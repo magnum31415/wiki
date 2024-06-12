@@ -1,11 +1,9 @@
 
 
-#TFENV
-
 ## tfenv 
 ### installation
 
-`git clone --depth=1 https://github.com/tfutils/tfenv.git ~/.tfenv`
+`git clone --depth=1 https://github.com/tfutils/tfenv.git ~/.tfenv
 echo 'export PATH=$PATH:$HOME/.tfenv/bin' >> ~/.bashrc
 tfenv list
 tfenv install X.Y.Z
