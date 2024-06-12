@@ -1,7 +1,7 @@
 
 
-## TFENV 
-### installation
+# TFENV 
+## installation
 
 ```
 git clone --depth=1 https://github.com/tfutils/tfenv.git ~/.tfenv
@@ -14,9 +14,29 @@ tfenv version-name
 
 NOTE: if the project contains  .terraform-version, tfenv will change automatically to the Terraform version defined in this file.
 
-# Launch Terraform inside a Docker Container
+# WORKSPACES
 
-# Docker
+```
+terraform workspace new dev
+terraform workspace new pre
+terraform workspace new pro
+terraform workspace list
+terraform workspace select dev 
+```
+# TERRAFORM
+```
+terraform force-unlock [options] LOCK_ID
+terraform init
+terraform init -backend-config=dev/dev_backend.tf
+terraform plan -var-file=dev/dev_variables.tfvars -target=module.rds -out=plant.out
+terraform plan
+terraform plan --var-file=VARFILE.tfvars --target=NOM_RECURS.NOM --out=plan.out
+terraform plan -var-file=pre/pre_variables.tfvars -target=module.rds -out=plant.out
+terraform plan -var-file=pre/pre_variables.tfvars -input=false -out=pre.tfplan
+
+```
+
+# Terraform inside a Docker Container
 
 ## Dockerfile
 
