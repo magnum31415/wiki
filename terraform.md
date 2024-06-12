@@ -33,7 +33,9 @@ terraform plan
 terraform plan --var-file=VARFILE.tfvars --target=NOM_RECURS.NOM --out=plan.out
 terraform plan -var-file=pre/pre_variables.tfvars -target=module.rds -out=plant.out
 terraform plan -var-file=pre/pre_variables.tfvars -input=false -out=pre.tfplan
-
+terraform plan -var-file="${STAGE}/${STAGE}_variables.tfvars" -input=false -out="${STAGE}.tfplan"
+terraform show -no-color "${STAGE}.tfplan" > "tfplan.txt" 
+terraform apply -var-file="${STAGE}/${STAGE}_variables.tfvars" -input=false -auto-approve
 ```
 
 # Terraform inside a Docker Container
