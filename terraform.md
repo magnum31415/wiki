@@ -3,12 +3,14 @@
 ## TFENV 
 ### installation
 
-```git clone --depth=1 https://github.com/tfutils/tfenv.git ~/.tfenv
+```
+git clone --depth=1 https://github.com/tfutils/tfenv.git ~/.tfenv
 echo 'export PATH=$PATH:$HOME/.tfenv/bin' >> ~/.bashrc
 tfenv list
 tfenv install X.Y.Z
 tfenv use X.Y.Z
-tfenv version-name```
+tfenv version-name
+```
 
 NOTE: if the project contains  .terraform-version, tfenv will change automatically to the Terraform version defined in this file.
 
@@ -18,7 +20,8 @@ NOTE: if the project contains  .terraform-version, tfenv will change automatical
 
 ## Dockerfile
 
-`FROM debian:10
+```
+FROM debian:10
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update -qq \
@@ -60,7 +63,8 @@ RUN wget -q https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_
 
 RUN echo $AWS_ACCESS_KEY_ID
 
-ENV HOME=/tmp`
+ENV HOME=/tmp
+```
 
 Create Container 
 
