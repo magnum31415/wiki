@@ -66,18 +66,23 @@ RUN echo $AWS_ACCESS_KEY_ID
 ENV HOME=/tmp
 ```
 
-Create Container 
+## Create Container 
 
-`docker build -t tf12.31 .`
+```
+docker build -t tf12.31 .
+```
 
-*Container Run*
-`docker run -d -ti -p 80:80 \
+## Container Run
+```
+docker run -d -ti -p 80:80 \
  -w /data \
  -v $PWD:/data:rw,z \
  -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
  -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
  -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} \
-  tf12.31`
-  
-*Container login*
-`docker exec -it -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} IDCONTAINER /bin/sh`
+  tf12.31
+```
+## Container login
+```
+docker exec -it -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} IDCONTAINER /bin/sh
+```
