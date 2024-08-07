@@ -20,14 +20,24 @@ An access control list (ACL) lets you assign permissions for each unique user or
 You can use the setfacl and getfacl command utilities to assign and verify the ACL of a file or directory. 
 
 ````
-#Set ACL
-setfacl --modify user1:rw sample
-setfacl --modify user2:r sample
+#to add new ACL for specific user
+setfacl -m u:<user>:rwx /file
+ 
+#add new ACL recursively to specific group
+setfacl -R -m g:<group>:rwx /directory 
+
+#add default ACL for specific user
+setfacl -m d:u:<user>:rwx /directory 
+
+#add new ACL for specific user with no permissions
+$setfacl -m u:<user>:- /file
+
+
 setfacl -m u:user1:rw -m u:user2:r -m u:user3:rwx -m g:demo1:rw -m g:demo2:rwx -m o:r sample
 
-#View SLC
+#View ACL
 getfacl sample
 
-#Delete ACL
-setfacl -x u:user1 sample
+#Delete ACL for specific user
+setfacl -x u:<user> /file
 ````
