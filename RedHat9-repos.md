@@ -6,6 +6,7 @@ El comando dnf config-manager puede habilitar o deshabilitar los repositorios.
 
 ```
 dnf config-manager --enable rhel-9-server-debug-rpms
+dnf config-manager --dissable rhel-9-server-debug-rpms
 ```
 
 Deberían descargar la clave en un archivo local en lugar de permitir que el comando dnf la recupere de una fuente externa. 
