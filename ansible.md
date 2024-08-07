@@ -11,8 +11,18 @@ pip install ansible-core==2.17
 pip install pywinrm
 ```
 
-# Commandos 
 
+## Proxychains
+
+```
+sudo apt-get install proxychains
+vim /etc/proxychains.conf 
+
+Add in [ProxyList]
+socks5 12.34.11.123 1080
+```
+
+# Commandos 
 ```
 proxychains ansible-playbook -i ../inventario.ini -l SERVERNAMEO01 playbook.yml --vault-password-file ../vault_pass.txt
 ```
