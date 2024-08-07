@@ -1,5 +1,5 @@
 5. [RedHat9 - REPOS](https://github.com/magnum31415/wiki/blob/main/RedHat9-repos.md)
 5. [RedHat9 - SELinux](https://github.com/magnum31415/wiki/blob/main/RedHat9-SELinux.md)
-5. [RedHat9](https://github.com/magnum31415/wiki/blob/main/RedHat9.md)
+5. [RedHat9](https://github.com/magnum31415/wiki/blob/main/RedHat9-perms.md)
 5. [RedHat9](https://github.com/magnum31415/wiki/blob/main/RedHat9.md)
 5. [RedHat9](https://github.com/magnum31415/wiki/blob/main/RedHat9.md)
