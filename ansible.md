@@ -22,3 +22,5 @@ ansible 's*' -i inventory1 --list-hosts
 ansible 'prod,172*,*lab*' -i inventory1  --list-hosts 
 ansible 'db,&london' -i inventory1  --list-hosts 
 
+# Ansible
+![Ansible Cheat Sheet](https://github.com/magnum31415/wiki/edit/main/Ansible_Cheat_Sheet.pdf)
