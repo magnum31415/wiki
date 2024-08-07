@@ -1,4 +1,7 @@
 
+# Ansible Cheat Sheet
+[Ansible Cheat Sheet](https://github.com/magnum31415/wiki/blob/main/Ansible_Cheat_Sheet.pdf)
+
 # Instalar venv ansible
 
 ```
@@ -10,17 +13,21 @@ pip install pywinrm
 
 # Commandos 
 
+```
 proxychains ansible-playbook -i ../inventario.ini -l SERVERNAMEO01 playbook.yml --vault-password-file ../vault_pass.txt
+```
 
+```
 ansible -i ../inventario.ini server01 -m setup -a 'filter=ansible_fqdn' 
 ansible -i ../inventario.ini server01 -m setup -a 'filter=ansible_hostname' 
+```
 
+```
 ansible '*.example.com, !*.lab.example.com'  -i inventory1 --list-hosts 
 ansible  lb1.lab.example.com,s1.lab.example.com,db1.example.com -i inventory1  --list-hosts 
 ansible '172.25.*' -i inventory1 --list-hosts 
 ansible 's*' -i inventory1 --list-hosts 
 ansible 'prod,172*,*lab*' -i inventory1  --list-hosts 
 ansible 'db,&london' -i inventory1  --list-hosts 
+```
 
-# Ansible
-![Ansible Cheat Sheet](https://github.com/magnum31415/wiki/edit/main/Ansible_Cheat_Sheet.pdf)
