@@ -8,6 +8,22 @@ El comando dnf config-manager puede habilitar o deshabilitar los repositorios.
 dnf config-manager --enable rhel-9-server-debug-rpms
 ```
 
+Deberían descargar la clave en un archivo local en lugar de permitir que el comando dnf la recupere de una fuente externa. 
+El siguiente archivo .repo usa el parámetro gpgkey para hacer referencia a una clave local:
+````
+[EPEL]
+name=EPEL 9
+baseurl=https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-9
+````
+
+```
+rpm --import  http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-9 
+dnf install  https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+```
+
 ## List
 ```
 dnf repolist all
