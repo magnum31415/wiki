@@ -1,4 +1,4 @@
-1. [RedHat9 - Repos](https://github.com/magnum31415/wiki/blob/main/RedHat9-network.md)
+1. [RedHat9 - Network](https://github.com/magnum31415/wiki/blob/main/RedHat9-network.md)
 2. [RedHat9 - Repos](https://github.com/magnum31415/wiki/blob/main/RedHat9-repos.md)
 3. [RedHat9 - SELinux](https://github.com/magnum31415/wiki/blob/main/RedHat9-SELinux.md)
 4. [RedHat9 - Perms](https://github.com/magnum31415/wiki/blob/main/RedHat9-perms.md)
