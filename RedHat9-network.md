@@ -6,6 +6,8 @@
  vim /etc/hostname
  or
  hostnamectl set-hostname <hostname>
+or
+ nmcli general hostname node1.lab.example.com
 ```
 
 ## setting ipv4/GW/DNS
@@ -13,10 +15,11 @@
 ```
 nmcli connection modify enp0s3 autoconnect yes ipv4.method manual ipv4.addresses 172.25.250.100 ipv4.gateway 172.25.250.254 ipv4.dns 172.25.250.254
 
+nmcli con add con-name "text1" ifname eth1 type ethernet ipv4.method manual ipv4.addresses  172.25.250.11/24 ipv4.gateway 172.25.250.254 ipv4.dns 172.25.250.254
+nmcli con up text1
 
 nmcli connection add con-name "test01" ifname tst01 type ethernet ipv4.method manual ipv4.addresses 10.0.0.10/24 ipv4.gateway 10.0.0.1 ipv4.dns 8.8.8.8
 
-```
 ip addr
 ```
 
