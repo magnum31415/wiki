@@ -1,7 +1,10 @@
 # tar
 
-1. gzip =  tar czvf name.tar.gz /usr/local
-2. bzip2 = tar cjvf name.tar.bzip2 /usr/local
+1. gzip (-z or --gzip) -  tar czvf name.tar.gz /usr/local
+2. bzip2 (-j or --bzip2) - tar cjvf name.tar.bzip2 /usr/local
+3. xz (-J or --xz) - tar cJvf name.tar.xz /usr/local
+
+
 
 # passwd
 ````
