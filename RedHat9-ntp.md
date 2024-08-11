@@ -33,4 +33,17 @@ timedactl
 
 ````
 
+# Rsyslog
+
+## Configure the rsyslog service to write the Logging test authpriv.alert message to the /var/log/auth-errors file. Use the authpriv facility and the alert priority.
+````
+#create & add in /etc/rsyslog.d/auth-errors.conf
+authpriv.alert  /var/log/auth-errors
+
+systemctl restart rsyslog.service
+
+logger -p authpriv.alert "Login test authpriv.alert"
+
+tail -f /var/log/auth-errors
+````
 
