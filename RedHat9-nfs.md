@@ -76,7 +76,7 @@ work  -rw,sync  serverb:/shares/work
 ````
 The autofs service automatically creates and removes the mount point. The autofs service creates and removes the /shares and /shares/work directories as needed.
 
-### Direct Map
+#### Direct Map
 To use directly mapped mount points, the master map file might appear as follows:
 A direct map is used to map an NFS export to an absolute path mount point. Only one direct map file is necessary, and can contain any number of direct maps.
 To use directly mapped mount points, the master map file might appear as follows:
@@ -88,4 +88,8 @@ All direct map entries use /- as the base directory. In this case, the mapping f
 The content for the /etc/auto.direct file might appear as follows:
 ````
 /mnt/docs  -rw,sync  serverb:/shares/docs
+````
+#### Start Automunter
+````
+sudo systemctl enable --now autofs
 ````
