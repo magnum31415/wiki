@@ -45,3 +45,31 @@ vim /etc/fstab
 exserver:/export  /mountpoint  nfs  rw,sync  0 0
 mount /mountpoint
 ````
+
+### Automounter Service
+
+####  Install packeges configure an automount 
+````
+ sudo dnf install autofs nfs-utils
+
+````
+
+#### Create a Master Map
+Add a master map file to /etc/auto.master.d. This file identifies the base directory for mount points, and identifies the mapping file to create the automounts.
+````
+sudo vim /etc/auto.master.d/demo.autofs
+/shares  /etc/auto.demo
+````
+This entry uses the /shares directory as the base for indirect automounts. The /etc/auto.demo file contains the mount details.
+
+#### Create an Indirect Map
+Each mapping file identifies the mount point, mount options, and source location to mount for a set of automounts.
+The mapping file-naming convention is /etc/auto.name, where name reflects the content of the map.
+````
+sudo vim /etc/auto.demo
+work  -rw,sync  serverb:/shares/work
+
+#systemctl restart autofs
+#systemctl enable --now autofs
+
+````
