@@ -93,3 +93,22 @@ The content for the /etc/auto.direct file might appear as follows:
 ````
 sudo systemctl enable --now autofs
 ````
+
+**NOTE**
+With an automounter indirect map, you must access each exported subdirectory for them to mount. With an automounter direct map, after you access the mapped mount point, you can immediately view and access the subdirectories and content in the exported directory.
+
+
+````
+/etc/auto.master.d/direct.autofs
+/-	/etc/auto.direct
+
+/etc/auto.master.d/indirect.autofs
+/internal	/etc/auto.indirect
+
+/etc/auto.direct
+/external	-rw,sync,fstype=nfs4	serverb.lab.example.com:/shares/direct/external
+
+/etc/auto.indirect
+*	-rw,sync,fstype=nfs4	serverb.lab.example.com:/shares/indirect/&
+````
+
