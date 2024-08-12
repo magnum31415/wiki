@@ -47,7 +47,9 @@ exserver:/export  /mountpoint  nfs  rw,sync  0 0
 mount /mountpoint
 ````
 
-### Automounter Service
+## Automounter Service
+The master map file. The autofs service uses /etc/auto.master (master map) as its default primary configuration file.
+The master map file lists mount points controlled by autofs
 
 ####  Install packeges configure an automount 
 ````
