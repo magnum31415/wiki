@@ -27,10 +27,11 @@ NFSv4 protocol eliminated the use of the legacy RPC protocol for NFS transaction
 NFSv4 introduced an export tree that contains all of the paths for the server's exported directories. 
 To view all of the exported directories, mount the root (/) of the server's export tree. Mounting the export tree's 
 root provides browseable paths for all exported directories, as children of the tree's root directory, but does not mount ("bind") any of the exported directories.
-[root@host ~]# mkdir /mountpoint
-[root@host ~]# mount server:/ /mountpoint
-[root@host ~]# ls /mountpoint
-
+````
+mkdir /mountpoint
+mount -t nfs4 server:/ /mountpoint
+ls /mountpoint
+````
 
 ## Mount
 
