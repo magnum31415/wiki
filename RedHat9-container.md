@@ -235,3 +235,36 @@ You use the firewall-cmd command to allow port 13306 traffic into the container 
 firewall-cmd --add-port=13306/tcp --permanent
 firewall-cmd --reload
 ````
+
+## Network create
+
+podman network create command to create a DNS-enabled network.
+
+````
+podman network create --gateway 10.87.0.1  --subnet 10.87.0.0/16 db_net
+ podman network inspect db_net
+ 
+ podman run -d --name db01 \
+-e MYSQL_USER=student \
+-e MYSQL_PASSWORD=student \
+-e MYSQL_DATABASE=dev_data \
+-e MYSQL_ROOT_PASSWORD=redhat \
+-v /home/user/db_data:/var/lib/mysql:Z \
+-p 13306:3306 \
+--network db_net \
+registry.lab.example.com/rhel8/mariadb-105
+
+ podman run -d --name client01 \
+--network db_net \
+registry.lab.example.com/ubi8/ubi:latest \
+sleep infinity
+
+podman exec -it db01 dnf install -y iputils iproute
+podman exec -it client01 dnf install -y iputils iproute
+
+podman exec -it db01 ping -c3 client01
+podman exec -it client01 ping -c3 db01
+
+
+````
+
