@@ -4,11 +4,22 @@
 
 1. Identify Available Disk Space
    ````
-   lsblk
+   sudo lsblk
    ````
 2. Create a New Partition for Swap
    ````
    sudo fdisk /dev/sdX
+   ````
+   O con parted
+   ````
+   sudo parted /dev/sdb
+   (parted) mklabel gpt
+   (parted) mkpart primary linux-swap 1MiB 4GiB
+   (parted) print
+   (parted) quit
+
+
+    sudo parted /dev/vdb mkpart <paritionName> linux-swap 1001MB 1101MB
    ````
 3. Format the Partition as Swap
    ````
