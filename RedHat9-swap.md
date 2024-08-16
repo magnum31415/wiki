@@ -35,6 +35,9 @@
    ````
 6. Make the Swap Permanent
    ````
+   lsblk -o UUID /dev/sdXn
+   echo "UUID=cc18...1b69 swap swap defaults 0 0" >> /etc/fstab
+   
    echo "/dev/sdXn swap swap defaults 0 0" | sudo tee -a /etc/fstab
    ````
 7. Verify Swap Space
