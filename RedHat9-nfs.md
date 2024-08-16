@@ -1,3 +1,5 @@
+
+
 # NFS
 Red Hat Enterprise Linux 9 uses NFS version 4.2. RHEL fully supports both NFSv3 and NFSv4 protocols.
 NFS servers export directories. NFS clients mount exported directories to an existing local mount point directory. NFS clients can mount exported directories in multiple ways:
@@ -47,7 +49,7 @@ exserver:/export  /mountpoint  nfs  rw,sync  0 0
 mount /mountpoint
 ````
 
-## Automounter Service
+# Automounter Service
 The master map file. The autofs service uses /etc/auto.master (master map) as its default primary configuration file.
 The master map file lists mount points controlled by autofs
 
