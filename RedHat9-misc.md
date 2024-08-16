@@ -41,3 +41,17 @@ To manipulate scheduled cron jobs, you can edit the crontab file (for system-wid
 00 23 * * *	localuser	rsync -av /home/localuser/source /home/localuser/destination
 00 12 * * 6	localuser	cp -R /home/localuser/destination/* /home/localuser/full/
 ````
+
+# Manage Temporary Files
+systemd-tmpfiles tool, which provides a structured and configurable method to manage temporary directories and files.
+At system boot, one of the first systemd service units to launch is the systemd-tmpfiles-setup service. This service runs the systemd-tmpfiles command --create --remove option, which reads instructions from the /usr/lib/tmpfiles.d/*.conf, /run/tmpfiles.d/*.conf, and /etc/tmpfiles.d/*.conf configuration files.
+Create the /etc/tmpfiles.d/volatile.conf file with the following content:
+````
+d /run/volatile 0700 root root 30s
+````
+````
+systemd-tmpfiles --create /etc/tmpfiles.d/volatile.conf
+````
+##Clean Temporary Files Manually
+The systemd-tmpfiles --clean command parses the same configuration files as the systemd-tmpfiles --create command, but instead of creating files and directories, it purges all files that were not accessed, changed, or modified more recently than the maximum age that is defined in the configuration file.
+
