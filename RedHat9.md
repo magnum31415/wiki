@@ -7,4 +7,5 @@
 6. [Services](https://github.com/magnum31415/wiki/blob/main/RedHat9-ntp.md)
 6. [NFS](https://github.com/magnum31415/wiki/blob/main/RedHat9-nfs.md)
 7. [VDO](https://github.com/magnum31415/wiki/blob/main/RedHat9-vdo.md)
+8. [SWAP](https://github.com/magnum31415/wiki/blob/main/RedHat9-swap.md)
 6. [Container](https://github.com/magnum31415/wiki/blob/main/RedHat9-container.md)
