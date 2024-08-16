@@ -42,6 +42,11 @@
 
    swapon -a
    ````
+   When you add or remove an entry in the /etc/fstab file, run the systemctl daemon-reload command, or reboot the server, for systemd to register the new configuration.
+   ````
+   systemctl daemon-reload
+
+   ````
 7. Verify Swap Space
    ````
    free -h
