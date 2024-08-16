@@ -22,6 +22,10 @@ nmcli connection add con-name "test01" ifname tst01 type ethernet ipv4.method ma
 
 ip addr
 ```
+Set connection enabled by default
+````
+sudo nmcli con mod test01 autoconnect yes
+````
 
 ## nmcli
 
