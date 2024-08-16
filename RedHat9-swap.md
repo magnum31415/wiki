@@ -6,27 +6,27 @@
    ````
    lsblk
    ````
-3. Create a New Partition for Swap
+2. Create a New Partition for Swap
    ````
    sudo fdisk /dev/sdX
    ````
-5. Format the Partition as Swap
+3. Format the Partition as Swap
    ````
    sudo mkswap /dev/sdXn
    ````
-7. Enable the Swap Partition
+4. Enable the Swap Partition
    ````
    sudo swapon /dev/sdXn
    ````
-9. Verify the Swap
+5. Verify the Swap
    ````
    sudo swapon --show 
    ````
-11. Make the Swap Permanent
+6. Make the Swap Permanent
    ````
-   echo '/dev/sdXn swap swap defaults 0 0' | sudo tee -a /etc/fstab
-    ````
-13. Verify Swap Space
+   echo "/dev/sdXn swap swap defaults 0 0" | sudo tee -a /etc/fstab
+   ````
+7. Verify Swap Space
    ````
    free -h
    ````
