@@ -333,12 +333,6 @@ loginctl enable-linger
 loginctl show-user appdev-adm
 ````
 
-### Manage Containers as Root with systemd
-1. Do not create a dedicated user for container management.
-2. The service file must be in the /etc/systemd/system directory instead of in the ~/.config/systemd/user directory.
-3. You manage the containers with the systemctl command without the --user option.
-4. Do not run the loginctl enable-linger command as the root user.
-
 ````
 sudo useradd contsvc
 sudo passwd contsvc
@@ -374,6 +368,14 @@ loginctl enable-linger
 loginctl show-user contsvc
 
 ````
+
+### Manage Containers as Root with systemd
+1. Do not create a dedicated user for container management.
+2. The service file must be in the /etc/systemd/system directory instead of in the ~/.config/systemd/user directory.
+3. You manage the containers with the systemctl command without the --user option.
+4. Do not run the loginctl enable-linger command as the root user.
+
+
 
 
 ````
