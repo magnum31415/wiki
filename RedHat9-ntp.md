@@ -15,11 +15,10 @@ timedatectl
 
 ## chronyd
 ````
-# specify the classroom.example.com server as the NTP time source.
-add in /etc/chrony.conf
+# specify the classroom.example.com server as the NTP time source. add in /etc/chrony.conf
 server classroom.example.com iburst
 
-sudo systemctl status/start chronyd
+sudo systemctl enable --now chronyd
 
 #check last step (The * in the S (Source state)  indicates  chronyd service uses the classroom.example.com  as a time source and is the NTP server that the machine is currently synchronized to.)
 chronyc sources -v
