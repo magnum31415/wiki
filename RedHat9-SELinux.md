@@ -1,7 +1,7 @@
 # SELinux
 All of the semanage commands that add or modify the targeted policy configuration store information in *local files under the /etc/selinux/targeted directory tree. 
 
-##check in which mode SELinux is running.
+## Check in which mode SELinux is running.
 ```
 sestatus
 getenforce
