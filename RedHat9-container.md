@@ -267,4 +267,118 @@ podman exec -it client01 ping -c3 db01
 
 
 ````
+## Manage Containers as System Services
+Configure a container as a systemd service
+
+### Requirements for systemd User Services
+The service starts when you open a session (graphical interface, text console, or SSH), and it stops when you close the last session. This behavior differs from a system service, which starts when the system boots and stops when the system shuts down.
+when you create a user account with the useradd command, the system uses the next available ID from the regular user ID range. The system also reserves a range of IDs for the user's containers in the /etc/subuid file. If you create a user account with the useradd command --system option, then the system does not reserve a range for the user containers. As a consequence, you cannot start rootless containers with system accounts.
+Create a dedicated user account to manage containers
+````
+sudo useradd appdev-adm
+````
+Podman is a stateless utility and requires a full login session
+````
+ssh appdev-adm@host
+````
+You then configure the container registry and authenticate with your credentials. You run the http container with the following command.
+
+````
+podman run -d --name webserver1 -p 8080:8080 -v ~/app-artifacts:/var/www/html:Z registry.access.redhat.com/ubi8/httpd-24
+````
+
+### Create systemd User Files for Containers
+You can manually define systemd services in the ~/.config/systemd/user/ directory. 
+Use the podman generate systemd command to generate systemd service files for an existing container. 
+````
+ podman generate systemd --name webserver1
+````
+
+The podman generate systemd command --new option instructs the podman utility to configure the systemd service to create the container when the service starts, and to delete the container when the service stops.
+````
+ podman generate systemd --name webserver1 --new
+````
+
+### Manage systemd User Files for Containers
+Now that you created the systemd user file, you can use the systemctl command --user option to manage the webserver1 container.
+````
+systemctl --user daemon-reload
+systemctl --user start container-webserver1.service
+systemctl --user status container-webserver1.service
+````
+When you configure a container with the systemd daemon, the daemon monitors the container status and restarts the container if it fails. Do not use the podman command to start or stop these containers. Doing so might interfere with the systemd daemon monitoring.
+
+
+|Type|System/User|Command|
+|-------|------|------|
+|Storing custom unit files| System services|/etc/systemd/system/unit.service|
+|-|User services|~/.config/systemd/user/unit.service|
+|Reloading unit files|System services|# systemctl daemon-reload|
+||User services|$ systemctl --user daemon-reload|
+|Starting and stopping a service|System services|# systemctl start UNIT # systemctl stop UNIT|
+||User services| $ systemctl --user start UNIT $ systemctl --user stop UNIT|
+|Starting a service when the machine starts|System services| # systemctl enable UNIT|
+||User services| $ loginctl enable-linger $ systemctl --user enable UNIT|
+
+
+
+### Configure Containers to Start at System Boot
+
+The systemd service stops the container after a certain time if the user logs out from the system. This behavior occurs because the systemd service unit was created with the --user option, which starts a service at user login and stops it at user logout.
+You can change this default behavior, and force your enabled services to start with the server and stop during the shutdown, by running the loginctl enable-linger.
+You use the loginctl command to configure the systemd user service to persist after the last user session of the configured service closes.
+````
+loginctl show-user appdev-adm
+loginctl enable-linger
+loginctl show-user appdev-adm
+````
+
+### Manage Containers as Root with systemd
+1. Do not create a dedicated user for container management.
+2. The service file must be in the /etc/systemd/system directory instead of in the ~/.config/systemd/user directory.
+3. You manage the containers with the systemctl command without the --user option.
+4. Do not run the loginctl enable-linger command as the root user.
+
+````
+sudo useradd contsvc
+sudo passwd contsvc
+ssh contsvc@servera
+
+mkdir -p ~/.config/containers/
+cp /tmp/containers-services/registries.conf ~/.config/containers/
+
+mkdir -p ~/webcontent/html/
+echo "Hello World" > ~/webcontent/html/index.html
+
+podman login registry.lab.example.com
+podman search registry.lab.example.com/
+podman run -d --name webapp -p 8080:8080 -v ~/webcontent:/var/www:Z registry.lab.example.com/rhel8/httpd-24:1-163
+curl http://localhost:8080
+
+mkdir -p ~/.config/systemd/user/
+cd ~/.config/systemd/user
+podman generate systemd --name webapp --files --new
+podman stop webapp
+podman rm webapp
+podman ps -a
+
+systemctl --user daemon-reload
+systemctl --user enable --now container-webapp
+curl http://localhost:8080
+podman ps
+systemctl --user stop container-webapp
+podman ps --all
+systemctl --user start container-webapp
+
+loginctl enable-linger
+loginctl show-user contsvc
+
+````
+
+
+````
+````
+
+````
+````
 
