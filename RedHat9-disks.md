@@ -27,7 +27,9 @@
   ````
   parted /dev/vdb mklabel msdos
   parted /dev/vdb mkpart primary 1MiB 2GiB
-  parted /dev/vdb set 1 lvm on
+  parted /dev/vdb set 1 lvm on 
+
+  parted /dev/vdb mklabel msdos mkpart primary 1MiB 2GiB set 1 lvm on 
   ````
 
   ## Create the extra_storage volume group with the /dev/vdb1
