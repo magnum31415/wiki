@@ -42,3 +42,6 @@
   echo "UUID=988c...0ab6 /user-homes xfs defaults 0 0" >> /etc/fstab
   mount /user-homes
   ````
+
+  # LVM
+  
