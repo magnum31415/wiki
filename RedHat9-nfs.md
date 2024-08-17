@@ -93,6 +93,46 @@ The content for the /etc/auto.direct file might appear as follows:
 ````
 /mnt/docs  -rw,sync  serverb:/shares/docs
 ````
+### Examples
+
+#### Ejemplo de Mapa Directo
+En un mapa directo, cada punto de montaje se define con su ruta absoluta en el archivo del mapa, y autofs monta el sistema de archivos en esa ubicación exacta.
+
+Configuración en /etc/auto.master o /etc/auto.master.d:
+````
+/-  /etc/auto.direct
+````
+Contenido de /etc/auto.direct:
+````
+/mnt/share1  -fstype=nfs,rw  server:/export/share1
+/mnt/share2  -fstype=nfs,rw  server:/export/share2
+/home/user1  -fstype=nfs,rw  server:/export/home/user1
+````
+Explicación:
+/mnt/share1: Se monta desde server:/export/share1 cuando se accede a /mnt/share1.
+/mnt/share2: Se monta desde server:/export/share2 cuando se accede a /mnt/share2.
+/home/user1: Se monta desde server:/export/home/user1 cuando se accede a /home/user1.
+
+
+#### Ejemplo de Mapa Indirecto
+En un mapa indirecto, los sistemas de archivos se montan como subdirectorios bajo un directorio base (/mnt/indirect en este caso). Esto permite organizar los montajes de forma más estructurada, agrupando varios sistemas de archivos bajo un mismo directorio.
+
+Configuración en /etc/auto.master:
+````
+/mnt/indirect  /etc/auto.indirect
+Contenido de /etc/auto.indirect:
+````
+````
+share1  -fstype=nfs,rw  server:/export/share1
+share2  -fstype=nfs,rw  server:/export/share2
+user1   -fstype=nfs,rw  server:/export/home/user1
+````
+Explicación:
+share1: Se monta desde server:/export/share1 en /mnt/indirect/share1.
+share2: Se monta desde server:/export/share2 en /mnt/indirect/share2.
+user1: Se monta desde server:/export/home/user1 en /mnt/indirect/user1.
+
+
 #### Start Automunter
 ````
 sudo systemctl enable --now autofs
