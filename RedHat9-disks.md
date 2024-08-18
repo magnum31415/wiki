@@ -43,5 +43,11 @@
   mount /user-homes
   ````
 
-  # LVM
-  
+  # Parted
+
+- create an MBR disk partition   ````parted /dev/vdb mklabel msdos; parted /dev/vdb mkpart primary xfs 2048s 1000MB````
+- create GPT Partitions  ````parted /dev/vdb mkpart userdata  xfs 2048s 1000MB````
+
+  # Other commands
+- This command waits for the system to register the new partition, and returns when it is done.  ````udevadm settle```` 
+- Update the systemd daemon for the system to register the new /etc/fstab file configuration. ````systemctl daemon-reload````
