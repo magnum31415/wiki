@@ -11,7 +11,7 @@ Use the tuned-adm command to change the settings of the tuned daemon. The tuned-
 8. Confirm that throughput-performance is the active tuning profile. ````sudo tuned-adm active````
 9. List all available profiles ````tuned-adm list````
 10. Get recommended profile: ````tuned-adm recommend ````
-11. Set default profile ```tuned-adm profile <name_profile_recommended>` ````
+11. Set default profile ````tuned-adm profile <name_profile_recommended> ````
 
 
 
