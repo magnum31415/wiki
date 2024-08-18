@@ -11,3 +11,4 @@
 9. [DISKS](https://github.com/magnum31415/wiki/blob/main/RedHat9-disks.md)
 6. [Container](https://github.com/magnum31415/wiki/blob/main/RedHat9-container.md)
 7. [Grub2](https://github.com/magnum31415/wiki/blob/main/RedHat9-grub2.md)
+8. [Manage Profiles](https://github.com/magnum31415/wiki/blob/main/RedHat9-profiles.md)
