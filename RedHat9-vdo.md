@@ -39,3 +39,15 @@ sudo mount /dev/mapper/vdo1 /mnt/vdo1
 sudo vdo status --name=vdo1
 
 ````
+## LVM now incorporates VDO
+LVM now incorporates VDO deduplication and compression as a configurable feature of regular logical volumes. 
+
+````
+dnf install vdo kmod-kvdo
+lvcreate --type vdo --name vdo-lv01 --size 5G vg01
+mkfs -t xfs /dev/vg01/lv01
+mkdir /mnt/data
+#/etc/fstab file.
+/dev/vg01/lv01 /mnt/data xfs defaults 0 0
+
+````
