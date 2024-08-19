@@ -28,6 +28,19 @@ sudo nmcli con mod test01 autoconnect yes
 ````
 
 ## nmcli
+El archivo de configuración de la conexión en /etc/NetworkManager/system-connections/.
+
+### Pasos para configurar una interfaz de red con nmcli
+
+1. Verificar el estado del servicio NetworkManager ````sudo systemctl status NetworkManager; nmcli general status````
+2. Listar las interfaces de red disponibles ````nmcli device status````
+3. Configurar la interfaz de red con dirección IP estática ````sudo nmcli connection add type ethernet con-name <nombre-conexion> ifname <nombre-interfaz> ip4 <direccion-ip>/<mascara> ipv4.dns <ip-dns> gw4 <puerta-enlace>````
+   1. -  ````nmcli con add con-name con1 type ethernet ifname eth1 ipv4.addresses 172.25.250.11/24 ipv4.gateway 172.25.250.254 ipv4.dns 172.25.250.254 ipv4.method manual````
+5. Configurar la interfaz de red usando DHCP ````sudo nmcli connection add type ethernet con-name dhcp-conn ifname <nombre-interfaz> ipv4.method auto````
+6. Activar la conexión ````sudo nmcli connection up <nombre-conexion> ````
+7. Verificar la configuración ````nmcli connection show; ip addr show <nombre-interfaz>````
+8. Configurar la conexión para que se active automáticamente al iniciar ````sudo nmcli connection modify <nombre-conexion> connection.autoconnect yes````
+
 
 ###  Checking the overall status 
 ```
