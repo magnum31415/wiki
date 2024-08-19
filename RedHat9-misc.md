@@ -64,7 +64,6 @@ The systemd-tmpfiles --clean command parses the same configuration files as the 
 Nota: si nos devuelve "Nothing Appropiate" ejecutar ````sudo mandb```` para actualizar mandb
 
 # Streams
-
 - **0** stdin
 - **1** stdout
 - **2** stderr
@@ -78,3 +77,5 @@ Nota: si nos devuelve "Nothing Appropiate" ejecutar ````sudo mandb```` para actu
 - **>file 2>&1**  or **&>file** : redirigir STDOUT y STDERR para sobreescribir el mismo archivo
 - **>>file 2>&1**  or **&>>file** : redirigir STDOUT y STDERR para agregar al mismo archivo
 
+# Netstat
+El comando ss reemplaza la herramienta anterior netstat, que es parte del paquete net-tools, 
