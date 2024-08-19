@@ -21,10 +21,13 @@ To prevent incorrectly labeled and unlabeled files from causing problems, SELinu
 Before rebooting the system for relabeling, make sure the system will boot in permissive mode, for example by using the enforcing=0 kernel option. This prevents the system from failing to boot in case the system contains unlabeled files required by systemd before launching the selinux-autorelabel service.
 
 ## check/set/check/unset semanage boolean
+Los SELinux Booleans son variables que controlan el comportamiento de las políticas SELinux de manera dinámica. Permiten activar o desactivar ciertas reglas de seguridad en la política SELinux sin necesidad de modificar la política completa ni reiniciar el sistema. Estas variables proporcionan una manera de ajustar el nivel de seguridad de manera flexible y adaptada a las necesidades específicas de un sistema o aplicación.
 ```
 sudo semanage boolean -l | grep httpd
+sudo getsebool -a | grep http
 
 sudo semanage boolean -m --off httpd_ssi_exec
+sudo setsebool httpd_ssi_exec off
 
 sudo semanage boolean -l | grep httpd
 
