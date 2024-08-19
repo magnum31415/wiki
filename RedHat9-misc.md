@@ -62,3 +62,19 @@ The systemd-tmpfiles --clean command parses the same configuration files as the 
 -  busca la palabra clave en la página de texto completo, no solo en los títulos y descripcion ````man -K STRING````
 
 Nota: si nos devuelve "Nothing Appropiate" ejecutar ````sudo mandb```` para actualizar mandb
+
+# Streams
+
+- **0** stdin
+- **1** stdout
+- **2** stderr
+- **3** filename
+
+## Redirects
+
+- **>file** : redirigir STDOUT para sobreescribir un archivo
+- **>>file** : redirigir STDOUT para agrregar a un archivo
+- **2>file** : redirigir STDERR para sobreescribir un archivo
+- **>file 2>&1**  or **&>file** : redirigir STDOUT y STDERR para sobreescribir el mismo archivo
+- **>>file 2>&1**  or **&>>file** : redirigir STDOUT y STDERR para agregar al mismo archivo
+
