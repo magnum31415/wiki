@@ -47,6 +47,9 @@ view any locally-customized file contexts by adding the -C option:
  sudo semanage fcontext -l -C
 ```
 
+**¿Cuándo usar restorecon?** 
+Se usa restorecon cuando cambias o reasignas contextos SELinux en archivos o directorios, no en la configuración de puertos. Por ejemplo, si mueves un archivo a un nuevo directorio o cambias un contexto manualmente, necesitarías ejecutar restorecon para aplicar el contexto correcto basado en la política.
+
 ## check/set/check/unset semanage ports
 ```
 sudo semanage port -l | grep http
