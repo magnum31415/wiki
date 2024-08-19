@@ -55,3 +55,10 @@ systemd-tmpfiles --create /etc/tmpfiles.d/volatile.conf
 ##Clean Temporary Files Manually
 The systemd-tmpfiles --clean command parses the same configuration files as the systemd-tmpfiles --create command, but instead of creating files and directories, it purges all files that were not accessed, changed, or modified more recently than the maximum age that is defined in the configuration file.
 
+# Man
+## Búsqueda en MAN
+
+-  busca una palabra clave en los títulos y descripciones de las páginas man. ````man -k STRING```` equivalente a ````apropos````
+-  busca la palabra clave en la página de texto completo, no solo en los títulos y descripcion ````man -K STRING````
+
+Nota: si nos devuelve "Nothing Appropiate" ejecutar ````sudo mandb```` para actualizar mandb
