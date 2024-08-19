@@ -78,4 +78,8 @@ Nota: si nos devuelve "Nothing Appropiate" ejecutar ````sudo mandb```` para actu
 - **>>file 2>&1**  or **&>>file** : redirigir STDOUT y STDERR para agregar al mismo archivo
 
 # Netstat
-El comando ss reemplaza la herramienta anterior netstat, que es parte del paquete net-tools, 
+El comando ss reemplaza la herramienta anterior netstat, que es parte del paquete net-tools.
+
+
+
+
