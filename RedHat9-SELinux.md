@@ -10,9 +10,11 @@ getenforce
 
 ## Changing SELinux to permissive mode 
 Open the /etc/selinux/config  and Configure the SELINUX=permissive and reboot
+or ````setenforce 0````
 
 ## Changing SELinux to enforcing  mode 
 Open the /etc/selinux/config  and Configure the SELINUX=enforcing  and reboot
+or  ````setenforce 1````
 
 To prevent incorrectly labeled and unlabeled files from causing problems, SELinux automatically relabels file systems when changing from the disabled state to permissive or enforcing mode. Use the fixfiles -F onboot command as root to create the /.autorelabel file containing the -F option to ensure that files are relabeled upon next reboot.
 
