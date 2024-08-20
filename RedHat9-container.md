@@ -78,7 +78,26 @@ systemctl enable web1-container.service
 systemctl start web1-container.service
 
 #Arranque como rootless
+ssh user@server
+mkdir -p ~/.config/systemd/user/
+cd ~/.config/systemd/user
+podman generate systemd --name web1 --files --new
+systemctl --user daemon-reload
+systemctl --user enable --now container-web1
+systemctl --user stop  container-web1
+systemctl --user start  container-web1
+#servico arrancado aunque el usuario este descontado
+loginctl enable-linger
 
+#Creacion Container a partir de Contarinerfile
+echo " 
+FROM alpine:latest
+RUN apk add --no-cache nginx
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+" > Containerfile
+podman build -t nginx-web1 .
+podman run -d  --name "nginx-web1" -p 8081:80 <IMAGE_ID>
 ````
 
 
