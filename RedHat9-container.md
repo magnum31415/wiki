@@ -79,6 +79,8 @@ systemctl start web1-container.service
 
 #Arranque como rootless
 ssh user@server
+podman pull docker.io/library/httpd
+podman run -d -name web1 -p 8080:80 -v /web:/var/www/htdocs:Z <IMAGE_ID>
 mkdir -p ~/.config/systemd/user/
 cd ~/.config/systemd/user
 podman generate systemd --name web1 --files --new
