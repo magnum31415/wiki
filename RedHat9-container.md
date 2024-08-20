@@ -4,7 +4,7 @@
 
 Install the container-tools meta-package
 ````
-sudo dnf install container-tools
+sudo dnf install @Container-Management
 ````
 Configure the registry.lab.example.com  registry in your home directory. 
 Log in to the container registry with admin as the user and xxxx
