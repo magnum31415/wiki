@@ -60,7 +60,6 @@ Run apache container with port and directory mappings
 podman login registry.redhat.io
 podman search httpd
 podman pull docker.io/library/httpd
-podman
 podman images
 podman run -d -name web1 -p 8080:80  <IMAGE_ID>
 podamn exec -it web1 /bin/bash
@@ -71,6 +70,15 @@ podman rm web1
 podman run -d -name web1 -p 8080:80 -v /web:/var/www/htdocs:Z <IMAGE_ID>
 podman stop web1
 podman rm web1
+
+#Arranque como root
+podman generate systemd web1 > /etc/systemd/system/web1-container.service
+systemctl daemon-reload
+systemctl enable web1-container.service
+systemctl start web1-container.service
+
+#Arranque como rootless
+
 ````
 
 
