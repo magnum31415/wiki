@@ -81,5 +81,10 @@ Nota: si nos devuelve "Nothing Appropiate" ejecutar ````sudo mandb```` para actu
 El comando ss reemplaza la herramienta anterior netstat, que es parte del paquete net-tools.
 
 
+# Firewalld
 
+````
+firewall-cmd --add-service={nfs,mountd,rpc-bind} --permanent
+firewall-cmd --reload
+````
 
