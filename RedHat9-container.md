@@ -55,6 +55,23 @@ Verify that the container was created.
 podman ps
 ````
 
+Run apache container with port and directory mappings
+````
+podman login registry.redhat.io
+podman search httpd
+podman pull docker.io/library/httpd
+podman
+podman images
+podman run -d -name web1 -p 8080:80  <IMAGE_ID>
+podamn exec -it web1 /bin/bash
+podman ps
+podman stop web1
+podman ps -a
+podman rm web1
+podman run -d -name web1 -p 8080:80 -v /web:/var/www/htdocs:Z <IMAGE_ID>
+podman stop web1
+podman rm web1
+````
 
 
 ## Build a container image called python39:1.0 from a container file, and use the image to create a container called python39.
