@@ -1,5 +1,55 @@
 # Container 
 
+# Examples
+
+
+Run apache container with port and directory mappings
+````
+podman login registry.redhat.io
+podman search httpd
+podman pull docker.io/library/httpd
+podman images
+podman run -d -name web1 -p 8080:80  <IMAGE_ID>
+podamn exec -it web1 /bin/bash
+podman ps
+podman stop web1
+podman ps -a
+podman rm web1
+podman run -d -name web1 -p 8080:80 -v /web:/var/www/htdocs:Z <IMAGE_ID>
+podman stop web1
+podman rm web1
+
+#Arranque como root
+podman generate systemd web1 > /etc/systemd/system/web1-container.service
+systemctl daemon-reload
+systemctl enable web1-container.service
+systemctl start web1-container.service
+
+#Arranque como rootless
+ssh user@server
+podman pull docker.io/library/httpd
+podman run -d -name web1 -p 8080:80 -v /web:/var/www/htdocs:Z <IMAGE_ID>
+mkdir -p ~/.config/systemd/user/
+cd ~/.config/systemd/user
+podman generate systemd --name web1 --files --new
+systemctl --user daemon-reload
+systemctl --user enable --now container-web1
+systemctl --user stop  container-web1
+systemctl --user start  container-web1
+#servico arrancado aunque el usuario este descontado
+loginctl enable-linger
+
+#Creacion Container a partir de Contarinerfile
+echo " 
+FROM alpine:latest
+RUN apk add --no-cache nginx
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+" > Containerfile
+podman build -t nginx-web1 .
+podman run -d  --name "nginx-web1" -p 8081:80 <IMAGE_ID>
+````
+
 ## Run the python38 container in detached mode from an image with the python 3.8 package and based on the ubi8 image. The image is hosted on a remote registry.
 
 Install the container-tools meta-package
@@ -55,52 +105,6 @@ Verify that the container was created.
 podman ps
 ````
 
-Run apache container with port and directory mappings
-````
-podman login registry.redhat.io
-podman search httpd
-podman pull docker.io/library/httpd
-podman images
-podman run -d -name web1 -p 8080:80  <IMAGE_ID>
-podamn exec -it web1 /bin/bash
-podman ps
-podman stop web1
-podman ps -a
-podman rm web1
-podman run -d -name web1 -p 8080:80 -v /web:/var/www/htdocs:Z <IMAGE_ID>
-podman stop web1
-podman rm web1
-
-#Arranque como root
-podman generate systemd web1 > /etc/systemd/system/web1-container.service
-systemctl daemon-reload
-systemctl enable web1-container.service
-systemctl start web1-container.service
-
-#Arranque como rootless
-ssh user@server
-podman pull docker.io/library/httpd
-podman run -d -name web1 -p 8080:80 -v /web:/var/www/htdocs:Z <IMAGE_ID>
-mkdir -p ~/.config/systemd/user/
-cd ~/.config/systemd/user
-podman generate systemd --name web1 --files --new
-systemctl --user daemon-reload
-systemctl --user enable --now container-web1
-systemctl --user stop  container-web1
-systemctl --user start  container-web1
-#servico arrancado aunque el usuario este descontado
-loginctl enable-linger
-
-#Creacion Container a partir de Contarinerfile
-echo " 
-FROM alpine:latest
-RUN apk add --no-cache nginx
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-" > Containerfile
-podman build -t nginx-web1 .
-podman run -d  --name "nginx-web1" -p 8081:80 <IMAGE_ID>
-````
 
 
 ## Build a container image called python39:1.0 from a container file, and use the image to create a container called python39.
