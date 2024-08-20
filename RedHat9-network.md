@@ -32,14 +32,34 @@ El archivo de configuración de la conexión en /etc/NetworkManager/system-conne
 
 ### Pasos para configurar una interfaz de red con nmcli
 
-1. Verificar el estado del servicio NetworkManager ````sudo systemctl status NetworkManager; nmcli general status````
-2. Listar las interfaces de red disponibles ````nmcli device status````
-3. Configurar la interfaz de red con dirección IP estática ````sudo nmcli connection add type ethernet con-name <nombre-conexion> ifname <nombre-interfaz> ip4 <direccion-ip>/<mascara> ipv4.dns <ip-dns> gw4 <puerta-enlace>````
-   1. -  ````nmcli con add con-name con1 type ethernet ifname eth1 ipv4.addresses 172.25.250.11/24 ipv4.gateway 172.25.250.254 ipv4.dns 172.25.250.254 ipv4.method manual````
-5. Configurar la interfaz de red usando DHCP ````sudo nmcli connection add type ethernet con-name dhcp-conn ifname <nombre-interfaz> ipv4.method auto````
-6. Activar la conexión ````sudo nmcli connection up <nombre-conexion> ````
-7. Verificar la configuración ````nmcli connection show; ip addr show <nombre-interfaz>````
-8. Configurar la conexión para que se active automáticamente al iniciar ````sudo nmcli connection modify <nombre-conexion> connection.autoconnect yes````
+1. Verificar el estado del servicio NetworkManager
+   - ````sudo systemctl status NetworkManager; nmcli general status````
+3. Listar las interfaces de red disponibles
+   - ````nmcli device status````
+5. Configurar la interfaz de red con dirección IP estática
+   - ````sudo nmcli connection add type ethernet con-name <nombre-conexion> ifname <nombre-interfaz> ip4 <direccion-ip>/<mascara> ipv4.dns <ip-dns> gw4 <puerta-enlace>````
+   - ````nmcli con add con-name con1 type ethernet ifname eth1 ipv4.addresses 172.25.250.11/24 ipv4.gateway 172.25.250.254 ipv4.dns 172.25.250.254 ipv4.method````
+7. Configurar la interfaz de red usando DHCP
+   - ````sudo nmcli connection add type ethernet con-name dhcp-conn ifname <nombre-interfaz> ipv4.method auto````
+8. Añadir una segunda dirección IP
+   - ````nmcli con mod <nombre-conexion> +ipv4.addresses 192.168.1.23 ````
+9. Activar la conexión
+   - ````sudo nmcli connection up <nombre-conexion> ````
+11. Verificar la configuración 
+    - ````nmcli connection show; ip addr show <nombre-interfaz>````
+13. Configurar la conexión para que se active automáticamente al iniciar
+    - ````sudo nmcli connection modify <nombre-conexion> connection.autoconnect yes````
+
+### autoconnect=yes:
+
+Afecta cuándo y cómo se activa la conexión de red, es decir, si la conexión debe iniciarse automáticamente cuando el dispositivo de red está disponible.
+Es aplicable a toda la conexión, independientemente de si es Ethernet, Wi-Fi, etc.
+
+### ipv4.method=auto:
+
+Afecta cómo se asigna la dirección IP (y otros parámetros relacionados como DNS y gateway) para la conexión, es decir, si estos parámetros deben ser obtenidos automáticamente a través de DHCP o configurados manualmente.
+Es específico a la configuración del protocolo de red (IPv4 en este caso).
+
 
 
 ###  Checking the overall status 
