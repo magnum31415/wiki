@@ -45,3 +45,5 @@ dnf config-manager --dissable rhel-9-server-debug-rpms
 - dnf group info "Security Tools"
 - dnf group install "Security Tools"
 - dnf history
+- dnf install podman @Container-Management
+  
