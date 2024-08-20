@@ -27,13 +27,17 @@ sudo semanage boolean -l | grep httpd
 sudo getsebool -a | grep http
 
 sudo semanage boolean -m --off httpd_ssi_exec
-sudo setsebool httpd_ssi_exec off
+sudo setsebool -P httpd_ssi_exec off
 
 sudo semanage boolean -l | grep httpd
 
 sudo semanage boolean -m --on httpd_ssi_exec
-```
 
+```
+view any locally-customized file contexts by adding the -C option:
+```
+ sudo semanage fcontext -l -C
+```
 ## check/set/check/unset semanage fcontext 
 ```
 sudo semanage fcontext -l | grep sshd
