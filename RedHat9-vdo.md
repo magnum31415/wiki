@@ -36,6 +36,7 @@ sudo mount /dev/mapper/vdo1 /mnt/vdo1
 ````
 8. Verificación de deduplicación y compresión
 ````
+sudo vdo list
 sudo vdo status --name=vdo1
 
 ````
