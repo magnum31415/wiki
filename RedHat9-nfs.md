@@ -50,6 +50,10 @@ mount /mountpoint
 ````
 
 # Automounter Service
+File systems that are mounted through the automounter are available by default to all users, but can be restricted through access permission options.
+- A **direct mount** is when a file system mounts to an unchanging, known mount point location.
+- An **indirect mount** is when the mount point location is not known until the mount demand occurs. An example of an indirect mount is the configuration for remote-mounted home directories, where a user’s home directory includes their username in the directory path.Although indirect mount points appear to exist, the autofs service creates them when the mount demand occurs, and deletes them again when the demand has ended and the file system is unmounted.
+
 The master map file. The autofs service uses /etc/auto.master (master map) as its default primary configuration file.
 The master map file lists mount points controlled by autofs
 
