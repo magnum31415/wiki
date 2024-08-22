@@ -41,6 +41,16 @@ To manipulate scheduled cron jobs, you can edit the crontab file (for system-wid
 00 23 * * *	localuser	rsync -av /home/localuser/source /home/localuser/destination
 00 12 * * 6	localuser	cp -R /home/localuser/destination/* /home/localuser/full/
 ````
+# At
+El comando at es útil para tareas puntuales que necesitas ejecutar en el futuro, sin tener que configurar cron jobs recurrentes.
+
+````
+$ at now + 5 minutes
+at> touch /tmp/archivo_de_prueba.txt
+at> <Ctrl+D>  # Presiona Ctrl+D para guardar y salir.
+````
+- atq: Muestra las tareas programadas.
+- atrm <job_number>: Cancela una tarea programada.
 
 # Manage Temporary Files
 systemd-tmpfiles tool, which provides a structured and configurable method to manage temporary directories and files.
