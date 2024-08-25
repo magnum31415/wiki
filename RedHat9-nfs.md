@@ -106,12 +106,14 @@ Configuración en /etc/auto.master o /etc/auto.master.d:
 ````
 /-  /etc/auto.direct
 ````
+
 Contenido de /etc/auto.direct:
 ````
 /mnt/share1  -fstype=nfs,rw  server:/export/share1
 /mnt/share2  -fstype=nfs,rw  server:/export/share2
 /home/user1  -fstype=nfs,rw  server:/export/home/user1
 ````
+
 Explicación:
 /mnt/share1: Se monta desde server:/export/share1 cuando se accede a /mnt/share1.
 /mnt/share2: Se monta desde server:/export/share2 cuando se accede a /mnt/share2.
