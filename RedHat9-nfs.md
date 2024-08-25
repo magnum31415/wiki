@@ -160,3 +160,13 @@ With an automounter indirect map, you must access each exported subdirectory for
 *	-rw,sync,fstype=nfs4	serverb.lab.example.com:/shares/indirect/&
 ````
 
+# Export dir with NFS
+````
+mkdir /exported_dir
+vim /etc/exports
+/exported_dir 192.168.1.0/24(rw,sync,no_subtree_check)
+systemctl restart nfs-server
+exportfs -v
+firewall-cmd --permanent --add-service=nfs
+firewall-cmd --reload
+````
