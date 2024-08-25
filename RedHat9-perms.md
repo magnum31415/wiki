@@ -32,6 +32,12 @@ setfacl -m d:u:<user>:rwx /directory
 #add new ACL for specific user with no permissions
 $setfacl -m u:<user>:- /file
 
+#denega permisos a un usuario especifico a un fichero
+setfacl -m u:<user>:0 /file
+
+#Elimina una acl 
+setfctl -x u:<user> /file
+
 
 setfacl -m u:user1:rw -m u:user2:r -m u:user3:rwx -m g:demo1:rw -m g:demo2:rwx -m o:r sample
 
@@ -41,3 +47,14 @@ getfacl sample
 #Delete ACL for specific user
 setfacl -x u:<user> /file
 ````
+
+## Default ACLs
+
+*¿Qué es una Default ACL?*
+Se configura para que cualquier archivo o subdirectorio que se cree dentro del directorio herede automáticamente los permisos definidos por la Default ACL.
+Las Default ACL permiten definir permisos adicionales (más allá de los permisos básicos de propietario, grupo y otros) que se aplican de manera predeterminada a cualquier nuevo archivo o subdirectorio.
+
+- **Control Fino de Permisos:** Permiten gestionar permisos de manera más granular que los permisos tradicionales de UNIX.
+- **Facilidad de Administración:** Si necesitas asegurar que ciertos usuarios o grupos siempre tengan permisos específicos en un conjunto de archivos o directorios, las Default ACLs son una herramienta poderosa.
+- **Seguridad:** Aseguran que los nuevos archivos y directorios creados dentro de un directorio específico hereden automáticamente permisos que se alinean con las políticas de seguridad.
+
