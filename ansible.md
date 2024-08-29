@@ -35,6 +35,60 @@ vim /etc/proxychains.conf
 Add in [ProxyList]
 socks5 12.34.11.123 1080
 ```
+# Vars
+Variables can be defined in a variety of places in an Ansible project 
+You can set a variable that affects a group of hosts or only individual hosts.
+Some variables are facts that can be set by Ansible based on the configuration of a system. 
+Other variables can be set inside the playbook, and affect one play in that playbook, or only one task in that play. 
+You can also set extra variables on the ansible-playbook command line by using the --extra-vars or -e option and specifying those variables, and they override all other values for that variable name. 
+ 
+List of ways to define a variable, ordered from lowest precedence to highest: 
+
+1. Group variables defined in the inventory. 
+2. Group variables defined in files in a group_vars subdirectory in the same directory as the inventory or the playbook. 
+3. Host variables defined in the inventory. 
+4. Host variables defined in files in a host_vars subdirectory in the same directory as the inventory or the playbook.
+5. Host facts, discovered at runtime.
+6. Play variables in the playbook (vars and vars_files).
+7. Task variables.
+8. Extra variables defined on the command line. 
+
+If the same variable name is defined at more than one level, the level with the highest precedence wins. A narrow scope, such as a host variable or a task variable, takes precedence over a wider scope, such as a group variable or a play variable. Variables defined by the inventory are overridden by variables defined by the playbook.
+
+Variables are referenced by placing the variable name in double curly braces ({{ }}). Ansible substitutes the variable with its value when the task is executed. 
+```
+vars: 
+user: joe 
+tasks: 
+  # This line will read: Creates the user joe 
+  - name: Creates the user {{ user }} 
+    user:   
+      # This line will create the user named Joe 
+      name: "{{ user }}" ![image](https://github.com/user-attachments/assets/cb9dea2c-6879-43e6-8852-ae0d5bc7c492)
+```
+
+
+* vars block **at the beginning** of a playbook:
+```
+- hosts: all
+  vars: 
+    user: joe 
+    home: /home/joe
+```  
+
+* define playbook variables **in external files**
+```
+- hosts: all 
+  vars_files: 
+    - vars/users.yml ![image](https://github.com/user-attachments/assets/4f9fe7ce-bef5-4c76-93c7-94858bfb9333)
+```
+
+* The **preferred approach** to defining variables for hosts and host groups is to create two directories, group_vars and host_vars, in the same working directory as the inventory file or playbook.
+  * To define group variables for the servers group, you would create a YAML file named group_vars/servers, and then the contents of that file would set variables to values using the same syntax as in a playbook: user: joe 
+  * To define host variables for a particular host, create a file with a name matching the host in the host_vars directory to contain the host variables.
+
+* **Extra variables** can be useful when you need to override the defined value for a variable for a one-off run of a playbook. For example: 
+```` ansible-playbook main.yml -e "package=apache" ````
 
 # Commandos 
 ```
@@ -72,15 +126,19 @@ Using /etc/ansible/ansible.cfg as config file
 ansible.cfg
 ````
 [defaults] 
-inventory = ./inventory 
-remote_user = user 
+inventory=./inventory 
+remote_user=curtis 
 ask_pass = false 
+roles_path = /home/curtis/ansible/roles:/usr/share/ansible/roles 
+forks = 8 
+log_path = /var/log/ansible/execution.log 
+host_key_checking = false 
  
 [privilege_escalation] 
-become = true 
-become_method = sudo 
-become_user = root 
-become_ask_pass = false ![image](https://github.com/user-attachments/assets/4d437060-6474-4b0a-9e05-492271e9bff1)
+become=True 
+become_method=sudo 
+become_user=root 
+become_ask_pass=False
 
 ````
 
@@ -125,11 +183,11 @@ ansible washington1.example.com --list-hosts
 ansible usa --list-hosts 
 ansible all --list-hosts 
 ansible ungrouped --list-hosts 
-ansible host-or-group -i inventory --list-hosts ![image](https://github.com/user-attachments/assets/6c08ea69-cdbb-42dd-86a8-8d049f24fce4)
+ansible host-or-group -i inventory --list-hosts
 
 ## Special groups
 
- - **all** that matches all managed hosts in the inventory. ![image](https://github.com/user-attachments/assets/ed6e7689-bc22-47eb-8892-946bb4d4bcd7)
+ - **all** that matches all managed hosts in the inventory.
 ````
  - hosts: all 
 ````
@@ -247,15 +305,47 @@ state: present
 
 # Estructuras de datos
 
-## Listas
+## Lista
 
-Lists, You have also seen lists written with the normal single-dash syntax: 
-hosts: 
-- servera 
-- serverb 
-- serverc 
+Una lista en Ansible es una colección ordenada de elementos. 
+Definición de una lista en Ansible
+````
+my_list:
+  - "elemento1"
+  - "elemento2"
+  - "elemento3"
+````
 Lists also have an inline format enclosed in square braces, as follows: 
 hosts: [servera, serverb, serverc]
+
+## Dictionary
+Un diccionario en Ansible es una colección de pares clave-valor. Puedes definirlo así:
+````
+my_dict:
+  nombre: "John Doe"
+  edad: 30
+  ciudad: "New York"
+````
+## Lista de Diccionarios
+````
+my_list_of_dicts:
+  - nombre: "Alice"
+    edad: 28
+    ciudad: "Paris"
+  - nombre: "Bob"
+    edad: 32
+    ciudad: "Berlin"
+
+- name: Ejemplo de lista de diccionarios
+  hosts: localhost
+  tasks:
+    - name: Mostrar cada persona en la lista
+      debug:
+        msg: "Nombre: {{ item.nombre }}, Edad: {{ item.edad }}, Ciudad: {{ item.ciudad }}"
+      loop: "{{ my_list_of_dicts }}"
+
+````
+
 
 
 # Templates Jinja
@@ -484,4 +574,124 @@ tasks:
       name: "{{ db_service }}" 
       state: started
 ````
+````
+#Block of config tasks 
+- name: Setting up the SSL cert directory and config files 
+  block: 
+  - name: Create SSL cert directory 
+    file: 
+      path: "{{ ssl_cert_dir }}" 
+      state: directory 
+  - name: Copy Config Files 
+    copy: 
+      src: "{{ item.src }}" 
+      dest: "{{ item.dest }}" 
+  loop: "{{ web_config_files }}" 
+  notify: restart web service 
+  rescue: 
+  - name: Configuration Error Message 
+    debug: 
+      msg: > 
+        One or more of the configuration 
+        changes failed, but the web service 
+        is still active.
+````
+
+# Loops
+
+Ansible supports iterating a task over a set of items using the loop keyword. 
+A simple loop iterates a task over a list of items.
+
+The loop variable item holds the value used during each iteration. 
+
+ ````
+- name: Postfix and Dovecot are running 
+service: 
+name: "{{ item }}" 
+state: started 
+loop: 
+- postfix 
+- dovecot
+
+
+- name: Users exist and are in the correct groups 
+  user: 
+    name: "{{ item.name }}" 
+    state: present 
+    groups: "{{ item.groups }}" 
+  loop: 
+  - name: jane 
+    groups: wheel 
+  - name: joe 
+    groups: root
+````
+
+# Conditionals
+
+Use conditionals to execute tasks or plays when certain conditions are met.
+The when statement is used to run a task conditionally. It takes as a value the condition to test. If the condition is met, the task runs. If the condition is not met, the task is skipped. 
+
+* Equal (value is a string) : ansible_machine == "x86_64" 
+* Equal (value is numeric) : max_memory == 512 
+* Less than: min_memory < 128 
+* Greater than:  min_memory > 256 
+* Less than or equal to:  min_memory <= 256 
+* Greater than or equal to:  min_memory >= 512
+* Not equal to min_memory: != 512 
+* Variable exists min_memory: is defined 
+* Variable does not exist  min_memory: is not defined 
+* Boolean variable is true. The values of 1, True, or yes evaluate to true. : memory_available 
+* Boolean variable is false. The values of 0, False, or no evaluate to false.: not memory_available 
+* First variable's value is present as a value in second variable's list : ansible_distribution in supported_distros 
+
+when: > 
+ansible_memtotal_mb < min_ram_mb or 
+ansible_distribution != "RedHat" 
+ ![image](https://github.com/user-attachments/assets/136c1ca8-3cd4-40fd-8e7c-282e41461441)
+
+
+# Vaults
+
+Ansible Vault, which is included with Ansible, can be used to encrypt and decrypt any structured data file used by Ansible. 
+
+````
+ansible-vault create filename
+ansible-vault create --vault-password-file=vault-pass secret.yml
+ansible-vault view secret1.yml
+ansible-vault encrypt filename
+ansible-vault decrypt secret1.yml --output=secret1-decrypted.yml
+ansible-playbook --vault-password-file=vault-pass create_users.yml 
+ansible-vault rekey  --new-vault-password-file=NEW_VAULT_PASSWORD_FILE secret.yml 
+ansible-playbook --vault-id @prompt site.yml
+ansible-playbook \ 
+> --vault-id one@prompt --vault-id two@prompt site.yml 
+Vault password (one): 
+Vault password (two): 
+
+````
+In this scenario, the advantage is that most variables for demo.example.com can be placed in the vars file, but sensitive variables can be kept secret by placing them separately in the vault file. Then the administrator can use ansible-vault to encrypt the vault file, while leaving the vars file as plain text
+
+````
+├── host_vars 
+│   └── demo.example.com 
+│       ├── vars 
+│       └── vault 
+├── inventory 
+└── playbook.yml 
+````
+
+# SSH
+
+To make sure that SSH only tries to authenticate by password and not by an SSH key, use the -o PreferredAuthentications=password option when you log in. 
+Log off from servera when you have successfully logged in. 
+````
+ssh -o PreferredAuthentications=password ansibleuser1@servera.lab.example.com
+````
+````
+ssh-copy-id root@web1.example.com 
+echo "automation ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/automation 
+echo devops | passwd --stdin automation 
+subscription-manager register --username=user.developer --password=12345678 
+````
+
 
