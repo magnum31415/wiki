@@ -277,7 +277,7 @@ Ansible managed" string set in the ansible_managed directive in ansible.cfg.
 # {{ ansible_managed }} 
 # DO NOT MAKE LOCAL MODIFICATIONS TO THIS FILE AS THEY WILL BE LOST 
 Port {{ ssh_port }} 
-ListenAddress {{ ansible_facts['default_ipv4']['address'] }} 
+ListenAddress {{ ansible_facts[default_ipv4][address] }} 
 HostKey /etc/ssh/ssh_host_rsa_key 
 HostKey /etc/ssh/ssh_host_ecdsa_key 
 ````
