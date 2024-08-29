@@ -256,3 +256,66 @@ hosts:
 - serverc 
 Lists also have an inline format enclosed in square braces, as follows: 
 hosts: [servera, serverb, serverc]
+
+
+# Templates Jinja
+A Jinja2 template is composed of multiple elements: data, variables, and expressions
+
+- use {% EXPR %} for expressions or logic (for example, loops)
+- user {{ EXPR }} are used for outputting the results of an expression or a variable to the end user.!
+- Use {# COMMENT #} syntax to enclose comments
+
+  ````
+  {# /etc/hosts line #} 
+{{ ansible_facts['default_ipv4']['address'] }}    {{ ansible_facts['hostname']}}![image]
+  ````
+
+To avoid having system administrators modify files deployed by Ansible.
+Ansible managed" string set in the ansible_managed directive in ansible.cfg.
+
+````
+# {{ ansible_managed }} 
+# DO NOT MAKE LOCAL MODIFICATIONS TO THIS FILE AS THEY WILL BE LOST 
+Port {{ ssh_port }} 
+ListenAddress {{ ansible_facts['default_ipv4']['address'] }} 
+HostKey /etc/ssh/ssh_host_rsa_key 
+HostKey /etc/ssh/ssh_host_ecdsa_key 
+````
+
+## Variable filters
+
+change the output format for template expressions
+
+````
+{{ output | to_json }} 
+{{ output | to_yaml }}
+````
+
+## Loops
+
+````
+{% for user in users %} 
+{{ user }} 
+{% endfor %} 
+
+ 
+{# for statement #} 
+{% for myuser in users if not myuser == "root" %} 
+User number {{ loop.index }} - {{ myuser }} 
+{% endfor %} 
+````
+
+The loop.index variable expands to the index number that the loop is currently on.
+
+````
+{% for myhost in groups['myhosts'] %} 
+{{ myhost }} 
+{% endfor %} 
+
+
+{% for host in groups['all'] %} 
+{{ hostvars[host]['ansible_facts']['default_ipv4']['address'] }} {{ hostvars[host]['ansible_facts']['fqdn'] }} {{ hostvars[host]['ansible_facts']['hostname'] }} 
+{% endfor %} 
+````
+
+
