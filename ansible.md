@@ -1,4 +1,4 @@
-
+![image](https://github.com/user-attachments/assets/1432d378-a37c-423e-9b64-349b1d087c09)
 # Ansible Cheat Sheet
 [Ansible Cheat Sheet](https://github.com/magnum31415/wiki/blob/main/Ansible_Cheat_Sheet.pdf)
 
@@ -265,17 +265,17 @@ A Jinja2 template is composed of multiple elements: data, variables, and express
 - user {{ EXPR }} are used for outputting the results of an expression or a variable to the end user.!
 - Use {# COMMENT #} syntax to enclose comments
 
-  ````
-  {# /etc/hosts line #} 
-{{ ansible_facts['default_ipv4']['address'] }}    {{ ansible_facts['hostname']}}![image]
-  ````
+````
+{# /etc/hosts line #} 
+{{ ansible_facts[default_ipv4][address] }}    {{ ansible_facts[hostname]}}
+````
 
 To avoid having system administrators modify files deployed by Ansible.
 Ansible managed" string set in the ansible_managed directive in ansible.cfg.
 
 ````
-# {{ ansible_managed }} 
-# DO NOT MAKE LOCAL MODIFICATIONS TO THIS FILE AS THEY WILL BE LOST 
+
+#{{ ansible_managed }} 
 Port {{ ssh_port }} 
 ListenAddress {{ ansible_facts[default_ipv4][address] }} 
 HostKey /etc/ssh/ssh_host_rsa_key 
@@ -318,4 +318,170 @@ The loop.index variable expands to the index number that the loop is currently o
 {% endfor %} 
 ````
 
+# Galaxy
+
+#You can list the currently installed system roles with the ansible-galaxy list command 
+````
+ansible-galaxy list 
+- linux-system-roles.kdump, (unknown version) 
+- linux-system-roles.network, (unknown version) 
+- linux-system-roles.postfix, (unknown version) 
+- linux-system-roles.selinux, (unknown version) 
+- linux-system-roles.timesync, (unknown version) 
+- rhel-system-roles.kdump, (unknown version) 
+- rhel-system-roles.network, (unknown version) 
+- rhel-system-roles.postfix, (unknown version) 
+- rhel-system-roles.selinux, (unknown version) 
+- rhel-system-roles.timesync, (unknown version)
+````
+ 
+Roles are located in the /usr/share/ansible/roles directory. A role beginning with linux-system-roles is a symlink to the matching rhel-system-roles role. 
+ 
+Review the Role Variables section of the README.md file for the rhel-system-roles.network role. 
+cat /usr/share/doc/rhel-system-roles/network/README.md 
+
+
+# HANDLING TASK FAILURE
+Ansible evaluates the return code of each task to determine whether the task succeeded or failed. Normally, when a task fails Ansible immediately aborts the rest of the play on that host, skipping all subsequent tasks. 
+
+## ignore_errors
+
+By default, if a task fails, the play is aborted. However, this behavior can be overridden by ignoring failed tasks. You can use the ignore_errors keyword 
+
+````
+- name: Latest version of notapkg is installed 
+yum: 
+name: notapkg 
+state: latest 
+ignore_errors: yes
+````
+## force_handlers
+Normally when a task fails and the play aborts on that host, any handlers that had been notified by earlier tasks in the play will not run. If you set the force_handlers: yes keyword on the play, then notified handlers are called even if the play aborted because a later task failed. 
+Remember that handlers are notified when a task reports a changed result but are not notified when it reports an ok or failed result.
+
+````
+--- 
+- hosts: all 
+force_handlers: yes 
+tasks: 
+- name: a task which always notifies its handler 
+command: /bin/true 
+notify: restart the database 
+- name: a task which fails because the package doesn't exist 
+yum: 
+name: notapkg 
+state: latest 
+handlers: 
+- name: restart the database 
+service: 
+name: mariadb 
+
+state: restarted ![image](https://github.com/user-attachments/assets/00a7e12c-f7f9-456c-86d8-c3f0f016e891)
+
+````
+
+## failed_when
+used with command modules that may successfully execute a command, but the command's output indicates a failure.
+
+````
+tasks: 
+- name: Run user creation script 
+shell: /usr/local/bin/create_users.sh 
+register: command_result 
+failed_when: "'Password missing' in command_result.stdout"
+````
+
+## fail
+
+The fail module can also be used to force a task failure. The above scenario can alternatively be written as two tasks: 
+````
+tasks: 
+- name: Run user creation script 
+shell: /usr/local/bin/create_users.sh 
+register: command_result 
+ignore_errors: yes 
+- name: Report script failure 
+fail: 
+msg: "The password is missing in the output" 
+when: "'Password
+ missing' in command_result.stdout"
+````
+
+# Blocks
+
+locks are clauses that logically group tasks, and can be used to control how tasks are executed. For example, a task block can have a when keyword to apply a conditional to multiple tasks: 
+````
+- name: block example 
+hosts: all 
+tasks: 
+- name: installing and configuring Yum versionlock plugin 
+block: 
+- name: package needed by yum 
+yum: 
+name: yum-plugin-versionlock 
+state: present 
+- name: lock version of tzdata 
+lineinfile: 
+dest: /etc/yum/pluginconf.d/versionlock.list 
+line: tzdata-2016j-1 
+state: present 
+when: ansible_distribution == "RedHat" 
+````
+
+If any task in a block fails, tasks in its rescue block are executed in order to recover. After the tasks in the block clause run, as well as the tasks in the rescue clause if there was a failure, then tasks in the always clause run.
+
+````
+tasks: 
+- name: Upgrade DB 
+  block: 
+  - name: upgrade the database 
+    shell: 
+      cmd: /usr/local/lib/upgrade-database
+  rescue: 
+  - name: revert the database upgrade 
+    shell: 
+      cmd: /usr/local/lib/revert-database 
+  always: 
+  - name: always restart the database 
+    service: 
+      name: mariadb 
+      state: restarted 
+````
+ 
+The when condition on a block clause also applies to its rescue and always clauses if present. 
+
+````
+--- 
+- name: Task Failure Exercise 
+hosts: databases 
+vars: 
+web_package: http 
+db_package: mariadb-server 
+db_service: mariadb 
+tasks: 
+- name: Check local time 
+  command: date 
+  register: command_result 
+  changed_when: false 
+- name: Print local time 
+  debug: 
+    var: command_result.stdout 
+- name: Attempt to set up a webserver 
+  block: 
+  - name: Install {{ web_package }} package 
+    yum: 
+      name: "{{ web_package }}" 
+      state: present 
+    failed_when: web_package == "httpd" 
+  rescue: 
+  - name: Install {{ db_package }} package 
+    yum: 
+      name: "{{ db_package }}" 
+      state: present 
+  always: 
+  - name: Start {{ db_service }} service 
+    service: 
+      name: "{{ db_service }}" 
+      state: started
+````
 
