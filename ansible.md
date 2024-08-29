@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/1432d378-a37c-423e-9b64-349b1d087c09)
+
 # Ansible Cheat Sheet
 [Ansible Cheat Sheet](https://github.com/magnum31415/wiki/blob/main/Ansible_Cheat_Sheet.pdf)
 
@@ -667,7 +667,7 @@ ansible-playbook \
 > --vault-id one@prompt --vault-id two@prompt site.yml 
 Vault password (one): 
 Vault password (two): 
-
+echo -n "NoLoConoceNadie" | ansible-vault encrypt_string --stdin-name "mi_password_secreto"
 ````
 In this scenario, the advantage is that most variables for demo.example.com can be placed in the vars file, but sensitive variables can be kept secret by placing them separately in the vault file. Then the administrator can use ansible-vault to encrypt the vault file, while leaving the vars file as plain text
 
