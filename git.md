@@ -1,3 +1,12 @@
+# Commands
+````
+git config --global user.name ' Username'
+git config --global user.email student@domain.com
+git config --global push.default simple
+git config --global  credential.https://git.lab.domain.com.username student
+git config --global  credential.helper cache --timeout=7200
+git config --global -l
+````
 # Create new branch
 git checkout -b develop
 
