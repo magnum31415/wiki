@@ -694,4 +694,13 @@ echo devops | passwd --stdin automation
 subscription-manager register --username=user.developer --password=12345678 
 ````
 
+# Pre_tasks
 
+````
+  pre_tasks:
+    - name: "Comprobando ansible_limit"
+      fail:
+        msg: "Se deben indicar en el limit las máquinas o grupos de máquinas sobre los que se quiere ejecutar el playbook"
+      when: ansible_limit is not defined
+      run_once: True
+````
