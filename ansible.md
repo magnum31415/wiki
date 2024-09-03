@@ -321,11 +321,45 @@ hosts: [servera, serverb, serverc]
 ## Dictionary
 Un diccionario en Ansible es una colección de pares clave-valor. Puedes definirlo así:
 ````
-my_dict:
-  nombre: "John Doe"
-  edad: 30
-  ciudad: "New York"
+---
+- name: Ejemplo de acceso a valores en un diccionario de servidores
+  hosts: localhost
+  gather_facts: no
+  vars:
+    servers:
+      SERVER1:
+        entidad: A
+        entorno: PRO
+        source_host: SERVEROLD1
+        grupo: "Web"
+      SERVER2:
+        entidad: B
+        entorno: PRO
+        source_host: SERVEROLD2
+        grupo: "DB"
+
+  tasks:
+    - name: Mostrar la información de SERVER1
+      debug:
+        msg: "SERVER1 pertenece a la entidad {{ servers.SERVER1.entidad }}, en el entorno {{ servers.SERVER1.entorno }}, con source_host {{ servers.SERVER1.source_host }} y grupo {{ servers.SERVER1.grupo }}"
+
+    - name: Mostrar la información de SERVER2
+      debug:
+        msg: "SERVER2 pertenece a la entidad {{ servers.SERVER2.entidad }}, en el entorno {{ servers.SERVER2.entorno }}, con source_host {{ servers.SERVER2.source_host }} y grupo {{ servers.SERVER2.grupo }}"
+
 ````
+En jinja
+
+````
+# plantilla.j2
+Server: {{ server_name }}
+Entidad: {{ servers[server_name].entidad }}
+Entorno: {{ servers[server_name].entorno }}
+Source Host: {{ servers[server_name].source_host }}
+Grupo: {{ servers[server_name].grupo }}
+````
+
+
 ## Lista de Diccionarios
 ````
 my_list_of_dicts:
