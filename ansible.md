@@ -727,8 +727,10 @@ echo "automation ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/automation
 echo devops | passwd --stdin automation 
 subscription-manager register --username=user.developer --password=12345678 
 ````
-
-# Pre_tasks
+# Task Execution
+It is a good practice to organize your play in the order of execution: pre_tasks, roles, tasks, and post_tasks. 
+This order comes from the fact that each play listed in the playbook is a YAML dictionary of key-value pairs. The order of the top-level directives (name, hosts, tasks, roles, and so on) is arbitrary, but Ansible handles them in a standardized order when it parses and runs the play.
+## Pre_tasks
 
 ````
   pre_tasks:
@@ -737,4 +739,50 @@ subscription-manager register --username=user.developer --password=12345678
         msg: "Se deben indicar en el limit las máquinas o grupos de máquinas sobre los que se quiere ejecutar el playbook"
       when: ansible_limit is not defined
       run_once: True
+````
+
+# Handlers
+
+````
+  ---
+- name: Implementing Handlers
+  hosts: web_servers
+
+  pre_tasks:
+    - name: Configuring Apache
+      ansible.builtin.include_tasks: apache.yml
+
+    - name: Setting web port and zone for firewall
+      ansible.builtin.set_fact:
+        web_port: 80/tcp
+        web_zone: public
+      changed_when: true
+      notify: display variables
+
+  roles:
+    - role: firewall
+
+  post_tasks:
+    - name: Ensure the web content is copied
+      ansible.builtin.copy:
+        src: index.html
+        dest: /var/www/html/
+      notify: verify connectivity
+
+  handlers:
+    - name: Showing the web port configured as pre_task
+      ansible.builtin.debug:
+        var: web_port
+      listen: display variables
+
+    - name: Showing the web zone configured as pre_task
+      ansible.builtin.debug:
+        var: web_zone
+      listen: display variables
+
+    - name: verify connectivity
+      ansible.builtin.uri:
+        url: http://{​{ ansible_facts['fqdn'] }​}
+        status_code: 200
+      become: false
 ````
