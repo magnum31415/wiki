@@ -6,4 +6,7 @@
 3. [Kubernetes](https://github.com/magnum31415/wiki/blob/main/Kubernetes_Cheat_Sheet.pdf)
 4. [Ansible](https://github.com/magnum31415/wiki/blob/main/ansible.md)
 5. [RedHat9](https://github.com/magnum31415/wiki/blob/main/RedHat9.md)
+6. [SSL](https://github.com/magnum31415/wiki/blob/main/SSL.md)
+
+
 
