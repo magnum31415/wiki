@@ -37,14 +37,22 @@ socks5 12.34.11.123 1080
 ```
 # Molecule
 
-``
+````
 sudo apt install docker.io -y
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker $USER
 source myenv/bin/activate
-pip install molecule molecule-docker yamllint
+pip install molecule molecule-docker yamllint pytest testinfra
 molecule drivers
+ansible-galaxy init my_role
+cd my_role
+
+molecule init scenario --driver-name docker
+
+
+
+ molecule login --host geerlingguy-centos8
 ````
 
 # Vars
