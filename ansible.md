@@ -35,6 +35,18 @@ vim /etc/proxychains.conf
 Add in [ProxyList]
 socks5 12.34.11.123 1080
 ```
+# Molecule
+
+``
+sudo apt install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+source myenv/bin/activate
+pip install molecule molecule-docker yamllint
+molecule drivers
+````
+
 # Vars
 Variables can be defined in a variety of places in an Ansible project 
 You can set a variable that affects a group of hosts or only individual hosts.
