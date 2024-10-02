@@ -1,4 +1,7 @@
-# Commands
+# Git Commands
+
+### Config
+
 ````
 git config --global user.name ' Username'
 git config --global user.email student@domain.com
@@ -7,14 +10,21 @@ git config --global  credential.https://git.lab.domain.com.username student
 git config --global  credential.helper cache --timeout=7200
 git config --global -l
 ````
-# Create new branch
-git checkout -b develop
+### Create new branch
 
-#verifiquem que hem canviar de branca
-git branch
+Creem la branca ````git checkout -b develop````
 
-#pujem la nova branca creada a l'origin
-git push origin develop
+verifiquem que hem canviar de branca ````git branch````
+
+pujem la nova branca creada a l'origin ````git push origin develop````
+
+
+### Delete branch
+
+delete local: ````git branch -d nombre_rama````
+
+delete remote: ````git push origin --delete nombre_rama````
+
 
 # configure  prompt
 
