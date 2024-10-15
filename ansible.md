@@ -209,6 +209,31 @@ canada
 usa 
 
 ````
+## JumpHost Config
+
+User to execute playbooks /home/user-exe-playbooks/.ssh/config
+
+````
+ config
+Host *
+    Port 22
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ServerAliveInterval 60
+    ServerAliveCountMax 30
+
+Host jumpserver
+    HostName bastion.company.intern
+    User ansible
+    IdentityFile ~/.ssh/ansible-jump-host
+````
+
+Inventory
+
+````
+[all:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -W %h:%p jumpserver"'
+````
 
 
 ## Verifying the Inventory 
