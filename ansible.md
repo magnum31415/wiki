@@ -53,6 +53,11 @@ pip install pywinrm
 | `2.9.x` and earlier      | Monolithic (no `ansible-core`) | Everything was included in a single package.                             |
 
 
+## System Roles
+
+````sudo dnf install rhel-system-roles -y````
+
+Esto instalará los roles en el directorio predeterminado de Ansible, que suele ser ````/usr/share/ansible/roles/.````
 
 ## Proxychains
 
