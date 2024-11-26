@@ -25,6 +25,10 @@ pip install ansible-core==2.17
 pip install pywinrm
 ```
 
+- To export current environment packages: ````pip freeze > requirements.txt````
+- To import packeges in another environment: ````pip install -r requirements.txt````
+
+
 
 | Ansible Version | Python 2.6 | Python 2.7 | Python 3.5 | Python 3.6 | Python 3.7 | Python 3.8 | Python 3.9 | Python 3.10 |
 |-----------------|------------|------------|------------|------------|------------|------------|------------|-------------|
@@ -36,6 +40,17 @@ pip install pywinrm
 | 2.14.x          | ✗          | ✗          | ✗          | ✓          | ✓          | ✓          | ✓          | ✓           |
 | 2.15.x          | ✗          | ✗          | ✗          | ✓          | ✓          | ✓          | ✓          | ✓           |
 
+
+
+| **pip version of `ansible`** | **pip version of `ansible-core`** | **Notes**                                                                 |
+|---------------------------|------------------------------|---------------------------------------------------------------------------|
+| `8.x.x`                  | `2.15.x`                    | Latest stable versions.                                                  |
+| `7.x.x`                  | `2.14.x`                    | Introduced several core enhancements.                                    |
+| `6.x.x`                  | `2.13.x`                    | Compatible with Python 3.8 and above.                                    |
+| `5.x.x`                  | `2.12.x`                    | Early versions with `ansible-core` separation.                           |
+| `4.x.x`                  | `2.11.x`                    | **Transition** to modular packaging with `ansible-core`.                 |
+| `2.x.x` and `3.x.x`      | Based on `ansible-base`     | Before renaming to `ansible-core`.                                       |
+| `2.9.x` and earlier      | Monolithic (no `ansible-core`) | Everything was included in a single package.                             |
 
 
 
