@@ -43,8 +43,27 @@ sudo chown -R vagrant:vagrant /home/vagrant/.ssh
 
 ## **🔹 Step 3: Find UUID in VirtualBox for the VirtualMachine**
 
-To list it:````"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" list vms````
+To list vms it:````"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" list vms````
+
+To list hdds it:````"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" list hdds````
+
+To resize hdds :````C:\Program Files\Oracle\VirtualBox>VBoxManage.exe modifyhd "C:\Users\XXXXXX\VirtualBox VMs\RedHat9\RedHat9-disk001.vdi" --resize 27000````
+
 To delete it: ````VBoxManage unregistervm "redhat9" --delete````
+
+To resize hdds:
+
+* In the host: ````C:\Program Files\Oracle\VirtualBox>VBoxManage.exe modifyhd "C:\Users\XXXXXX\VirtualBox VMs\RedHat9\RedHat9-disk001.vdi" --resize 27000````
+
+* In the vm:
+````
+  lsblk
+  growpart /dev/sda 2
+  pvresize /dev/sda2
+  lvextend -l +100%FREE /dev/rhel/root
+  xfs_growfs /
+````
+
 
 ## **🔹 Step 4: Create vagrant box**
 
