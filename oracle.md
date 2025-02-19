@@ -1,6 +1,17 @@
 
 
+## Improve user exprience with sqlplus
 
+rlwrap with sqlplus: ``rlwrap sqlplus scott/tiger@orcl``
+
+**rlwrap** This command invokes the wrapper that adds readline functionalities, such as command history, line editing, and autocomplete.
+sqlplus scott/tiger@orcl: This starts SQL*Plus, connecting with the username "scott", password "tiger" to the database identified as "orcl".
+Using this command, SQL*Plus will now support:
+
+Navigating through command history using the arrow keys.
+* Interactive editing of the command line.
+* An overall more comfortable experience similar to shells that have native readline support.
+* This is especially useful when SQL*Plus doesn't natively include these features.
 
 ## Multithenant CDB & PDB
 * Verificar el contenedor actual: ``SHOW CON_NAME;``
