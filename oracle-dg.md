@@ -14,18 +14,26 @@
 ```sql
 SELECT log_mode FROM v$database;
 ```
-Si está en NOARCHIVELOG, cambiar a ARCHIVELOG
+Si está en **NOARCHIVELOG**, cambiar a **ARCHIVELOG**
 ````sql
 SHUTDOWN IMMEDIATE;
 STARTUP MOUNT;
+````
+Habilitar el archivado de redo logs
+````sql
 ALTER DATABASE ARCHIVELOG;
+````
+Forzar que todas las transacciones generen redo logs.
+````sql
 ALTER DATABASE FORCE LOGGING;
 ````
 Verificar el cambio
 ````sql
 SELECT name, force_logging, log_mode FROM v$database;
 ````
-### 2. Crear Standby Redo Logs
+
+
+### 2. Crear Standby Redo Logs (SRL)
 
 Agregar Standby Redo Logs en la Primary
 ````sql
@@ -38,6 +46,16 @@ Verificar la creación
 ````
 SELECT group#, member, type, status FROM v$logfile;
 ````
+Los Standby Redo Logs se utilizan para:
+
+1. Recibir y almacenar Redo Logs en la Standby
+- Cuando la Primary genera redo logs, estos se envían a la Standby.
+- La Standby escribe los redo logs en los Standby Log Files (SRLs) antes de archivarlos.
+2. Habilitar el modo de Aplicación en Tiempo Real (Real-Time Apply)
+- Sin SRLs: la Standby solo aplica cambios cuando el redo log se archiva en la Primary.
+- Con SRLs: la Standby aplica los cambios en tiempo real, sin esperar la generación del archive log.
+
+
 ### 3. Configurar TNS y Listener para Primary y Standby
 Editar tnsnames.ora en ambas bases
 ````ini
@@ -145,18 +163,17 @@ mv orapwdigital orapwdigitaldr
 ````
 
 ### 8: Habilitar FRA en la Primary
+````
 sql
-Copiar
-Editar
 ALTER SYSTEM SET db_recovery_file_dest_size=10G;
 ALTER SYSTEM SET db_recovery_file_dest='/u02/app/oracle/fast_recovery_area/';
-Paso 9: Verificar Ubicación de Datafiles y Audit Logs
-sql
-Copiar
-Editar
+````
+
+### 9: Verificar Ubicación de Datafiles y Audit Logs
+````sql
 SELECT name FROM v$datafile;
 SHOW PARAMETER audit;
-
+````
 
 
 ## STANDBY DATABASE - Configuración de la Base de Datos Standby en Oracle Data Guard
