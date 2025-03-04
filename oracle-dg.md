@@ -205,29 +205,16 @@ ALTER SYSTEM SET log_archive_dest_2='service=digitaldr async valid_for=(online_l
 ALTER SYSTEM SET LOG_ARCHIVE_DEST_STATE_2=ENABLE;
 ````
 
-
-
-
-
-
-
+#### Verificar los valores definidos
 ````sql
-ALTER SYSTEM SET log_archive_config='dg_config=(digital,digitaldr)' SCOPE=both;
-ALTER SYSTEM SET fal_server='digitaldr' SCOPE=both;
-ALTER SYSTEM SET fal_client='digital' SCOPE=both;
-ALTER SYSTEM SET standby_file_management='AUTO' SCOPE=both;
-ALTER SYSTEM SET log_archive_dest_1='location=use_db_recovery_file_dest valid_for=(all_logfiles,all_roles) db_unique_name=digital' SCOPE=both;
-ALTER SYSTEM SET log_archive_dest_2='service=digitaldr async valid_for=(online_logfiles,primary_role) db_unique_name=digitaldr' SCOPE=both;
-ALTER SYSTEM SET LOG_ARCHIVE_DEST_STATE_2=ENABLE;
-````
-Verificar configuración
-````sql
-SELECT name, value FROM v$parameter WHERE name IN (
-  'db_name','db_unique_name','log_archive_config','log_archive_dest_1','log_archive_dest_2',
-  'log_archive_dest_state_1','log_archive_dest_state_2','remote_login_passwordfile',
-  'log_archive_format','log_archive_max_processes','fal_server','fal_client',
-  'db_file_name_convert','log_file_name_convert','standby_file_management'
-);
+col name for a30
+col value for a85
+set lin 300 pagesize 300
+
+select name, value from v$parameter
+where name in ('db_name','db_unique_name','log_archive_config','log_archive_dest_1','log_archive_dest_2',
+'log_archive_dest_state_1′,’log_archive_dest_state_2','remote_login_passwordfile','log_archive_format','log_archive_max_processes',
+'fal_server','fal_client','db_file_name_convert','log_file_name_convert','standby_file_management');
 ````
 
 ### 7. Configurar el Password File en la Standby
@@ -235,24 +222,23 @@ SELECT name, value FROM v$parameter WHERE name IN (
 scp orapwdigital oracle@192.168.74.160:$ORACLE_HOME/dbs/
 ````
 Renombrar el archivo en la Standby:
-
 ````bash
 cd $ORACLE_HOME/dbs
 mv orapwdigital orapwdigitaldr
 ````
 
-### 8: Habilitar FRA en la Primary
-````
-sql
+### 8. Habilitar FRA en la Primary
+````sql
 ALTER SYSTEM SET db_recovery_file_dest_size=10G;
 ALTER SYSTEM SET db_recovery_file_dest='/u02/app/oracle/fast_recovery_area/';
-````
+`````
 
-### 9: Verificar Ubicación de Datafiles y Audit Logs
+### 9. Verificar Ubicación de Datafiles y Audit Logs
 ````sql
 SELECT name FROM v$datafile;
 SHOW PARAMETER audit;
 ````
+
 
 
 ## STANDBY DATABASE - Configuración de la Base de Datos Standby en Oracle Data Guard
