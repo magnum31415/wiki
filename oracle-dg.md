@@ -218,6 +218,9 @@ where name in ('db_name','db_unique_name','log_archive_config','log_archive_dest
 ````
 
 ### 7. Configurar el Password File en la Standby
+Oracle usa el password file (orapw<db_name>) para permitir la autenticación remota de usuarios con privilegios SYSDBA o SYSOPER 
+sin requerir la contraseña explícita en la conexión. Esto es esencial en Data Guard, RMAN, y conexiones administrativas remotas.
+
 ````bash
 scp orapwdigital oracle@192.168.74.160:$ORACLE_HOME/dbs/
 ````
@@ -227,11 +230,41 @@ cd $ORACLE_HOME/dbs
 mv orapwdigital orapwdigitaldr
 ````
 
-### 8. Habilitar FRA en la Primary
+### 8. Habilitar FRA `db_recovery_file_dest` y `db_recovery_file_size` en la Primary 
+
+- Define el tamaño máximo de la Fast Recovery Area (FRA).
+- Especifica la cantidad de espacio en disco que Oracle puede usar para almacenar archivos de recuperación.
+- Si la FRA se llena, Oracle no podrá generar archived redo logs, lo que puede detener la base de datos.
 ````sql
 ALTER SYSTEM SET db_recovery_file_dest_size=10G;
+````
+- Especifica la ubicación física donde Oracle almacenará los archivos de recuperación en la FRA.
+- Puede ser un directorio en disco o una ubicación ASM (Automatic Storage Management).
+````sql
 ALTER SYSTEM SET db_recovery_file_dest='/u02/app/oracle/fast_recovery_area/';
 `````
+
+**Verificar**
+
+````sql
+SHOW PARAMETER DB_RECOVERY_FILE_DEST;
+SHOW PARAMETER DB_RECOVERY_FILE_DEST_SIZE;
+SELECT name, space_limit, space_used, space_reclaimable  FROM v$recovery_area_usage;
+````
+
+
+**Archivos almacenados en la Fast Recovery Area (FRA)**
+
+| **Archivo**             | **Descripción** |
+|-------------------------|---------------|
+| **Archived Redo Logs**  | Logs generados en **modo ARCHIVELOG** para recuperación. |
+| **Flashback Logs**      | Permiten el **Flashback Database** para restaurar la base de datos a un punto anterior. |
+| **Control Files**       | Copia multiplexada del archivo de control. |
+| **Redo Logs**          | Opcionalmente, Oracle puede almacenar **online redo logs** en la FRA. |
+| **RMAN Backups**       | Backups creados por **RMAN** pueden almacenarse automáticamente en la FRA. |
+
+
+
 
 ### 9. Verificar Ubicación de Datafiles y Audit Logs
 ````sql
@@ -242,27 +275,52 @@ SHOW PARAMETER audit;
 
 
 ## STANDBY DATABASE - Configuración de la Base de Datos Standby en Oracle Data Guard
+### 1.  Create the required directory on the standby side as below:
+````bash
+mkdir -p /u02/app/oracle/oradata/DIGITALDR/
+mkdir -p /u02/app/oracle/oradata/DIGITALDR/pdbseed/
+mkdir -p /u02/app/oracle/oradata/DIGITALDR/shri/	
+mkdir -p /u02/app/oracle/admin/digitaldr/adump
+mkdir -p /u02/app/oracle/fast_recovery_area/
+````
 
-### 1. Verificación del archivo de inicialización en la Standby
+### 2. Crear pfile en la Standby
 ```bash
 cat /u02/app/oracle/product/19.3.0/db_home/dbs/initdigitaldr.ora
 db_name=digital
 enable_pluggable_database=true
 ```
 
-### 2 .Arrancar la instancia en modo NOMOUNT
+### 3. Arrancar la instancia en modo NOMOUNT
 ````
 export ORACLE_SID=digitaldr
 sqlplus / as sysdba
 startup nomount pfile=/u02/app/oracle/product/19.3.0/db_home/dbs/initdigitaldr.ora;
 ````
 
-### 3. Clonación de la Primary a la Standby con RMAN
+### 4. Clonación de la Primary a la Standby con RMAN
+si usas RMAN Duplicación desde la base de datos activa con la opción SPFILE y parameter_value_convert, ya no es necesario configurar 
+manualmente los parámetros en la Standby, ya que RMAN los aplica automáticamente en el SPFILE de la Standby.
+
+**¿Qué hace RMAN automáticamente?**
+- Copia la base de datos Primary a la Standby.
+- Configura los parámetros del SPFILE en la Standby con los valores correctos (como db_unique_name, fal_client, fal_server, log_archive_dest_2, etc.).
+- Convierte rutas de archivos (db_file_name_convert, log_file_name_convert).
+- Crea los archivos de control y redo logs de la Standby.
+
+**¿Cuándo NO necesitas modificar manualmente los parámetros en la Standby?**
+✅ Si en el bloque DUPLICATE ya incluyes:
+- set db_unique_name='digitaldr'
+- set fal_client='digitaldr'
+- set fal_server='digital'
+- set log_archive_dest_2='service=digital ...'
+- set log_archive_config='dg_config=(digital,digitaldr)'
+
 
 ````
 rman target sys/sys@digital auxiliary sys/sys@digitaldr
 
-RUN {
+run {
   ALLOCATE CHANNEL c1 TYPE DISK;
   ALLOCATE AUXILIARY CHANNEL c3 TYPE DISK;
   DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE
@@ -284,3 +342,53 @@ RUN {
     NOFILENAMECHECK;
 }
 ````
+### 5. Abrimos la base de datos standby y arrancamos el Managed Recovery Process (MRP) 
+Abrimos la standby database y arrancamos el proceso MRP.
+
+````sql
+alter database open;
+````
+
+### 6. Arrancamos el Managed Recovery Process (MRP)
+
+- Se ejecuta en la Standby y aplica los cambios de la Primary en los archived redo logs.
+- Mantiene la Standby actualizada en tiempo real en modo Real-Time Apply.
+- Requiere que la base de datos Standby esté en modo MOUNT para operar.
+- Puede trabajar en dos modos:
+  - MRP normal (ARCHIVELOG APPLY MODE): Aplica redo logs archivados.
+  - MRP en tiempo real (REAL-TIME APPLY): Aplica redo logs en tiempo real desde los Standby Redo Logs (SRLs).
+
+Arrancamos MRP
+````sql
+alter database recover managed standby database disconnect nodelay;
+````
+Verificamos MRP
+````sql
+ select sequence#,process,status from v$managed_standby
+
+ SEQUENCE# PROCESS   STATUS
+---------- --------- ------------
+         0 ARCH      CONNECTED
+         0 DGRD      ALLOCATED
+         0 DGRD      ALLOCATED
+         0 ARCH      CONNECTED
+         0 ARCH      CONNECTED
+         0 ARCH      CONNECTED
+         0 ARCH      CONNECTED
+         0 RFS       IDLE
+         0 RFS       IDLE
+        21 MRP0      WAIT_FOR_LOG
+         0 RFS       IDLE
+         0 RFS       IDLE
+        21 RFS       IDLE
+````
+
+Check the standby database role and open status.
+````sql
+SQL> select name,open_mode,database_role from v$database;
+
+NAME      OPEN_MODE            DATABASE_ROLE
+--------- -------------------- ----------------
+DIGITAL   READ ONLY WITH APPLY PHYSICAL STANDBY
+````
+
