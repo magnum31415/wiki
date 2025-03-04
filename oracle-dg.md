@@ -168,9 +168,16 @@ Si tnsping no funciona:
 - Revisar /etc/hosts
 - Verificar tnsnames.ora
 - Deshabilitar el firewall:
+  
 ````bash
-sudo systemctl stop firewalld
-sudo systemctl disable firewalld
+# 1️⃣ Agregar la regla para abrir el puerto 1521 en firewalld
+sudo firewall-cmd --permanent --add-port=1521/tcp
+
+# 2️⃣ Recargar firewalld para aplicar los cambios
+sudo firewall-cmd --reload
+
+# 3️⃣ Verificar que el puerto está abierto
+sudo firewall-cmd --list-ports
 ````
 ### 8. Configurar Parámetros de Data Guard en la Primary
 
