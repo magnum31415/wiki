@@ -10,7 +10,7 @@
 
 ### 1. Verificar paramatros iniciales
 
-````
+````sql
 SHOW PARAMETER log_archive_config;
 SHOW PARAMETER fal_server;
 SHOW PARAMETER fal_client;
