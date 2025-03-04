@@ -137,6 +137,17 @@ sudo systemctl disable firewalld
 ### 6. Configurar Parámetros de Data Guard en la Primary
 
 
+| **Comando** | **Propósito** |
+|------------|-------------|
+| `log_archive_config` | Define la relación entre Primary (`digital`) y Standby (`digitaldr`). |
+| `fal_server` | Especifica desde dónde solicitar redo logs faltantes (Standby). |
+| `fal_client` | Define el nombre de la base de datos local en FAL (Primary). |
+| `standby_file_management` | Permite la creación automática de archivos en Standby al agregar datafiles en la Primary. |
+| `log_archive_dest_1` | Configura el almacenamiento de redo logs locales en la **Fast Recovery Area (FRA)**. |
+| `log_archive_dest_2` | Envía redo logs desde la Primary (`digital`) a la Standby (`digitaldr`) de forma asíncrona. |
+| `LOG_ARCHIVE_DEST_STATE_2` | Habilita la replicación de redo logs hacia la Standby (`digitaldr`). |
+
+ 
 #### Configurar `log_archive_config`
 - Define las bases de datos participantes en Data Guard.
 - "digital" es el Primary y "digitaldr" es la Standby.
@@ -160,6 +171,43 @@ ALTER SYSTEM SET fal_server='digitaldr' SCOPE=both;
 ````sql
 ALTER SYSTEM SET fal_client='digital' SCOPE=both;
 ````
+
+#### Configurar `standby_file_management`
+- Permite la creación automática de archivos de datos en la Standby.
+- Si en la Primary se agrega un Datafile, se creará automáticamente en la Standby.
+````sql
+ALTER SYSTEM SET standby_file_management='AUTO' SCOPE=both;
+````
+
+#### Configurar `log_archive_dest_1` (Destino local de logs)
+- Define el destino de archivos de redo logs locales.
+- "use_db_recovery_file_dest" usa la Fast Recovery Area (FRA) para almacenar los logs.
+- "valid_for=(all_logfiles,all_roles)" aplica a todos los logs en Primary y Standby.
+- "db_unique_name=digital" especifica que esta configuración pertenece a "digital".
+
+````sql
+ALTER SYSTEM SET log_archive_dest_1='location=use_db_recovery_file_dest valid_for=(all_logfiles,all_roles) db_unique_name=digital' SCOPE=both;
+````
+#### Configurar `log_archive_dest_2` (Destino de logs a la Standby)
+- Define el destino de los redo logs enviados a la Standby.
+- "service=digitaldr" indica que los logs se enviarán a la Standby.
+- "async" envía los redo logs de manera asíncrona, sin retrasar las transacciones en la Primary.
+- "valid_for=(online_logfiles,primary_role)" aplica solo a online redo logs en modo Primary.
+- "db_unique_name=digitaldr" especifica que el destino es la Standby.
+
+````sql
+ALTER SYSTEM SET log_archive_dest_2='service=digitaldr async valid_for=(online_logfiles,primary_role) db_unique_name=digitaldr' SCOPE=both;
+````
+#### Habilitar el destino de replicación LOG_ARCHIVE_DEST_STATE_2
+- Activa el destino log_archive_dest_2 para enviar redo logs a la Standby.
+- Sin este comando, la Primary no enviará logs a "digitaldr".
+````sql
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_STATE_2=ENABLE;
+````
+
+
+
+
 
 
 
