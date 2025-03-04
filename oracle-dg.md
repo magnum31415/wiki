@@ -97,7 +97,7 @@ SELECT group#, member, type, status FROM v$logfile;
 
 
 
-### 3. Configurar TNS y Listener para Primary y Standby
+### 5. Configurar TNS y Listener para Primary y Standby
 Editar tnsnames.ora en ambas bases
 ````ini
 DIGITAL =
@@ -118,7 +118,7 @@ DIGITALDR =
     )
   )
 ````
-### 4. Configurar el Listener
+### 6. Configurar el Listener
 
 Listener en la Primary (listener.ora)
 ````ini
@@ -159,7 +159,7 @@ LISTENER =
 ADR_BASE_LISTENER = /u02/app/oracle
 ````
 
-### 5. Probar la conectividad con tnsping
+### 7. Probar la conectividad con tnsping
 ````bash
 tnsping digital
 tnsping digitaldr
@@ -172,7 +172,7 @@ Si tnsping no funciona:
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 ````
-### 6. Configurar Parámetros de Data Guard en la Primary
+### 8. Configurar Parámetros de Data Guard en la Primary
 
 
 | **Comando** | **Propósito** |
@@ -254,7 +254,7 @@ where name in ('db_name','db_unique_name','log_archive_config','log_archive_dest
 'log_archive_dest_state_1′,’log_archive_dest_state_2','remote_login_passwordfile','log_archive_format','log_archive_max_processes',
 'fal_server','fal_client','db_file_name_convert','log_file_name_convert','standby_file_management');
 ````
-### 7. Verificación de REDO TRANSPORT en la Primary
+### 9. Verificación de REDO TRANSPORT en la Primary
 Después de configurar los destinos de archivo de redo logs (log_archive_dest_1 y log_archive_dest_2), 
 verifica si los archivos de redo logs están enviándose correctamente a la Standby sin errores.
 
@@ -266,7 +266,7 @@ WHERE DEST_ID IN (1,2);
 
 
 
-### 7. Configurar el Password File en la Standby
+### 10. Configurar el Password File en la Standby
 Oracle usa el password file (orapw<db_name>) para permitir la autenticación remota de usuarios con privilegios SYSDBA o SYSOPER 
 sin requerir la contraseña explícita en la conexión. Esto es esencial en Data Guard, RMAN, y conexiones administrativas remotas.
 
@@ -279,7 +279,7 @@ cd $ORACLE_HOME/dbs
 mv orapwdigital orapwdigitaldr
 ````
 
-### 8. Habilitar FRA `db_recovery_file_dest` y `db_recovery_file_size` en la Primary 
+### 11. Habilitar FRA `db_recovery_file_dest` y `db_recovery_file_size` en la Primary 
 
 - Define el tamaño máximo de la Fast Recovery Area (FRA).
 - Especifica la cantidad de espacio en disco que Oracle puede usar para almacenar archivos de recuperación.
@@ -317,7 +317,7 @@ SELECT name, space_limit, space_used, space_reclaimable  FROM v$recovery_area_us
 
 
 
-### 9. Verificar Ubicación de Datafiles y Audit Logs
+### 12. Verificar Ubicación de Datafiles y Audit Logs
 ````sql
 SELECT name FROM v$datafile;
 SHOW PARAMETER audit;
@@ -451,7 +451,7 @@ SELECT THREAD#, SEQUENCE#, APPLIED FROM V$ARCHIVED_LOG ORDER BY SEQUENCE# DESC;
 ````
 🔹 Propósito: Comprobar que la Standby está recibiendo y aplicando los redo logs de la Primary.
 
-### Validar si la Standby puede ser promovida a Primary
+### 7. Validar si la Standby puede ser promovida a Primary
 Si necesitas hacer un Switchover o Failover, primero verifica si la Standby está lista para asumir el rol de Primary:
 
 ````sql
