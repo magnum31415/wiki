@@ -8,8 +8,22 @@
 - Se establecen parámetros esenciales de Data Guard (log_archive_dest, fal_client, fal_server).
 - Se configura el archivo de contraseña y se habilita FRA para gestionar logs.
 
+### 1. Verificar paramatros iniciales
 
-### 1. Habilitar Archivelog Mode y Force Logging
+````
+SHOW PARAMETER log_archive_config;
+SHOW PARAMETER fal_server;
+SHOW PARAMETER fal_client;
+SHOW PARAMETER standby_file_management;
+SHOW PARAMETER log_archive_dest_1;
+SHOW PARAMETER log_archive_dest_2;
+SHOW PARAMETER log_archive_dest_state_2;
+SHOW PARAMETER db_unique_name;
+SHOW PARAMETER remote_login_passwordfile;
+````
+
+
+### 2. Habilitar Archivelog Mode y Force Logging
  **Verificar el modo de log actual**
 ```sql
 SELECT log_mode FROM v$database;
@@ -31,9 +45,33 @@ Verificar el cambio
 ````sql
 SELECT name, force_logging, log_mode FROM v$database;
 ````
+### 3. Agregar el control de protección de datos (PROTECTION MODE)
+Definir el nivel de protección de Data Guard.
+````sql
+SELECT protection_mode FROM v$database;
+````
+Si deseas habilitar un nivel de protección más alto:
+
+````sql
+ALTER DATABASE SET STANDBY DATABASE TO MAXIMUM PERFORMANCE;
+-- Otras opciones:
+-- ALTER DATABASE SET STANDBY DATABASE TO MAXIMUM AVAILABILITY;
+-- ALTER DATABASE SET STANDBY DATABASE TO MAXIMUM PROTECTION;
+````
 
 
-### 2. Crear Standby Redo Logs (SRL)
+
+## **📌 Modos de Protección en Data Guard**
+
+| **Modo**                  | **Escritura en Standby** | **Impacto en Performance** | **Disponibilidad de Primary** | **Pérdida de datos posible** |
+|---------------------------|-------------------------|----------------------------|-------------------------------|------------------------------|
+| **Maximum Protection**    | **SYNC**                | 🔴 **Alto impacto**         | ❌ **Se detiene si falla la Standby** | 🚫 **Cero pérdida de datos** |
+| **Maximum Availability**  | **SYNC**                | 🟠 **Moderado**             | ✅ **Sigue operando si falla la Standby** | 🔸 **Mínima pérdida si hay fallo** |
+| **Maximum Performance**   | **ASYNC**               | 🟢 **Bajo impacto**         | ✅ **Siempre disponible** | 🔸 **Posible pérdida de datos en falla** |
+
+
+
+### 4. Crear Standby Redo Logs (SRL)
 
 Agregar Standby Redo Logs en la Primary
 ````sql
@@ -216,6 +254,17 @@ where name in ('db_name','db_unique_name','log_archive_config','log_archive_dest
 'log_archive_dest_state_1′,’log_archive_dest_state_2','remote_login_passwordfile','log_archive_format','log_archive_max_processes',
 'fal_server','fal_client','db_file_name_convert','log_file_name_convert','standby_file_management');
 ````
+### 7. Verificación de REDO TRANSPORT en la Primary
+Después de configurar los destinos de archivo de redo logs (log_archive_dest_1 y log_archive_dest_2), 
+verifica si los archivos de redo logs están enviándose correctamente a la Standby sin errores.
+
+````sql
+SELECT DEST_ID, STATUS, DESTINATION, ERROR 
+FROM V$ARCHIVE_DEST 
+WHERE DEST_ID IN (1,2);
+````
+
+
 
 ### 7. Configurar el Password File en la Standby
 Oracle usa el password file (orapw<db_name>) para permitir la autenticación remota de usuarios con privilegios SYSDBA o SYSOPER 
@@ -244,6 +293,7 @@ ALTER SYSTEM SET db_recovery_file_dest_size=10G;
 ALTER SYSTEM SET db_recovery_file_dest='/u02/app/oracle/fast_recovery_area/';
 `````
 
+
 **Verificar**
 
 ````sql
@@ -251,6 +301,7 @@ SHOW PARAMETER DB_RECOVERY_FILE_DEST;
 SHOW PARAMETER DB_RECOVERY_FILE_DEST_SIZE;
 SELECT name, space_limit, space_used, space_reclaimable  FROM v$recovery_area_usage;
 ````
+
 
 
 **Archivos almacenados en la Fast Recovery Area (FRA)**
@@ -391,4 +442,26 @@ NAME      OPEN_MODE            DATABASE_ROLE
 --------- -------------------- ----------------
 DIGITAL   READ ONLY WITH APPLY PHYSICAL STANDBY
 ````
+
+Después de iniciar el Managed Recovery Process (MRP) en la Standby, 
+verifica si la replicación funciona correctamente:
+
+````sql
+SELECT THREAD#, SEQUENCE#, APPLIED FROM V$ARCHIVED_LOG ORDER BY SEQUENCE# DESC;
+````
+🔹 Propósito: Comprobar que la Standby está recibiendo y aplicando los redo logs de la Primary.
+
+### Validar si la Standby puede ser promovida a Primary
+Si necesitas hacer un Switchover o Failover, primero verifica si la Standby está lista para asumir el rol de Primary:
+
+````sql
+SELECT SWITCHOVER_STATUS FROM V$DATABASE;
+````
+📌 Posibles valores:
+
+- TO PRIMARY → La Standby está lista para ser promovida a Primary.
+- SESSIONS ACTIVE → Hay sesiones activas en la Primary, se deben cerrar antes del switchover.
+- TO STANDBY → La Primary está lista para convertirse en Standby.
+- NOT ALLOWED → Switchover no es posible, verificar la configuración.
+
 
