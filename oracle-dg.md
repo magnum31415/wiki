@@ -43,17 +43,20 @@ ALTER DATABASE ADD STANDBY LOGFILE GROUP 6 '/u02/app/oracle/oradata/DIGITAL/redo
 ALTER DATABASE ADD STANDBY LOGFILE GROUP 7 '/u02/app/oracle/oradata/DIGITAL/redo07.log' SIZE 50M;
 ````
 Verificar la creación
-````
+````sql
 SELECT group#, member, type, status FROM v$logfile;
 ````
-Los Standby Redo Logs se utilizan para:
 
-1. Recibir y almacenar Redo Logs en la Standby
-- Cuando la Primary genera redo logs, estos se envían a la Standby.
-- La Standby escribe los redo logs en los Standby Log Files (SRLs) antes de archivarlos.
-2. Habilitar el modo de Aplicación en Tiempo Real (Real-Time Apply)
-- Sin SRLs: la Standby solo aplica cambios cuando el redo log se archiva en la Primary.
-- Con SRLs: la Standby aplica los cambios en tiempo real, sin esperar la generación del archive log.
+#### **Diferencia entre `REDO LOGFILE` y `STANDBY LOGFILE`**
+
+| **Característica**         | **Redo Logfile (Primary)** | **Standby Logfile (Standby)** |
+|---------------------------|---------------------------|-------------------------------|
+| **Ubicación**             | Base de datos Primary     | Base de datos Standby         |
+| **Función**               | Guarda los cambios antes de archivarlos | Recibe y aplica los redo logs en tiempo real |
+| **Modo de uso**           | Requerido siempre         | Opcional, pero altamente recomendado |
+| **Impacto en recuperación** | No afecta Data Guard   | Sin SRLs, la Standby se retrasa |
+| **Modo de escritura**     | Escrito por la Primary    | Escrito por el proceso RFS de la Standby |
+
 
 
 ### 3. Configurar TNS y Listener para Primary y Standby
@@ -132,6 +135,34 @@ sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 ````
 ### 6. Configurar Parámetros de Data Guard en la Primary
+
+
+#### Configurar `log_archive_config`
+- Define las bases de datos participantes en Data Guard.
+- "digital" es el Primary y "digitaldr" es la Standby.
+- Permite la replicación de redo logs entre ambas bases de datos.
+
+```sql
+ALTER SYSTEM SET log_archive_config='dg_config=(digital,digitaldr)' SCOPE=both;
+````
+#### Configurar `fal_server` (Fetch Archive Log Server)
+- Especifica desde dónde la base de datos primaria pedirá archivos de redo logs perdidos.
+- "digitaldr" es el servidor de la Standby.
+- Si la Primary pierde un archivo de redo, lo buscará en "digitaldr".
+
+````sql
+ALTER SYSTEM SET fal_server='digitaldr' SCOPE=both;
+````
+
+#### Configurar `fal_client` (Fetch Archive Log Client)
+- Define el nombre de la base de datos local en el contexto de FAL.
+- "digital" se usa para que la Standby se identifique al solicitar redo logs a la Primary.
+````sql
+ALTER SYSTEM SET fal_client='digital' SCOPE=both;
+````
+
+
+
 ````sql
 ALTER SYSTEM SET log_archive_config='dg_config=(digital,digitaldr)' SCOPE=both;
 ALTER SYSTEM SET fal_server='digitaldr' SCOPE=both;
