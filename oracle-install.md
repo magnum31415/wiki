@@ -22,7 +22,7 @@ sqlplus / as sysdba
 @?/rdbms/admin/utlrp.sql
 ````
 
-##📌 ¿Qué hace cada script?
+## 📌 ¿Qué hace cada script?
 ### 1️⃣ catalog.sql (Diccionario de datos)
 - Crea las vistas y sinónimos necesarios para administrar la base de datos.
 - Registra las vistas DBA_, ALL_ y USER_*.
