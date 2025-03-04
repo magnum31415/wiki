@@ -1,15 +1,172 @@
 # Config Oracle Data Guard
-## PRIMARY SIDE - Dataguard configuration steps Primary side
+## PRIMARY DATABASE  - Dataguard configuration steps Primary side
+
+**Resumen**
+- Se habilita ARCHIVELOG y FORCE LOGGING en la Primary.
+- Se crean Standby Redo Logs para permitir la aplicación en tiempo real.
+- Se configuran TNS y Listener en ambas bases de datos.
+- Se establecen parámetros esenciales de Data Guard (log_archive_dest, fal_client, fal_server).
+- Se configura el archivo de contraseña y se habilita FRA para gestionar logs.
 
 
-## STANDBY SIDE - Configuración de la Base de Datos Standby en Oracle Data Guard
+### 1. Habilitar Archivelog Mode y Force Logging
+ **Verificar el modo de log actual**
+```sql
+SELECT log_mode FROM v$database;
+```
+Si está en NOARCHIVELOG, cambiar a ARCHIVELOG
+````sql
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+ALTER DATABASE ARCHIVELOG;
+ALTER DATABASE FORCE LOGGING;
+````
+Verificar el cambio
+````sql
+SELECT name, force_logging, log_mode FROM v$database;
+````
+### 2. Crear Standby Redo Logs
+
+Agregar Standby Redo Logs en la Primary
+````sql
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 4 '/u02/app/oracle/oradata/DIGITAL/redo04.log' SIZE 50M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 5 '/u02/app/oracle/oradata/DIGITAL/redo05.log' SIZE 50M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 6 '/u02/app/oracle/oradata/DIGITAL/redo06.log' SIZE 50M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 7 '/u02/app/oracle/oradata/DIGITAL/redo07.log' SIZE 50M;
+````
+Verificar la creación
+````
+SELECT group#, member, type, status FROM v$logfile;
+````
+### 3. Configurar TNS y Listener para Primary y Standby
+Editar tnsnames.ora en ambas bases
+````ini
+DIGITAL =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ocptechnology.localhost)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = digital)
+    )
+  )
+
+DIGITALDR =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ocpstandby.localhost)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = digitaldr)
+    )
+  )
+````
+### 4. Configurar el Listener
+
+Listener en la Primary (listener.ora)
+````ini
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (GLOBAL_DBNAME = digital)
+      (ORACLE_HOME = /u02/app/oracle/product/19.3.0/db_home)
+      (SID_NAME = digital)
+    )
+  )
+
+LISTENER =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ocptechnology.localhost)(PORT = 1521))
+  )
+
+ADR_BASE_LISTENER = /u02/app/oracle
+````
+
+Listener en la Standby (listener.ora)
+
+````ini
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (GLOBAL_DBNAME = digitaldr)
+      (ORACLE_HOME = /u02/app/oracle/product/19.3.0/db_home)
+      (SID_NAME = digitaldr)
+    )
+  )
+
+LISTENER =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = ocpstandby.localhost)(PORT = 1521))
+  )
+
+ADR_BASE_LISTENER = /u02/app/oracle
+````
+
+### 5. Probar la conectividad con tnsping
+````bash
+tnsping digital
+tnsping digitaldr
+````
+Si tnsping no funciona:
+- Revisar /etc/hosts
+- Verificar tnsnames.ora
+- Deshabilitar el firewall:
+````bash
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+````
+### 6. Configurar Parámetros de Data Guard en la Primary
+````sql
+ALTER SYSTEM SET log_archive_config='dg_config=(digital,digitaldr)' SCOPE=both;
+ALTER SYSTEM SET fal_server='digitaldr' SCOPE=both;
+ALTER SYSTEM SET fal_client='digital' SCOPE=both;
+ALTER SYSTEM SET standby_file_management='AUTO' SCOPE=both;
+ALTER SYSTEM SET log_archive_dest_1='location=use_db_recovery_file_dest valid_for=(all_logfiles,all_roles) db_unique_name=digital' SCOPE=both;
+ALTER SYSTEM SET log_archive_dest_2='service=digitaldr async valid_for=(online_logfiles,primary_role) db_unique_name=digitaldr' SCOPE=both;
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_STATE_2=ENABLE;
+````
+Verificar configuración
+````sql
+SELECT name, value FROM v$parameter WHERE name IN (
+  'db_name','db_unique_name','log_archive_config','log_archive_dest_1','log_archive_dest_2',
+  'log_archive_dest_state_1','log_archive_dest_state_2','remote_login_passwordfile',
+  'log_archive_format','log_archive_max_processes','fal_server','fal_client',
+  'db_file_name_convert','log_file_name_convert','standby_file_management'
+);
+````
+
+### 7. Configurar el Password File en la Standby
+````bash
+scp orapwdigital oracle@192.168.74.160:$ORACLE_HOME/dbs/
+````
+Renombrar el archivo en la Standby:
+
+````bash
+cd $ORACLE_HOME/dbs
+mv orapwdigital orapwdigitaldr
+````
+
+### 8: Habilitar FRA en la Primary
+sql
+Copiar
+Editar
+ALTER SYSTEM SET db_recovery_file_dest_size=10G;
+ALTER SYSTEM SET db_recovery_file_dest='/u02/app/oracle/fast_recovery_area/';
+Paso 9: Verificar Ubicación de Datafiles y Audit Logs
+sql
+Copiar
+Editar
+SELECT name FROM v$datafile;
+SHOW PARAMETER audit;
+
+
+
+## STANDBY DATABASE - Configuración de la Base de Datos Standby en Oracle Data Guard
 
 ### 1. Verificación del archivo de inicialización en la Standby
-````
+```bash
 cat /u02/app/oracle/product/19.3.0/db_home/dbs/initdigitaldr.ora
 db_name=digital
 enable_pluggable_database=true
-````
+```
 
 ### 2 .Arrancar la instancia en modo NOMOUNT
 ````
