@@ -34,6 +34,13 @@ SUCCESS
 
 Ensure everything shows as **SUCCESS**.
 
+You can also check each database:
+
+````sql
+DGMGRL> SHOW DATABASE db_primary;
+DGMGRL> SHOW DATABASE db_standby;
+````
+
 ### Step 3: Initiate the Switchover
 Run the following command to perform switchover (assuming db_standby is your standby):
 
