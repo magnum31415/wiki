@@ -1,5 +1,7 @@
 #  ✅Config Oracle Data Guard
 
+![DataGuard](https://github.com/magnum31415/wiki/blob/main/dataguard.png)
+
 ## CHECK DATAGUARD 
 ### SQLPLUS
 
