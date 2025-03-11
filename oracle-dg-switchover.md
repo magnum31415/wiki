@@ -1,4 +1,4 @@
-# Oracle DataGuard SwitchOver
+# ✅Oracle DataGuard SwitchOver
 ## DGMGRL
 
 **📝 Quick Summary of Steps:**
@@ -102,25 +102,80 @@ Ensure both databases are communicating correctly before and after switchover.
 
 
 
+# ✅Starting the Oracle Standby Database (Data Guard)
+Perform these steps on your standby database server:
+
+## Quick summary (commands to run):
+````sql
+sqlplus / as sysdba
+STARTUP MOUNT;
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+SELECT PROCESS, STATUS FROM V$MANAGED_STANDBY WHERE PROCESS LIKE 'MRP%';
+````
+Your standby database should now be up and running, applying logs automatically from the primary.
 
 
+## Step 1: Start the instance in MOUNT mode
+From your Linux shell:
 
-## SQLPLUS
-
-## 1. Check the status of both Primary and Standby
-**On the Primary database**, run:
+````bash
+sqlplus / as sysdba
+````
+Then, inside SQL*Plus:
 
 ````sql
-SELECT SWITCHOVER_STATUS FROM V$DATABASE;
+STARTUP MOUNT;
 ````
-Expected result:
-- TO STANDBY or SESSIONS ACTIVE is acceptable.
-- If you see SESSIONS ACTIVE, you might need to shut down sessions or wait briefly.
+This command will start the Oracle database instance and mount the database (required for standby).
 
-**On the Standby database**, run:
+## Step 2: Verify and Start (if it is stopped) the Managed Recovery Process (MRP)
+Check
 
 ````sql
-SELECT SWITCHOVER_STATUS FROM V$DATABASE;
+ SELECT PROCESS, STATUS FROM V$MANAGED_STANDBY WHERE PROCESS LIKE 'MRP%';
+--or
+ SELECT PROCESS, STATUS, THREAD#, SEQUENCE#, BLOCK# FROM V$MANAGED_STANDBY;
 ````
+
+Run this SQL command to activate managed recovery (apply redo logs automatically):
+
+````sql
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+````
+This starts the Managed Recovery Process (MRP) and allows the standby database to apply redo logs received from the primary automatically.
+
+## Step 3: Verify MRP is running correctly
+Check the status of MRP by running:
+
+````sql
+SELECT PROCESS, STATUS FROM V$MANAGED_STANDBY WHERE PROCESS LIKE 'MRP%';
+````
+You should see output similar to:
+
+````
+PROCESS   STATUS
+--------- --------------------
+MRP0      APPLYING_LOG
+````
+
+This confirms that your standby database is applying logs correctly.
+
+## Step 4: Confirm database status
+Confirm the current role and status of the standby database:
+
+````sql
+SELECT DATABASE_ROLE, OPEN_MODE FROM V$DATABASE;
+````
+
 Expected result:
--TO PRIMARY or NOT ALLOWED (if it shows NOT ALLOWED, re-check configuration).
+
+````
+DATABASE_ROLE      OPEN_MODE
+------------------ --------------------
+PHYSICAL STANDBY   MOUNTED
+````
+
+
+
+
+
