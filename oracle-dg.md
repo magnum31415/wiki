@@ -1,4 +1,37 @@
 # Config Oracle Data Guard
+
+## CHECK DATAGUARD 
+### SQLPLUS
+````sql
+SELECT 
+    db_unique_name, 
+    database_role, 
+    open_mode 
+FROM v$database;
+````
+- **DATABASE_ROLE** te dirá si es ``PRIMARY, PHYSICAL STANDBY, LOGICAL STANDBY o SNAPSHOT STANDBY``.
+- **OPEN_MODE** indicará si la base de datos está en ``READ WRITE, READ ONLY``, etc.
+
+### DGMGRL
+
+````
+dgmgrl sys/PASSWORD
+SHOW CONFIGURATION;
+````
+
+````
+Configuration - ctest_dg_config
+
+  Protection Mode: MaxPerformance
+  Members:
+  ctest_2 - Primary database
+    ctest_1 - Physical standby database
+````
+**Database details:**  
+````sql 
+SHOW DATABASE 'nombre_base_datos_standby';
+````
+
 ## PRIMARY DATABASE  - Dataguard configuration steps Primary side
 
 **Resumen**
