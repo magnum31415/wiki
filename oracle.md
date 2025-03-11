@@ -28,3 +28,43 @@ Navigating through command history using the arrow keys.
 ## Listener
 
 *Parar Listener: ``/u01/app/oracle/product/19.21.0.0/CDB1/bin/lsnrctl stop LISTENER_CDB1``
+
+## Archive Logs space
+
+### Check the Archive Destination Parameter
+
+This command will display the values of parameters like LOG_ARCHIVE_DEST_1, LOG_ARCHIVE_DEST_2, etc. These parameters indicate the directory paths where the archive logs are being stored.
+````sql
+SHOW PARAMETER log_archive_dest;
+````
+### Examine the Archive Log List
+````sql
+ARCHIVE LOG LIST;
+````
+If the output shows Archive destination: USE_DB_RECOVERY_FILE_DEST, it means the archive logs are stored in the Fast Recovery Area.
+
+### Check the Fast Recovery Area
+
+If your archive logs are using the Fast Recovery Area, verify the actual directory by running:
+The value returned is the physical directory used by the Fast Recovery Area where your archive logs are stored.
+````sql
+SHOW PARAMETER db_recovery_file_dest;
+````
+
+### Check Log Status
+You can query the database to review the status of each archive log:
+
+````sql
+SELECT thread#, sequence#, applied
+FROM v$archived_log
+ORDER BY sequence#;
+````
+The **APPLIED** column helps you determine if the logs have been applied in a Data Guard environment or are no longer needed.
+
+### Consider Fast Recovery Area (FRA) Management
+If your archive logs are stored in the Fast Recovery Area, Oracle automatically manages the deletion of old files based on space and retention policies. You can check the FRA details with:
+
+````sql
+SELECT space_limit, space_used, space_reclaimable, number_of_files
+FROM v$recovery_file_dest;
+````
