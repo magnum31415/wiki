@@ -1,4 +1,4 @@
-# Config Oracle Data Guard
+#  ✅Config Oracle Data Guard
 
 ## CHECK DATAGUARD 
 ### SQLPLUS
