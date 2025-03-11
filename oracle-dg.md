@@ -2,6 +2,27 @@
 
 ## CHECK DATAGUARD 
 ### SQLPLUS
+
+#### Quickly checking current Data Guard status
+
+On the **STANDBY**
+````sql
+SELECT PROCESS, STATUS, THREAD#, SEQUENCE#, BLOCK# FROM V$MANAGED_STANDBY;
+````
+
+This confirms whether the Managed Recovery Process (MRP) is actively applying logs and which sequence it's currently working on.
+
+**Check synchronization status** on both primary and standby:
+
+````sql
+-- From primary
+SQL> SELECT MAX(SEQUENCE#) FROM v$archived_log WHERE APPLIED = 'YES';
+
+-- From standby
+SQL> SELECT MAX(SEQUENCE#) FROM v$archived_log WHERE APPLIED = 'YES';
+````
+
+**Check Database Role**
 ````sql
 SELECT 
     db_unique_name, 
