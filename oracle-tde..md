@@ -5,7 +5,20 @@ Is an Oracle Advance security feature that help us to protect our data from bein
 - Theft of database backup
 - Compromise of database export
 
-# ✅Configuring TDE on a Single Database in a multithenant db
+## Setup
+
+-	Keystore: **Oracle Wallet**
+-	Wallet Type: **Local auto-login wallet**
+-	Encryption Algorithm: **AES256**
+-	Mode: **United Mode**
+-	Management Tool: **Administer Key Management**
+-	Tested Architectures: **Oracle Multitenant (CDB with a single PDB), DataGuard, RMAN**
+-	Oracle Releases: **Oracle 19c onwards**
+-	Encryption Target: **Application tablespaces (not  system tablespaces: SYSAUX, SYSTEM, TEMP  and UNDO.)**
+-	Encrypt Tablespace strategy: **Online**
+
+
+# ✅Procedure for configuring TDE on a Single Database in a multithenant db
 
 ## 1. Set the default Parameters
 
@@ -128,6 +141,92 @@ ls -la /u01/app/oracle/dbname/wallet/tde/cwallet.sso
 ````
 Note: LOCAL enables you to create a local auto-login software keystore. Otherwise, omit this clause if you want the keystore to be accessible by other computers. LOCAL creates a local auto-login wallet file, cwallet.sso, and this wallet will be tied to the host on which it was created
 
+
+# ✅Procedure for Tablespace Online Encryption
+ **Free Space:** For online encryption having auxiliary space of largest datafile size in the tablespace should be enough
+
+## 1. Encrypt tablespace
+````sql
+ALTER TABLESPACE users_2_non_enc ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
+````
+check status of tablespace encryption
+
+````sql
+Verify 
+SELECT sid, serial#, sofar, totalwork, ROUND( (sofar / totalwork) * 100, 2 ) AS pct_complete, elapsed_seconds, time_remaining, opname, message FROM v$session_longops WHERE opname LIKE '%Encrypt%' AND sofar <> totalwork ORDER BY start_time DESC;
+````
+
+# ✅ Procedure for Master Encryption Key Rotation (Rekeying)
+In Oracle TDE, performing a rekey operation does not physically remove or delete the old master encryption key (MEK) from the keystore. Instead, the rekey operation creates a new master key and then re-wraps (re-encrypts) the existing data encryption keys (DEKs) with this new MEK. The old MEK remains in the keystore as a historical record or backup but is no longer used for encrypting new data. This behavior is by design for audit, compliance, and recovery purposes. In a united mode environment, the rekey operation is performed at the CDB level (with CONTAINER=ALL), ensuring that all PDBs start using the new master key, while the old keys are preserved in the keystore.
+Tablespace Data Encryption Key should be encrypted with the new Master Encrytion Key. 
+
+
+## 1.	Temporarily Disable the Auto-Login Wallet
+````bash
+mv /u01/app/oracle/dbname/wallet/tde/cwallet.sso /u01/app/oracle/dbname/wallet/tde/cwallet.sso.OLD
+````
+## 2.	On CDB$ROOT restart the database
+
+````
+shutdown immediate ;
+startup ;
+````
+
+## 3.	On CDB$ROOT open the password-based wallet explicitly:
+````sql
+ALTER SESSION SET CONTAINER = CDB$ROOT;
+ADMINISTER KEY MANAGEMENT 
+SET KEYSTORE OPEN 
+IDENTIFIED BY "S@cr@tP@ssw@rd"
+CONTAINER=ALL;
+````
+
+## 4.	On CDB$ROOT check current created Master Encryption KEYS
+````
+set pages 200
+set line 200
+col KEY_ID format  a52
+col TAG format a31
+col creation_time format a17
+col activation_time format a17
+col con_name format a8
+SELECT ek.key_id, ek.tag, ek.creation_time, ek.activation_time,       ek.key_use, ek.keystore_type, ek.backed_up, c.name AS con_name
+  FROM v$encryption_keys ek
+  JOIN v$containers c ON ek.con_id = c.con_id
+ ORDER BY ek.creation_time;
+````
+
+## 5.	On CDB$ROOT create a New Master Key “MEK” (rekeying) 
+````sql
+ADMINISTER KEY MANAGEMENT 
+SET ENCRYPTION KEY 
+USING TAG 'REKEY_MEK_2025_02_28' 
+IDENTIFIED BY "S@cr@tP@ssw@rd" 
+WITH BACKUP USING 'REKEY_MEK_2025_02_28' 
+CONTAINER=ALL;
+````
+## 6.	On CDB$ROOT check again Master Encryption KEYS, one new per each PDB must appear.
+````sql
+set pages 200
+set line 200
+col KEY_ID format  a52
+col TAG format a31
+col creation_time format a17
+col activation_time format a17
+col con_name format a8
+SELECT ek.key_id, ek.tag, ek.creation_time, ek.activation_time,       ek.key_use, ek.keystore_type, ek.backed_up, c.name AS con_name
+  FROM v$encryption_keys ek
+  JOIN v$containers c ON ek.con_id = c.con_id
+ ORDER BY ek.creation_time;
+````
+
+## 7.	On CDB$ROOT Recreate the auto-login wallet once your operation is complete
+````
+ADMINISTER KEY MANAGEMENT 
+CREATE AUTO_LOGIN KEYSTORE 
+FROM KEYSTORE '/u01/app/oracle/synlab/wallet/tde' 
+IDENTIFIED BY "S@cr@tP@ssw@rd";
+````
 
 
 
