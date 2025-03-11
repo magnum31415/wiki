@@ -1,5 +1,9 @@
 
 
+- [Oracle DataGuard](https://github.com/magnum31415/wiki/blob/main/oracle-dg.md)
+- [Oracle Install](https://github.com/magnum31415/wiki/blob/main/oracle-install.md)
+- [Oracle TDE](https://github.com/magnum31415/wiki/blob/main/oracle-tde.md)
+
 ## Improve user exprience with sqlplus
 
 rlwrap with sqlplus: ``rlwrap sqlplus scott/tiger@orcl``
