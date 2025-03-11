@@ -22,11 +22,7 @@ ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
 **Check synchronization status** on both primary and standby:
 
 ````sql
--- From primary
-SQL> SELECT MAX(SEQUENCE#) FROM v$archived_log WHERE APPLIED = 'YES';
-
--- From standby
-SQL> SELECT MAX(SEQUENCE#) FROM v$archived_log WHERE APPLIED = 'YES';
+SELECT MAX(SEQUENCE#) FROM v$archived_log WHERE APPLIED = 'YES';
 ````
 
 **Check Database Role**
