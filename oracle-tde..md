@@ -17,6 +17,14 @@ Is an Oracle Advance security feature that help us to protect our data from bein
 -	Encryption Target: **Application tablespaces (not  system tablespaces: SYSAUX, SYSTEM, TEMP  and UNDO.)**
 -	Encrypt Tablespace strategy: **Online**
 
+**Single Key in United Mode:** In a united mode setup, all PDBs share one TDE master key administered at the CDB level. 
+
+Specifying **CONTAINER=ALL** confirms the operation applies across the entire CDB environment.
+
+**Ensures Key Propagation:** Even though in united mode, Oracle defaults to a single key for all PDBs, including CONTAINER=ALL explicitly makes it clear and forces any relevant dictionary updates for all containers in one statement.
+
+**Best Practice:** Oracle documentation recommends using CONTAINER=ALL for TDE key rotation in a multitenant environment to avoid confusion and to make sure the new master key is recognized consistently across all PDBs.
+
 
 # ✅Procedure for configuring TDE on a Single Database in a multithenant db
 
