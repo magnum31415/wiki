@@ -12,6 +12,13 @@ SELECT PROCESS, STATUS, THREAD#, SEQUENCE#, BLOCK# FROM V$MANAGED_STANDBY;
 
 This confirms whether the Managed Recovery Process (MRP) is actively applying logs and which sequence it's currently working on.
 
+If necessary, on the standby, restart the Managed Recovery Process:
+
+````sql
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+````
+
 **Check synchronization status** on both primary and standby:
 
 ````sql
