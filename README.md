@@ -10,7 +10,6 @@
 7. [PasswdPolicies](https://github.com/magnum31415/wiki/blob/main/passwd.md)
 8. [Vagrant Boxes](https://github.com/magnum31415/wiki/blob/main/vagrant-box.md)
 9. [Oracle](https://github.com/magnum31415/wiki/blob/main/oracle.md)
-10. [Oracle DataGuard](https://github.com/magnum31415/wiki/blob/main/oracle-dg.md)
 
 
 
