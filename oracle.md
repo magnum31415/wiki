@@ -1,6 +1,7 @@
 
 
-- [Oracle DataGuard](https://github.com/magnum31415/wiki/blob/main/oracle-dg.md)
+- [Oracle DataGuard Configuration](https://github.com/magnum31415/wiki/blob/main/oracle-dg.md)
+- [Oracle DataGuard SwithOver](https://github.com/magnum31415/wiki/blob/main/oracle-dg-switchover.md)
 - [Oracle Install](https://github.com/magnum31415/wiki/blob/main/oracle-install.md)
 - [Oracle TDE](https://github.com/magnum31415/wiki/blob/main/oracle-tde.md)
 
