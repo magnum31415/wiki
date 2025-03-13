@@ -1,34 +1,40 @@
-# PDBs
+# 📌 PDBs
+✅**Setup sqlplus prompt **
+````sql
+SET SQLPROMPT "_USER'@'_CONNECT_IDENTIFIER> "
+````
 
-**Show PBDs**
+
+✅**Show PBDs**
 ````sql
 show pdbs
 ````
 
-**Show connected pdb**
+✅**Show connected pdb**
 ````sql
 show con_name
 ````
 
-**Connect to a specific pdb**
+✅**Connect to a specific pdb**
 ````sql
 alter session set container=PDBNAME;
 ````
-# Transparent Data Encryption
+# 📌 Transparent Data Encryption
 
-**Tablespace online encryption**
+✅**Tablespace online encryption**
 ````sql
 ALTER TABLESPACE users_non_enc ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
 ````
 
-**Oracle Wallet Status**
+✅**Oracle Wallet Status**
 ````sql
 col WRL_PARAMETER format a40
 SELECT * FROM v$encryption_wallet;
 ````
 
-**List Encryption Keys**
+✅**List Encryption Keys**
 ````sql
+set linesize 200
 col tag format a20
 col KEY_ID format a52
 col ACTIVATION_TIME format a22
@@ -36,25 +42,38 @@ col CREATION_TIME format a22
 SELECT key_id, tag, creation_time, activation_time, key_use, keystore_type, backed_up FROM v$encryption_keys ORDER BY creation_time;
 ````
 
-# DataGuard
+# 📌 DataGuard
 
-**Query database cuurent Role**
+✅**Query database cuurent Role**
 ````sql
-set linesize 200
-col DB_UNIQUE_NAME format a10
+SET LINESIZE 200
+COL DB_UNIQUE_NAME FORMAT A15
+COL CDB_NAME FORMAT A15
+COL CONTAINER_NAME FORMAT A15
+COL DATABASE_ROLE FORMAT A16
+COL OPEN_MODE FORMAT A20
+COL PROTECTION_MODE FORMAT A25
+COL PROTECTION_LEVEL FORMAT A25
+COL SWITCHOVER_STATUS FORMAT A20
+
 SELECT 
+    SYS_CONTEXT('USERENV', 'DB_NAME') AS CDB_NAME,  -- Shows the CDB name
+    SYS_CONTEXT('USERENV', 'CON_NAME') AS CONTAINER_NAME, -- Current container (CDB or PDB)
     DATABASE_ROLE,
     DB_UNIQUE_NAME,
+    CDB,
     OPEN_MODE,
     PROTECTION_MODE,
     PROTECTION_LEVEL,
     SWITCHOVER_STATUS
 FROM v$database;
+
+
 ````
 
-# Tablespaces
+# 📌 Tablespaces
 
-**Total, Free, Used space in tablespaces**
+✅**Total, Free, Used space in tablespaces**
 
 ````sql
 SET LINESIZE 200
@@ -88,7 +107,7 @@ ON df.tablespace_name = te.tablespace_name
 ORDER BY df.tablespace_name;
 ````
 
-**List datafile size**
+✅**List datafile size**
 
 ````sql
 SET LINESIZE 200
@@ -103,7 +122,7 @@ FROM DBA_DATA_FILES
 ORDER BY SIZE_MB DESC;
 ````
 
-**Tables in a tablespace**
+✅**Tables in a tablespace**
 ````sql
 SET LINESIZE 200
 col TABLESPACE_NAME format a20
