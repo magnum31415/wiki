@@ -14,6 +14,13 @@ show con_name
 ````sql
 alter session set container=PDBNAME;
 ````
+# Transparent Data Encryption
+
+**Tablespace online encryption**
+````sql
+ALTER TABLESPACE users_non_enc ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
+````
+
 # DataGuard
 
 **Query database cuurent Role**
@@ -64,4 +71,19 @@ LEFT JOIN
      FROM dba_tablespaces) te
 ON df.tablespace_name = te.tablespace_name
 ORDER BY df.tablespace_name;
+````
+
+**List datafile size**
+
+````sql
+SET LINESIZE 200
+col FILE_NAME format a50
+SELECT 
+    FILE_NAME,
+    TABLESPACE_NAME,
+    ROUND(BYTES / 1024 / 1024, 2) AS SIZE_MB,
+    AUTOEXTENSIBLE,
+    ROUND(MAXBYTES / 1024 / 1024, 2) AS MAX_SIZE_MB
+FROM DBA_DATA_FILES
+ORDER BY SIZE_MB DESC;
 ````
