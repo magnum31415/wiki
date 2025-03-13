@@ -21,6 +21,21 @@ alter session set container=PDBNAME;
 ALTER TABLESPACE users_non_enc ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
 ````
 
+**Oracle Wallet Status**
+````sql
+col WRL_PARAMETER format a40
+SELECT * FROM v$encryption_wallet;
+````
+
+**List Encryption Keys**
+````sql
+col tag format a20
+col KEY_ID format a52
+col ACTIVATION_TIME format a22
+col CREATION_TIME format a22
+SELECT key_id, tag, creation_time, activation_time, key_use, keystore_type, backed_up FROM v$encryption_keys ORDER BY creation_time;
+````
+
 # DataGuard
 
 **Query database cuurent Role**
@@ -86,4 +101,22 @@ SELECT
     ROUND(MAXBYTES / 1024 / 1024, 2) AS MAX_SIZE_MB
 FROM DBA_DATA_FILES
 ORDER BY SIZE_MB DESC;
+````
+
+**Tables in a tablespace**
+````sql
+SET LINESIZE 200
+col TABLESPACE_NAME format a20
+col TABLE_NAME format a20
+col OWNER format a20
+
+SELECT 
+    OWNER, 
+    TABLE_NAME, 
+    TABLESPACE_NAME, 
+    NUM_ROWS 
+FROM DBA_TABLES 
+WHERE TABLESPACE_NAME = '&tablespace_name'
+ORDER BY NUM_ROWS DESC;
+
 ````
