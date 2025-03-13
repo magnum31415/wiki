@@ -4,6 +4,7 @@
 - [Oracle DataGuard SwitchOver](https://github.com/magnum31415/wiki/blob/main/oracle-dg-switchover.md)
 - [Oracle Install](https://github.com/magnum31415/wiki/blob/main/oracle-install.md)
 - [Oracle TDE](https://github.com/magnum31415/wiki/blob/main/oracle-tde.md)
+- [Oracle Queries](https://github.com/magnum31415/wiki/blob/main/oracle-queries.md) 
 
 ## ✅Improve user exprience with sqlplus
 
