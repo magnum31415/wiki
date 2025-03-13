@@ -1,6 +1,38 @@
+# PDBs
+
+**Show PBDs**
+````sql
+show pdbs
+````
+
+**Show connected pdb**
+````sql
+show con_name
+````
+
+**Connect to a specific pdb**
+````sql
+alter session set container=PDBNAME;
+````
+# DataGuard
+
+**Query database cuurent Role**
+````sql
+set linesize 200
+col DB_UNIQUE_NAME format a10
+SELECT 
+    DATABASE_ROLE,
+    DB_UNIQUE_NAME,
+    OPEN_MODE,
+    PROTECTION_MODE,
+    PROTECTION_LEVEL,
+    SWITCHOVER_STATUS
+FROM v$database;
+````
+
 # Tablespaces
 
-## Total, Free, Used space in tablespaces
+**Total, Free, Used space in tablespaces**
 
 ````sql
 SET LINESIZE 200
