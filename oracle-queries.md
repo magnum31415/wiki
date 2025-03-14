@@ -67,8 +67,27 @@ SELECT
     PROTECTION_LEVEL,
     SWITCHOVER_STATUS
 FROM v$database;
+````
 
+## Redo Apply
 
+✅**Check Redo Apply**
+````sql
+SELECT PROCESS, STATUS, THREAD#, SEQUENCE# 
+FROM V$MANAGED_STANDBY
+WHERE PROCESS IN ('MRP0', 'RFS', 'LNS');
+````
+-Si el **MRP0 (Managed Recovery Process)** no aparece o su estado es WAITING FOR GAP o STOPPED, el Redo Apply está detenido.
+
+-Si está en estado **APPLYING_LOG**, el Redo Apply está en ejecución.
+
+✅**Stop Redo Apply**
+````sql
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+````
+✅**Start Redo Apply**
+````sql
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
 ````
 
 # 📌 Tablespaces
