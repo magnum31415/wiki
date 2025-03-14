@@ -19,7 +19,9 @@ show con_name
 ````sql
 alter session set container=PDBNAME;
 ````
-# 📌 Transparent Data Encryption
+# 📌 Transparent Data Encryption (TDE)
+
+
 
 ✅**Tablespace online encryption**
 ````sql
@@ -41,6 +43,16 @@ col ACTIVATION_TIME format a22
 col CREATION_TIME format a22
 SELECT key_id, tag, creation_time, activation_time, key_use, keystore_type, backed_up FROM v$encryption_keys ORDER BY creation_time;
 ````
+
+✅**Open Oracle Wallet**
+````sql
+ADMINISTER KEY MANAGEMENT SET KEYSTORE OPEN IDENTIFIED BY "<wallet_password>" CONTAINER=ALL;
+````
+✅**Close Oracle Wallet**
+````sql
+ADMINISTER KEY MANAGEMENT SET KEYSTORE CLOSE IDENTIFIED BY "<wallet_password>" CONTAINER=ALL;
+````
+
 
 # 📌 DataGuard
 
@@ -79,7 +91,9 @@ WHERE PROCESS IN ('MRP0', 'RFS', 'LNS');
 ````
 -Si el **MRP0 (Managed Recovery Process)** no aparece o su estado es WAITING FOR GAP o STOPPED, el Redo Apply está detenido.
 
--Si está en estado **APPLYING_LOG**, el Redo Apply está en ejecución.
+-Si **MRP=** está en estado **APPLYING_LOG**, el Redo Apply está en ejecución.
+
+-**RFS (Remote File Server)** Receives redo logs from Primary.
 
 ✅**Stop Redo Apply**
 ````sql
@@ -88,6 +102,19 @@ ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
 ✅**Start Redo Apply**
 ````sql
 ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+````
+
+ ✅**Check Redo Apply Status**
+````sql
+SELECT ARCH.THREAD#, ARCH.SEQUENCE# AS "LAST_RECEIVED", 
+       APPL.SEQUENCE# AS "LAST_APPLIED", 
+       (ARCH.SEQUENCE# - APPL.SEQUENCE#) AS "LAG"
+FROM   (SELECT THREAD#, MAX(SEQUENCE#) SEQUENCE# 
+        FROM V$ARCHIVED_LOG 
+        WHERE APPLIED = 'YES' GROUP BY THREAD#) APPL,
+       (SELECT THREAD#, MAX(SEQUENCE#) SEQUENCE# 
+        FROM V$ARCHIVED_LOG GROUP BY THREAD#) ARCH
+WHERE  ARCH.THREAD# = APPL.THREAD#;
 ````
 
 # 📌 Tablespaces
@@ -157,4 +184,12 @@ FROM DBA_TABLES
 WHERE TABLESPACE_NAME = '&tablespace_name'
 ORDER BY NUM_ROWS DESC;
 
+````
+
+# 📌 Misc querys
+
+✅**Instance startup time**
+````sql
+SELECT INSTANCE_NAME, TO_CHAR(STARTUP_TIME, 'DD-MON-YYYY HH24:MI:SS') AS STARTUP_TIME
+FROM V$INSTANCE;
 ````
