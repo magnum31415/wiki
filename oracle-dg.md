@@ -2,7 +2,7 @@
 
 ![DataGuard](https://github.com/magnum31415/wiki/blob/main/dataguard.png)
 
-## CHECK DATAGUARD 
+## 📌CHECK DATAGUARD 
 ### SQLPLUS
 
 #### Quickly checking current Data Guard status
@@ -58,7 +58,20 @@ Configuration - ctest_dg_config
 SHOW DATABASE 'nombre_base_datos_standby';
 ````
 
-## PRIMARY DATABASE  - Dataguard configuration steps Primary side
+
+###  Key Differences: Switchover vs. Failover
+
+| Feature          | **Switchover**                              | **Failover**                                |
+|-----------------|--------------------------------|--------------------------------|
+| **Purpose**     | Planned maintenance          | Emergency recovery             |
+| **Primary DB**  | Remains accessible after switchover | Considered lost                |
+| **Standby DB**  | Becomes the new Primary      | Becomes the new Primary        |
+| **Data Loss**   | ❌ No                        | ⚠ Possible (depends on redo logs applied) |
+| **Recovery Time** | ⏳ Minutes                  | ⏳ Fast, but requires rebuilding the old Primary |
+| **Use Case**    | Maintenance, patching, DR testing | Primary failure, corruption, disaster |
+
+
+## 📌PRIMARY DATABASE  - Dataguard configuration steps Primary side
 
 **Resumen**
 - Se habilita ARCHIVELOG y FORCE LOGGING en la Primary.
@@ -120,7 +133,7 @@ ALTER DATABASE SET STANDBY DATABASE TO MAXIMUM PERFORMANCE;
 
 
 
-## **📌 Modos de Protección en Data Guard**
+ ** Modos de Protección en Data Guard**
 
 | **Modo**                  | **Escritura en Standby** | **Impacto en Performance** | **Disponibilidad de Primary** | **Pérdida de datos posible** |
 |---------------------------|-------------------------|----------------------------|-------------------------------|------------------------------|
@@ -292,7 +305,8 @@ ALTER SYSTEM SET standby_file_management='AUTO' SCOPE=both;
 - "db_unique_name=digital" especifica que esta configuración pertenece a "digital".
 
 ````sql
-ALTER SYSTEM SET log_archive_dest_1='location=use_db_recovery_file_dest valid_for=(all_logfiles,all_roles) db_unique_name=digital' SCOPE=both;
+ALTER SYSTEM SET log_archive_dest_1='location=use_db_recovery_file_dest valid_for=(all_logfiles,all_roles)
+db_unique_name=digital' SCOPE=both;
 ````
 #### Configurar `log_archive_dest_2` (Destino de logs a la Standby)
 - Define el destino de los redo logs enviados a la Standby.
@@ -302,7 +316,8 @@ ALTER SYSTEM SET log_archive_dest_1='location=use_db_recovery_file_dest valid_fo
 - "db_unique_name=digitaldr" especifica que el destino es la Standby.
 
 ````sql
-ALTER SYSTEM SET log_archive_dest_2='service=digitaldr async valid_for=(online_logfiles,primary_role) db_unique_name=digitaldr' SCOPE=both;
+ALTER SYSTEM SET log_archive_dest_2='service=digitaldr async valid_for=(online_logfiles,primary_role)
+db_unique_name=digitaldr' SCOPE=both;
 ````
 #### Habilitar el destino de replicación LOG_ARCHIVE_DEST_STATE_2
 - Activa el destino log_archive_dest_2 para enviar redo logs a la Standby.
@@ -393,7 +408,7 @@ SHOW PARAMETER audit;
 
 
 
-## STANDBY DATABASE - Configuración de la Base de Datos Standby en Oracle Data Guard
+## 📌STANDBY DATABASE - Configuración de la Base de Datos Standby en Oracle Data Guard
 ### 1.  Create the required directory on the standby side as below:
 ````bash
 mkdir -p /u02/app/oracle/oradata/DIGITALDR/
