@@ -101,3 +101,164 @@ Configuring the Fast Recovery Area (FRA) should be the first step of your Databa
 This is because FRA is the place, where Oracle Recovery Manager (RMAN) saves all the backups of the database and necessary configuration files along with metadata.
 
 Improper configured FRA will cause error, which will lead to database backup failure. And, the backup failure is the nightmare of every DBA’s life.
+
+# ✅Tipos de Backups
+
+## 🚀Offline Backup:
+
+**Base de Datos Apagada**: La base de datos debe estar en estado SHUTDOWN IMMEDIATE, SHUTDOWN TRANSACTIONAL o SHUTDOWN NORMAL.
+**Copia de Archivos Físicos:** Se respaldan los archivos esenciales como:
+- Datafiles (.dbf)
+- Control files (.ctl)
+- Redo log files (.log)
+- Archivos de parámetros (spfile o pfile)
+
+**Consistencia Garantizada:** No se requiere aplicar redo logs o archive logs para restaurar, ya que la base de datos se encuentra en un estado consistente en el momento del backup.
+**Método Manual:** Normalmente se realiza copiando físicamente los archivos con herramientas como cp, tar, rsync en sistemas Unix/Linux o copy en Windows.
+
+### Cómo hacer un Offline/Cold Backup  manual
+1. Apagar la base de datos: ````SHUTDOWN IMMEDIATE;````
+2. Copiar los archivos físicos de la base de datos:
+````bash
+cp -r /u01/oracle/oradata/MYDB /backup/location/
+cp /u01/oracle/controlfile.ctl /backup/location/
+cp /u01/oracle/redo01.log /backup/location/
+````
+3. Encender la base de datos nuevamente: ````STARTUP;````
+
+### Cómo hacer un Offline/Cold Backup con RMAN
+
+MAN (Recovery Manager) permite realizar un Offline Backup (Cold Backup) en Oracle, pero **solo si la base de datos está en estado MOUNT**. 
+Es una alternativa segura y recomendada en entornos donde se puede detener la base de datos.
+
+1️1. Apagar la base de datos y montarla sin abrirla
+````sql
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+````
+2. Realizar el backup con RMAN :
+Opcionalmente, también puedes incluir el control file y spfile:
+
+````sql
+rman target /
+BACKUP DATABASE;
+````
+También puedes incluir el control file y spfile:
+````
+BACKUP DATABASE INCLUDE CURRENT CONTROLFILE SPFILE;
+````
+
+Si deseas comprimir el backup para ahorrar espacio:
+````
+BACKUP AS COMPRESSED BACKUPSET DATABASE INCLUDE CURRENT CONTROLFILE SPFILE;
+````
+
+Verificar backup: ````LIST BACKUP;````
+
+Si quieres especificar una ubicación personalizada, usa:
+````rman
+CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT '/backup/rman_%d_%T_%U.bkp';
+````
+Esto guardará los backups en /backup/ con un nombre único.
+
+3️. Abrir la base de datos nuevamente
+````sql
+ALTER DATABASE OPEN;
+````
+
+📌 Ventajas de usar RMAN para Offline Backup
+- Copia consistente sin necesidad de aplicar redo logs o archive logs.
+- Backup administrado y catalogado en RMAN.
+- Compresión y optimización del tamaño del backup.
+- Automatización posible mediante scripts.
+
+
+   
+
+📌 Ventajas:
+- Copia de seguridad simple y rápida.
+- Restauración fácil y sin riesgo de corrupción.
+- No depende de los archive logs.
+
+📌 Desventajas:
+Tiempo de inactividad: No es viable para bases de datos en producción 24/7.
+No permite backup en caliente: Se requiere apagar la base de datos.
+
+📌 Alternativa:
+Si necesitas respaldos sin interrumpir la base de datos, usa Online Backup con RMAN y modo ARCHIVELOG.
+
+## 🚀Online Backup (Inconsistent Backup):
+
+Un **backup se considera inconsistente** si los datafiles no están sincronizados con los redo logs y control files. Esto ocurre cuando la base de datos estaba en funcionamiento durante el backup.
+
+🔹 ¿Cuándo un backup es inconsistente?
+- La base de datos estaba abierta y en uso durante el backup.
+- Se hizo un Online Backup sin detener la base de datos.
+- Hay transacciones en curso que no fueron confirmadas o descartadas.
+
+
+### Requisitos
+
+#### 1. La base de datos debe estar en Modo ARCHIVELOG
+   
+   Para verificar si está activado:
+````sql
+SELECT LOG_MODE FROM V$DATABASE;
+````
+Si el resultado es NOARCHIVELOG, se debe habilitar:
+````sql
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+ALTER DATABASE ARCHIVELOG;
+ALTER DATABASE OPEN;
+````
+Verifica nuevamente:
+````sql
+ARCHIVE LOG LIST;
+````
+
+#### 2. Configurar la Destinación de Archive Logs en Oracle
+Cuando habilitas ARCHIVELOG mode, Oracle guarda los redo logs archivados en una ubicación específica. 
+Puedes configurar esta ubicación de diferentes maneras según tus necesidades.
+
+Hay varias maneras:
+
+#### 2.1. Configurar una Única Destinación para Archive Logs *LOG_ARCHIVE_DEST_n*
+
+**n** can define up tp10 destinations for saving the archive logs.
+
+It can be:
+- A Local Directory
+- A Network Directory
+- A NAS Location
+- A Service Name
+
+
+🔹opción MANDATORY en LOG_ARCHIVE_DEST_n
+- Si un destino es **MANDATORY**, Oracle no continuará con la operación de la base de datos si no se puede escribir el archivo de archive log en ese destino.
+- Si un destino es opcional (**DEFAULT**), Oracle puede continuar con el procesamiento aunque falle la escritura del archive log en ese destino.
+
+🔹Si deseas almacenar los Archive Logs en una sola ubicación, usa el siguiente comando:
+
+````sql
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_1='LOCATION=/u01/oracle/archivelogs MANDATORY' SCOPE=BOTH;
+SHOW PARAMETER LOG_ARCHIVE_DEST_1;
+````
+
+🔹Si deseas que Oracle guarde los archive logs en dos ubicaciones diferentes (ej. disco local y red):
+
+````sql
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_1='LOCATION=/u01/oracle/archivelogs MANDATORY' SCOPE=BOTH;
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_2='LOCATION=/mnt/backup/archivelogs OPTIONAL' SCOPE=BOTH;
+SELECT DEST_ID, STATUS, DESTINATION FROM V$ARCHIVE_DEST WHERE STATUS='VALID';
+````
+
+🔹Si quieres enviar los archive logs a otro servidor mediante Oracle Data Guard, usa:
+
+````sql
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_2='SERVICE=standby_db' SCOPE=BOTH;
+````
+
+**SERVICE=standby_db** → Indica que los archive logs se enviarán a la base de datos de Standby (Data Guard).
+
+#### 2.2. Co
