@@ -238,6 +238,12 @@ It can be:
 - Si un destino es **MANDATORY**, Oracle no continuará con la operación de la base de datos si no se puede escribir el archivo de archive log en ese destino.
 - Si un destino es opcional (**DEFAULT**), Oracle puede continuar con el procesamiento aunque falle la escritura del archive log en ese destino.
 
+🔹parametro **LOG_ARCHIVE_MIN_SUCCEED_DEST**
+Define el número mínimo de destinos en los que se debe escribir un archive log exitosamente antes de continuar.
+````sql
+ALTER SYSTEM SET LOG_ARCHIVE_MIN_SUCCEED_DEST=1 SCOPE=BOTH;
+````
+
 🔹Si deseas almacenar los Archive Logs en una sola ubicación, usa el siguiente comando:
 
 ````sql
