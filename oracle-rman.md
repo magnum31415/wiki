@@ -218,6 +218,11 @@ ARCHIVE LOG LIST;
 ````
 
 #### 2. Configurar la Destinación de Archive Logs en Oracle
+Oracle permite configurar la ubicación de los Archive Logs de dos maneras:
+
+🔹**Mediante LOG_ARCHIVE_DEST_n** → Define rutas específicas para almacenar los Archive Logs.
+🔹**Mediante DB_RECOVERY_FILE_DEST (Flash Recovery Area - FRA)** → Oracle administra automáticamente el almacenamiento de los Archive Logs y otros archivos de recuperación.
+
 Cuando habilitas ARCHIVELOG mode, Oracle guarda los redo logs archivados en una ubicación específica. 
 Puedes configurar esta ubicación de diferentes maneras según tus necesidades.
 
