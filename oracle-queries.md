@@ -186,10 +186,29 @@ ORDER BY NUM_ROWS DESC;
 
 ````
 
-# 📌 Misc querys
+# 📌 Instance 
 
 ✅**Instance startup time**
 ````sql
 SELECT INSTANCE_NAME, TO_CHAR(STARTUP_TIME, 'DD-MON-YYYY HH24:MI:SS') AS STARTUP_TIME
 FROM V$INSTANCE;
+````
+✅**Database files**
+````sql
+SELECT substr(MEMBER,1,40) AS LOG FROM V$LOGFILE;
+SELECT substr(NAME,1,40) AS DATAFILE FROM V$DATAFILE;
+SELECT substr(NAME,1,40) AS TEMPFILE FROM V$TEMPFILE;
+SELECT substr(NAME,1,40) AS CONTROLFILE FROM V$CONTROLFILE;
+````
+
+
+
+# 📌 ControlFiles
+✅**Control File Location **
+````sql
+SELECT NAME FROM V$CONTROLFILE;
+````
+✅**Control File Backup **
+````sql
+ALTER DATABASE BACKUP CONTROLFILE TO '/ruta/backup_control.ctl';
 ````
