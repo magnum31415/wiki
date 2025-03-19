@@ -207,8 +207,23 @@ SELECT substr(NAME,1,40) AS CONTROLFILE FROM V$CONTROLFILE;
 ✅**Control File Location **
 ````sql
 SELECT NAME FROM V$CONTROLFILE;
+SHOW PARAMETER CONTROL_FILES;
+````
+RMAN
+````
+RMAN> SHOW CONTROLFILE AUTOBACKUP;
+RMAN> SHOW PARAMETER CONTROL_FILE_RECORD_KEEP_TIME;
+RMAN> SHOW PARAMETER DB_RECOVERY_FILE_DEST;
 ````
 ✅**Control File Backup **
 ````sql
 ALTER DATABASE BACKUP CONTROLFILE TO '/ruta/backup_control.ctl';
+````
+✅**RMAN  Control File Backup **
+Si quieres ver en qué backups se ha guardado el Control File, ejecuta en RMAN:
+````rman
+LIST BACKUP OF CONTROLFILE;
+````
+````rman
+LIST BACKUP OF CONTROLFILE;
 ````
