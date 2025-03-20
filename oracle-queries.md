@@ -1,5 +1,5 @@
 # 📌 PDBs
-✅**Setup sqlplus prompt **
+✅**Setup sqlplus prompt**
 ````sql
 SET SQLPROMPT "_USER'@'_CONNECT_IDENTIFIER> "
 ````
@@ -20,7 +20,6 @@ show con_name
 alter session set container=PDBNAME;
 ````
 # 📌 Transparent Data Encryption (TDE)
-
 
 
 ✅**Tablespace online encryption**
@@ -97,17 +96,32 @@ show parameter dg_broker_config_file2
 
 ✅**Data Guard Configuration Parameters (Primary vs Standby)r**
 
-
-
 | **Parameter**            | **Primary**                                                                                 | **Standby**                                                                                 |
 |--------------------------|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
 | **log_archive_config**   | `dg_config=(dbname_1,dbname_1)`                                                           | `dg_config=(dbname_1,dbname_1)`                                                           |
 | **log_archive_dest_1**   | `location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=dbname_1` | `location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=dbname_2` |
-| **log_archive_dest_2**   | `service="dbname_2", ASYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="dbname_2" net_timeout=30, valid_for=(online_logfile,all_roles)` | `` |
+| **log_archive_dest_2**   | `service="dbname_2", ASYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="dbname_2" net_timeout=30, valid_for=(online_logfile,all_roles)` |  |
 | **dg_broker_start**      | `TRUE`                                                                                    | `TRUE`                                                                                    |
 | **dg_broker_config_file1** | `/u01/app/oracle/product/19.21.0.0/dbname/dbs/dr1dbname_1.dat`                          | `/u01/app/oracle/product/19.21.0.0/dbname/dbs/dr1dbname_2.dat`                          |
 | **dg_broker_config_file2** | `/u01/app/oracle/product/19.21.0.0/dbname/dbs/dr2dbname_1.dat`                          | `/u01/app/oracle/product/19.21.0.0/dbname/dbs/dr1dbname_2.dat`                          |
 
+**How to setup**
+````sql
+alter system set log_archive_dest_1='location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=dbname_1';
+alter system set log_archive_dest_2='service="dbname_1"','ASYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="dbname_1" net_timeout=30','valid_for=(online_logfile,all_roles)';
+````
+✅**Create Standby from Primary **
+
+First, start standby in nomount
+````sql
+BASH> sqlplus / as sysdba
+SQL>  startup nomount pfile=/u01/app/oracle/product/19.21.0.0/dbname/dbs/initdbname.ora
+````
+Second, duplicate primary
+````sql
+rman target=sys/SYSPASSWD@dbname_1 auxiliary sys/SYSPASSWD@dbname_2
+RMAN > DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE NOFILENAMECHECK;
+````
 
 ## Redo Apply
 
