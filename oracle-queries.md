@@ -212,6 +212,20 @@ SELECT substr(NAME,1,40) AS CONTROLFILE FROM V$CONTROLFILE;
 ````
 
 # 📌Database
+
+✅**Oracle Database Startup Modes Comparison**
+
+| **Startup Mode**       | **Description**                                     | **What Happens at This Stage?**                                       | **Can Users Connect?**        | **RMAN Backups Possible?** |
+|-----------------------|-------------------------------------------------|------------------------------------------------------------------------|------------------------------|---------------------------|
+| **NOMOUNT**           | Instance started, but database is not mounted.   | - The **instance starts** (SGA allocated, background processes started).<br>- The **control file is NOT read**.<br>- The database files are **not yet accessed**. | **No** (Only SYSDBA/SYSOPER) | **Control File Backup Only** |
+| **MOUNT**             | The database is mounted, but not open.           | - Oracle **reads the control file**.<br>- The **datafiles and redo logs are known**, but not yet accessible.<br>- The database is ready for recovery operations. | **No** (Only SYSDBA)         | **Control File and Archive Log Backup** |
+| **OPEN**              | The database is fully open and available.         | - The database opens and **datafiles are available for read/write**.<br>- Users can perform **queries and transactions**.<br>- Redo logs and undo segments are fully operational. | **Yes** (All users)          | **Full Database Backup** |
+| **MOUNT (RESTRICTED)** | Database mounted but only privileged users can access. | - Same as `MOUNT`, but **only SYSDBA users** can perform maintenance tasks.<br>- Used for maintenance or performing special recovery. | **No** (Only SYSDBA)         | **Control File and Archive Log Backup** |
+| **OPEN (READ ONLY)**  | Database is open but in read-only mode.           | - The database is open, but **no modifications are allowed**.<br>- Used for reporting, backups, or testing. | **Yes (Read-Only Access)**   | **Datafile Backups** |
+| **OPEN (RESTRICTED)** | Database is open, but access is limited.         | - The database is open, but **only privileged users** can connect.<br>- Used for maintenance tasks like upgrading. | **Yes (Only SYSDBA/SYSOPER)** | **Full Database Backup** |
+| **FORCE STARTUP**     | Used to restart a crashed instance.               | - If the instance is running, Oracle first **shuts it down with ABORT**.<br>- Then, it restarts the instance. | **Depends on mode after restart.** | **Depends on mode after restart.** |
+
+
 ✅**Database configuration**
 ````sql
 SELECT name, database_role, open_mode, log_mode, flashback_on FROM v$database;
@@ -219,7 +233,7 @@ SELECT name, database_role, open_mode, log_mode, flashback_on FROM v$database;
 
 
 # 📌 ControlFiles
-✅**Control File Location **
+✅**Control File Location**
 ````sql
 SELECT NAME FROM V$CONTROLFILE;
 SHOW PARAMETER CONTROL_FILES;
@@ -230,11 +244,11 @@ RMAN> SHOW CONTROLFILE AUTOBACKUP;
 RMAN> SHOW PARAMETER CONTROL_FILE_RECORD_KEEP_TIME;
 RMAN> SHOW PARAMETER DB_RECOVERY_FILE_DEST;
 ````
-✅**Control File Backup **
+✅**Control File Backup**
 ````sql
 ALTER DATABASE BACKUP CONTROLFILE TO '/ruta/backup_control.ctl';
 ````
-✅**RMAN  Control File Backup **
+✅**RMAN  Control File Backup**
 Si quieres ver en qué backups se ha guardado el Control File, ejecuta en RMAN:
 ````rman
 LIST BACKUP OF CONTROLFILE;
