@@ -83,6 +83,16 @@ FROM v$database;
 
 ## Redo Apply
 
+✅**List RedoLof Files **
+````sql
+SELECT GROUP#, STATUS, MEMBER FROM V$LOGFILE;
+````
+✅**Estado de los Grupos de Redo Logs **
+````sql
+SELECT GROUP#, SEQUENCE#, BYTES/1024/1024 AS SIZE_MB, MEMBERS, STATUS, ARCHIVED 
+FROM V$LOG;
+````
+
 ✅**Check Redo Apply**
 ````sql
 SELECT PROCESS, STATUS, THREAD#, SEQUENCE# 
@@ -201,6 +211,11 @@ SELECT substr(NAME,1,40) AS TEMPFILE FROM V$TEMPFILE;
 SELECT substr(NAME,1,40) AS CONTROLFILE FROM V$CONTROLFILE;
 ````
 
+# 📌Database
+✅**Database configuration**
+````sql
+SELECT name, database_role, open_mode, log_mode, flashback_on FROM v$database;
+````
 
 
 # 📌 ControlFiles
