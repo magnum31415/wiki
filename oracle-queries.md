@@ -110,7 +110,8 @@ show parameter dg_broker_config_file2
 alter system set log_archive_dest_1='location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=dbname_1';
 alter system set log_archive_dest_2='service="dbname_1"','ASYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="dbname_1" net_timeout=30','valid_for=(online_logfile,all_roles)';
 ````
-✅**Create Standby from Primary **
+
+✅**Create Standby from Primary with RMAN **
 
 First, start standby in nomount
 ````sql
@@ -122,6 +123,23 @@ Second, duplicate primary
 rman target=sys/SYSPASSWD@dbname_1 auxiliary sys/SYSPASSWD@dbname_2
 RMAN > DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE NOFILENAMECHECK;
 ````
+
+✅**Create Dataguard Broker configuration **
+
+# Data Guard Configuration Commands Summary
+
+| **Order** | **Command** | **Action** |
+|---------|------------|-----------|
+| **1** | `CREATE CONFIGURATION dbname_dg_config AS PRIMARY DATABASE IS dbname_1 CONNECT IDENTIFIER IS dbname_1;` | Creates a **Data Guard Configuration** with `dbname_1` as the **Primary Database**. |
+| **2** | `ADD DATABASE dbname_2 AS CONNECT IDENTIFIER IS dbname_2 MAINTAINED AS PHYSICAL;` | Adds `dbname_1` as a **Physical Standby Database**. |
+| **3** | `EXIT;` | Exits **DGMGRL** (Data Guard Manager). |
+| **4** | `SHOW CONFIGURATION;` | Displays the current Data Guard configuration status. |
+| **5** | `SHOW DATABASE dbname_1;` | Displays details about the **Primary Database** (`dbname_1`). |
+| **6** | `SHOW DATABASE dbname_1;` | Displays details about the **Standby Database** (`dbname_2`). |
+| **7** | `ENABLE CONFIGURATION;` | Enables Data Guard Broker monitoring and management. |
+| **8** | `EDIT DATABASE cotde_2 SET STATE='APPLY-ON';` | Starts **Redo Log Apply** on the standby database (`cotde_2`). |
+
+
 
 ## Redo Apply
 
