@@ -363,11 +363,11 @@ SELECT DBID FROM V$DATABASE;
 shutdown immediate;
 startup mount;
 ````
-⚠️**Generate a new dbid. It will stop the instance**
+🔹 ⚠️**Generate a new dbid. It will stop the instance**
 ````bash
 nid TARGET=/
 ````
-🚀**Open database with openreset logs**
+🔹 🚀**Open database with openreset logs**
 ````sql
 alter database open resetlogs;
 ````
@@ -375,6 +375,9 @@ alter database open resetlogs;
 ````bash
 rman target /
 ````
-
+🔹 **Recreate password file**
+````bash
+ /u01/app/oracle/product/19.21.0.0/cdbname/bin/orapwd file=/u01/app/oracle/product/19.21.0.0/cdbname/dbs/orapwcdbname password=SYSPASSWD force=y
+````
 
 
