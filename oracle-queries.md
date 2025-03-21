@@ -354,7 +354,6 @@ sqlplus / as sysdba
 alter database open resetlogs;
 shutdown immadiate
 startup
-SELECT DBID FROM V$DATABASE;
 ````
 🔹 **Fourthly, create a new DBID for the restored database**
 
