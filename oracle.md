@@ -21,13 +21,15 @@ Navigating through command history using the arrow keys.
 * An overall more comfortable experience similar to shells that have native readline support.
 * This is especially useful when SQL*Plus doesn't natively include these features.
 
-## ✅Multithenant CDB & PDB
-* Verificar el contenedor actual: ``SHOW CON_NAME;``
-* Cambiar la sesión al PDB "DB1": ``ALTER SESSION SET CONTAINER = DB1;``
-* Cambiar del PDB actual a la base de datos contenedora (CDB): ``ALTER SESSION SET CONTAINER = CDB$ROOT;``
-* Abrir el PDB "DB1": ``ALTER PLUGGABLE DATABASE DB1 OPEN;``
-* Ver los PDBs disponibles: ``SHOW PDBS;`` o  ``SELECT name, open_mode FROM v$pdbs;``
-* Si deseas cerrar solo un PDB y mantener el CDB activo, conéctate al CDB y ejecuta: ``ALTER PLUGGABLE DATABASE <nombre_del_PDB> CLOSE;``
+
+
+## ✅Oracle error message lookup utility
+- **facility** → The component generating the error (e.g., ORA, TNS, EXP, IMP).
+- **error_number** → The numerical part of the Oracle error code.
+````bash
+oerr <facility> <error_number>
+oerr ora 16698
+````
 
 ## ✅Listener
 
