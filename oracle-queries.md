@@ -122,6 +122,7 @@ alter system set log_archive_dest_2='service="dbname_1"','ASYNC NOAFFIRM delay=0
 
 **Config Datagruard with dataguard Mager**
 ````sql
+dgmgrl sys/SYSPASSWD
 create configuration cdname_dg_config as primary database is cdbname_1 connect identifier is cdbname_1;
 add database cdbname_2 as connect identifier is cdbname_2 maintained as physical;
 enable configuration;
@@ -130,9 +131,11 @@ show configuration;
 
 
 
-✅**Create Dataguard Broker configuration **
+✅**Create Dataguard Broker configuration**
 
 # Data Guard Configuration Commands Summary
+
+From DataGuard Manager command line ````dgmgrl sys/SYSPASSWD````
 
 | **Order** | **Command** | **Action** |
 |---------|------------|-----------|
