@@ -321,7 +321,7 @@ LIST BACKUP OF CONTROLFILE;
    ````rman
    rman target /   
    ````
-## 2. **(Restore Server) Copy original pfile in the restore server in $ORACLE_HOME/dbs/initDBNAME.ora**
+## 2. **(Restore Server) Copy original pfile in  $ORACLE_HOME/dbs/initDBNAME.ora**
    - Delete internal parameters (--)
    - Ajust these parameters (this values are minimun required)
 ````sql
