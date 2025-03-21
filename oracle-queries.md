@@ -335,8 +335,8 @@ LIST BACKUP OF CONTROLFILE;
 🔹 **Firstly, Restore Controlfile**
 ````sql
 rman target / catalog /@rmancat
-startup nomount
-set dbid #############  
+startup nomount;
+set dbid #############;  
 list backup;
 restore controlfile;
 exit
@@ -352,8 +352,8 @@ exit;
 ````sql
 sqlplus / as sysdba
 alter database open resetlogs;
-shutdown immadiate
-startup
+shutdown immadiate;
+startup;
 ````
 🔹 **Fourthly, create a new DBID for the restored database**
 
