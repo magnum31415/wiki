@@ -315,22 +315,23 @@ LIST BACKUP OF CONTROLFILE;
 
 # 📌 Restore Database
 
-## 1. **Get DBID from the Original Database**
-   DBID appears as a heade *"connected to target database: DBNAME (DBID=############)"*
+## 1. **(Original Server) Get DBID from the Original Database**
+   On the original db get the dbid.
+   DBID appears as a header *"connected to target database: DBNAME (**DBID=############**)"*
    ````rman
    rman target /   
    ````
-## 2. **Copy original pfile in the restore server in $ORACLE_HOME/dbs/initDBNAME.ora**
+## 2. **(Restore Server) Copy original pfile in the restore server in $ORACLE_HOME/dbs/initDBNAME.ora**
    - Delete internal parameters (--)
-   - Ajust these parameters at least this values
-````
+   - Ajust these parameters (this values are minimun required)
+````sql
 *.pga_aggregate_limit=2G
 *.pga_aggregate_target=1G
 *.sga_max_size=2G
 *.sga_target=2G
 *.processes=300
 ````
-## 3. **Restore database**
+## 3. **(Restore Server) Restore database**
 🔹 **First, Restore Controlfile**
 ````rman
 rman target / catalog /@rmancat
@@ -356,6 +357,7 @@ startup
 SELECT DBID FROM V$DATABASE;
 ````
 🔹 **Four, create a new DBID for the restored database**
+
 **Get the initial dbid**
 ````sql
 SELECT DBID FROM V$DATABASE;
