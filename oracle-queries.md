@@ -332,8 +332,8 @@ LIST BACKUP OF CONTROLFILE;
 *.processes=300
 ````
 ## 3. **(Restore Server) Restore database**
-🔹 **First, Restore Controlfile**
-````rman
+🔹 **Firstly, Restore Controlfile**
+````sql
 rman target / catalog /@rmancat
 startup nomount
 set dbid #############  
@@ -342,13 +342,13 @@ restore controlfile;
 exit
 ````
 🔹 **Secondly, Restore Controlfile**
-````
+````sql
 rman target /
 restore database;
 recover database;
 exit;
 ````
-🔹 **Third, open database resetlogs and restart db**
+🔹 **Thirdly, open database resetlogs and restart db**
 ````sql
 sqlplus / as sysdba
 alter database open resetlogs;
@@ -356,7 +356,7 @@ shutdown immadiate
 startup
 SELECT DBID FROM V$DATABASE;
 ````
-🔹 **Four, create a new DBID for the restored database**
+🔹 **Fourthly, create a new DBID for the restored database**
 
 **Get the initial dbid**
 ````sql
@@ -367,11 +367,11 @@ SELECT DBID FROM V$DATABASE;
 shutdown immediate;
 startup mount;
 ````
-🔹 ⚠️**Generate a new dbid. It will stop the instance**
+ ⚠️**Generate a new dbid. It will stop the instance**
 ````bash
 nid TARGET=/
 ````
-🔹 🚀**Open database with openreset logs**
+🚀**Open database with openreset logs**
 ````sql
 alter database open resetlogs;
 ````
@@ -379,7 +379,7 @@ alter database open resetlogs;
 ````bash
 rman target /
 ````
-🔹 **Recreate password file**
+🔹 **Fifthly, Recreate password file**
 ````bash
  /u01/app/oracle/product/19.21.0.0/cdbname/bin/orapwd file=/u01/app/oracle/product/19.21.0.0/cdbname/dbs/orapwcdbname password=SYSPASSWD force=y
 ````
