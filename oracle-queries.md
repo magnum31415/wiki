@@ -311,3 +311,70 @@ LIST BACKUP OF CONTROLFILE;
 ````rman
 LIST BACKUP OF CONTROLFILE;
 ````
+
+
+# 📌 Restore Database
+
+## 1. **Get DBID from the Original Database**
+   DBID appears as a heade *"connected to target database: DBNAME (DBID=############)"*
+   ````rman
+   rman target /   
+   ````
+## 2. **Copy original pfile in the restore server in $ORACLE_HOME/dbs/initDBNAME.ora**
+   - Delete internal parameters (--)
+   - Ajust these parameters at least this values
+````
+*.pga_aggregate_limit=2G
+*.pga_aggregate_target=1G
+*.sga_max_size=2G
+*.sga_target=2G
+*.processes=300
+````
+## 3. **Restore database**
+🔹 **First, Restore Controlfile**
+````rman
+rman target / catalog /@rmancat
+startup nomount
+set dbid #############  
+list backup;
+restore controlfile;
+exit
+````
+🔹 **Secondly, Restore Controlfile**
+````rman target
+restore database;
+recover database;
+exit;
+````
+🔹 **Third, open database resetlogs and restart db**
+````sqlplus / as sysdba
+alter database open resetlogs;
+shutdown immadiate
+startup
+SELECT DBID FROM V$DATABASE;
+````
+🔹 **Four, create a new DBID for the restored database**
+**Get the initial dbid**
+````sql
+SELECT DBID FROM V$DATABASE;
+````
+**Stop and start un mount**
+````
+shutdown immediate;
+startup mount;
+````
+⚠️**Generate a new dbid. It will stop the instance**
+````bash
+nid TARGET=/
+````
+🚀**Open database with openreset logs**
+````sql
+alter database open resetlogs;
+````
+**Check new dbid**
+````bash
+rman target /
+````
+
+
+
