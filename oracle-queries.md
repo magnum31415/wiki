@@ -341,13 +341,15 @@ restore controlfile;
 exit
 ````
 🔹 **Secondly, Restore Controlfile**
-````rman target
+````
+rman target /
 restore database;
 recover database;
 exit;
 ````
 🔹 **Third, open database resetlogs and restart db**
-````sqlplus / as sysdba
+````sql
+sqlplus / as sysdba
 alter database open resetlogs;
 shutdown immadiate
 startup
@@ -359,7 +361,7 @@ SELECT DBID FROM V$DATABASE;
 SELECT DBID FROM V$DATABASE;
 ````
 **Stop and start un mount**
-````
+````sql
 shutdown immediate;
 startup mount;
 ````
