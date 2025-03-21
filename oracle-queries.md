@@ -77,6 +77,19 @@ FROM v$database;
 
 ## Parameters
 
+✅**Create Standby from Primary with RMAN**
+
+First, start standby in nomount
+````sql
+BASH> sqlplus / as sysdba
+SQL>  startup nomount pfile=/u01/app/oracle/product/19.21.0.0/dbname/dbs/initdbname.ora
+````
+Second, duplicate primary
+````sql
+rman target=sys/SYSPASSWD@dbname_1 auxiliary sys/SYSPASSWD@dbname_2
+RMAN > DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE NOFILENAMECHECK;
+````
+
 ✅**List DataGuard Parameter**
 ````sql
 show parameter log_archive_config
@@ -89,8 +102,9 @@ show parameter dg_broker_config_file2
 
 
 
-✅**Data Guard Configuration Parameters (Primary vs Standby)r**
+✅**Data Guard Configuration**
 
+🔹 **These parameters must be defined as in the table  (Primary vs Standby)**
 | **Parameter**            | **Primary**                                                                                 | **Standby**                                                                                 |
 |--------------------------|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
 | **log_archive_config**   | `dg_config=(dbname_1,dbname_1)`                                                           | `dg_config=(dbname_1,dbname_1)`                                                           |
@@ -106,18 +120,15 @@ alter system set log_archive_dest_1='location=USE_DB_RECOVERY_FILE_DEST valid_fo
 alter system set log_archive_dest_2='service="dbname_1"','ASYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="dbname_1" net_timeout=30','valid_for=(online_logfile,all_roles)';
 ````
 
-✅**Create Standby from Primary with RMAN **
+**Config Datagruard with dataguard Mager**
+````sql
+create configuration cdname_dg_config as primary database is cdbname_1 connect identifier is cdbname_1;
+add database cdbname_2 as connect identifier is cdbname_2 maintained as physical;
+enable configuration;
+show configuration;
+````
 
-First, start standby in nomount
-````sql
-BASH> sqlplus / as sysdba
-SQL>  startup nomount pfile=/u01/app/oracle/product/19.21.0.0/dbname/dbs/initdbname.ora
-````
-Second, duplicate primary
-````sql
-rman target=sys/SYSPASSWD@dbname_1 auxiliary sys/SYSPASSWD@dbname_2
-RMAN > DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE NOFILENAMECHECK;
-````
+
 
 ✅**Create Dataguard Broker configuration **
 
