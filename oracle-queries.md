@@ -2,12 +2,18 @@
 
 
 - Verificar el contenedor actual: ``SHOW CON_NAME;``
-- Cambiar la sesión al PDB "DB1": ``ALTER SESSION SET CONTAINER = DB1;``
-- Cambiar del PDB actual a la base de datos contenedora (CDB): ``ALTER SESSION SET CONTAINER = CDB$ROOT;``
-- Abrir el PDB "DB1": ``ALTER PLUGGABLE DATABASE DB1 OPEN;``
-- Ver los PDBs disponibles: ``SHOW PDBS;`` o  ``SELECT name, open_mode FROM v$pdbs;``
-- Si deseas cerrar solo un PDB y mantener el CDB activo, conéctate al CDB y ejecuta: ``ALTER PLUGGABLE DATABASE <nombre_del_PDB> CLOSE;``
+- Cambiar la sesión al PDB "DB1": ``ALTER SESSION SET CONTAINER = <nombre_del_PDB>;``
+- Ver los PDBs disponibles:
+``sql
+SHOW PDBS;
+SELECT name, open_mode FROM v$pdbs;
+``
+ 
+- Cerrar solo una PDB y mantener el CDB activo: ``ALTER PLUGGABLE DATABASE <nombre_del_PDB> CLOSE IMMEDIATE;``
+- Abrir una PDB: ``ALTER PLUGGABLE DATABASE TEST OPEN;`
+- Configurar una PDB para que se abrá: ``ALTER PLUGGABLE DATABASE pdb_demo SAVE STATE;``
 
+  
 ✅**Setup sqlplus prompt**
 ````sql
 SET SQLPROMPT "_USER'@'_CONNECT_IDENTIFIER> "
@@ -265,6 +271,19 @@ ORDER BY NUM_ROWS DESC;
 
 ````
 
+````sql
+SELECT 
+    owner,
+    segment_name AS table_name,
+    ROUND(SUM(bytes)/1024/1024, 2) AS size_mb
+FROM dba_segments
+WHERE segment_type = 'TABLE'
+  AND tablespace_name = 'SANDBOX'
+GROUP BY owner, segment_name
+ORDER BY size_mb DESC;
+
+````
+
 # 📌 Instance 
 
 ✅**Instance startup time**
@@ -409,12 +428,19 @@ select * from v$logfile order by griup#;
 ALTER DATABASE ADD LOGFILE MEMBER'/path/xxx/redo01_b.log' TO GROUP 1;
 ````
 
-**forces a log switch in the database**
+**Forces a log switch in the database**
 ````sql
 ALTER DATABASE SWITCH LOGFILE;
 ````
-**forces an immediate checkpoint**
+**Forces an immediate checkpoint**
 
+- Solo se puede ejecutar cuando la base de datos está abierta.
+- Función: Obliga a Oracle a escribir todos los buffers modificados (dirty buffers) en disco y a actualizar la información de checkpoint en el archivo de control, asegurando que la base de datos tenga un punto consistente en disco.
+````sql
+ALTER SYSTEM CHECKPOINT;
+````
+- Uso: Se puede utilizar tanto cuando la base de datos está montada (antes de abrirla) como cuando está abierta.
+- Función: Realiza la misma operación que ALTER SYSTEM CHECKPOINT, forzando la escritura de la memoria caché en los datafiles y actualizando el checkpoint. Esto resulta especialmente útil cuando la base de datos se encuentra en modo MOUNT y aún no está abierta.
 ````sql
 ALTER DATABASE CHECKPOINT;
 ````
