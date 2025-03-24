@@ -397,4 +397,45 @@ rman target /
  /u01/app/oracle/product/19.21.0.0/cdbname/bin/orapwd file=/u01/app/oracle/product/19.21.0.0/cdbname/dbs/orapwcdbname password=SYSPASSWD force=y
 ````
 
+# 📌 Redolog
+**list redologs**
+````sql
+select * from v$log order by group#;
+select * from v$logfile order by griup#;
+````
+
+**Add redolog**
+````sql
+ALTER DATABASE ADD LOGFILE MEMBER'/path/xxx/redo01_b.log' TO GROUP 1;
+````
+
+**forces a log switch in the database**
+````sql
+ALTER DATABASE SWITCH LOGFILE;
+````
+**forces an immediate checkpoint**
+
+````sql
+ALTER DATABASE CHECKPOINT;
+````
+
+# 📌 Archives
+
+**Check if databse is in archivelog mode**
+````sql
+archive log list;
+select log_mode from v$database;
+
+````
+**Set database in archivelog mode**
+During a checkpoint, Oracle writes all dirty buffers (modified data in memory) to the datafiles and updates the checkpoint information in the control file.
+````sql
+alter database archivelog;
+````
+
+**Define FRA to allow online rman backup**
+````sql
+ALTER SYSTEM SET DB_RECOVERY_FILE_DEST_SIZE=10G SPCOPE=BOTH;
+ALTER SYSTEM SET DB_RECOVERY_FILE_DEST = '/db/oradata/fra' SCOPE=BOTH;
+````
 
