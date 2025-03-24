@@ -1,5 +1,11 @@
 # RMAN
 
+# Commandos RMAN
+
+- Show configuraction:  ````show all;````
+- Backup redo archivados y una copia del control file y del SPFILE: ````BACKUP DATABASE PLUS ARCHIVELOG;````
+- Verificar backups existented: ````LIST BACKUP;````
+
 ## ✅Componentes Clave de RMAN
 
 - **Target Database**  Es la base de datos a la que RMAN se conecta y de la cual realiza backups o recuperaciones.
