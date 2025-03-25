@@ -101,7 +101,15 @@ SET SQLPROMPT "_USER'@'_CONNECT_IDENTIFIER> "
 ````sql
 ALTER TABLESPACE <tablespace_name> ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
 ````
-**List encrypted tablespaces**
+
+✅**Tablespace offline encryption**
+````sql
+ALTER DATABASE /* 28300MB */ DATAFILE '/u02/oradata/cdbname/dbname/<tablesapce_name>001.dbf' ENCRYPT;
+````
+
+✅**List tbalespaces**
+
+**Encrypted tablespaces**
 ````sql
 SELECT C.NAME CONTAINER_NAME, TS.NAME TABLESPACE_NAME ,ET.ENCRYPTIONALG ENCRYPTION_ALGORITHM
 FROM V$TABLESPACE TS, V$CONTAINERS C, V$ENCRYPTED_TABLESPACES ET
@@ -109,7 +117,7 @@ WHERE TS.CON_ID=C.CON_ID
 AND TS.CON_ID=ET.CON_ID
 AND TS.TS#=ET.TS#;
 ````
-**List unencrypted tablespaces**
+**Unencrypted tablespaces**
 ````sql
 col CONTAINER_NAME format a25;
 col TABLESPACE_NAME format a25;
