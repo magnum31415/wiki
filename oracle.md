@@ -21,7 +21,12 @@ Navigating through command history using the arrow keys.
 * An overall more comfortable experience similar to shells that have native readline support.
 * This is especially useful when SQL*Plus doesn't natively include these features.
 
+## ✅display the elapsed time for each command executed
 
+````sql
+SET TIMING ON
+SET TIMING OFF
+````
 
 ## ✅Oracle error message lookup utility
 - **facility** → The component generating the error (e.g., ORA, TNS, EXP, IMP).
