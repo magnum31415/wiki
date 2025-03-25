@@ -22,15 +22,105 @@ SET SQLPROMPT "_USER'@'_CONNECT_IDENTIFIER> "
 
 # 📌 Transparent Data Encryption (TDE)
 
+✅**Procedure to enable TDE**
+
+1. **Create a spfile backup**
+   
+   ````sql
+   CREATE PFILE='${ORACLE_HOME}/dbs/initSID_YYYYMMDD_HHMM.ora' FROM SPFILE;
+   ````
+2. **Define defaults: encryption for new tablespaces encryption algorithm**
+   
+   ````sql
+   ALTER SYSTEM SET ENCRYPT_NEW_TABLESPACES = 'ALWAYS' SCOPE = SPFILE SID = '*';
+   ALTER SYSTEM SET "_tablespace_encryption_default_algorithm" = AES256 SCOPE=SPFILE SID='*';
+    ````
+3. **Set wallet_root**
+   
+    ````sql
+    ALTER SYSTEM SET wallet_root='/u01/app/oracle/wallet' SCOPE=SPFILE;
+    !mkdir -p /u01/app/oracle/wallet/tde
+    ````
+4. **Restart Database**
+
+    ````sql
+    SHUTDOWN IMMEDIATE;
+    STARTUP;
+    ````
+    
+5. **Check parameters**
+   
+    ````sql
+    SHOW PARAMETER wallet_root;
+    SHOW PARAMETER ENCRYPT_NEW_TABLESPACES;
+    SHOW PARAMETER tablespace_encryption_default_algorithm;
+    ````
+7. **Set set TDE_CONFIGURATION to FILE (to use OracleWallet)**
+   
+    ````sql
+    ALTER SYSTEM SET tde_configuration='KEYSTORE_CONFIGURATION=FILE' SCOPE=BOTH;
+    SHOW PARAMETER tde_configuration;
+    ````
+   
+9. **Create keystore (oracle wallet)**
+
+    ````sql
+    ALTER SESSION SET CONTAINER = CDB$ROOT;
+    ADMINISTER KEY MANAGEMENT 
+    CREATE KEYSTORE 
+    '/u01/app/oracle/wallet/tde' 
+    IDENTIFIED BY "<wallet_password>";
+    ````
+10. **Open keystore on all containers**
+
+    ````sql
+    ADMINISTER KEY MANAGEMENT 
+    SET KEYSTORE OPEN 
+    IDENTIFIED BY "<wallet_password>"
+    CONTAINER=ALL;
+    ````
+11. **Create new Master Encryption Key on all CONTAINERS**
+    ````sql
+    ADMINISTER KEY MANAGEMENT 
+    SET KEY 
+    USING TAG "INITIAL_MASTER_KEY" 
+    IDENTIFIED BY "<wallet_password>" 
+    WITH BACKUP USING "INITIAL-MEK"
+    CONTAINER=ALL;
+    ````
+11. **Create auto-login Keystore**
+
+    ````sql
+    ADMINISTER KEY MANAGEMENT 
+    CREATE AUTO_LOGIN KEYSTORE 
+    FROM KEYSTORE '/u01/app/oracle/wallet/tde' 
+    IDENTIFIED BY "<wallet_password>";
+    ````
 
 ✅**Tablespace online encryption**
 ````sql
 ALTER TABLESPACE <tablespace_name> ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
 ````
-Check
+**List encrypted tablespaces**
 ````sql
-SELECT tablespace_name,encrypted from dba_tablespaces;
+SELECT C.NAME CONTAINER_NAME, TS.NAME TABLESPACE_NAME ,ET.ENCRYPTIONALG ENCRYPTION_ALGORITHM
+FROM V$TABLESPACE TS, V$CONTAINERS C, V$ENCRYPTED_TABLESPACES ET
+WHERE TS.CON_ID=C.CON_ID
+AND TS.CON_ID=ET.CON_ID
+AND TS.TS#=ET.TS#;
 ````
+**List unencrypted tablespaces**
+````sql
+col CONTAINER_NAME format a25;
+col TABLESPACE_NAME format a25;
+SELECT C.NAME CONTAINER_NAME, TS.NAME TABLESPACE_NAME
+FROM V$CONTAINERS C, V$TABLESPACE TS
+WHERE C.NAME!='PDB$SEED'
+AND C.CON_ID=TS.CON_ID
+AND TS.CON_ID||':'||TS.TS# NOT IN (SELECT TSE.CON_ID||':'||TSE.TS# FROM V$ENCRYPTED_TABLESPACES TSE)
+ORDER BY 1,2;
+````
+
 ✅**Oracle Wallet Status**
 ````sql
 col WRL_PARAMETER format a40
@@ -203,6 +293,14 @@ FROM   (SELECT THREAD#, MAX(SEQUENCE#) SEQUENCE#
        (SELECT THREAD#, MAX(SEQUENCE#) SEQUENCE# 
         FROM V$ARCHIVED_LOG GROUP BY THREAD#) ARCH
 WHERE  ARCH.THREAD# = APPL.THREAD#;
+````
+✅**Restart managed recovery**
+In Data Guard Broker (DGMGRL), you can restart managed recovery to apply a redo gap by toggling the apply state. 
+
+````sql
+Copiar
+DGMGRL> EDIT DATABASE <standby_instance_name> SET STATE=APPLY-OFF;
+DGMGRL> EDIT DATABASE <standby_instance_name> SET STATE=APPLY-ON;
 ````
 
 # 📌 Tablespaces
