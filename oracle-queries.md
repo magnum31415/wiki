@@ -25,9 +25,12 @@ SET SQLPROMPT "_USER'@'_CONNECT_IDENTIFIER> "
 
 ✅**Tablespace online encryption**
 ````sql
-ALTER TABLESPACE users_non_enc ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
+ALTER TABLESPACE <tablespace_name> ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
 ````
-
+Check
+````sql
+SELECT tablespace_name,encrypted from dba_tablespaces;
+````
 ✅**Oracle Wallet Status**
 ````sql
 col WRL_PARAMETER format a40
