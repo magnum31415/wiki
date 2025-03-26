@@ -157,7 +157,7 @@ ADMINISTER KEY MANAGEMENT SET KEYSTORE CLOSE IDENTIFIED BY "<wallet_password>" C
 
 # 📌 DataGuard
 
-✅**Query database cuurent Role**
+✅**Query database current Role**
 ````sql
 SET LINESIZE 200
 COL DB_UNIQUE_NAME FORMAT A15
@@ -309,6 +309,12 @@ In Data Guard Broker (DGMGRL), you can restart managed recovery to apply a redo 
 Copiar
 DGMGRL> EDIT DATABASE <standby_instance_name> SET STATE=APPLY-OFF;
 DGMGRL> EDIT DATABASE <standby_instance_name> SET STATE=APPLY-ON;
+````
+
+Equivalent commands but is better to  maintain configuration integrity.
+````sql
+DGMGRL> EDIT DATABASE <standby> SET STATE=APPLY-OFF;
+SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
 ````
 
 # 📌 Tablespaces
