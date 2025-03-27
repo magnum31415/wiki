@@ -157,7 +157,7 @@ Note: LOCAL enables you to create a local auto-login software keystore. Otherwis
 ````sql
 ALTER TABLESPACE users_2_non_enc ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
 ````
-check status of tablespace encryption
+Monitor the progress of tablespace encryption
 
 ````sql
 Verify 
