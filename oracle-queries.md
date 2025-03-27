@@ -107,6 +107,23 @@ ALTER TABLESPACE <tablespace_name> ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
 ALTER DATABASE /* 28300MB */ DATAFILE '/u02/oradata/cdbname/dbname/<tablesapce_name>001.dbf' ENCRYPT;
 ````
 
+✅**To monitor the progress of tablespace encryption**
+````sql
+SELECT sid,
+       serial#,
+       sofar,
+       totalwork,
+       ROUND((sofar / totalwork) * 100, 2) AS pct_complete,
+       elapsed_seconds,
+       time_remaining,
+       opname,
+       message
+  FROM v$session_longops
+ WHERE opname LIKE '%Encrypt%'
+   AND sofar <> totalwork
+ ORDER BY start_time DESC;
+
+````
 ✅**List tbalespaces**
 
 **Encrypted tablespaces**
