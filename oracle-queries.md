@@ -4,14 +4,14 @@
 - Verificar el contenedor actual: ``SHOW CON_NAME;``
 - Cambiar la sesión al PDB "DB1": ``ALTER SESSION SET CONTAINER = <nombre_del_PDB>;``
 - Ver los PDBs disponibles:
-``sql
+````sql
 SHOW PDBS;
 SELECT name, open_mode FROM v$pdbs;
-``
+````
  
 - Cerrar solo una PDB y mantener el CDB activo: ``ALTER PLUGGABLE DATABASE <nombre_del_PDB> CLOSE IMMEDIATE;``
-- Abrir una PDB: ``ALTER PLUGGABLE DATABASE TEST OPEN;`
-- Configurar una PDB para que se abrá: ``ALTER PLUGGABLE DATABASE pdb_demo SAVE STATE;``
+- Abrir una PDB: ``ALTER PLUGGABLE DATABASE <nombre_del_PDB> OPEN`READ WRITE;`
+- Configurar una PDB para que se abrá: ``ALTER PLUGGABLE DATABASE <nombre_del_PDB> SAVE STATE;``
 
   
 ✅**Setup sqlplus prompt**
