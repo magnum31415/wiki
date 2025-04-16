@@ -335,6 +335,16 @@ SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
 ````
 
 # 📌 Tablespaces
+✅**Objects in a tablespace**
+````sql
+SELECT
+ DISTINCT OWNER, TABLESPACE_NAME
+FROM
+ DBA_SEGMENTS
+WHERE
+ TABLESPACE_NAME = 'NAME_TABLESPACE_TO_SEARCH'
+ORDER BY OWNER;
+````
 
 ✅**Total, Free, Used space in tablespaces**
 
