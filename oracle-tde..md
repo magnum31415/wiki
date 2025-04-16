@@ -164,6 +164,14 @@ Verify
 SELECT sid, serial#, sofar, totalwork, ROUND( (sofar / totalwork) * 100, 2 ) AS pct_complete, elapsed_seconds, time_remaining, opname, message FROM v$session_longops WHERE opname LIKE '%Encrypt%' AND sofar <> totalwork ORDER BY start_time DESC;
 ````
 
+Tablespaces and temporary encryption (master key ID for temporary tablespaces can be seen in the system tablespace data):
+````sql
+set linesize 150
+column name format a40
+column masterkeyid_base64 format a60
+select name,utl_raw.cast_to_varchar2( utl_encode.base64_encode('01'||substr(mkeyid,1,4))) || utl_raw.cast_to_varchar2( utl_encode.base64_encode(substr(mkeyid,5,length(mkeyid)))) masterkeyid_base64 FROM (select t.name, RAWTOHEX(x.mkid) mkeyid from v$tablespace t, x$kcbtek x where t.ts#=x.ts#);
+````
+
 # ✅ Procedure for Master Encryption Key Rotation (Rekeying)
 In Oracle TDE, performing a rekey operation does not physically remove or delete the old master encryption key (MEK) from the keystore. Instead, the rekey operation creates a new master key and then re-wraps (re-encrypts) the existing data encryption keys (DEKs) with this new MEK. The old MEK remains in the keystore as a historical record or backup but is no longer used for encrypting new data. This behavior is by design for audit, compliance, and recovery purposes. In a united mode environment, the rekey operation is performed at the CDB level (with CONTAINER=ALL), ensuring that all PDBs start using the new master key, while the old keys are preserved in the keystore.
 Tablespace Data Encryption Key should be encrypted with the new Master Encrytion Key. 
