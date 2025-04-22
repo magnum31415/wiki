@@ -426,7 +426,44 @@ ORDER BY size_mb DESC;
 
 ````
 
+
+
+
+
+
 # 📌 Instance 
+✅**Active sessions**
+````sql
+COL SID        FOR 99999
+COL SERIAL#    FOR 99999
+COL USERNAME   FOR A25
+COL STATUS     FOR A10
+COL OSUSER     FOR A25
+COL PROGRAM    FOR A25
+COL MACHINE    FOR A25
+COL MODULE     FOR A25
+COL ACTION     FOR A25
+COL EVENT      FOR A25
+COL SQL_ID     FOR A15
+
+SELECT 
+    s.sid,
+    s.serial#,
+    s.username,
+    s.status,
+    s.osuser,
+    s.program,
+    s.machine,
+    s.module,
+    s.action,
+    s.event,
+    s.sql_id
+FROM 
+    v$session s
+WHERE 
+    s.status = 'ACTIVE'
+  AND s.username IS NOT NULL;
+````
 
 ✅**Instance startup time**
 ````sql
