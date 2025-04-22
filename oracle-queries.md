@@ -335,6 +335,11 @@ SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
 ````
 
 # 📌 Tablespaces
+
+✅**Drop tablespace including contents and datafiles**
+````sql
+DROP TABLESPACE TABLESPACE_NAME INCLUDING CONTENTS AND DATAFILES;
+````
 ✅**Objects in a tablespace**
 ````sql
 SELECT
