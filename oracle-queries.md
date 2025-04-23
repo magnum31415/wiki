@@ -1,4 +1,18 @@
-# 📌 Multithenant CDB & PDB
+# Índice
+
+
+- [Multithenant](#multithenant)
+- [Transparent Data Encryption TDE](#transparent-data-encryption-tde)
+- [DataGuard](#dataguard)
+- [Tablespaces](#tablespaces)
+- [Instance](#instance)
+- [Database](#database)
+- [ControlFiles](#controlfiles)
+- [Restore Database](#restore-database)
+- [Redolog](#redolog)
+- [Archives](#archives)
+  
+# Multithenant
 
 
 - Verificar el contenedor actual: ``SHOW CON_NAME;``
@@ -20,7 +34,7 @@ SET SQLPROMPT "_USER'@'_CONNECT_IDENTIFIER> "
 ````
 
 
-# 📌 Transparent Data Encryption (TDE)
+# Transparent Data Encryption TDE
 
 ✅**Procedure to enable TDE**
 
@@ -172,7 +186,7 @@ ADMINISTER KEY MANAGEMENT SET KEYSTORE CLOSE IDENTIFIED BY "<wallet_password>" C
 ````
 
 
-# 📌 DataGuard
+# DataGuard
 
 ✅**Query database current Role**
 ````sql
@@ -334,7 +348,7 @@ DGMGRL> EDIT DATABASE <standby> SET STATE=APPLY-OFF;
 SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
 ````
 
-# 📌 Tablespaces
+# Tablespaces
 
 ✅**Drop tablespace including contents and datafiles**
 ````sql
@@ -436,7 +450,7 @@ ORDER BY size_mb DESC;
 
 
 
-# 📌 Instance 
+# Instance 
 ✅**Active sessions**
 ````sql
 COL SID        FOR 99999
@@ -483,7 +497,7 @@ SELECT substr(NAME,1,40) AS TEMPFILE FROM V$TEMPFILE;
 SELECT substr(NAME,1,40) AS CONTROLFILE FROM V$CONTROLFILE;
 ````
 
-# 📌Database
+# Database
 
 ✅**Oracle Database Startup Modes Comparison**
 
@@ -504,7 +518,7 @@ SELECT name, database_role, open_mode, log_mode, flashback_on FROM v$database;
 ````
 
 
-# 📌 ControlFiles
+# ControlFiles
 ✅**Control File Location**
 ````sql
 SELECT NAME FROM V$CONTROLFILE;
@@ -530,7 +544,7 @@ LIST BACKUP OF CONTROLFILE;
 ````
 
 
-# 📌 Restore Database
+# Restore Database
 
 ## 1. **(Original Server) Get DBID from the Original Database**
    On the original db get the dbid.
@@ -600,7 +614,7 @@ rman target /
  /u01/app/oracle/product/19.21.0.0/cdbname/bin/orapwd file=/u01/app/oracle/product/19.21.0.0/cdbname/dbs/orapwcdbname password=SYSPASSWD force=y
 ````
 
-# 📌 Redolog
+# Redolog
 **list redologs**
 ````sql
 select * from v$log order by group#;
@@ -629,7 +643,7 @@ ALTER SYSTEM CHECKPOINT;
 ALTER DATABASE CHECKPOINT;
 ````
 
-# 📌 Archives
+# Archives
 
 **Check if databse is in archivelog mode**
 ````sql
