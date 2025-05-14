@@ -1,6 +1,6 @@
 # Índice
 
-
+- [Users](#users)
 - [Multithenant](#multithenant)
 - [Transparent Data Encryption TDE](#transparent-data-encryption-tde)
 - [DataGuard](#dataguard)
@@ -11,7 +11,24 @@
 - [Restore Database](#restore-database)
 - [Redolog](#redolog)
 - [Archives](#archives)
-  
+
+# Users
+
+✅**Create user from DBMS_METADATA**
+
+Get existing user details with DBMS_METADATA
+````sql
+SET LONG 1000000
+SET LONGCHUNKSIZE 1000000
+SET LINESIZE 32767
+SET PAGESIZE 0
+SELECT DBMS_METADATA.GET_DDL('USER','NAGIOS') FROM DUAL;
+SELECT DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','NAGIOS') FROM DUAL;
+SELECT DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT','NAGIOS') FROM DUAL;
+SELECT DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT','NAGIOS') FROM DUAL;
+
+````
+
 # Multithenant
 
 
@@ -349,6 +366,20 @@ SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
 ````
 
 # Tablespaces
+
+✅**Space occupied per schema in each tablespace**
+````sql
+SELECT 
+    OWNER AS ESQUEMA,
+    TABLESPACE_NAME,
+    ROUND(SUM(BYTES) / 1024 / 1024, 2) AS TAMANO_MB
+FROM 
+    DBA_SEGMENTS
+GROUP BY 
+    OWNER, TABLESPACE_NAME
+ORDER BY 
+    TAMANO_MB DESC;
+````
 
 ✅**Drop tablespace including contents and datafiles**
 ````sql
