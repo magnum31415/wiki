@@ -22,10 +22,23 @@ SET LONG 1000000
 SET LONGCHUNKSIZE 1000000
 SET LINESIZE 32767
 SET PAGESIZE 0
+
+-- Retrieves the DDL statement to create the user 'NAGIOS'
 SELECT DBMS_METADATA.GET_DDL('USER','NAGIOS') FROM DUAL;
+
+-- Retrieves the DDL for system-level privileges granted to the user 'NAGIOS'
 SELECT DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT','NAGIOS') FROM DUAL;
+
+-- Retrieves the DDL for roles granted to the user 'NAGIOS'
 SELECT DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT','NAGIOS') FROM DUAL;
+
+-- Retrieves the DDL for object-level privileges granted to the user 'NAGIOS'
 SELECT DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT','NAGIOS') FROM DUAL;
+
+-- Retrieves the DDL statement to create the profile named 'PROFILENAMECOMPANY'
+SELECT DBMS_METADATA.GET_DDL('PROFILE', 'PROFILENAMECOMPANY') FROM DUAL;
+
+
 
 ````
 
