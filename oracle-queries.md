@@ -13,6 +13,37 @@
 - [Redolog](#redolog)
 - [Archives](#archives)
 
+  
+# Views
+
+El código fuente de cada vista.
+
+````sql
+SET LONG 10000
+SET PAGESIZE 0
+col view_name format a15
+col text format a50
+SELECT view_name, text
+FROM dba_views
+WHERE owner = 'DWH_READ' AND view_name IN ('V_ACINVORD', 'V_ACINVORDL', 'V_ACINVORD_T', 'V_ACINVORDL_T');
+````
+
+Los errores de compilación exactos: por ejemplo, si falta una tabla o columna
+
+````sql
+SET LONG 10000
+SET PAGESIZE 0
+col view_name format a15
+col text format a50
+col owner format a15
+col name format a15
+SELECT owner, name, type, line, position, text
+FROM dba_errors
+WHERE owner = 'DWH_READ'
+  AND name IN ('V_ACINVORD', 'V_ACINVORDL', 'V_ACINVORD_T', 'V_ACINVORDL_T')
+ORDER BY name, line;
+
+````
 # Roles
 En Oracle, los roles no pertenecen a un esquema específico como los objetos (tablas, paquetes, etc.). Son objetos a nivel de base de datos y están definidos globalmente en el diccionario de datos.
 ✅**Privs assigned to the role**
