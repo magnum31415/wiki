@@ -1,5 +1,6 @@
 # Índice
 
+- [Roles](#roles)
 - [Users](#users)
 - [Multithenant](#multithenant)
 - [Transparent Data Encryption TDE](#transparent-data-encryption-tde)
@@ -11,6 +12,20 @@
 - [Restore Database](#restore-database)
 - [Redolog](#redolog)
 - [Archives](#archives)
+
+# Roles
+En Oracle, los roles no pertenecen a un esquema específico como los objetos (tablas, paquetes, etc.). Son objetos a nivel de base de datos y están definidos globalmente en el diccionario de datos.
+✅**Privs assigned to the role**
+````sql
+SELECT * FROM DBA_TAB_PRIVS WHERE GRANTEE = 'READ_ONLY_SMB_ADMIN';
+SELECT * FROM DBA_SYS_PRIVS WHERE GRANTEE = 'READ_ONLY_SMB_ADMIN';
+SELECT * FROM DBA_ROLE_PRIVS WHERE GRANTEE = 'READ_ONLY_SMB_ADMIN';
+````
+
+✅**Who has created the role**
+````sql
+SELECT * FROM DBA_ROLE_PRIVS WHERE GRANTED_ROLE = 'READ_ONLY_SMB_ADMIN';
+````
 
 # Users
 
