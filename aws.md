@@ -73,6 +73,32 @@ region = us-east-1
 ````
 Estas son credenciales de largo plazo. Asegúrate de protegerlas y preferiblemente usar perfiles.
 
+**Validar acceso desde awscli a Amazon**
+
+````bash
+aws sts get-caller-identity
+````
+
+Este comando llama al servicio AWS STS (Security Token Service) y te devuelve información sobre quién eres dentro de la cuenta de AWS.
+
+🧾 Resultado típico:
+````json
+{
+  "UserId": "AIDAEXAMPLEUSERID",
+  "Account": "123456789012",
+  "Arn": "arn:aws:iam::123456789012:user/mi-usuario"
+}
+````
+
+📌 ¿Qué te indica?
+
+- UserId: El identificador interno del usuario o rol que estás usando.
+- Account: El ID de la cuenta de AWS a la que estás conectado.
+- Arn: El nombre completo del usuario o rol que estás utilizando.
+  - Si es un usuario IAM: arn:aws:iam::123456789012:user/mi-usuario
+  - Si estás usando un rol asumido (como con SSO): arn:aws:sts::123456789012:assumed-role/rol/nombre-de-sesion
+
+
 
 ## 🧩 Install Session Manager Plugin
 
