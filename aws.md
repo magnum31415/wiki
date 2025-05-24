@@ -210,4 +210,99 @@ Ahora, cada vez que entres a ese directorio y uses terraform, tfenv activará au
 - Para integraciones con CI/CD, donde quieres controlar exactamente qué versión de Terraform se usa.
 - Compatible con muchos editores y herramientas que detectan .terraform-version.
 
+## 🧩 terraform
 
+Execution
+````bash
+rm .terraform-version
+tfenv install 1.12.1
+tfenv use 1.12.1
+tfenv pin  # Opcional: fija la versión en el proyecto
+terraform init
+terraform plan
+terraform apply
+terraform destroy
+````
+
+### Sample Terragorm to launch ec2 instance 
+
+**variables.tf**
+````tf
+variable "region" {
+  description = "AWS region to deploy resources"
+  type        = string
+  default     = "eu-west-1"
+}
+
+variable "ami" {
+  description = "AMI ID for the EC2 instance"
+  type        = string
+}
+
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+}
+````
+
+**terraform.tfvars**
+````tf
+region                 = "eu-west-1"
+ami                    = "ami-03d8b47244d950bbb" # Amazon Linux 2023 en eu-west-1
+instance_type          = "t2.micro"
+````
+
+**main.tf**
+````tf
+provider "aws" {
+  region = var.region
+}
+
+resource "aws_iam_role" "ec2_ssm_role" {
+  name = "ec2-ssm-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_attach" {
+  role       = aws_iam_role.ec2_ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_instance" "free_tier_ec2" {
+  ami                    = var.ami # Amazon Linux 2023 en eu-west-1
+  instance_type          = var.instance_type
+  iam_instance_profile   = aws_iam_instance_profile.ec2_ssm_profile.name
+
+  tags = {
+    Name = "SSM-EC2"
+  }
+}
+
+resource "aws_iam_instance_profile" "ec2_ssm_profile" {
+  name = "ec2-ssm-profile"
+  role = aws_iam_role.ec2_ssm_role.name
+}
+````
+
+
+**Conectarme a la instancia usando AWS CLI + Session Manager (SSM)**
+
+— sin usar SSH ni abrir el puerto 22.
+````bash 
+#Verificar que la instancia es “SSM managed”
+aws ssm describe-instance-information
+
+#Conectarse con
+aws ssm start-session --target i-01ad1b9e95ad1a390
+````
