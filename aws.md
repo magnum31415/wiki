@@ -155,13 +155,13 @@ tfenv list-remote
 **Instalar una versión específica de Terraform:**
 
 ````bash
-tfenv install 1.6.6
+tfenv install 1.8.2
 ````
 
 **Establecer versión global por defecto:**
 
 ````bash
-tfenv use 1.6.6
+tfenv use 1.8.2
 ````
 Esto crea un archivo .terraform-version en el directorio, que Terraform leerá automáticamente.
 
