@@ -5,7 +5,8 @@
 - [Oracle Install](https://github.com/magnum31415/wiki/blob/main/oracle-install.md)
 - [Oracle TDE](https://github.com/magnum31415/wiki/blob/main/oracle-tde.md)
 - [Oracle Queries](https://github.com/magnum31415/wiki/blob/main/oracle-queries.md)
-- [Oracle RMAN](https://github.com/magnum31415/wiki/blob/main/oracle-rman.md) 
+- [Oracle RMAN](https://github.com/magnum31415/wiki/blob/main/oracle-rman.md)
+- [Oracle RMAN RESTORE](https://github.com/magnum31415/wiki/blob/main/oracle-RMAN-Restore.md) 
 
 
 ## ✅Improve user exprience with sqlplus
