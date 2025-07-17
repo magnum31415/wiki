@@ -29,6 +29,21 @@ SET TIMING ON
 SET TIMING OFF
 ````
 
+## ✅spool commands and output
+````sql
+-- Configura el entorno para mostrar los comandos
+SET ECHO ON         -- Muestra los comandos ejecutados
+SET FEEDBACK ON     -- Muestra cuántas filas se seleccionaron/afectaron
+SET TERMOUT ON      -- Muestra resultados en pantalla
+SET VERIFY ON       -- Muestra sustituciones si usas variables
+SET TIMING ON       -- (opcional) Muestra tiempo de ejecución
+
+SPOOL /tmp/mi_log.txt
+
+
+SPOOL OFF
+````
+
 ## ✅Oracle error message lookup utility
 - **facility** → The component generating the error (e.g., ORA, TNS, EXP, IMP).
 - **error_number** → The numerical part of the Oracle error code.
