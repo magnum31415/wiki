@@ -112,3 +112,22 @@ az login
   -p <SECRET or CERT> \
   --tenant <TENANT_ID>
   ````
+## AWS vs Azure
+
+| AWS          | Azure           |
+| ------------ | --------------- |
+| Root user    | ❌ No existe     |
+| IAM User     | Entra ID User   |
+| IAM Role     | Azure RBAC Role |
+| Account      | Subscription    |
+| Organization | Tenant          |
+| SCP          | Azure Policy    |
+
+| Uso                       | Tipo de identidad       |
+| ------------------------- | ----------------------- |
+| Administración del tenant | Cuenta admin (poco uso) |
+| Trabajo diario            | Usuario normal          |
+| Automatización            | Service Principal       |
+| Azure-native automation   | Managed Identity        |
+
+
