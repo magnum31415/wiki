@@ -90,8 +90,25 @@ az login
 
 ## AzureCli Commands
 
-- Check current context: ````bash az account show````
-- List all tenants you have access to:  ````bash az account tenant list````
-- List subscriptions: ````bash az account list --output table````
-- Select a subscription explicitly ````bash az account set --subscription "<SUBSCRIPTION_NAME_OR_ID>"````
-- Before running any script or discovery command, always do: ````bash az account show````
+- Login: ````az login````
+- Login without browser: ````az login --use-device-code````
+
+- Close Session and delte local tokens:
+  ````bash
+  az logout
+  #remains folder ~/.azure without valid credentilas
+  #Optional: to clean all
+  rm -rf ~/.azure
+  ````
+- Check current context: ````az account show````
+- List all tenants you have access to:  ````az account tenant list````
+- List subscriptions: ````az account list --output table````
+- Select a subscription explicitly ````az account set --subscription "<SUBSCRIPTION_NAME_OR_ID>"````
+- Before running any script or discovery command, always do: ````az account show````
+- For automation:
+  ````bash
+  az login --service-principal \
+  -u <APP_ID> \
+  -p <SECRET or CERT> \
+  --tenant <TENANT_ID>
+  ````
