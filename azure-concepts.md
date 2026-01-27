@@ -53,4 +53,63 @@ Your user: ````es-adm-mcdonals@companyrz.onmicrosoft.com````
 - **Users exist in the tenant, not in subscriptions.**
 - **They only gain access to subscriptions through RBAC role assignments**.
 
+#### Identity & directory roles (Tenant level)
 
+How to check in the Azure Portal
+
+Go to Microsoft Entra ID
+
+Go to:
+````graphql
+Users
+ └── Select your user
+      └── Assigned roles
+````
+
+What you’ll see:
+
+Directory roles assigned directly or via groups
+
+If this page is empty → you are not a tenant admin
+
+📌 Important
+
+Having NO directory roles does NOT prevent you from seeing Azure resources.
+
+## Azure RBAC roles (Resource access)
+
+These control what you can see or do with Azure resources
+They apply to:
+- Management Groups
+- Subscriptions
+- Resource Groups
+- Individual resources
+
+**How to check in the Azure Portal**
+
+**Option A — From Subscriptions**
+
+1. Go to Subscriptions
+2. Select a subscription
+3. Go to:
+````graphql
+Access control (IAM)
+ └── Role assignments
+````
+4. Search for your user
+
+Check:
+- Role (Reader, Contributor, Owner)
+- Scope (Subscription, Resource Group, etc.)
+
+**Option B — From Management Groups (important)**
+
+If you can see many subscriptions, your role is likely inherited.
+
+1. Go to Management Groups
+2. Select a group
+3. Go to:
+````graphql
+Access control (IAM)
+````
+If your user appears here → access is **inherited by all child subscriptions**.
