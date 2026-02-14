@@ -14,7 +14,7 @@
 | 🟣 **ExpressRoute Premium Direct**          | - Necesitas conectividad global entre regiones<br>- Alto volumen de tráfico<br>- Conexión directa a Microsoft<br>- Alta resiliencia y 10/100 Gbps | Conexión física directa a Microsoft              | - Máximo rendimiento<br>- Control total<br>- Escenarios enterprise/global      | Global                             |
 | 🟢 **ExpressRoute Standard Direct**         | - Conexión directa a Microsoft<br>- No necesitas conectividad global<br>- Alto tráfico regional                                                   | Conexión física directa a Microsoft              | - Alto rendimiento<br>- Más económico que Premium Direct<br>- Enfoque regional | Regional                           |
 
-
+ 
 ````
 ¿Necesitas conexión privada dedicada a Azure?
 │
@@ -38,3 +38,71 @@
               └── ❌ No → ExpressRoute Standard
 
 ````
+---
+
+## Service Endpoints en Azure
+En Azure, los Service Endpoints se configuran por servicio específico en una subnet, no existe un endpoint global para todos los servicios.
+
+En Azure, un Service Endpoint:
+
+- Se habilita a nivel de subnet
+- Se configura por servicio específico
+- Permite acceso privado desde la VNet al servicio PaaS
+- Mantiene el tráfico dentro del backbone de Microsoft
+
+En una subnet activas:
+- VM acceda a Azure Storage → activas Microsoft.Storage
+- VM acceda a Azure SQL → activas Microsoft.Sql
+- VM acceda a Key Vault → activas Microsoft.KeyVault
+
+- 👉 No activas “Azure completo”.
+- 👉 Activar Storage NO activa SQL.
+
+#### ✅ Procedimiento recomendado (Private Endpoint)
+**1) Crear Private Endpoint para Azure SQL Database**
+- Azure SQL Server → Networking → Private endpoint connections
+- Crear Private Endpoint en:
+  - **La VNet de la app**
+  - **La subnet donde están las VMs** (o una subnet dedicada a Private Endpoints, si tu estándar lo exige)
+- Seleccionar target:
+  - Microsoft.Sql/servers (tu SQL logical server) y el database si aplica
+
+**2) Configurar DNS privado (imprescindible)**
+- Crear o usar una Private DNS Zone:
+privatelink.database.windows.net
+- Vincularla a la VNet (VNet link)
+- Verificar que el registro A del SQL server apunta a la IP privada del Private Endpoint
+
+✅ Resultado: desde las VMs, tu-servidor.database.windows.net resolverá a IP privada.
+
+**3) Bloquear acceso público al SQL**
+- En Azure SQL Server → **Networking**
+- **Public network access: Disabled**
+- (Opcional) Asegúrate que “Allow Azure services…” esté Off, si existe esa opción en tu blade
+
+**4) Verificación**
+
+- Desde una VM en esa subnet:
+  - nslookup tu-servidor.database.windows.net → debe devolver IP privada
+  - Conexión SQL OK
+- Desde fuera (tu PC, otra red):
+ - No resuelve a IP pública útil o directamente no conecta
+
+**5) Cómo funciona con Service Endpoint**
+
+Cuando habilitas:
+
+``
+VNet Subnet → Service Endpoint → Microsoft.Sql
+``
+
+Lo que ocurre ea que el tráfico sigue yendo al endpoint público de SQL: ``*.database.windows.net``
+
+Pero Azure marca el tráfico como proveniente de esa VNet.
+
+Entonces necesitas configurar el firewall del SQL Server para:
+
+- ❌ Bloquear todo
+- ✅ Permitir esa VNet/Subnet específica
+
+- **Porque con Service Endpoint el firewall es obligatorio para restringir acceso.**
