@@ -1,6 +1,20 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 # Storage
 
+## Azure Managed Disks
+
+![Disks Type](./img/azure/azure-managed-disks.png)
+
+| Tipo de disco    | Rendimiento             | Latencia          | IOPS máximos  | Throughput máx   | Escalabilidad dinámica                  | Uso típico                                              | Coste    |
+| ---------------- | ----------------------- | ----------------- | ------------- | ---------------- | --------------------------------------- | ------------------------------------------------------- | -------- |
+| **Ultra Disk**   | Muy alto (configurable) | Muy baja (sub-ms) | Hasta 160,000 | Hasta 4,000 MB/s | ✅ Sí (IOPS/MBps ajustables en caliente) | Bases de datos críticas (SQL, SAP HANA), OLTP intensivo | Muy alto |
+| **Premium SSD**  | Alto                    | Baja              | Hasta ~20,000 | Hasta ~900 MB/s  | ❌ No (depende del tamaño del disco)     | Producción, apps empresariales, DB medias               | Alto     |
+| **Standard SSD** | Medio                   | Media-baja        | Hasta ~6,000  | Hasta ~750 MB/s  | ❌ No                                    | Web servers, entornos prod ligeros                      | Medio    |
+| **Standard HDD** | Bajo                    | Alta              | Hasta ~2,000  | Hasta ~500 MB/s  | ❌ No                                    | Backup, DEV/TEST, cargas no críticas                    | Bajo     |
+
+
+## Conceptos
+
 Hay tres conceptos distintos que se cruzan:
 
 - 🔹 Storage Account
