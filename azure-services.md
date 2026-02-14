@@ -5,9 +5,11 @@
 
 - [Tabla comparativa rápida](#tabla-comparativa-rápida)
 - [AzCopy](#azcopy)
+- [Azure Analysis Services](#azure-analysis-services)
 - [Azure Arc](#azure-arc)
 - [Azure Automation](#azure-automation)
 - [Azure Backup](#azure-backup)
+- [Azure Blueprints](#azure-blueprints)
 - [Azure Data Box](#azure-data-box)
 - [Azure Data Box Edge](#azure-data-box-edge)
 - [Azure Data Box Gateway](#azure-data-box-gateway)
@@ -16,9 +18,13 @@
 - [Azure Database Migration Service](#azure-database-migration-service)
 - [Azure DevOps](#azure-devops)
 - [Azure Event Hubs](#azure-event-hubs)
-- [Azure File Sync](#azure-file-sync)
+- [Azure Function](#azure-function)
 - [Azure Import/Export service](#azure-importexport-service)
+- [Azure Log Analytics](#azure-log-analytics)
+- [Azure Log Analytics Workspace](#azure-log-analytics-workspace)
 - [Azure Migrate](#azure-migrate)
+- [Azure Monitor](#azure-monitor)
+- [Azure Monitor (Activity Log)](#azure-monitor-activity-log)
 - [Azure Notification Hubs](#azure-notification-hubs)
 - [Azure Resource Manager (ARM)](#azure-resource-manager-arm)
 - [Azure Service Bus](#azure-service-bus)
@@ -33,268 +39,170 @@
 
 | Servicio | Resumen en pocas palabras | Propósito principal | Orientado a |
 |-----------|--------------------------|--------------------|-------------|
-| AzCopy | CLI para copiar datos a Azure Storage | Transferencia rápida de datos | Migración |
-| Azure Arc | Gestión híbrida y multi-cloud | Gobierno centralizado | Infraestructura |
-| Azure Automation | Automatización de tareas | Runbooks y procesos automáticos | Operaciones / IT |
-| Azure Backup | Backup gestionado en la nube | Protección y recuperación de datos | Backup / DR |
-| Azure Data Box | Dispositivo físico de transferencia | Migración masiva offline | Migración |
-| Azure Data Box Edge | Dispositivo físico edge con procesamiento | Transferencia + computación en edge | Edge / Híbrido |
-| Azure Data Box Gateway | Pasarela virtual con caché local | Transferir datos a Azure Storage | Híbrido / Migración / DR |
-| Azure Data Factory | Integración y transformación de datos | ETL/ELT y orquestación | Integración de datos |
-| Azure Data Lake Storage | Data lake escalable para analítica | Almacenamiento masivo | Big Data / Analytics |
-| Azure Database Migration Service | Migración gestionada de bases de datos | Migración online/offline | Bases de datos |
-| Azure DevOps | Plataforma de CI/CD y gestión de proyectos | Desarrollo y despliegue continuo | Dev / DevOps |
-| Azure Event Hubs | Ingesta masiva de eventos | Streaming de datos | Big Data / Telemetría |
-| Azure File Sync | Sincroniza file servers con Azure | Extender almacenamiento a la nube | Híbrido / Files |
-| Azure Import/Export service | Transferencia física con discos | Migraciones offline | Migración masiva |
-| Azure Migrate | Plataforma de migración de servidores | Evaluar y migrar workloads | Infraestructura |
-| Azure Notification Hubs | Push notifications móviles | Notificaciones masivas | Usuarios finales |
-| Azure Resource Manager (ARM) | Motor de despliegue de recursos Azure | Infraestructura como código | Infraestructura |
-| Azure Service Bus | Mensajería empresarial | Comunicación entre aplicaciones | Backend |
-| Azure Stack Hub | Azure en tu datacenter | Extensión híbrida | Infraestructura |
-| Azure Storage Explorer | Cliente gráfico para Storage | Gestión manual de datos | Administración |
-| Azure Storage Sync | Sincronización con Azure Files | Extensión de almacenamiento | Híbrido / Files |
-| Role-based access control (RBAC) | Control de acceso por roles | Autorización granular | Seguridad |
+| Azure Analysis Services | Modelos analíticos tabulares | BI empresarial | Analytics |
+| Azure Automation | Automatización de tareas | Runbooks | Operaciones |
+| Azure Backup | Backup gestionado | Protección de datos | Backup / DR |
+| Azure Blueprints | Plantillas de gobernanza | Estándares organizativos | Gobierno |
+| Azure Data Factory | ETL/ELT gestionado | Integración de datos | Analytics |
+| Azure Event Hubs | Streaming masivo | Ingesta de eventos | Big Data |
+| Azure Function | Serverless compute | Código bajo demanda | Desarrollo |
+| Azure Log Analytics | Consulta de logs | Análisis de telemetría | Observabilidad |
+| Azure Log Analytics Workspace | Contenedor de logs | Almacenamiento y consulta | Monitorización |
+| Azure Monitor | Monitorización integral | Métricas y logs | Observabilidad |
+| Azure Monitor (Activity Log) | Log de operaciones Azure | Auditoría de cambios | Gobierno |
+| RBAC | Control de acceso por roles | Autorización | Seguridad |
 
 ---
 
-## AzCopy
+## Azure Analysis Services 🔝 [Volver al índice](#-índice)
 
 ### 🔎 ¿Qué es?
-Herramienta CLI para copiar datos hacia/desde Azure Storage.
-
-### 🧠 Idea clave examen
-**AzCopy = Transferencia rápida de datos por red.**
-
----
-
-## Azure Arc
-
-### 🔎 ¿Qué es?
-Gestión centralizada de recursos on-prem, multi-cloud y edge desde Azure.
-
-### 🧠 Idea clave examen
-**Azure Arc = Gobierno híbrido/multi-cloud.**
-
----
-
-## Azure Automation
-
-### 🔎 ¿Qué es?
-Servicio para automatizar tareas administrativas en Azure y entornos híbridos.
+Servicio PaaS para modelos tabulares de análisis (similar a SQL Server Analysis Services).
 
 ### 🎯 Para qué se usa
-- Runbooks (PowerShell / Python)
-- Automatizar parches
-- Apagar/encender VMs
-- Gestión programada
+- Modelos semánticos
+- Power BI
+- BI empresarial
 
-### 🧠 Idea clave examen
-**Azure Automation = Runbooks y automatización operativa.**
-
----
-
-## Azure Backup
-
-### 🔎 ¿Qué es?
-Servicio de backup totalmente gestionado en Azure.
-
-### 🧠 Idea clave examen
-**Azure Backup = Protección y recuperación de datos.**
+### 🧠 Idea clave
+**Modelo analítico centralizado en la nube.**
 
 ---
 
-## Azure Data Box
+## Azure Automation 🔝 [Volver al índice](#-índice)
 
 ### 🔎 ¿Qué es?
-Dispositivo físico enviado por Microsoft para transferencias masivas offline.
+Automatización basada en runbooks (PowerShell / Python).
 
-### 🧠 Idea clave examen
-**Data Box = Migración offline a gran escala.**
+### 🎯 Casos de uso
+- Apagar VMs
+- Parches automáticos
+- Tareas programadas
+
+### 🧠 Idea clave
+**Automatización operativa en Azure.**
 
 ---
 
-## Azure Data Box Edge
+## Azure Blueprints 🔝 [Volver al índice](#-índice)
 
 ### 🔎 ¿Qué es?
-Dispositivo físico con capacidad de procesamiento en edge.
+Servicio para definir y aplicar estándares de gobernanza.
 
-### 🧠 Idea clave examen
-**Data Box Edge = Edge computing + envío de datos.**
+### 🧱 Componentes
+- Blueprint Definition
+- Blueprint Assignment
+- Políticas
+- RBAC
+- ARM templates
+
+### 🧠 Idea clave
+**Gobernanza reusable a nivel de suscripción.**
 
 ---
 
-## Azure Data Box Gateway
+## Azure Function 🔝 [Volver al índice](#-índice)
 
 ### 🔎 ¿Qué es?
-Dispositivo virtual con caché local para transferir datos a Azure.
+Servicio serverless para ejecutar código bajo demanda.
 
-### 🧠 Idea clave examen
-**Data Box Gateway = Pasarela híbrida virtual.**
+### 🔁 Tipos de hosting
+
+1️⃣ **Consumption Plan**
+- Escala automática
+- Pago por ejecución
+
+2️⃣ **Premium Plan**
+- Sin cold start
+- Escalado rápido
+
+3️⃣ **App Service Plan**
+- Recursos dedicados
+
+### 🎯 Casos de uso
+- Webhooks
+- Procesamiento de eventos
+- APIs ligeras
+
+### 🧠 Idea clave
+**Azure Functions = Compute serverless basado en eventos.**
 
 ---
 
-## Azure Data Factory
+## Azure Log Analytics 🔝 [Volver al índice](#-índice)
 
 ### 🔎 ¿Qué es?
-Servicio de integración de datos (ETL/ELT).
-
-### 🧠 Idea clave examen
-**Data Factory = Orquestación y transformación de datos.**
-
----
-
-## Azure Data Lake Storage
-
-### 🔎 ¿Qué es?
-Almacenamiento optimizado para Big Data y analítica.
-
-### 🧠 Idea clave examen
-**Data Lake = Almacenamiento masivo para analítica.**
-
----
-
-## Azure Database Migration Service
-
-### 🔎 ¿Qué es?
-Servicio gestionado para migrar bases de datos con mínimo downtime.
-
-### 🧠 Idea clave examen
-**DMS = Migración de bases de datos.**
-
----
-
-## Azure DevOps
-
-### 🔎 ¿Qué es?
-Plataforma para desarrollo y despliegue continuo.
-
-### 🎯 Incluye
-- Repos (Git)
-- Pipelines (CI/CD)
-- Boards
-- Artifacts
-
-### 🧠 Idea clave examen
-**Azure DevOps = Desarrollo + CI/CD en Azure.**
-
----
-
-## Azure Event Hubs
-
-### 🔎 ¿Qué es?
-Plataforma de ingesta masiva de eventos en tiempo real.
-
-### 🧠 Idea clave examen
-**Event Hubs = Streaming masivo de eventos.**
-
----
-
-## Azure File Sync
-
-### 🔎 ¿Qué es?
-Sincroniza file servers locales con Azure Files.
-
-### 🧠 Idea clave examen
-**File Sync = Sincronización híbrida de archivos.**
-
----
-
-## Azure Import/Export service
-
-### 🔎 ¿Qué es?
-Permite enviar discos físicos a Azure para migración.
-
-### 🧠 Idea clave examen
-**Import/Export = Migración física manual.**
-
----
-
-## Azure Migrate
-
-### 🔎 ¿Qué es?
-Plataforma para evaluar y migrar servidores y workloads a Azure.
-
-### 🧠 Idea clave examen
-**Azure Migrate = Evaluación + migración de infraestructura.**
-
----
-
-## Azure Notification Hubs
-
-### 🔎 ¿Qué es?
-Servicio de notificaciones push móviles masivas.
-
-### 🧠 Idea clave examen
-**Notification Hubs = Push móvil.**
-
----
-
-## Azure Resource Manager (ARM)
-
-### 🔎 ¿Qué es?
-Motor de despliegue y gestión de recursos en Azure.
+Motor de consulta de logs usando KQL.
 
 ### 🎯 Para qué se usa
-- Deploy de recursos
-- ARM Templates
-- Gestión declarativa
-- Infraestructura como código
+- Consultas avanzadas
+- Alertas
+- Monitorización
 
-### 🧠 Idea clave examen
-**ARM = Motor que crea y gestiona recursos Azure.**
-
----
-
-## Azure Service Bus
-
-### 🔎 ¿Qué es?
-Mensajería empresarial desacoplada.
-
-### 🧠 Idea clave examen
-**Service Bus = Colas y publish/subscribe.**
+### 🧠 Idea clave
+**Lenguaje KQL para análisis de logs.**
 
 ---
 
-## Azure Stack Hub
+## Azure Log Analytics Workspace 🔝 [Volver al índice](#-índice)
 
 ### 🔎 ¿Qué es?
-Azure ejecutándose en tu datacenter.
+Contenedor lógico donde se almacenan los logs.
 
-### 🧠 Idea clave examen
-**Stack Hub = Azure on-prem.**
+### 🎯 Contiene
+- Logs de VMs
+- Logs de Azure Monitor
+- Security logs
+
+### 🧠 Idea clave
+**Workspace = Base de datos de logs.**
 
 ---
 
-## Azure Storage Explorer
+## Azure Monitor 🔝 [Volver al índice](#-índice)
 
 ### 🔎 ¿Qué es?
-Cliente gráfico para gestionar blobs, files y tables.
+Servicio central de monitorización en Azure.
 
-### 🧠 Idea clave examen
-**Storage Explorer = Gestión manual de Azure Storage.**
+### 📊 Incluye
+- Métricas
+- Logs
+- Alertas
+- Dashboards
+
+### 🧠 Idea clave
+**Monitor = Observabilidad completa.**
 
 ---
 
-## Azure Storage Sync
+## Azure Monitor (Activity Log) 🔝 [Volver al índice](#-índice)
 
 ### 🔎 ¿Qué es?
-Servicio que sincroniza almacenamiento local con Azure Files.
+Registro de operaciones administrativas en Azure.
 
-### 🧠 Idea clave examen
-**Storage Sync = Extensión híbrida de almacenamiento.**
+### 🎯 Registra
+- Creación/eliminación de recursos
+- Cambios RBAC
+- Modificaciones de configuración
+
+### 🧠 Idea clave
+**Activity Log = Auditoría de acciones en Azure.**
 
 ---
 
-## Role-based access control (RBAC)
+## Role-based access control (RBAC) 🔝 [Volver al índice](#-índice)
 
 ### 🔎 ¿Qué es?
-Sistema de autorización basado en roles en Azure.
+Sistema de autorización basado en roles.
 
-### 🎯 Para qué se usa
-- Asignar permisos a usuarios, grupos o aplicaciones
-- Definir alcance (scope): Management Group, Subscription, Resource Group o recurso
-- Aplicar principio de mínimo privilegio
+### 🧠 Fórmula clave
+Security Principal + Role + Scope
 
-### 🧠 Idea clave examen
-**RBAC = Security Principal + Role + Scope.**
+### 🎯 Alcance
+- Management Group
+- Subscription
+- Resource Group
+- Recurso
+
+### 🧠 Idea clave
+**RBAC = Control granular de permisos.**
