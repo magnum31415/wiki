@@ -2,6 +2,16 @@
 
 ## ¿Qué Load Balancer usar en Azure?
 
+| Si necesitas…             | Usa…                      |
+| ------------------------- | ------------------------- |
+| Global + Web inteligente  | **Azure Front Door**      |
+| Global + solo DNS routing | **Traffic Manager**       |
+| Regional + Web + WAF      | **Application Gateway**   |
+| Regional + TCP/UDP        | **Azure Load Balancer**   |
+| Insertar Firewall/NVA     | **Gateway Load Balancer** |
+| Gestionar APIs            | **API Management**        |
+
+
 ````
 ¿Necesitas balanceo GLOBAL entre varias regiones?
 │
