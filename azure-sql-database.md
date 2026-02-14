@@ -1,3 +1,4 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 # Azure SQL Database 
 
 Servicio PaaS basado en SQLServer totalmente gestionado 
