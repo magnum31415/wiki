@@ -1,164 +1,130 @@
-# Servicios Azure
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+# 📚 Resumen comparativo de servicios Azure
 
-| Servicio                    | Para qué sirve realmente                                  |
-| --------------------------- | --------------------------------------------------------- |
-| **Azure Service Bus**       | Mensajería empresarial entre sistemas (backend ↔ backend) |
-| **Azure Notification Hubs** | Enviar notificaciones push a móviles y dispositivos       |
+## 📑 Índice
 
+- [Tabla comparativa rápida](#tabla-comparativa-rápida)
+- [Azure Arc](#azure-arc)
+- [Azure Event Hubs](#azure-event-hubs)
+- [Azure Notification Hubs](#azure-notification-hubs)
+- [Azure Service Bus](#azure-service-bus)
+- [Azure Stack Hub](#azure-stack-hub)
 
+---
 
-## 📦 Azure Service Bus – Resumen para estudiar
+# 📊 Tabla comparativa rápida
+
+| Servicio | Resumen en pocas palabras | Propósito principal | Orientado a |
+|-----------|--------------------------|--------------------|-------------|
+| Azure Arc | Gestión híbrida y multi-cloud | Gobierno centralizado | Infraestructura |
+| Azure Event Hubs | Ingesta masiva de eventos en tiempo real | Streaming de datos | Big Data / Telemetría |
+| Azure Notification Hubs | Push notifications móviles | Notificaciones masivas | Usuarios finales |
+| Azure Service Bus | Mensajería empresarial | Comunicación entre aplicaciones | Backend |
+| Azure Stack Hub | Azure en tu datacenter | Extensión híbrida | Infraestructura |
+
+---
+
+## Azure Arc
 
 ### 🔎 ¿Qué es?
-Servicio de mensajería empresarial (Enterprise Messaging) para conectar aplicaciones y servicios de forma desacoplada.
+Servicio que permite gestionar recursos fuera de Azure (on-premises, multi-cloud, edge) desde el portal de Azure.
 
-Permite comunicación confiable entre sistemas distribuidos.
+### 🎯 Para qué se usa
+- Gobierno y cumplimiento en entornos híbridos  
+- Gestión centralizada de servidores y Kubernetes  
+- Aplicar Azure Policy fuera de Azure  
 
-### 🧱 Modelos de mensajería
+### ❌ No es para
+Mensajería ni notificaciones.
 
-- 📬 **Queues (colas)** → Comunicación punto a punto
-- 📢 **Topics + Subscriptions** → Modelo publish/subscribe
-- 🔁 Mensajes ordenados, con entrega garantizada
-- ⏱ Soporte para reintentos y dead-letter queues
+### 🧠 Idea clave examen
+**Azure Arc = Gestión y gobierno híbrido/multi-cloud.**
+
+---
+
+## Azure Event Hubs
+
+### 🔎 ¿Qué es?
+Servicio de **ingesta masiva de eventos en tiempo real** (streaming platform).
+
+Diseñado para capturar millones de eventos por segundo.
+
+### 🎯 Para qué se usa
+- Telemetría IoT  
+- Logs de aplicaciones  
+- Streaming de datos  
+- Integración con Spark, Databricks o Synapse  
 
 ### 🚀 Características clave
-
-- ✅ Desacopla aplicaciones
-- ✅ Alta fiabilidad
-- ✅ Entrega garantizada
-- ✅ Transacciones
-- ✅ Soporte para patrones enterprise
-
-### 🎯 Casos de uso típicos
-
-- Integración entre microservicios
-- Procesamiento asíncrono
-- Workflows distribuidos
-- Sistemas financieros o críticos
-- Arquitecturas event-driven
+- Alta escalabilidad  
+- Arquitectura basada en particiones  
+- Integración con análisis en tiempo real  
+- Retención temporal de eventos  
 
 ### ❌ No es para
+Colas empresariales con transacciones o workflows complejos.
 
-- Enviar notificaciones push móviles
-- Segmentación por usuarios finales
-- Localización de notificaciones
-
-### 🧠 Idea clave para examen
-
-**Azure Service Bus = Mensajería entre aplicaciones (colas y publish/subscribe).**
-No está orientado a dispositivos móviles.
-
-
-## 🏢 Azure Stack Hub – Resumen para estudiar
-
-### 🔎 ¿Qué es?
-Extensión de Azure que permite ejecutar servicios Azure **en tu propio datacenter** (on-premises).
-
-Pensado para escenarios híbridos.
-
-### 🏗 Qué permite
-
-- Ejecutar máquinas virtuales
-- Usar servicios PaaS seleccionados
-- Mantener consistencia con Azure público
-- Cumplir requisitos regulatorios o de latencia
-
-### 🎯 Casos de uso típicos
-
-- Requisitos de soberanía de datos
-- Entornos sin conectividad constante a Azure
-- Edge computing
-- Organizaciones gubernamentales
-
-### ❌ No es para
-
-- Notificaciones push móviles
-- Mensajería entre apps
-- Escenarios puramente cloud
-
-### 🧠 Idea clave para examen
-
-**Azure Stack Hub = Azure en tu datacenter (híbrido).**
-
-
----------------------------------------------------------------------
-
-
-## 🌐 Azure Arc – Resumen para estudiar
-
-### 🔎 ¿Qué es?
-Servicio que extiende la gestión de Azure a recursos que están:
-
-- On-premises
-- En otras nubes (AWS, GCP)
-- En edge locations
-
-No mueve recursos a Azure; solo los gestiona desde Azure.
+### 🧠 Idea clave examen
+**Event Hubs = Streaming masivo de eventos.**
 
 ---
-
-### 🧱 Qué permite gestionar
-
-- Servidores
-- Kubernetes clusters
-- Bases de datos
-- Aplicar Azure Policy
-- Seguridad centralizada
-
----
-
-### 🎯 Casos de uso típicos
-
-- Gobierno multi-cloud
-- Gestión centralizada
-- Aplicación de políticas en híbrido
-- Inventario unificado de recursos
-
----
-
-### ❌ No es para
-
-- Enviar notificaciones push
-- Mensajería empresarial
-- Comunicación directa entre aplicaciones
-
----
-
-### 🧠 Idea clave para examen
-
-**Azure Arc = Gestión y gobierno centralizado de infra híbrida y multi-cloud.**
 
 ## Azure Notification Hubs
-Servicio altamente escalable para enviar **notificaciones push masivas** a dispositivos móviles:
 
-- iOS (APNs)
-- Android (FCM / antes GCM)
-- Windows (WNS)
-- Kindle y otros
+### 🔎 ¿Qué es?
+Servicio altamente escalable para enviar **notificaciones push masivas a dispositivos móviles** (iOS, Android, Windows, etc.).
 
-Permite enviar millones de notificaciones rápidamente con muy poco código.
+### 🎯 Para qué se usa
+- Breaking news  
+- Promociones  
+- Alertas empresariales  
+- Códigos MFA  
+- Segmentación por usuarios o grupos  
 
----
+### ❌ No es para
+Comunicación entre microservicios backend.
 
-### 🚀 Características clave
-
-- ✅ Alta escalabilidad
-- ✅ Envío multiplataforma
-- ✅ Segmentación por usuarios o grupos
-- ✅ Personalización de mensajes
-- ✅ Integración directa con servicios de notificación nativos
+### 🧠 Idea clave examen
+**Notification Hubs = Push notifications móviles.**
 
 ---
 
-### 🎯 Casos de uso típicos
+## Azure Service Bus
 
-- 📰 Breaking news a millones de usuarios
-- 📍 Cupones basados en ubicación
-- 🏟 Notificaciones de eventos (deportes, finanzas, gaming)
-- 📢 Campañas promocionales
-- 💼 Alertas empresariales (mensajes, tareas)
-- 🔐 Envío de códigos para MFA
+### 🔎 ¿Qué es?
+Servicio de **mensajería empresarial** para comunicación desacoplada entre aplicaciones.
 
-### 🧠 Idea clave para examen
+### 🧱 Modelos de mensajería
+- Queues (punto a punto)  
+- Topics + Subscriptions (publish/subscribe)  
 
-**Azure Notification Hubs = Servicio para enviar notificaciones push masivas a dispositivos móviles.**
+### 🎯 Para qué se usa
+- Integración de microservicios  
+- Procesamiento asíncrono  
+- Workflows distribuidos  
+- Sistemas críticos  
+
+### ❌ No es para
+Streaming masivo de datos ni push móvil.
+
+### 🧠 Idea clave examen
+**Service Bus = Mensajería confiable entre aplicaciones.**
+
+---
+
+## Azure Stack Hub
+
+### 🔎 ¿Qué es?
+Extensión de Azure que permite ejecutar servicios Azure en tu propio datacenter.
+
+### 🎯 Para qué se usa
+- Soberanía de datos  
+- Requisitos regulatorios  
+- Edge computing  
+- Escenarios híbridos  
+
+### ❌ No es para
+Mensajería ni notificaciones.
+
+### 🧠 Idea clave examen
+**Azure Stack Hub = Azure on-premises (híbrido).**
