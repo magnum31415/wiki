@@ -7,3 +7,5 @@
 6. [Azure Services](https://github.com/magnum31415/wiki/blob/main/azure-services.md)
 7. [Azure Data Migration](https://github.com/magnum31415/wiki/blob/main/azure-data-migration.md)
 8. [Azure Entra](https://github.com/magnum31415/wiki/blob/main/azure-entra.md)
+9. [Azure Networking](https://github.com/magnum31415/wiki/blob/main/azure-networking.md)
+10. [Azure Cosmosdb](https://github.com/magnum31415/wiki/blob/main/azure-cosmosdb.md)
