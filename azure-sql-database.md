@@ -2,6 +2,144 @@
 # Azure SQL Database 
 
 Servicio PaaS basado en SQLServer totalmente gestionado 
+---
+##  Arquitectura de Azure SQL Database – Hyperscale
+
+La imagen representa la **arquitectura interna de Azure SQL Database en el tier Hyperscale**.
+
+Hyperscale se caracteriza por separar **compute, log y almacenamiento**, permitiendo escalar cada componente de forma independiente.
+
+![Diagrama arquitectura](./img/azure/azure-sql-hyperscale-replicas.png)
+
+## 🏗 Componentes principales
+
+### 1️⃣ Primary Compute
+
+- Nodo principal de base de datos.
+- Atiende tráfico **Read-Write**.
+- Ejecuta el motor SQL.
+- No almacena físicamente todos los datos.
+
+🔎 En Hyperscale el compute es desacoplado del storage.
+
+---
+
+### 2️⃣ Named Replicas (Read-Only)
+
+- Réplicas adicionales de solo lectura.
+- Cada una puede tener distinto tamaño de compute.
+- Se usan para:
+  - Escalar consultas analíticas
+  - Reducir carga del primario
+  - Separar workloads OLTP y reporting
+
+✔ Tienen **read-only endpoints dedicados**.
+
+---
+
+### 3️⃣ Log Service
+
+Es el corazón de Hyperscale.
+
+- Recibe el transaction log del Primary.
+- Replica los cambios a:
+  - Page Servers
+  - Named Replicas
+- Permite recuperación rápida.
+
+🔎 Diferencia clave:
+En Hyperscale el log está desacoplado del compute.
+
+---
+
+### 4️⃣ Page Servers
+
+- Almacenan los datos reales en páginas.
+- Arquitectura distribuida.
+- Permiten:
+  - Escalado hasta 100 TB+
+  - Acceso paralelo a datos
+  - Snapshots rápidos
+
+Cada Page Server gestiona un rango de datos.
+
+---
+
+### 5️⃣ Storage Layer
+
+Incluye:
+
+- Data files
+- Log files
+- Snapshots automáticos
+
+✔ Los backups se basan en snapshots (rápidos y eficientes).
+✔ Soporta LTR (Long Term Retention).
+
+---
+
+### 🔁 Flujos representados en la imagen
+
+#### 🟢 Data Pathway (línea punteada negra)
+- Acceso a datos desde compute hacia Page Servers.
+
+#### 🔵 Log Pathway (línea azul)
+- Flujo del transaction log:
+  Primary → Log Service → Page Servers → Replicas
+
+---
+
+### 📊 Qué significa esta arquitectura
+
+#### Separación total de capas
+
+| Capa | Función |
+|------|--------|
+| Compute | Ejecutar consultas |
+| Log Service | Gestionar transacciones |
+| Page Servers | Almacenar datos |
+| Storage | Persistencia y backups |
+
+---
+
+### 🚀 Ventajas de Hyperscale
+
+- Escalado independiente de compute y almacenamiento
+- Múltiples réplicas de lectura
+- Snapshots rápidos
+- Soporte para bases muy grandes
+- Escalado casi inmediato
+
+---
+
+### ❗ Limitaciones importantes
+
+- Replicación interna asincrónica → RPO > 0
+- No es Always On síncrono como Business Critical
+- No es 100% compatible con todas las features de SQL Server on-prem
+
+---
+
+### 🎯 Claves para el examen AZ-305
+
+Hyperscale =
+
+- Compute separado del storage
+- Log service independiente
+- Page servers distribuidos
+- Snapshots rápidos
+- Read replicas múltiples
+- Diseñado para bases de datos muy grandes
+
+---
+
+Si quieres, puedo prepararte un esquema comparativo visual entre:
+
+- General Purpose
+- Business Critical
+- Hyperscale
+
+
 
 ## Funcionalitats
 
