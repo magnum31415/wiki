@@ -11,6 +11,8 @@
 - [Azure Subscription](#azure-subscription)
 - [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
 - [Access Reviews](#access-reviews)
+- [Azure AD Enterprise Applications](#azure-ad-enterprise-applications)
+- [Azure AD Application Proxy](#azure-ad-application-proxy)
 
 ---
 
@@ -299,6 +301,53 @@ Access Reviews = Control periódico de privilegios para evitar acumulación de p
 
 ---
 
+## Azure AD Enterprise Applications
+
+🔝 [Volver al índice](#-índice)
+
+**¿Qué es?**  
+Representa las aplicaciones que usan tu tenant para autenticarse (SaaS o apps internas).
+
+Cuando registras o integras una app:
+- Se crea un **Service Principal** en Enterprise Applications.
+- Desde aquí gestionas:
+  - Permisos
+  - Asignación de usuarios/grupos
+  - SSO
+  - Conditional Access
+  - Consentimientos
+
+**Diferencia clave examen**
+- App Registration = definición global de la app.
+- Enterprise Application = instancia en tu tenant.
+
+**Clave AZ-305**
+Enterprise Applications = Gestión de acceso a aplicaciones dentro del tenant.
+
+---
+
+## Azure AD Application Proxy
+
+🔝 [Volver al índice](#-índice)
+
+**¿Qué es?**  
+Servicio que permite publicar aplicaciones on-premises de forma segura en Internet usando Microsoft Entra ID.
+
+**Cómo funciona**
+- Instalas un conector en tu red interna.
+- El tráfico saliente se establece hacia Azure.
+- Los usuarios acceden vía Entra ID (SSO + Conditional Access).
+
+**Ventajas**
+- No necesitas abrir puertos inbound.
+- Integración con MFA y Conditional Access.
+- Ideal para apps legacy web internas.
+
+**Clave examen AZ-305**
+Application Proxy = Publicar aplicaciones on-prem de forma segura usando identidad Entra.
+
+---
+
 # 🧠 Resumen rápido para examen
 
 | Concepto | Qué controla |
@@ -308,3 +357,5 @@ Access Reviews = Control periódico de privilegios para evitar acumulación de p
 | OIDC | Protocolo de autenticación moderno |
 | MFA | Verificación multifactor |
 | Access Reviews | Revisión periódica de accesos |
+| Enterprise Applications | Gestión de acceso a apps en el tenant |
+| Application Proxy | Publicar apps on-prem con identidad Entra |
