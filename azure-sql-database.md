@@ -2,6 +2,7 @@
 # Azure SQL Database 
 
 Servicio PaaS basado en SQLServer totalmente gestionado 
+
 ---
 ##  Arquitectura de Azure SQL Database – Hyperscale
 
