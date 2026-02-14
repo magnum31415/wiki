@@ -21,6 +21,7 @@
 - [Azure File Sync](#azure-file-sync)
 - [Azure Functions](#azure-functions)
 - [Azure Import/Export service](#azure-importexport-service)
+- [Azure Logic Apps](#azure-logic-apps)
 - [Azure Logs Analytics](#azure-logs-analytics)
 - [Azure Logs Analytics Workspace](#azure-logs-analytics-workspace)
 - [Azure Migrate](#azure-migrate)
@@ -32,6 +33,8 @@
 - [Azure Stack Hub](#azure-stack-hub)
 - [Azure Storage Explorer](#azure-storage-explorer)
 - [Azure Storage Sync](#azure-storage-sync)
+- [Azure Stream Analytics](#azure-stream-analytics)
+- [Azure Synapse Analytics](#azure-synapse-analytics)
 - [AzCopy](#azcopy)
 - [Role-based access control (RBAC)](#role-based-access-control-rbac)
 
@@ -57,6 +60,7 @@
 | Azure File Sync | Sincroniza file servers | Extensión Azure Files | Híbrido |
 | Azure Functions | Compute serverless | Ejecución por eventos | Serverless |
 | Azure Import/Export service | Discos físicos | Migración offline | Migración |
+| Azure Logic Apps | Workflows low-code | Integración procesos | Integración |
 | Azure Logs Analytics | Consulta logs (KQL) | Análisis logs | Monitor |
 | Azure Logs Analytics Workspace | Contenedor logs | Centralización | Monitor |
 | Azure Migrate | Evaluación + migración | Migración infra | Migración |
@@ -68,11 +72,12 @@
 | Azure Stack Hub | Azure on-prem | Extensión híbrida | Infra |
 | Azure Storage Explorer | Cliente GUI storage | Gestión blobs | Storage |
 | Azure Storage Sync | Sincroniza storage | Extensión Azure Files | Híbrido |
+| Azure Stream Analytics | Procesamiento stream en tiempo real | Transformación eventos | Big Data |
+| Azure Synapse Analytics | Plataforma analítica unificada | Data warehouse + Big Data | Analytics |
 | AzCopy | CLI transferencia | Copia masiva | Storage |
 | RBAC | Control acceso granular | Seguridad | Seguridad |
 
 ---
-
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Analysis Services
 
@@ -302,3 +307,29 @@ Muy usado en migraciones y cargas masivas.
 
 Modelo de autorización basado en Security Principal + Role + Scope.  
 Clave en diseño de seguridad y gobierno en AZ-305.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Logic Apps
+
+Servicio de integración y automatización basado en workflows low-code.  
+Se usa para integrar sistemas (SaaS, on-prem, APIs) sin escribir código complejo.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Stream Analytics
+
+Motor de procesamiento de eventos en tiempo real mediante consultas SQL-like.  
+Se usa junto a Event Hubs o IoT Hub para transformar y enrutar datos en streaming.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Synapse Analytics
+
+Plataforma analítica unificada que combina Data Warehouse, Spark y Data Lake.  
+Clave en arquitecturas de Big Data y análisis empresarial a gran escala.
+
+---
