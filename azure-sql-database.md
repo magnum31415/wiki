@@ -20,7 +20,7 @@ Un Failover Group es un mecanismo de disaster recovery (DR) entre regiones para:
 - Azure SQL Managed Instance
 Permite agrupar una o varias bases de datos y replicarlas automáticamente a otra región de Azure.
 
-![Diagrama arquitectura](./azure-sql-failover-group.png)
+![Diagrama arquitectura](./img/azure/azure-sql-failover-group.png)
 
 #### ¿Qué problema resuelve?
 
