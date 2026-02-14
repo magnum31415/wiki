@@ -26,7 +26,7 @@
     │               │               │
     │               │               ├── Integración recomendada:
     │               │               │       az aks update --attach-acr
-    │               │               │       (Permite a AKS autenticarse con ACR vía Managed Identity)
+    │               │               │       (Managed Identity)
     │               │               │
     │               │               ├── Seguridad:
     │               │               │       RBAC Azure
@@ -38,10 +38,32 @@
     │               │                       Producción → Standard
     │               │                       Multi-región / Enterprise → Premium
     │               │
-    │               ├── Escalado en AKS:
-    │               │       HPA → Escala pods
-    │               │       Cluster Autoscaler → Escala nodos
-    │               │       KEDA → Escala por eventos
+    │               ├── Escalado en AKS (Kubernetes-native):
+    │               │       Horizontal Pod Autoscaler (HPA)
+    │               │           → Escala número de pods según CPU/métricas
+    │               │
+    │               │       Vertical Pod Autoscaler (VPA)
+    │               │           → Ajusta CPU/RAM de los pods
+    │               │
+    │               │       Cluster Autoscaler
+    │               │           → Escala nodos del cluster (VMSS)
+    │               │
+    │               │       Kubernetes Event-Driven Autoscaling (KEDA)
+    │               │           → Escala pods por eventos (Service Bus, Kafka, etc.)
+    │               │
+    │               ├── Escalado a nivel Azure (fuera de Kubernetes):
+    │               │
+    │               │       Azure Monitor Autoscale
+    │               │           → Escala recursos Azure basados en métricas
+    │               │           → Se aplica a:
+    │               │               - VM Scale Sets
+    │               │               - App Service Plans
+    │               │               - Azure Container Apps
+    │               │           → Basado en CPU, memoria, colas, métricas personalizadas
+    │               │
+    │               │       ⚠ En AKS:
+    │               │           No escala pods.
+    │               │           Se usa indirectamente al escalar VM Scale Sets.
     │               │
     │               ├── Alta disponibilidad:
     │               │       AKS multi-zone
@@ -54,9 +76,20 @@
     │
     └── No Kubernetes
             │
-            ├── Azure Container Apps → Puede usar ACR
-            ├── Azure App Service (contenedores) → Puede usar ACR
-            └── Azure Functions (contenedores) → Puede usar ACR
+            ├── Azure Container Apps
+            │       ├── Usa KEDA internamente
+            │       ├── Puede usar ACR
+            │       └── Escala automáticamente (HTTP o eventos)
+            │
+            ├── Azure App Service (contenedores)
+            │       ├── Puede usar ACR
+            │       └── Escala con Azure Monitor Autoscale
+            │
+            └── Azure Functions (contenedores)
+                    ├── Puede usar ACR
+                    ├── Escala automática integrada
+                    └── Puede usar Azure Monitor Autoscale en plan dedicado
+
 ````
 ## Azure Container Registry (ACR)
 
