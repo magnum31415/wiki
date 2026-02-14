@@ -64,6 +64,15 @@ Azure SQL (Familia de servicios)
 │
 ├── Sí → Azure SQL Managed Instance
 │       │
+│       ├── Modelo: Solo vCore
+│       ├── Service Tier:
+│       │       ├── General Purpose
+│       │       └── Business Critical
+│       │
+│       ├── 🔎 Equivalencia conceptual:
+│       │       Business Critical (MI)
+│       │       ≈ Premium (DTU en Single DB)
+│       │
 │       ├── HA: Sí (Always On interno)
 │       ├── DR: Sí (Auto-failover groups / Geo-replication)
 │       ├── Read replicas: Sí (Business Critical)
@@ -73,7 +82,17 @@ Azure SQL (Familia de servicios)
 └── No →
       ¿Carga OLTP muy alta / In-Memory / baja latencia?
       │
-      ├── Sí → Azure SQL Database – Business Critical
+      ├── Sí → Azure SQL Database
+      │       │
+      │       ├── Modelo moderno (vCore):
+      │       │       └── Business Critical
+      │       │
+      │       ├── Modelo antiguo (DTU):
+      │       │       └── Premium
+      │       │
+      │       ├── 🔎 Equivalencia:
+      │       │       Premium (DTU)
+      │       │       ⇄ Business Critical (vCore)
       │       │
       │       ├── HA: Sí (réplicas síncronas locales)
       │       ├── DR: Sí (Auto-failover group / Geo-replication)
@@ -86,16 +105,34 @@ Azure SQL (Familia de servicios)
             │
             ├── Sí → Elastic Pool
             │       │
+            │       ├── Modelo DTU:
+            │       │       ├── Basic
+            │       │       ├── Standard
+            │       │       └── Premium
+            │       │
+            │       ├── Modelo vCore:
+            │       │       ├── General Purpose
+            │       │       └── Business Critical
+            │       │
+            │       ├── 🔎 Equivalencias:
+            │       │       Basic (DTU)     ≈ GP bajo
+            │       │       Standard (DTU)  ⇄ General Purpose (vCore)
+            │       │       Premium (DTU)   ⇄ Business Critical (vCore)
+            │       │
             │       ├── HA: Sí (integrado)
             │       ├── DR: Sí (Geo-replication)
-            │       ├── Read replicas: Solo si Business Critical
+            │       ├── Read replicas: Solo si Business Critical / Premium
             │       ├── Backups: Automáticos
-            │       └── In-Memory OLTP: Solo en BC
+            │       └── In-Memory OLTP: Solo en Premium / Business Critical
             │
             └── No →
                   ¿Carga intermitente / dev-test?
                   │
                   ├── Sí → Single DB – General Purpose Serverless
+                  │       │
+                  │       ├── Modelo: vCore (General Purpose)
+                  │       ├── 🔎 Equivalencia aproximada:
+                  │       │       Standard (DTU) ≈ General Purpose (vCore)
                   │       │
                   │       ├── HA: Sí (remota)
                   │       ├── DR: Sí
@@ -103,13 +140,24 @@ Azure SQL (Familia de servicios)
                   │       ├── Auto-pause: Sí
                   │       └── In-Memory OLTP: No
                   │
-                  └── No → Single DB – General Purpose
+                  └── No → Single DB – General Purpose (Provisioned)
+                          │
+                          ├── Modelo vCore:
+                          │       └── General Purpose
+                          │
+                          ├── Modelo DTU equivalente:
+                          │       └── Standard
+                          │
+                          ├── 🔎 Equivalencia:
+                          │       Standard (DTU)
+                          │       ⇄ General Purpose (vCore)
                           │
                           ├── HA: Sí (réplica remota)
                           ├── DR: Sí
                           ├── Read replicas: No dedicadas
                           ├── Backups: Automáticos
                           └── In-Memory OLTP: No
+
 
 ````
 
