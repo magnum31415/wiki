@@ -587,3 +587,91 @@ Azure SQL (Familia de servicios)
 | Zone-redundant    | Fallo de zona completa   |
 | Geo-replication   | Fallo de región completa |
 
+
+## 🌳 Árbol de Herramientas de Migración a Azure SQL
+````
+Migración a Azure SQL
+│
+├── 1️⃣ Herramientas de evaluación / compatibilidad
+│       │
+│       └── SQL Server Migration Assistant (SSMA)
+│               │
+│               ├── Qué es:
+│               │       Herramienta para convertir y migrar bases
+│               │       desde otros motores a SQL Server/Azure SQL
+│               │
+│               ├── Orígenes soportados:
+│               │       Oracle
+│               │       MySQL
+│               │       PostgreSQL
+│               │       DB2
+│               │       Access
+│               │
+│               ├── Función principal:
+│               │       Analizar compatibilidad
+│               │       Convertir esquema
+│               │       Migrar datos
+│               │
+│               └── Uso típico:
+│                       Migración heterogénea (no SQL Server)
+│
+│
+├── 2️⃣ Herramientas de evaluación para SQL Server
+│       │
+│       └── Azure SQL Migration Extension (en Azure Data Studio)
+│               │
+│               ├── Qué es:
+│               │       Extensión que analiza SQL Server
+│               │       antes de migrar a Azure
+│               │
+│               ├── Función principal:
+│               │       Evaluación de compatibilidad
+│               │       Identificar problemas
+│               │       Recomendar destino:
+│               │             Azure SQL Database
+│               │             Managed Instance
+│               │             SQL en VM
+│               │
+│               └── Uso típico:
+│                       Assessment previo a migración
+│
+│
+├── 3️⃣ Orquestador de migración online/offline
+│       │
+│       └── Azure Database Migration Service (DMS)
+│               │
+│               ├── Qué es:
+│               │       Servicio PaaS en Azure
+│               │       que ejecuta la migración
+│               │
+│               ├── Soporta:
+│               │       Migraciones online (mínimo downtime)
+│               │       Migraciones offline
+│               │
+│               ├── Orígenes:
+│               │       SQL Server
+│               │       Oracle
+│               │       MySQL
+│               │       PostgreSQL
+│               │
+│               └── Uso típico:
+│                       Migraciones productivas
+│                       Migraciones con mínimo downtime
+│
+│
+└── 4️⃣ Entorno cliente
+        │
+        └── Azure Data Studio
+                │
+                ├── Qué es:
+                │       Cliente ligero para gestionar SQL
+                │
+                ├── No migra por sí solo
+                │
+                ├── Puede usar:
+                │       Azure SQL Migration Extension
+                │
+                └── Uso típico:
+                        Gestión y análisis
+
+````
