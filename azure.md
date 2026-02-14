@@ -10,3 +10,5 @@
 9. [Azure Networking](https://github.com/magnum31415/wiki/blob/main/azure-networking.md)
 10. [Azure Cosmosdb](https://github.com/magnum31415/wiki/blob/main/azure-cosmosdb.md)
 11. [Azure Virtual Machines](https://github.com/magnum31415/wiki/blob/main/azure-virtual-machines.md)
+12. [Azure storage](https://github.com/magnum31415/wiki/blob/main/azure-storage.md)
+   
