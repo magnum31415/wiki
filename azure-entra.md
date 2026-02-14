@@ -207,3 +207,96 @@ Juan
 # Frase para memorizar
 
 Un rol en Azure es un conjunto de permisos que se asigna a una identidad sobre un alcance específico.
+
+
+# 🔐 Microsoft Entra ID – Conceptos clave de autenticación y acceso
+
+## Continuous Access Evaluation (CAE)
+
+**¿Qué es?**  
+Mecanismo que permite que los tokens de acceso se validen en tiempo real, sin esperar a que expiren.
+
+**Qué hace en la práctica**
+- Revoca acceso inmediatamente si:
+  - Se cambia la contraseña
+  - Se deshabilita el usuario
+  - Se detecta riesgo
+- Reduce la ventana de exposición frente a sesiones comprometidas.
+
+**Clave examen AZ-305**
+CAE = Revocación casi inmediata de acceso sin esperar al expiry del token.
+
+---
+
+## Conditional Access Policies (CAP)
+
+**¿Qué es?**  
+Motor de políticas basado en reglas que decide si un usuario puede acceder a un recurso.
+
+**Se basa en condiciones como:**
+- Usuario o grupo
+- Ubicación
+- Dispositivo
+- Nivel de riesgo
+- Aplicación destino
+
+**Puede exigir:**
+- MFA
+- Dispositivo compliant
+- Bloquear acceso
+
+**Clave examen AZ-305**
+Conditional Access = “Si ocurre X → exige Y”.
+Es el control dinámico de acceso en Entra ID.
+
+---
+
+## OpenID Connect (OIDC)
+
+**¿Qué es?**  
+Protocolo de autenticación moderno basado en OAuth 2.0.
+
+Permite que una aplicación:
+- Autentique al usuario
+- Reciba un ID token
+- Sepa quién es el usuario
+
+**Dónde se usa**
+- Login con Microsoft
+- Integración apps web/cloud
+- Single Sign-On (SSO)
+
+**Clave examen AZ-305**
+OIDC = Autenticación moderna para aplicaciones (identity layer sobre OAuth).
+
+---
+
+## Multi-Factor Authentication (MFA)
+
+**¿Qué es?**  
+Mecanismo que requiere más de un factor de autenticación.
+
+**Factores típicos:**
+1. Algo que sabes → contraseña  
+2. Algo que tienes → móvil / token  
+3. Algo que eres → biometría  
+
+**Objetivo**
+Reducir riesgo de credenciales comprometidas.
+
+**Clave examen AZ-305**
+MFA = Segunda prueba de identidad.
+Se aplica normalmente mediante Conditional Access.
+
+---
+
+# 🧠 Resumen rápido para examen
+
+| Concepto | Qué controla |
+|----------|-------------|
+| CAE | Revocación inmediata de acceso |
+| Conditional Access | Reglas dinámicas de acceso |
+| OIDC | Protocolo de autenticación moderno |
+| MFA | Verificación en múltiples factores |
+
+
