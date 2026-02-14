@@ -10,6 +10,7 @@
 - [Microsoft Entra tenant](#microsoft-entra-tenant)
 - [Azure Subscription](#azure-subscription)
 - [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
+- [Access Reviews](#access-reviews)
 
 ---
 
@@ -208,10 +209,15 @@ Juan
 
 Un rol en Azure es un conjunto de permisos que se asigna a una identidad sobre un alcance específico.
 
+---
 
 # 🔐 Microsoft Entra ID – Conceptos clave de autenticación y acceso
 
+---
+
 ## Continuous Access Evaluation (CAE)
+
+🔝 [Volver al índice](#-índice)
 
 **¿Qué es?**  
 Mecanismo que permite que los tokens de acceso se validen en tiempo real, sin esperar a que expiren.
@@ -221,72 +227,75 @@ Mecanismo que permite que los tokens de acceso se validen en tiempo real, sin es
   - Se cambia la contraseña
   - Se deshabilita el usuario
   - Se detecta riesgo
-- Reduce la ventana de exposición frente a sesiones comprometidas.
 
-**Clave examen AZ-305**
-CAE = Revocación casi inmediata de acceso sin esperar al expiry del token.
+**Clave examen AZ-305**  
+CAE = Revocación casi inmediata de acceso.
 
 ---
 
 ## Conditional Access Policies (CAP)
 
-**¿Qué es?**  
-Motor de políticas basado en reglas que decide si un usuario puede acceder a un recurso.
+🔝 [Volver al índice](#-índice)
 
-**Se basa en condiciones como:**
-- Usuario o grupo
-- Ubicación
-- Dispositivo
-- Nivel de riesgo
-- Aplicación destino
+Motor de políticas dinámicas que decide si un usuario puede acceder a un recurso.
 
-**Puede exigir:**
+Puede exigir:
 - MFA
 - Dispositivo compliant
-- Bloquear acceso
+- Bloqueo de acceso
 
-**Clave examen AZ-305**
-Conditional Access = “Si ocurre X → exige Y”.
-Es el control dinámico de acceso en Entra ID.
+**Clave examen**  
+Si ocurre X → exige Y.
 
 ---
 
 ## OpenID Connect (OIDC)
 
-**¿Qué es?**  
-Protocolo de autenticación moderno basado en OAuth 2.0.
+🔝 [Volver al índice](#-índice)
 
-Permite que una aplicación:
-- Autentique al usuario
-- Reciba un ID token
-- Sepa quién es el usuario
+Protocolo moderno de autenticación basado en OAuth 2.0.
 
-**Dónde se usa**
+Se usa para:
 - Login con Microsoft
-- Integración apps web/cloud
-- Single Sign-On (SSO)
+- SSO
+- Apps cloud
 
-**Clave examen AZ-305**
-OIDC = Autenticación moderna para aplicaciones (identity layer sobre OAuth).
+**Clave examen**  
+OIDC = Autenticación moderna.
 
 ---
 
 ## Multi-Factor Authentication (MFA)
 
+🔝 [Volver al índice](#-índice)
+
+Requiere más de un factor de autenticación.
+
+**Clave examen**  
+MFA reduce riesgo de credenciales comprometidas.
+
+---
+
+## Access Reviews
+
+🔝 [Volver al índice](#-índice)
+
 **¿Qué es?**  
-Mecanismo que requiere más de un factor de autenticación.
+Funcionalidad de Microsoft Entra ID (Identity Governance) que permite revisar periódicamente quién tiene acceso a qué recursos.
 
-**Factores típicos:**
-1. Algo que sabes → contraseña  
-2. Algo que tienes → móvil / token  
-3. Algo que eres → biometría  
+**Qué hace en la práctica**
+- Revisa membresías de grupos
+- Revisa asignaciones de roles
+- Permite aprobar o revocar accesos
+- Automatiza expiración de permisos
 
-**Objetivo**
-Reducir riesgo de credenciales comprometidas.
+**Escenarios típicos**
+- Revisar accesos de usuarios externos (B2B)
+- Revisar miembros de grupos privilegiados
+- Cumplimiento normativo (SOX, ISO, etc.)
 
 **Clave examen AZ-305**
-MFA = Segunda prueba de identidad.
-Se aplica normalmente mediante Conditional Access.
+Access Reviews = Control periódico de privilegios para evitar acumulación de permisos.
 
 ---
 
@@ -297,6 +306,5 @@ Se aplica normalmente mediante Conditional Access.
 | CAE | Revocación inmediata de acceso |
 | Conditional Access | Reglas dinámicas de acceso |
 | OIDC | Protocolo de autenticación moderno |
-| MFA | Verificación en múltiples factores |
-
-
+| MFA | Verificación multifactor |
+| Access Reviews | Revisión periódica de accesos |
