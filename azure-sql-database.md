@@ -341,323 +341,354 @@ Comparativa: PITR vs RPO vs RTO vs LTR
 | **RPO**  | Recovery Point Objective | Objetivo de negocio        | Cuánta pérdida de datos es aceptable                                   | “Máximo 5 minutos de pérdida”                              | Depende de arquitectura (BC ≈ 0, Geo-replication > 0) |
 | **RTO**  | Recovery Time Objective  | Objetivo de negocio        | Cuánto tiempo puede tardar el sistema en volver a estar operativo      | “Debe estar disponible en 2 minutos”                       | HA síncrona → bajo RTO                                |
 
-## Guía de Selección de Azure SQL (Servicio PaaS) según Requisitos Técnicos -  
+## Guía de Selección de Azure SQL  según Requisitos Técnicos -  
 
 ````yml
-
-¿Necesita compatibilidad casi total con SQL Server (SQL Agent, cross-DB, CLR)?
+¿Necesita control total del sistema operativo
+o configuración específica del motor SQL?
 │
-├── Sí → Azure SQL Managed Instance
+├── Sí → SQL Server on Azure Virtual Machines (IaaS)
 │       │
-│       ├── Modelos disponibles:
-│       │       vCore → General Purpose / Business Critical
-│       │       DTU → ❌ No disponible
+│       ├── Tipo servicio: IaaS (VM + SQL instalado)
+│       ├── Compatible 100% SQL Server: ✅ Sí (idéntico a on-prem)
 │       │
-│       ├── HA: Sí (de serie)
-│       │       ├── Tipo redundancia:
-│       │       │       General Purpose → Locally redundant (asincrónica dentro región)
-│       │       │       Business Critical → Zone-redundant (síncrona)
-│       │       ├── RPO:
-│       │       │       General Purpose → > 0 segundos
-│       │       │       Business Critical → ≈ 0
-│       │       ├── RTO:
-│       │       │       General Purpose → Bajo (segundos)
-│       │       │       Business Critical → Muy bajo (segundos)
-│       │       ├── Réplicas:
-│       │       │       General Purpose → 1 réplica asincrónica interna 
-│       │       │       Business Critical → 3 réplicas síncronas (Always On AG)
-│       │       ├── Read-only endpoints:
-│       │       │       General Purpose → ❌ No
-│       │       │       Business Critical → ✅ Sí
-│       │       ├── Automatic failover with zero data loss:
-│       │       │       General Purpose → ❌ No (asincrónica)
-│       │       │       Business Critical → ✅ Sí (síncrona)
+│       ├── HA: ❌ No viene de serie
+│       │       ├── Debe configurarse:
+│       │       │       Always On Availability Groups
+│       │       │       Failover Cluster Instance
+│       │       │       Log Shipping
+│       │       ├── RPO/RTO → Depende de tu configuración
+│       │       └── Zero data loss → Solo si configuras síncrono
 │       │
-│       ├── DR: Sí (Auto-failover group / Geo-replication)
-│       │       ├── Tipo redundancia: Geo-replication (entre regiones)
-│       │       ├── Tipo sincronización → Asincrónica
-│       │       ├── RPO → Segundos a minutos (depende del lag)
-│       │       └── RTO → Minutos
-│       │       └── Requiere activación: Sí (no viene configurado)
-│       │       ├── Réplicas:
-│       │       │       Secundaria asincrónica en otra región
-│       │       ├── Read-only endpoint:
-│       │       │       ✅ Sí (si se configura secondary)
-│       │       └── Requiere activación: Sí
+│       ├── DR: ❌ No viene de serie
+│       │       ├── Se configura manualmente
+│       │       ├── Azure Site Recovery
+│       │       └── Always On entre regiones
 │       │
-│       ├── Read replicas: Solo en Business Critical  (síncronas)
-│       ├── Backups: Automáticos + PITR + LTR
-│       ├── In-Memory OLTP: Solo en Business Critical
-│       │
-│       ├── Patching: Automático (gestionado por Azure)
-│       ├── Escalado sin downtime: Sí (con pequeño failover)
-│       ├── Escalado automático: No
-│       ├── Computación: Dedicada
-│       ├── Almacenamiento:
-│       │       General Purpose → remoto
-│       │       Business Critical → local SSD
-│       ├── Compatible 100% SQL Server: Muy alta compatibilidad
-│       ├── Reserved Capacity: Sí (vCore)
-│       ├── Azure Hybrid Benefit: Sí (vCore)
+│       ├── Backups: ❌ No automáticos (salvo extensión SQL IaaS Agent)
+│       ├── Patching: ❌ Lo gestionas tú (o mantenimiento automático)
+│       ├── Escalado: Manual
+│       ├── Gestión: Completa responsabilidad tuya
 │       │
 │       └── Escenario ideal:
-│               Migración lift-and-shift
-│               Aplicaciones legacy
-│               Necesita SQL Agent y cross-database
+│               Lift-and-shift sin cambios
+│               Requisitos muy específicos de SO
+│               Versiones antiguas SQL
+│               Control total de configuración
 │
 └── No →
-      ¿Base de datos muy grande (varios TB hasta 100 TB+) o
-      necesita escalar almacenamiento independientemente del cómputo?
-      │
-      ├── Sí → Azure SQL Database – Hyperscale
-      │       │
-      │       ├── Modelos disponibles:
-      │       │       vCore → Hyperscale
-      │       │       DTU → ❌ No disponible
-      │       │
-      │       ├── HA: Sí (arquitectura distribuida)
-      │       │       └── Réplicas asincrónicas internas (log service + page servers)
-      │       │       ├── Tipo redundancia: Zone-redundant interna
-      │       │       ├── Sincronización: Asincrónica distribuida 
-      │       │       └── Built-in: Sí
-      │       │       └── Automatic failover with zero data loss: ❌ No (asincrónica)
-      │       │       ├── Réplicas:
-      │       │       │       Múltiples réplicas asincrónicas distribuidas
-      │       │       ├── Read-only endpoints:
-      │       │       │       ✅ Sí (múltiples)
-      │       │       └── Automatic failover with zero data loss: ❌ No
-      │       │       ├── RPO → > 0 
-      │       │       └── RTO → Bajo (segundos)
-      │       │
-      │       ├── DR: Sí (Auto-failover group / Geo-replication)
-      │       │       ├── Tipo redundancia: Geo-replication
-      │       │       ├── Sincronización: Asincrónica
-      │       │       └── Requiere activación: Sí
-      │       │
-      │       ├── Read replicas: Sí (múltiples,asincrónicas)
-      │       ├── Backups: Automáticos (snapshots + PITR + LTR)
-      │       ├── In-Memory OLTP: No
-      │       │
-      │       ├── Patching: Automático
-      │       ├── Escalado sin downtime: Sí
-      │       ├── Escalado automático: Solo almacenamiento
-      │       ├── Computación: Dedicada
-      │       ├── Almacenamiento: Arquitectura distribuida separada del cómputo
-      │       ├── Compatible 100% SQL Server: No
-      │       ├── Reserved Capacity: Sí (vCore)
-      │       ├── Azure Hybrid Benefit: Sí (vCore)
-      │       │
-      │       └── Escenario ideal:
-      │               Bases de datos muy grandes
-      │               Crecimiento impredecible
-      │               Workloads mixtos (OLTP + analítico)
-      │               Necesita escalar almacenamiento rápidamente
-      │
-      └── No →
-            ¿Carga OLTP muy alta / In-Memory / baja latencia?
-            │
-            ├── Sí → Azure SQL Database – Business Critical
-            │       │
-            │       ├── Modelos disponibles:
-            │       │       vCore → Business Critical
-            │       │       DTU → Premium
-            │       │
-            │       ├── Equivalencia:
-            │       │       Premium (DTU) ⇄ Business Critical (vCore)
-            │       │
-            │       ├── HA: Sí (réplicas síncronas locales – Always On AG)
-            │       │       ├── Tipo redundancia: Zone-redundant
-            │       │       ├── Sincronización: Síncrona
-            │       │       ├── RPO → ≈ 0
-            │       │       └── RTO → Muy bajo (segundos)
-            │       │       └── Built-in: Sí
-            │       │       └── Automatic failover with zero data loss: ✅ Sí
-            │       │       ├── Réplicas:
-            │       │       │       3 réplicas síncronas (Always On AG)
-            │       │       ├── Read-only endpoints: ✅ Sí (hasta 3)
-            │       │       │       
-            │       │       └── Automatic failover with zero data loss:  ✅ Sí
-            │       │              
-            │       │ 
-            │       ├── DR: Sí (Auto-failover group / Geo-replication)
-            │       │       ├── Tipo redundancia: Geo-replication
-            │       │       ├── Sincronización: Asincrónica entre regiones
-            │       │       └── Requiere activación: Sí
-            │       │       ├── RPO → Segundos a minutos
-            │       │       └── RTO → Minutos
-            │       │
-            │       ├── Read replicas: Sí (hasta 3)
-            │       ├── Backups: Automáticos + PITR + LTR
-            │       ├── In-Memory OLTP: Sí
-            │       │
-            │       ├── Patching: Automático
-            │       ├── Escalado sin downtime: Sí (failover breve)
-            │       ├── Escalado automático: No
-            │       ├── Computación: Dedicada
-            │       ├── Almacenamiento: Local SSD
-            │       ├── Compatible 100% SQL Server: No (pero alta compatibilidad)
-            │       ├── Reserved Capacity: Sí (vCore)
-            │       ├── Azure Hybrid Benefit: Sí (vCore)
-            │       │
-            │       └── Escenario ideal:
-            │               Sistemas críticos
-            │               Alta concurrencia
-            │               Latencia mínima
-            │
-            └── No →
-                  ¿Muchas bases con uso variable?
-                  │
-                  ├── Sí → Elastic Pool
-                  │       │
-                  │       ├── Modelos disponibles:
-                  │       │       vCore → General Purpose / Business Critical
-                  │       │       DTU → Basic / Standard / Premium
-                  │       │
-                  │       ├── Equivalencias:
-                  │       │       Basic (DTU)    ≈ General Purpose bajo
-                  │       │       Standard (DTU) ⇄ General Purpose (vCore)
-                  │       │       Premium (DTU)  ⇄ Business Critical (vCore)
-                  │       │
-                  │       ├── HA: Sí (integrado)
-                  │       │       ├── General Purpose → Locally redundant (asincrónica)
-                  │       │       ├── Business Critical → Zone-redundant (síncrona)
-                  │       │       ├── General Purpose → Asincrónica
-                  │       │       │       RPO → > 0
-                  │       │       │       RTO → Bajo
-                  │       │       ├── Business Critical → Síncrona
-                  │       │       │       RPO → ≈ 0
-                  │       │       │       RTO → Muy bajo
-                  │       │       └── Built-in: Sí
-                  │       │       └── Automatic failover with zero data loss:
-                  │       │       │       General Purpose → ❌ No
-                  │       │       │       Business Critical / Premium → ✅ Sí
-                  │       │       ├── Réplicas:
-                  │       │       │       General Purpose → 1 asincrónica interna
-                  │       │       │       Business Critical → 3 síncronas
-                  │       │       ├── Read-only endpoints:
-                  │       │       │       General Purpose → ❌ No
-                  │       │       │       Business Critical → ✅ Sí
-                  │       │       └── Automatic failover with zero data loss:
-                  │       │               General Purpose → ❌ No
-                  │       │               Business Critical → ✅ Sí
-                  │       │     
-                  │       ├── DR: Sí asincrónica entre regiones)
-                  │       │       ├── Sincronización: Asincrónica
-                  │       │       ├── RPO → Segundos a minutos
-                  │       │       └── RTO → Minutos
-                  │       ├── Read replicas: Solo si BC / Premium
-                  │       ├── Backups: Automáticos
-                  │       ├── In-Memory OLTP: Solo si BC / Premium
-                  │       │
-                  │       ├── Patching: Automático
-                  │       ├── Escalado sin downtime: Sí
-                  │       ├── Escalado automático: No
-                  │       ├── Computación: Compartida entre DBs
-                  │       ├── Almacenamiento: Remoto (GP) / Local (BC)
-                  │       ├── Compatible 100% SQL Server: No
-                  │       ├── Reserved Capacity: Sí (vCore)
-                  │       ├── Azure Hybrid Benefit: Sí (vCore)
-                  │       │
-                  │       └── Escenario ideal:
-                  │               SaaS multi-tenant
-                  │               Muchas bases pequeñas
-                  │               Optimización de costes
-                  │
-                  └── No →
-                        ¿Carga intermitente / dev-test?
-                        │
-                        ├── Sí → Single DB – General Purpose Serverless
-                        │       │
-                        │       ├── Modelos disponibles:
-                        │       │       vCore → General Purpose (Serverless)
-                        │       │       DTU → ❌ No disponible
-                        │       │
-                        │       ├── Equivalente aproximado en DTU:
-                        │       │       Standard
-                        │       │
-                        │       ├── HA: Sí (réplica asincrónica)
-                        │       │       ├── RPO → > 0
-                        │       │       └── RTO → Bajo
-                        │       │       ├── Tipo redundancia: Locally redundant
-                        │       │       └── Built-in: Sí
-                        │       │       └── Automatic failover with zero data loss: ❌ No
-                        │       │       ├── Réplicas:
-                        │       │       │       1 asincrónica interna
-                        │       │       ├── Read-only endpoints: ❌ No
-                        │       │       └── Automatic failover with zero data loss: ❌ No
-                        │       │               
-                        │       │     
-                        │       ├── DR: Sí (asincrónica)
-                        │       │       ├── Tipo redundancia: Geo-replication
-                        │       │       ├── Sincronización: Asincrónica  
-                        │       │       ├── RPO → Segundos a minutos
-                        │       │       └── RTO → Minutos
-                        │       │       └── Requiere activación: Sí
-                        │       │  
-                        │       ├── Read replicas: No dedicadas
-                        │       ├── Backups: Automáticos
-                        │       ├── In-Memory OLTP: No
-                        │       │
-                        │       ├── Patching: Automático
-                        │       ├── Escalado sin downtime: Sí
-                        │       ├── Escalado automático: Sí (computación)
-                        │       ├── Computación: Dedicada pero elástica
-                        │       ├── Almacenamiento: Remoto
-                        │       ├── Compatible 100% SQL Server: No
-                        │       ├── Reserved Capacity: No
-                        │       ├── Azure Hybrid Benefit: Sí
-                        │       │
-                        │       └── Escenario ideal:
-                        │               Dev/Test
-                        │               Workloads impredecibles
-                        │               Uso intermitente
-                        │               Optimización de costes
-                        │
-                        └── No → Single DB – General Purpose (Provisioned)
+        ¿Necesita compatibilidad casi total con SQL Server (SQL Agent, cross-DB, CLR)?
+        │
+        ├── Sí → Azure SQL Managed Instance
+        │       │
+        │       ├── Modelos disponibles:
+        │       │       vCore → General Purpose / Business Critical
+        │       │       DTU → ❌ No disponible
+        │       │
+        │       ├── HA: Sí (de serie)
+        │       │       ├── Tipo redundancia:
+        │       │       │       General Purpose → Locally redundant (asincrónica dentro región)
+        │       │       │       Business Critical → Zone-redundant (síncrona)
+        │       │       ├── RPO:
+        │       │       │       General Purpose → > 0 segundos
+        │       │       │       Business Critical → ≈ 0
+        │       │       ├── RTO:
+        │       │       │       General Purpose → Bajo (segundos)
+        │       │       │       Business Critical → Muy bajo (segundos)
+        │       │       ├── Réplicas:
+        │       │       │       General Purpose → 1 réplica asincrónica interna 
+        │       │       │       Business Critical → 3 réplicas síncronas (Always On AG)
+        │       │       ├── Read-only endpoints:
+        │       │       │       General Purpose → ❌ No
+        │       │       │       Business Critical → ✅ Sí
+        │       │       ├── Automatic failover with zero data loss:
+        │       │       │       General Purpose → ❌ No (asincrónica)
+        │       │       │       Business Critical → ✅ Sí (síncrona)
+        │       │
+        │       ├── DR: Sí (Auto-failover group / Geo-replication)
+        │       │       ├── Tipo redundancia: Geo-replication (entre regiones)
+        │       │       ├── Tipo sincronización → Asincrónica
+        │       │       ├── RPO → Segundos a minutos (depende del lag)
+        │       │       └── RTO → Minutos
+        │       │       └── Requiere activación: Sí (no viene configurado)
+        │       │       ├── Réplicas:
+        │       │       │       Secundaria asincrónica en otra región
+        │       │       ├── Read-only endpoint:
+        │       │       │       ✅ Sí (si se configura secondary)
+        │       │       └── Requiere activación: Sí
+        │       │
+        │       ├── Read replicas: Solo en Business Critical  (síncronas)
+        │       ├── Backups: Automáticos + PITR + LTR
+        │       ├── In-Memory OLTP: Solo en Business Critical
+        │       │
+        │       ├── Patching: Automático (gestionado por Azure)
+        │       ├── Escalado sin downtime: Sí (con pequeño failover)
+        │       ├── Escalado automático: No
+        │       ├── Computación: Dedicada
+        │       ├── Almacenamiento:
+        │       │       General Purpose → remoto
+        │       │       Business Critical → local SSD
+        │       ├── Compatible 100% SQL Server: Muy alta compatibilidad
+        │       ├── Reserved Capacity: Sí (vCore)
+        │       ├── Azure Hybrid Benefit: Sí (vCore)
+        │       │
+        │       └── Escenario ideal:
+        │               Migración lift-and-shift
+        │               Aplicaciones legacy
+        │               Necesita SQL Agent y cross-database
+        │
+        └── No →
+              ¿Base de datos muy grande (varios TB hasta 100 TB+) o
+              necesita escalar almacenamiento independientemente del cómputo?
+              │
+              ├── Sí → Azure SQL Database – Hyperscale
+              │       │
+              │       ├── Modelos disponibles:
+              │       │       vCore → Hyperscale
+              │       │       DTU → ❌ No disponible
+              │       │
+              │       ├── HA: Sí (arquitectura distribuida)
+              │       │       └── Réplicas asincrónicas internas (log service + page servers)
+              │       │       ├── Tipo redundancia: Zone-redundant interna
+              │       │       ├── Sincronización: Asincrónica distribuida 
+              │       │       └── Built-in: Sí
+              │       │       └── Automatic failover with zero data loss: ❌ No (asincrónica)
+              │       │       ├── Réplicas:
+              │       │       │       Múltiples réplicas asincrónicas distribuidas
+              │       │       ├── Read-only endpoints:
+              │       │       │       ✅ Sí (múltiples)
+              │       │       └── Automatic failover with zero data loss: ❌ No
+              │       │       ├── RPO → > 0 
+              │       │       └── RTO → Bajo (segundos)
+              │       │
+              │       ├── DR: Sí (Auto-failover group / Geo-replication)
+              │       │       ├── Tipo redundancia: Geo-replication
+              │       │       ├── Sincronización: Asincrónica
+              │       │       └── Requiere activación: Sí
+              │       │
+              │       ├── Read replicas: Sí (múltiples,asincrónicas)
+              │       ├── Backups: Automáticos (snapshots + PITR + LTR)
+              │       ├── In-Memory OLTP: No
+              │       │
+              │       ├── Patching: Automático
+              │       ├── Escalado sin downtime: Sí
+              │       ├── Escalado automático: Solo almacenamiento
+              │       ├── Computación: Dedicada
+              │       ├── Almacenamiento: Arquitectura distribuida separada del cómputo
+              │       ├── Compatible 100% SQL Server: No
+              │       ├── Reserved Capacity: Sí (vCore)
+              │       ├── Azure Hybrid Benefit: Sí (vCore)
+              │       │
+              │       └── Escenario ideal:
+              │               Bases de datos muy grandes
+              │               Crecimiento impredecible
+              │               Workloads mixtos (OLTP + analítico)
+              │               Necesita escalar almacenamiento rápidamente
+              │
+              └── No →
+                    ¿Carga OLTP muy alta / In-Memory / baja latencia?
+                    │
+                    ├── Sí → Azure SQL Database – Business Critical
+                    │       │
+                    │       ├── Modelos disponibles:
+                    │       │       vCore → Business Critical
+                    │       │       DTU → Premium
+                    │       │
+                    │       ├── Equivalencia:
+                    │       │       Premium (DTU) ⇄ Business Critical (vCore)
+                    │       │
+                    │       ├── HA: Sí (réplicas síncronas locales – Always On AG)
+                    │       │       ├── Tipo redundancia: Zone-redundant
+                    │       │       ├── Sincronización: Síncrona
+                    │       │       ├── RPO → ≈ 0
+                    │       │       └── RTO → Muy bajo (segundos)
+                    │       │       └── Built-in: Sí
+                    │       │       └── Automatic failover with zero data loss: ✅ Sí
+                    │       │       ├── Réplicas:
+                    │       │       │       3 réplicas síncronas (Always On AG)
+                    │       │       ├── Read-only endpoints: ✅ Sí (hasta 3)
+                    │       │       │       
+                    │       │       └── Automatic failover with zero data loss:  ✅ Sí
+                    │       │              
+                    │       │ 
+                    │       ├── DR: Sí (Auto-failover group / Geo-replication)
+                    │       │       ├── Tipo redundancia: Geo-replication
+                    │       │       ├── Sincronización: Asincrónica entre regiones
+                    │       │       └── Requiere activación: Sí
+                    │       │       ├── RPO → Segundos a minutos
+                    │       │       └── RTO → Minutos
+                    │       │
+                    │       ├── Read replicas: Sí (hasta 3)
+                    │       ├── Backups: Automáticos + PITR + LTR
+                    │       ├── In-Memory OLTP: Sí
+                    │       │
+                    │       ├── Patching: Automático
+                    │       ├── Escalado sin downtime: Sí (failover breve)
+                    │       ├── Escalado automático: No
+                    │       ├── Computación: Dedicada
+                    │       ├── Almacenamiento: Local SSD
+                    │       ├── Compatible 100% SQL Server: No (pero alta compatibilidad)
+                    │       ├── Reserved Capacity: Sí (vCore)
+                    │       ├── Azure Hybrid Benefit: Sí (vCore)
+                    │       │
+                    │       └── Escenario ideal:
+                    │               Sistemas críticos
+                    │               Alta concurrencia
+                    │               Latencia mínima
+                    │
+                    └── No →
+                          ¿Muchas bases con uso variable?
+                          │
+                          ├── Sí → Elastic Pool
+                          │       │
+                          │       ├── Modelos disponibles:
+                          │       │       vCore → General Purpose / Business Critical
+                          │       │       DTU → Basic / Standard / Premium
+                          │       │
+                          │       ├── Equivalencias:
+                          │       │       Basic (DTU)    ≈ General Purpose bajo
+                          │       │       Standard (DTU) ⇄ General Purpose (vCore)
+                          │       │       Premium (DTU)  ⇄ Business Critical (vCore)
+                          │       │
+                          │       ├── HA: Sí (integrado)
+                          │       │       ├── General Purpose → Locally redundant (asincrónica)
+                          │       │       ├── Business Critical → Zone-redundant (síncrona)
+                          │       │       ├── General Purpose → Asincrónica
+                          │       │       │       RPO → > 0
+                          │       │       │       RTO → Bajo
+                          │       │       ├── Business Critical → Síncrona
+                          │       │       │       RPO → ≈ 0
+                          │       │       │       RTO → Muy bajo
+                          │       │       └── Built-in: Sí
+                          │       │       └── Automatic failover with zero data loss:
+                          │       │       │       General Purpose → ❌ No
+                          │       │       │       Business Critical / Premium → ✅ Sí
+                          │       │       ├── Réplicas:
+                          │       │       │       General Purpose → 1 asincrónica interna
+                          │       │       │       Business Critical → 3 síncronas
+                          │       │       ├── Read-only endpoints:
+                          │       │       │       General Purpose → ❌ No
+                          │       │       │       Business Critical → ✅ Sí
+                          │       │       └── Automatic failover with zero data loss:
+                          │       │               General Purpose → ❌ No
+                          │       │               Business Critical → ✅ Sí
+                          │       │     
+                          │       ├── DR: Sí asincrónica entre regiones)
+                          │       │       ├── Sincronización: Asincrónica
+                          │       │       ├── RPO → Segundos a minutos
+                          │       │       └── RTO → Minutos
+                          │       ├── Read replicas: Solo si BC / Premium
+                          │       ├── Backups: Automáticos
+                          │       ├── In-Memory OLTP: Solo si BC / Premium
+                          │       │
+                          │       ├── Patching: Automático
+                          │       ├── Escalado sin downtime: Sí
+                          │       ├── Escalado automático: No
+                          │       ├── Computación: Compartida entre DBs
+                          │       ├── Almacenamiento: Remoto (GP) / Local (BC)
+                          │       ├── Compatible 100% SQL Server: No
+                          │       ├── Reserved Capacity: Sí (vCore)
+                          │       ├── Azure Hybrid Benefit: Sí (vCore)
+                          │       │
+                          │       └── Escenario ideal:
+                          │               SaaS multi-tenant
+                          │               Muchas bases pequeñas
+                          │               Optimización de costes
+                          │
+                          └── No →
+                                ¿Carga intermitente / dev-test?
                                 │
-                                ├── Modelos disponibles:
-                                │       vCore → General Purpose
-                                │       DTU → Standard
+                                ├── Sí → Single DB – General Purpose Serverless
+                                │       │
+                                │       ├── Modelos disponibles:
+                                │       │       vCore → General Purpose (Serverless)
+                                │       │       DTU → ❌ No disponible
+                                │       │
+                                │       ├── Equivalente aproximado en DTU:
+                                │       │       Standard
+                                │       │
+                                │       ├── HA: Sí (réplica asincrónica)
+                                │       │       ├── RPO → > 0
+                                │       │       └── RTO → Bajo
+                                │       │       ├── Tipo redundancia: Locally redundant
+                                │       │       └── Built-in: Sí
+                                │       │       └── Automatic failover with zero data loss: ❌ No
+                                │       │       ├── Réplicas:
+                                │       │       │       1 asincrónica interna
+                                │       │       ├── Read-only endpoints: ❌ No
+                                │       │       └── Automatic failover with zero data loss: ❌ No
+                                │       │               
+                                │       │     
+                                │       ├── DR: Sí (asincrónica)
+                                │       │       ├── Tipo redundancia: Geo-replication
+                                │       │       ├── Sincronización: Asincrónica  
+                                │       │       ├── RPO → Segundos a minutos
+                                │       │       └── RTO → Minutos
+                                │       │       └── Requiere activación: Sí
+                                │       │  
+                                │       ├── Read replicas: No dedicadas
+                                │       ├── Backups: Automáticos
+                                │       ├── In-Memory OLTP: No
+                                │       │
+                                │       ├── Patching: Automático
+                                │       ├── Escalado sin downtime: Sí
+                                │       ├── Escalado automático: Sí (computación)
+                                │       ├── Computación: Dedicada pero elástica
+                                │       ├── Almacenamiento: Remoto
+                                │       ├── Compatible 100% SQL Server: No
+                                │       ├── Reserved Capacity: No
+                                │       ├── Azure Hybrid Benefit: Sí
+                                │       │
+                                │       └── Escenario ideal:
+                                │               Dev/Test
+                                │               Workloads impredecibles
+                                │               Uso intermitente
+                                │               Optimización de costes
                                 │
-                                ├── Equivalencia:
-                                │       Standard (DTU) ⇄ General Purpose (vCore)
-                                │
-                                ├── HA: Sí (réplica asincrónica)
-                                │       ├── Tipo redundancia: Locally redundant
-                                │       └── Built-in: Sí
-                                │       └── Automatic failover with zero data loss: ❌ No
-                                │       ├── Réplicas:
-                                │       │       1 asincrónica interna
-                                │       ├── Read-only endpoints: ❌ No
-                                │       └── Automatic failover with zero data loss: ❌ No
-                                │       ├── RPO → > 0
-                                │       └── RTO → Bajo
-                                │  
-                                ├── DR: Sí (asincrónica)
-                                │       ├── Tipo redundancia: Geo-replication
-                                │       ├── Sincronización: Asincrónica
-                                │       └── Requiere activación: Sí
-                                │       ├── RPO → Segundos a minutos
-                                │       └── RTO → Minutos
-                                │  
-                                ├── Read replicas: No dedicadas
-                                ├── Backups: Automáticos
-                                ├── In-Memory OLTP: No
-                                │
-                                ├── Patching: Automático
-                                ├── Escalado sin downtime: Sí
-                                ├── Escalado automático: No
-                                ├── Computación: Dedicada
-                                ├── Almacenamiento: Remoto
-                                ├── Compatible 100% SQL Server: No
-                                ├── Reserved Capacity: Sí (vCore)
-                                ├── Azure Hybrid Benefit: Sí (vCore)
-                                │
-                                └── Escenario ideal:
-                                        Aplicaciones estándar
-                                        OLTP moderado
-                                        Coste equilibrado
-
+                                └── No → Single DB – General Purpose (Provisioned)
+                                        │
+                                        ├── Modelos disponibles:
+                                        │       vCore → General Purpose
+                                        │       DTU → Standard
+                                        │
+                                        ├── Equivalencia:
+                                        │       Standard (DTU) ⇄ General Purpose (vCore)
+                                        │
+                                        ├── HA: Sí (réplica asincrónica)
+                                        │       ├── Tipo redundancia: Locally redundant
+                                        │       └── Built-in: Sí
+                                        │       └── Automatic failover with zero data loss: ❌ No
+                                        │       ├── Réplicas:
+                                        │       │       1 asincrónica interna
+                                        │       ├── Read-only endpoints: ❌ No
+                                        │       └── Automatic failover with zero data loss: ❌ No
+                                        │       ├── RPO → > 0
+                                        │       └── RTO → Bajo
+                                        │  
+                                        ├── DR: Sí (asincrónica)
+                                        │       ├── Tipo redundancia: Geo-replication
+                                        │       ├── Sincronización: Asincrónica
+                                        │       └── Requiere activación: Sí
+                                        │       ├── RPO → Segundos a minutos
+                                        │       └── RTO → Minutos
+                                        │  
+                                        ├── Read replicas: No dedicadas
+                                        ├── Backups: Automáticos
+                                        ├── In-Memory OLTP: No
+                                        │
+                                        ├── Patching: Automático
+                                        ├── Escalado sin downtime: Sí
+                                        ├── Escalado automático: No
+                                        ├── Computación: Dedicada
+                                        ├── Almacenamiento: Remoto
+                                        ├── Compatible 100% SQL Server: No
+                                        ├── Reserved Capacity: Sí (vCore)
+                                        ├── Azure Hybrid Benefit: Sí (vCore)
+                                        │
+                                        └── Escenario ideal:
+                                                Aplicaciones estándar
+                                                OLTP moderado
+            
 
 ````
 ## DR
