@@ -250,6 +250,44 @@ Azure Kubernetes Service (AKS)
 │                 ├── Ejecuta pods sin gestionar nodos
 │                 ├── Ideal → Picos impredecibles / burst
 │                 └── Nivel → Serverless extension de AKS
+|                 │
+|                 ├── Qué es:
+|                 │       Extensión serverless de AKS
+|                 │       Ejecuta pods directamente en ACI
+|                 │       No usas nodos VM del cluster
+|                 │
+|                 ├── Ventaja principal:
+|                 │       Escalado rápido para picos impredecibles (burst)
+|                 │       Sin gestionar infraestructura
+|                 │
+|                 ├── Limitaciones importantes:
+|                 │
+|                 │       ❌ No soporta pods Windows → Solo contenedores Linux
+|                 │       ❌ No soporta DaemonSets → No puedes ejecutar agentes por nodo
+|                 │       ❌ No soporta privilegios elevados → No privileged containers, No acceso al host
+|                 │       ❌ No soporta host networking
+|                 │       ❌ No soporta storage persistente tipo Azure Disk (solo Azure Files)
+|                 │       ❌ No es ideal para workloads stateful
+|                 │       ❌ Sin soporte completo para:
+|                 │           - Custom CNI avanzado
+|                 │           - GPU
+|                 │           - Windows containers
+|                 │
+|                 ├── Red:
+|                 │       Usa Azure VNet
+|                 │       Requiere configuración específica
+|                 │
+|                 ├── Cuándo usarlo:
+|                 │       ✔ Jobs batch
+|                 │       ✔ Procesamiento por eventos
+|                 │       ✔ Picos temporales de carga
+|                 │       ✔ Workloads stateless
+|                 │
+|                 └── Cuándo NO usarlo:
+|                         ✖ Workloads Windows
+|                         ✖ Apps stateful con Azure Disk
+|                         ✖ Necesitas DaemonSets
+|                         ✖ Necesitas control profundo de nodo
 │
 │
 ├── 🔹 2️⃣ Gobernanza y Gestión híbrida
