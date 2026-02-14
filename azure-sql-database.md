@@ -338,9 +338,14 @@ Azure SQL (Familia de servicios)
 ## Guía de Selección de Azure SQL según Requisitos Técnicos Ampliado
 
 ````yml
+
 ¿Necesita compatibilidad casi total con SQL Server (SQL Agent, cross-DB, CLR)?
 │
 ├── Sí → Azure SQL Managed Instance
+│       │
+│       ├── Modelos disponibles:
+│       │       vCore → General Purpose / Business Critical
+│       │       DTU → ❌ No disponible
 │       │
 │       ├── HA: Sí (Always On interno)
 │       ├── DR: Sí (Auto-failover group / Geo-replication)
@@ -356,8 +361,8 @@ Azure SQL (Familia de servicios)
 │       │       GP → remoto
 │       │       BC → local SSD
 │       ├── Compatible 100% SQL Server: Muy alta compatibilidad
-│       ├── Reserved Capacity: Sí
-│       ├── Azure Hybrid Benefit: Sí
+│       ├── Reserved Capacity: Sí (vCore)
+│       ├── Azure Hybrid Benefit: Sí (vCore)
 │       │
 │       └── Escenario ideal:
 │               Migración lift-and-shift
@@ -369,6 +374,10 @@ Azure SQL (Familia de servicios)
       necesita escalar almacenamiento independientemente del cómputo?
       │
       ├── Sí → Azure SQL Database – Hyperscale
+      │       │
+      │       ├── Modelos disponibles:
+      │       │       vCore → Hyperscale
+      │       │       DTU → ❌ No disponible
       │       │
       │       ├── HA: Sí (arquitectura distribuida)
       │       ├── DR: Sí (Auto-failover group / Geo-replication)
@@ -382,19 +391,26 @@ Azure SQL (Familia de servicios)
       │       ├── Computación: Dedicada
       │       ├── Almacenamiento: Arquitectura distribuida separada del cómputo
       │       ├── Compatible 100% SQL Server: No
-      │       ├── Reserved Capacity: Sí
-      │       ├── Azure Hybrid Benefit: Sí
+      │       ├── Reserved Capacity: Sí (vCore)
+      │       ├── Azure Hybrid Benefit: Sí (vCore)
       │       │
       │       └── Escenario ideal:
       │               Bases de datos muy grandes
       │               Crecimiento impredecible
       │               Workloads mixtos (OLTP + analítico)
       │               Necesita escalar almacenamiento rápidamente
-      │
+│
       └── No →
             ¿Carga OLTP muy alta / In-Memory / baja latencia?
             │
             ├── Sí → Azure SQL Database – Business Critical
+            │       │
+            │       ├── Modelos disponibles:
+            │       │       vCore → Business Critical
+            │       │       DTU → Premium
+            │       │
+            │       ├── Equivalencia:
+            │       │       Premium (DTU) ⇄ Business Critical (vCore)
             │       │
             │       ├── HA: Sí (réplicas síncronas locales)
             │       ├── DR: Sí (Auto-failover group / Geo-replication)
@@ -408,24 +424,33 @@ Azure SQL (Familia de servicios)
             │       ├── Computación: Dedicada
             │       ├── Almacenamiento: Local SSD
             │       ├── Compatible 100% SQL Server: No (pero alta compatibilidad)
-            │       ├── Reserved Capacity: Sí
-            │       ├── Azure Hybrid Benefit: Sí
+            │       ├── Reserved Capacity: Sí (vCore)
+            │       ├── Azure Hybrid Benefit: Sí (vCore)
             │       │
             │       └── Escenario ideal:
             │               Sistemas críticos
             │               Alta concurrencia
             │               Latencia mínima
-            │
+│
             └── No →
                   ¿Muchas bases con uso variable?
                   │
                   ├── Sí → Elastic Pool
                   │       │
+                  │       ├── Modelos disponibles:
+                  │       │       vCore → General Purpose / Business Critical
+                  │       │       DTU → Basic / Standard / Premium
+                  │       │
+                  │       ├── Equivalencias:
+                  │       │       Basic (DTU)    ≈ GP bajo
+                  │       │       Standard (DTU) ⇄ General Purpose (vCore)
+                  │       │       Premium (DTU)  ⇄ Business Critical (vCore)
+                  │       │
                   │       ├── HA: Sí (integrado)
                   │       ├── DR: Sí
-                  │       ├── Read replicas: Solo si BC
+                  │       ├── Read replicas: Solo si BC / Premium
                   │       ├── Backups: Automáticos
-                  │       ├── In-Memory OLTP: Solo si BC
+                  │       ├── In-Memory OLTP: Solo si BC / Premium
                   │       │
                   │       ├── Patching: Automático
                   │       ├── Escalado sin downtime: Sí
@@ -440,11 +465,18 @@ Azure SQL (Familia de servicios)
                   │               SaaS multi-tenant
                   │               Muchas bases pequeñas
                   │               Optimización de costes
-                  │
+│
                   └── No →
                         ¿Carga intermitente / dev-test?
                         │
                         ├── Sí → Single DB – General Purpose Serverless
+                        │       │
+                        │       ├── Modelos disponibles:
+                        │       │       vCore → General Purpose (Serverless)
+                        │       │       DTU → ❌ No disponible
+                        │       │
+                        │       ├── Equivalente aproximado en DTU:
+                        │       │       Standard
                         │       │
                         │       ├── HA: Sí
                         │       ├── DR: Sí
@@ -466,8 +498,15 @@ Azure SQL (Familia de servicios)
                         │               Workloads impredecibles
                         │               Uso intermitente
                         │               Optimización de costes
-                        │
+│
                         └── No → Single DB – General Purpose (Provisioned)
+                                │
+                                ├── Modelos disponibles:
+                                │       vCore → General Purpose
+                                │       DTU → Standard
+                                │
+                                ├── Equivalencia:
+                                │       Standard (DTU) ⇄ General Purpose (vCore)
                                 │
                                 ├── HA: Sí
                                 ├── DR: Sí
@@ -481,8 +520,8 @@ Azure SQL (Familia de servicios)
                                 ├── Computación: Dedicada
                                 ├── Almacenamiento: Remoto
                                 ├── Compatible 100% SQL Server: No
-                                ├── Reserved Capacity: Sí
-                                ├── Azure Hybrid Benefit: Sí
+                                ├── Reserved Capacity: Sí (vCore)
+                                ├── Azure Hybrid Benefit: Sí (vCore)
                                 │
                                 └── Escenario ideal:
                                         Aplicaciones estándar
