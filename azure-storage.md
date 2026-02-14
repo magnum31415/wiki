@@ -3,9 +3,9 @@
 
 Hay tres conceptos distintos que se cruzan:
 
--🔹 Storage Account
--🔹 Access Tier (Hot/Cool/Cold/Archive)
--🔹 Redundancia (LRS, ZRS, GRS, etc.)
+- 🔹 Storage Account
+- 🔹 Access Tier (Hot/Cool/Cold/Archive)
+- 🔹 Redundancia (LRS, ZRS, GRS, etc.)
 
 ---
 ## Tipo de Storage Account (SKU funcional)
@@ -23,6 +23,7 @@ Esto define qué tipo de almacenamiento puedes usar y con qué rendimiento.
 
 
 Standard (GPv2) → hasta 5 PiB (Pebibytes) por Storage Account
+
 
 
 | Tipo de cuenta | Tipo de datos que soporta | Blob Versioning | Soft Delete | Snapshots | Lifecycle Management | Casos de uso típicos |
@@ -86,3 +87,201 @@ Día 90   → Mover a Cold
 Día 180  → Mover a Archive
 Día 3650 → Delete
 ````
+
+----
+## 🔐 Network Security en Azure Storage
+
+Cuando creas un Storage Account, por defecto:
+
+- 👉 Tiene public endpoint
+- 👉 Es accesible desde Internet (si tienes clave/SAS)
+
+La seguridad de red consiste en controlar desde dónde puede conectarse alguien al storage.
+
+### 1️⃣ Public Endpoint + Firewall
+
+- 📌 ¿Qué es? El storage tiene una IP pública gestionada por Azure.
+
+  Puedes activar el Storage Firewall y definir:
+  - IPs públicas permitidas
+  - VNets permitidas
+  - Bloquear todo lo demás
+
+- 📌 Cómo funciona
+ El tráfico sigue siendo:  ``Cliente → Internet → Endpoint público Azure``
+
+ Pero el firewall decide si lo deja pasar o no.
+
+- ✅ Ventajas
+
+  - Fácil de configurar
+  - No requiere cambios DNS
+  - Útil para permitir solo ciertas IPs corporativas
+
+- ❌ Problema
+  - Sigue siendo un endpoint público.
+  - Aunque esté protegido, existe en Internet.
+
+### 2️⃣ Virtual Network Service Endpoints
+- 📌 ¿Qué es? Permite que una subnet acceda al storage usando su identidad de red privada, pero el endpoint sigue siendo público.
+  El tráfico: ``VM en VNet → backbone Azure → Storage (public endpoint)``
+  No sale a Internet, pero el endpoint sigue siendo público.
+
+- 🔎 Clave técnica
+  - Se habilita en la subnet
+  - Se configura el firewall del storage para aceptar esa VNet
+
+- ✅ Ventajas
+  - Tráfico no pasa por Internet
+  - Sencillo
+  - Bueno para workloads internos
+
+- ❌ Limitación
+  - El storage sigue teniendo endpoint público activo
+  - No cumple requisito de: “No debe ser accesible desde Internet”
+ 
+### 3️⃣ Private Endpoint (Private Link) ✅ IMPORTANTE
+- 📌 ¿Qué es? Crea una IP privada dentro de tu VNet para el storage.
+
+  El storage deja de ser accesible públicamente si deshabilitas el public network access.
+
+  El tráfico: ``VM → IP privada (10.x.x.x) → Storage``
+  
+  No hay endpoint público expuesto.
+
+- 🔎 Qué ocurre técnicamente
+  - Se crea un NIC en tu VNet
+  - Se usa DNS privado (privatelink.blob.core.windows.net)
+  - El tráfico es 100% privado
+
+- ✅ Ventajas
+  - Totalmente privado
+  - Cumple Zero Trust
+  - Requisito típico de compliance
+ - Es lo más seguro
+
+- 🎯 Pregunta clásica AZ-305
+  - “El storage no debe ser accesible desde Internet”
+  - Respuesta correcta:
+    - 👉 Private Endpoint
+    NO:
+    - Service Endpoint
+    - Firewall solo
+
+### 4️⃣ Trusted Microsoft Services
+- 📌 ¿Qué es? Permite que ciertos servicios Azure (Backup, Site Recovery, etc.) accedan aunque el firewall esté activo.
+     Ejemplo: Azure Backup necesita acceder al storage
+
+
+📊 Comparativa rápida
+
+| Método            | Endpoint público existe | Tráfico pasa por Internet | Seguridad nivel |
+| ----------------- | ----------------------- | ------------------------- | --------------- |
+| Public + Firewall | ✅ Sí                    | Puede                     | Media           |
+| Service Endpoint  | ✅ Sí                    | No                        | Media-Alta      |
+| Private Endpoint  | ❌ No                    | No                        | Máxima          |
+
+---
+| Concepto             | Qué controla                  | Nivel           | Uso típico            |
+| -------------------- | ----------------------------- | --------------- | --------------------- |
+| Access Key           | Acceso total                  | Cuenta completa | Automatización legacy |
+| SAS                  | Acceso temporal y granular    | Blob/Container  | Compartir acceso      |
+| Stored Access Policy | Control centralizado de SAS   | Container       | Revocar SAS           |
+| Resource Lock        | Protección contra cambios ARM | Recurso Azure   | Evitar borrados       |
+
+## 🔐 Storage Account Access Key
+- 📌 ¿Qué es?
+  Es una clave maestra (shared key) que da acceso completo al Storage Account.
+  Cada storage account tiene:
+  - 2 claves (key1 y key2)
+  - Acceso total al nivel de cuenta
+
+- 🔎 Qué permite
+  - Acceso a todos los servicios (Blob, File, Queue, Table)
+  - Permite generar SAS
+  - Permite acceso completo (según permisos usados)
+
+- ⚠️ Riesgo
+  - Si alguien obtiene la Access Key: 👉 Tiene acceso total al storage
+  - No es granular.
+  - No es recomendable para apps modernas.
+
+- 🎯 Clave examen
+  - Access Key = Master key del Storage Account.
+  - Demasiado permisiva para entornos Zero Trust.
+
+##  🔐  Shared Access Signature (SAS)
+- 📌 ¿Qué es?
+  Un token firmado que da acceso limitado y temporal a recursos del storage.
+  Se puede limitar por:
+  - Tiempo (start / expiry)
+  - Permisos (read, write, delete)
+  - IP
+  - Protocolo (HTTPS only)
+  - Recurso específico (blob, container, file)
+
+- 📌 Tipos de SAS
+  1. **User Delegation SAS** (recomendado)
+    - Basado en Entra ID
+    - Más seguro
+  2. **Service SAS**
+     - Basado en Access Key
+     - A nivel blob/container
+  3. **Account SAS**
+    - A nivel cuenta completa
+
+- 🎯 Clave examen
+
+  - SAS = Acceso temporal y granular
+  - Muy usado para compartir blobs sin dar claves maestras.
+
+## 🔐  Stored Access Policy
+- 📌 ¿Qué es?
+  Una política almacenada en un container que define:
+  - Permisos
+  - Expiración
+
+Y luego el SAS referencia esa política.
+
+- 📌 ¿Para qué sirve?
+
+Permite revocar múltiples SAS a la vez.
+
+Ejemplo:
+
+- 50 SAS creados usando la misma policy
+- Cambias o eliminas la policy
+- Todos los SAS quedan invalidados
+
+- 🎯 Clave examen
+  Stored Access Policy = Control centralizado de SAS
+  Sin policy:
+  - → No puedes revocar un SAS antes de su expiración
+
+## 🔐 ReadOnly Resource Lock
+- 📌 ¿Qué es?
+  Un mecanismo de protección a nivel de Azure Resource Manager.
+  Tipos:
+   - CanNotDelete
+   - ReadOnly
+  ReadOnly:
+   - Nadie puede modificar el recurso
+   - Ni siquiera Owner
+- 📌 Qué bloquea
+ - Cambios de configuración
+ - Eliminación
+ - Actualizaciones
+
+- ⚠️ Importante
+  NO controla acceso a datos.
+ Controla el recurso ARM.
+ Ejemplo: No evita que alguien con clave lea blobs
+ Solo evita cambiar configuración del storage account
+
+ - 🎯 Clave examen
+  Resource Lock = Protección administrativa
+  No es un control de acceso a datos.
+
+
+
+
