@@ -38,7 +38,7 @@ terraform show -no-color "${STAGE}.tfplan" > "tfplan.txt"
 terraform apply -var-file="${STAGE}/${STAGE}_variables.tfvars" -input=false -auto-approve
 ```
 ## Terraform Cheat Sheet
-![Terraform Cheat Sheet](Terraform_Cheat_Sheet.png)
+![Terraform Cheat Sheet](img/terraform/Terraform_Cheat_Sheet.png)
 
 # Terraform inside a Docker Container
 

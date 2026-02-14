@@ -2,7 +2,7 @@
 
 **Oracle Data Guard** is NOT a cluster. It is a **disaster recovery** and **high availability** solution that provides standby database replication and failover capabilities.
 
-![DataGuard](https://github.com/magnum31415/wiki/blob/main/dataguard.png)
+![DataGuard](img/dataguard/dataguard.png)
 
 ## 📌CHECK DATAGUARD 
 ### SQLPLUS
