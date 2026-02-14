@@ -347,9 +347,17 @@ Azure SQL (Familia de servicios)
 │       │       vCore → General Purpose / Business Critical
 │       │       DTU → ❌ No disponible
 │       │
-│       ├── HA: Sí (Always On interno)
+│       ├── HA: Sí (de serie)
+│       │       ├── Tipo redundancia:
+│       │       │       General Purpose → Locally redundant (asincrónica dentro región)
+│       │       │       Business Critical → Zone-redundant (síncrona)
+│       │
 │       ├── DR: Sí (Auto-failover group / Geo-replication)
-│       ├── Read replicas: Solo en Business Critical
+│       │       ├── Tipo redundancia: Geo-replication (entre regiones)
+│       │       ├── Tipo sincronización → Asincrónica
+│       │       └── Requiere activación: Sí (no viene configurado)
+│       │
+│       ├── Read replicas: Solo en Business Critical  (síncronas)
 │       ├── Backups: Automáticos + PITR + LTR
 │       ├── In-Memory OLTP: Solo en Business Critical
 │       │
@@ -380,8 +388,17 @@ Azure SQL (Familia de servicios)
       │       │       DTU → ❌ No disponible
       │       │
       │       ├── HA: Sí (arquitectura distribuida)
+      │       │       └── Réplicas asincrónicas internas (log service + page servers)
+      │       │       ├── Tipo redundancia: Zone-redundant interna
+      │       │       ├── Sincronización: Asincrónica distribuida 
+      │       │       └── Built-in: Sí
+      │       │
       │       ├── DR: Sí (Auto-failover group / Geo-replication)
-      │       ├── Read replicas: Sí (múltiples)
+      │       │       ├── Tipo redundancia: Geo-replication
+      │       │       ├── Sincronización: Asincrónica
+      │       │       └── Requiere activación: Sí
+      │       │
+      │       ├── Read replicas: Sí (múltiples,asincrónicas)
       │       ├── Backups: Automáticos (snapshots + PITR + LTR)
       │       ├── In-Memory OLTP: No
       │       │
@@ -412,8 +429,16 @@ Azure SQL (Familia de servicios)
             │       ├── Equivalencia:
             │       │       Premium (DTU) ⇄ Business Critical (vCore)
             │       │
-            │       ├── HA: Sí (réplicas síncronas locales)
+            │       ├── HA: Sí (réplicas síncronas locales – Always On AG)
+            │       │       ├── Tipo redundancia: Zone-redundant
+            │       │       ├── Sincronización: Síncrona
+            │       │       └── Built-in: Sí
+            │       │ 
             │       ├── DR: Sí (Auto-failover group / Geo-replication)
+            │       │       ├── Tipo redundancia: Geo-replication
+            │       │       ├── Sincronización: Asincrónica entre regiones
+            │       │       └── Requiere activación: Sí
+            │       │
             │       ├── Read replicas: Sí (hasta 3)
             │       ├── Backups: Automáticos + PITR + LTR
             │       ├── In-Memory OLTP: Sí
@@ -447,7 +472,11 @@ Azure SQL (Familia de servicios)
                   │       │       Premium (DTU)  ⇄ Business Critical (vCore)
                   │       │
                   │       ├── HA: Sí (integrado)
-                  │       ├── DR: Sí
+                  │       │       ├── GP → Locally redundant (asincrónica)
+                  │       │       ├── BC → Zone-redundant (síncrona)
+                  │       │       └── Built-in: Sí
+                  │       │     
+                  │       ├── DR: Sí asincrónica entre regiones)
                   │       ├── Read replicas: Solo si BC / Premium
                   │       ├── Backups: Automáticos
                   │       ├── In-Memory OLTP: Solo si BC / Premium
@@ -478,8 +507,15 @@ Azure SQL (Familia de servicios)
                         │       ├── Equivalente aproximado en DTU:
                         │       │       Standard
                         │       │
-                        │       ├── HA: Sí
-                        │       ├── DR: Sí
+                        │       ├── HA: Sí (réplica asincrónica)
+                        │       │       ├── Tipo redundancia: Locally redundant
+                        │       │       └── Built-in: Sí
+                        │       │     
+                        │       ├── DR: Sí (asincrónica)
+                        │       │       ├── Tipo redundancia: Geo-replication
+                        │       │       ├── Sincronización: Asincrónica
+                        │       │       └── Requiere activación: Sí
+                        │       │  
                         │       ├── Read replicas: No dedicadas
                         │       ├── Backups: Automáticos
                         │       ├── In-Memory OLTP: No
@@ -508,8 +544,15 @@ Azure SQL (Familia de servicios)
                                 ├── Equivalencia:
                                 │       Standard (DTU) ⇄ General Purpose (vCore)
                                 │
-                                ├── HA: Sí
-                                ├── DR: Sí
+                                ├── HA: Sí (réplica asincrónica)
+                                │       ├── Tipo redundancia: Locally redundant
+                                │       └── Built-in: Sí
+                                │  
+                                ├── DR: Sí (asincrónica)
+                                │       ├── Tipo redundancia: Geo-replication
+                                │       ├── Sincronización: Asincrónica
+                                │       └── Requiere activación: Sí
+                                │  
                                 ├── Read replicas: No dedicadas
                                 ├── Backups: Automáticos
                                 ├── In-Memory OLTP: No
@@ -530,3 +573,17 @@ Azure SQL (Familia de servicios)
 
 
 ````
+## DR
+-👉 Zone-redundant ≠ DR
+-👉 DR es entre regiones (asincrónico)
+
+- “Protect against zone-level failure” → Zone-redundant
+- “Protect against datacenter hardware failure” → Locally redundant
+- “Protect against regional outage” → Geo-replication / Failover group
+
+| Tipo              | Protege contra           |
+| ----------------- | ------------------------ |
+| Locally redundant | Fallo de hardware        |
+| Zone-redundant    | Fallo de zona completa   |
+| Geo-replication   | Fallo de región completa |
+
