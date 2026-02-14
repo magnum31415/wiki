@@ -137,9 +137,13 @@ La seguridad de red consiste en controlar desde dónde puede conectarse alguien 
   - Aunque esté protegido, existe en Internet.
 
 ### 2️⃣ Virtual Network Service Endpoints
+
 - 📌 ¿Qué es? Permite que una subnet acceda al storage usando su identidad de red privada, pero el endpoint sigue siendo público.
   El tráfico: ``VM en VNet → backbone Azure → Storage (public endpoint)``
   No sale a Internet, pero el endpoint sigue siendo público.
+
+
+![Service Endpoint](./img/azure/azure-service-endpoint.png)
 
 - 🔎 Clave técnica
   - Se habilita en la subnet
