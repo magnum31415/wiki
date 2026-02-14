@@ -160,32 +160,178 @@ Azure SQL (Familia de servicios)
 
 
 ````
+## Tabla Completa Agrupada por Servicio
 
-## Tabla Comparativa – Capacidades Azure SQL
+<table border="1" cellpadding="6" cellspacing="0">
+<thead>
+<tr>
+<th rowspan="2">Característica</th>
+<th colspan="3">Azure SQL Database – Single Database</th>
+<th colspan="2">Azure SQL Database – Elastic Pool</th>
+<th colspan="2">Azure SQL Managed Instance</th>
+</tr>
+<tr>
+<th>General Purpose</th>
+<th>Business Critical</th>
+<th>Hyperscale</th>
+<th>General Purpose</th>
+<th>Business Critical</th>
+<th>General Purpose</th>
+<th>Business Critical</th>
+</tr>
+</thead>
+<tbody>
 
-| Característica                                | Azure SQL Database Single Database – General Purpose | Azure SQL Database Single Database – Business Critical | Azure SQL Database Single Database – Hyperscale | Azure SQL Database Elastic Pool – General Purpose | Azure SQL Database Elastic Pool – Business Critical | Azure SQL Managed Instance – General Purpose | Azure SQL Managed Instance – Business Critical |
-| --------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------- | --------------------------------------------------- | -------------------------------------------- | ---------------------------------------------- |
-| Modelo basado en vCore                        | ✅                                                    | ✅                                                      | ✅                                               | ✅                                                 | ✅                                                   | ✅                                            | ✅                                              |
-| Modelo basado en DTU disponible               | ✅                                                    | ❌                                                      | ❌                                               | ✅                                                 | ❌                                                   | ❌                                            | ❌                                              |
-| In-Memory OLTP                                | ❌                                                    | ✅                                                      | ❌                                               | ❌                                                 | ✅                                                   | ❌                                            | ✅                                              |
-| Memory-Optimized Tables                       | ❌                                                    | ✅                                                      | ❌                                               | ❌                                                 | ✅                                                   | ❌                                            | ✅                                              |
-| Columnstore Indexes                           | ✅                                                    | ✅                                                      | ✅                                               | ✅                                                 | ✅                                                   | ✅                                            | ✅                                              |
-| Alta disponibilidad integrada                 | ✅                                                    | ✅                                                      | ✅                                               | ✅                                                 | ✅                                                   | ✅                                            | ✅                                              |
-| Recuperación ante desastres (Geo-replication) | ✅                                                    | ✅                                                      | ✅                                               | ✅                                                 | ✅                                                   | ✅                                            | ✅                                              |
-| Auto-failover groups                          | ✅                                                    | ✅                                                      | ✅                                               | ✅                                                 | ✅                                                   | ✅                                            | ✅                                              |
-| Réplicas de solo lectura dedicadas            | ❌                                                    | ✅                                                      | ✅                                               | ❌                                                 | ✅                                                   | ❌                                            | ✅                                              |
-| Escalado sin downtime                         | ✅                                                    | ✅                                                      | ✅                                               | ✅                                                 | ✅                                                   | ✅                                            | ✅                                              |
-| Escalado automático de computación            | ✅ (solo modo Serverless)                             | ❌                                                      | ❌                                               | ❌                                                 | ❌                                                   | ❌                                            | ❌                                              |
-| Modo Serverless disponible                    | ✅                                                    | ❌                                                      | ❌                                               | ❌                                                 | ❌                                                   | ❌                                            | ❌                                              |
-| Auto-pause disponible                         | ✅                                                    | ❌                                                      | ❌                                               | ❌                                                 | ❌                                                   | ❌                                            | ❌                                              |
-| Almacenamiento local SSD                      | ❌                                                    | ✅                                                      | ❌ (arquitectura distribuida)                    | ❌                                                 | ✅                                                   | ❌                                            | ✅                                              |
-| Almacenamiento remoto                         | ✅                                                    | ❌                                                      | ✅                                               | ✅                                                 | ❌                                                   | ✅                                            | ❌                                              |
-| Recursos dedicados                            | ✅                                                    | ✅                                                      | ✅                                               | ❌ (compartidos)                                   | ❌ (compartidos)                                     | ✅                                            | ✅                                              |
-| SQL Agent disponible                          | ❌                                                    | ❌                                                      | ❌                                               | ❌                                                 | ❌                                                   | ✅                                            | ✅                                              |
-| Consultas cross-database completas            | ❌                                                    | ❌                                                      | ❌                                               | ❌                                                 | ❌                                                   | ✅                                            | ✅                                              |
-| Compatibilidad casi total con SQL Server      | ❌                                                    | ❌                                                      | ❌                                               | ❌                                                 | ❌                                                   | ✅                                            | ✅                                              |
-| Compatible con Azure Hybrid Benefit           | ✅                                                    | ✅                                                      | ✅                                               | ✅                                                 | ✅                                                   | ✅                                            | ✅                                              |
-| Compatible con Reserved Capacity              | ✅                                                    | ✅                                                      | ✅                                               | ✅                                                 | ✅                                                   | ✅                                            | ✅                                              |
+<tr>
+<td>Modelo basado en vCore</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Modelo basado en DTU disponible</td>
+<td>✅</td><td>❌</td><td>❌</td>
+<td>✅</td><td>❌</td>
+<td>❌</td><td>❌</td>
+</tr>
+
+<tr>
+<td>In-Memory OLTP</td>
+<td>❌</td><td>✅</td><td>❌</td>
+<td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Memory-Optimized Tables</td>
+<td>❌</td><td>✅</td><td>❌</td>
+<td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Columnstore Indexes</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Alta disponibilidad integrada</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Recuperación ante desastres (Geo-replication)</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Auto-failover groups</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Réplicas de solo lectura dedicadas</td>
+<td>❌</td><td>✅</td><td>✅</td>
+<td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Escalado sin downtime</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Escalado automático de computación</td>
+<td>✅ (solo Serverless)</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+</tr>
+
+<tr>
+<td>Modo Serverless disponible</td>
+<td>✅</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+</tr>
+
+<tr>
+<td>Auto-pause disponible</td>
+<td>✅</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+</tr>
+
+<tr>
+<td>Almacenamiento local SSD</td>
+<td>❌</td><td>✅</td><td>❌</td>
+<td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Almacenamiento remoto</td>
+<td>✅</td><td>❌</td><td>✅</td>
+<td>✅</td><td>❌</td>
+<td>✅</td><td>❌</td>
+</tr>
+
+<tr>
+<td>Recursos dedicados</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>❌</td><td>❌</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>SQL Agent disponible</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Consultas cross-database completas</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Compatibilidad casi total con SQL Server</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Compatible con Azure Hybrid Benefit</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Compatible con Reserved Capacity</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+</tbody>
+</table>
+
 
 
 
@@ -219,101 +365,129 @@ Azure SQL (Familia de servicios)
 │               Necesita SQL Agent y cross-database
 │
 └── No →
-      ¿Carga OLTP muy alta / In-Memory / baja latencia?
+      ¿Base de datos muy grande (varios TB hasta 100 TB+) o
+      necesita escalar almacenamiento independientemente del cómputo?
       │
-      ├── Sí → Azure SQL Database – Business Critical
+      ├── Sí → Azure SQL Database – Hyperscale
       │       │
-      │       ├── HA: Sí (réplicas síncronas locales)
+      │       ├── HA: Sí (arquitectura distribuida)
       │       ├── DR: Sí (Auto-failover group / Geo-replication)
-      │       ├── Read replicas: Sí (hasta 3)
-      │       ├── Backups: Automáticos + PITR + LTR
-      │       ├── In-Memory OLTP: Sí
+      │       ├── Read replicas: Sí (múltiples)
+      │       ├── Backups: Automáticos (snapshots + PITR + LTR)
+      │       ├── In-Memory OLTP: No
       │       │
       │       ├── Patching: Automático
-      │       ├── Escalado sin downtime: Sí (failover breve)
-      │       ├── Escalado automático: No
+      │       ├── Escalado sin downtime: Sí
+      │       ├── Escalado automático: Solo almacenamiento
       │       ├── Computación: Dedicada
-      │       ├── Almacenamiento: Local SSD
-      │       ├── Compatible 100% SQL Server: No (pero alta compatibilidad)
+      │       ├── Almacenamiento: Arquitectura distribuida separada del cómputo
+      │       ├── Compatible 100% SQL Server: No
       │       ├── Reserved Capacity: Sí
       │       ├── Azure Hybrid Benefit: Sí
       │       │
       │       └── Escenario ideal:
-      │               Sistemas críticos
-      │               Alta concurrencia
-      │               Latencia mínima
+      │               Bases de datos muy grandes
+      │               Crecimiento impredecible
+      │               Workloads mixtos (OLTP + analítico)
+      │               Necesita escalar almacenamiento rápidamente
       │
       └── No →
-            ¿Muchas bases con uso variable?
+            ¿Carga OLTP muy alta / In-Memory / baja latencia?
             │
-            ├── Sí → Elastic Pool
+            ├── Sí → Azure SQL Database – Business Critical
             │       │
-            │       ├── HA: Sí (integrado)
-            │       ├── DR: Sí
-            │       ├── Read replicas: Solo si BC
-            │       ├── Backups: Automáticos
-            │       ├── In-Memory OLTP: Solo si BC
+            │       ├── HA: Sí (réplicas síncronas locales)
+            │       ├── DR: Sí (Auto-failover group / Geo-replication)
+            │       ├── Read replicas: Sí (hasta 3)
+            │       ├── Backups: Automáticos + PITR + LTR
+            │       ├── In-Memory OLTP: Sí
             │       │
             │       ├── Patching: Automático
-            │       ├── Escalado sin downtime: Sí
+            │       ├── Escalado sin downtime: Sí (failover breve)
             │       ├── Escalado automático: No
-            │       ├── Computación: Compartida entre DBs
-            │       ├── Almacenamiento: Remoto (GP) / Local (BC)
-            │       ├── Compatible 100% SQL Server: No
-            │       ├── Reserved Capacity: Sí (vCore)
-            │       ├── Azure Hybrid Benefit: Sí (vCore)
+            │       ├── Computación: Dedicada
+            │       ├── Almacenamiento: Local SSD
+            │       ├── Compatible 100% SQL Server: No (pero alta compatibilidad)
+            │       ├── Reserved Capacity: Sí
+            │       ├── Azure Hybrid Benefit: Sí
             │       │
             │       └── Escenario ideal:
-            │               SaaS multi-tenant
-            │               Muchas bases pequeñas
-            │               Optimización de costes
+            │               Sistemas críticos
+            │               Alta concurrencia
+            │               Latencia mínima
             │
             └── No →
-                  ¿Carga intermitente / dev-test?
+                  ¿Muchas bases con uso variable?
                   │
-                  ├── Sí → Single DB – General Purpose Serverless
+                  ├── Sí → Elastic Pool
                   │       │
-                  │       ├── HA: Sí
+                  │       ├── HA: Sí (integrado)
                   │       ├── DR: Sí
-                  │       ├── Read replicas: No dedicadas
+                  │       ├── Read replicas: Solo si BC
                   │       ├── Backups: Automáticos
-                  │       ├── In-Memory OLTP: No
+                  │       ├── In-Memory OLTP: Solo si BC
                   │       │
                   │       ├── Patching: Automático
                   │       ├── Escalado sin downtime: Sí
-                  │       ├── Escalado automático: Sí
-                  │       ├── Auto-pause: Sí
-                  │       ├── Computación: Dedicada pero dinámica
-                  │       ├── Almacenamiento: Remoto
+                  │       ├── Escalado automático: No
+                  │       ├── Computación: Compartida entre DBs
+                  │       ├── Almacenamiento: Remoto (GP) / Local (BC)
                   │       ├── Compatible 100% SQL Server: No
-                  │       ├── Reserved Capacity: No
-                  │       ├── Azure Hybrid Benefit: Sí
+                  │       ├── Reserved Capacity: Sí (vCore)
+                  │       ├── Azure Hybrid Benefit: Sí (vCore)
                   │       │
                   │       └── Escenario ideal:
-                  │               Dev/Test
-                  │               Workloads impredecibles
+                  │               SaaS multi-tenant
+                  │               Muchas bases pequeñas
                   │               Optimización de costes
                   │
-                  └── No → Single DB – General Purpose (Provisioned)
-                          │
-                          ├── HA: Sí
-                          ├── DR: Sí
-                          ├── Read replicas: No dedicadas
-                          ├── Backups: Automáticos
-                          ├── In-Memory OLTP: No
-                          │
-                          ├── Patching: Automático
-                          ├── Escalado sin downtime: Sí
-                          ├── Escalado automático: No
-                          ├── Computación: Dedicada
-                          ├── Almacenamiento: Remoto
-                          ├── Compatible 100% SQL Server: No
-                          ├── Reserved Capacity: Sí
-                          ├── Azure Hybrid Benefit: Sí
-                          │
-                          └── Escenario ideal:
-                                  Aplicaciones estándar
-                                  OLTP moderado
-                                  Coste equilibrado
+                  └── No →
+                        ¿Carga intermitente / dev-test?
+                        │
+                        ├── Sí → Single DB – General Purpose Serverless
+                        │       │
+                        │       ├── HA: Sí
+                        │       ├── DR: Sí
+                        │       ├── Read replicas: No dedicadas
+                        │       ├── Backups: Automáticos
+                        │       ├── In-Memory OLTP: No
+                        │       │
+                        │       ├── Patching: Automático
+                        │       ├── Escalado sin downtime: Sí
+                        │       ├── Escalado automático: Sí (computación)
+                        │       ├── Computación: Dedicada pero elástica
+                        │       ├── Almacenamiento: Remoto
+                        │       ├── Compatible 100% SQL Server: No
+                        │       ├── Reserved Capacity: No
+                        │       ├── Azure Hybrid Benefit: Sí
+                        │       │
+                        │       └── Escenario ideal:
+                        │               Dev/Test
+                        │               Workloads impredecibles
+                        │               Uso intermitente
+                        │               Optimización de costes
+                        │
+                        └── No → Single DB – General Purpose (Provisioned)
+                                │
+                                ├── HA: Sí
+                                ├── DR: Sí
+                                ├── Read replicas: No dedicadas
+                                ├── Backups: Automáticos
+                                ├── In-Memory OLTP: No
+                                │
+                                ├── Patching: Automático
+                                ├── Escalado sin downtime: Sí
+                                ├── Escalado automático: No
+                                ├── Computación: Dedicada
+                                ├── Almacenamiento: Remoto
+                                ├── Compatible 100% SQL Server: No
+                                ├── Reserved Capacity: Sí
+                                ├── Azure Hybrid Benefit: Sí
+                                │
+                                └── Escenario ideal:
+                                        Aplicaciones estándar
+                                        OLTP moderado
+                                        Coste equilibrado
+
 
 ````
