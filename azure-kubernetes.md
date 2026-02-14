@@ -43,13 +43,13 @@
     │               │           → Escala número de pods según CPU/métricas
     │               │
     │               │       Vertical Pod Autoscaler (VPA)
-    │               │           → Ajusta CPU/RAM de los pods
+    │               │           → Ajusta CPU/RAM de los pods 
     │               │
     │               │       Cluster Autoscaler
-    │               │           → Escala nodos del cluster (VMSS)
+    │               │           → Escala nodos "Añadir más máquinas virtuales al cluster" del cluster (VMSS) -
     │               │
     │               │       Kubernetes Event-Driven Autoscaling (KEDA)
-    │               │           → Escala pods por eventos (Service Bus, Kafka, etc.)
+    │               │           → Escala pods "Crear más copias de tu aplicación" por eventos (Service Bus, Kafka, etc.)
     │               │
     │               ├── Escalado a nivel Azure (fuera de Kubernetes):
     │               │
