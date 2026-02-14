@@ -1,3 +1,5 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
 # Migración de datos On-Prem → Azure
 ````
 ¿Tienes buena conectividad de red y suficiente ancho de banda?
