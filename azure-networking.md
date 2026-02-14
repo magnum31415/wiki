@@ -100,7 +100,7 @@ Lo que ocurre ea que el tráfico sigue yendo al endpoint público de SQL: ``*.da
 
 Pero Azure marca el tráfico como proveniente de esa VNet.
 
-Entonces necesitas configurar el firewall del SQL Server para:
+Entonces necesitas **configurar el firewall del SQL Server (PaaS Firewall)** para:
 
 - ❌ Bloquear todo
 - ✅ Permitir esa VNet/Subnet específica
