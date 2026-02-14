@@ -133,3 +133,15 @@
                 Monetización de APIs
 
 ````
+
+---
+
+
+**Azure Application Gatewa**y is a web traffic load balancer that enables you to manage traffic to your web applications. Traditional load balancers operate at the transport layer (OSI layer 4 – TCP and UDP) and route traffic based on source IP address and port, to a destination IP address and port. Application Gateway can make routing decisions based on additional attributes of an HTTP request, for example, URI path or host headers.
+
+![Azure-AppGateway-Diagram](./img/azure/Azure-AppGateway-Diagram.png)
+
+SSL termination refers to the process of decrypting encrypted traffic before passing it along to a web server. TLS is just an updated, more secure version of SSL. An SSL connection sends encrypted data between a user and a web server by using a certificate for authentication. SSL termination helps speed up the decryption process and reduces the processing burden on the servers.
+
+Azure Application Gateway is specifically designed to offer advanced routing capabilities, SSL offloading (which alleviates the load on web servers), and autoscaling features to efficiently handle varying traffic loads.
+**Azure Front Door** . Although it supports SSL offloading, this service is not a load balancer. Azure Front Door is a global, scalable entry-point that uses the Microsoft global edge network to create fast, secure, and widely scalable web applications.
