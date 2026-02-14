@@ -3,6 +3,107 @@
 
 Servicio PaaS basado en SQLServer totalmente gestionado 
 
+## Funcionalitats
+
+### Geo-replication
+**Geo-replication** provides geographic redundancy and enables read operations only in the secondary region during a primary region outage.
+However, it does not support write operations in the secondary region when the primary region is down.
+
+Active geo-replication is configured per database, and only supports manual failover.
+
+---
+
+### Azure SQL Database Failover Group
+
+Un Failover Group es un mecanismo de disaster recovery (DR) entre regiones para:
+- Azure SQL Database (Single DB / Elastic Pool)
+- Azure SQL Managed Instance
+Permite agrupar una o varias bases de datos y replicarlas automáticamente a otra región de Azure.
+
+![Diagrama arquitectura](./azure-sql-failover-group.png)
+
+#### ¿Qué problema resuelve?
+
+Alta disponibilidad dentro de una región ya viene incluida (HA local).
+
+Pero si se cae una región entera (region outage), necesitas:
+- Réplica en otra región
+- Failover automático
+- Endpoint estable que no cambie
+Ahí entra Failover Group.
+
+#### 🏗 Cómo funciona
+
+Cuando creas un Failover Group:
+
+##### 1️⃣ Seleccionas:
+
+- Servidor primario (ej: West Europe)
+- Servidor secundario (ej: North Europe)
+
+##### 2️⃣ Azure crea:
+
+- Réplica secundaria asincrónica
+- Sincronización continua (geo-replication)
+
+##### 3️⃣ Se generan 2 endpoints:
+| Endpoint      | Uso                        |
+| ------------- | -------------------------- |
+| 🔵 Read/Write | Apunta siempre al primario |
+| 🟢 Read-only  | Apunta al secundario       |
+
+
+##### 🔁 Tipo de replicación
+
+- 🌍 Geo-replication
+- 🔄 Asincrónica
+- RPO → segundos/minutos
+- RTO → minutos
+No es síncrona, por lo tanto:
+- ❌ No garantiza RPO = 0
+- ✅ Sí garantiza continuidad regional
+
+##### 🚀 Ventajas clave
+
+- Failover automático opcional
+- Failover manual posible
+- Endpoint DNS estable (no cambia string de conexión)
+- Agrupa múltiples bases en una sola operación
+
+---
+### Availability Group (AG)
+
+Un Availability Group (AG) es una tecnología de alta disponibilidad (HA) y opcionalmente disaster recovery (DR) de Microsoft SQL Server, basada en Windows Server Failover Clustering (WSFC).
+Permite replicar una o varias bases de datos entre varias instancias de SQL Server.
+
+#### 🧠 Idea rápida
+
+**Availability Group = Always On + múltiples réplicas + failover automático + endpoint virtual**
+
+#### ¿Dónde se usa?
+
+- SQL Server on-premises
+- SQL Server en Azure Virtual Machines
+- Azure SQL Managed Instance (Business Critical usa una arquitectura similar internamente)
+No aplica a Azure SQL Database Single DB (PaaS puro).
+
+#### Cómo funciona
+
+Un AG tiene:
+
+- 🔵 1 réplica primaria (read/write)
+- 🟢 1 o más réplicas secundarias (read-only opcional)
+- 🎯 Un Listener (DNS virtual)
+
+``App → AG Listener → Primaria``
+
+- Si la primaria falla:
+
+``→ Se promueve automáticamente una secundaria.``
+
+**La aplicación no cambia el connection string.**
+
+---
 ## Mapa Jerárquico de Azure SQL (Servicios y Modelos de Compra) - Servicios PaaS 
 ````graph
 Azure SQL (Familia de servicios)
