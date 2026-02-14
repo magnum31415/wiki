@@ -332,8 +332,14 @@ Azure SQL (Familia de servicios)
 </tbody>
 </table>
 
+Comparativa: PITR vs RPO vs RTO vs LTR
 
-
+| Concepto | Significado              | ¿Es objetivo o tecnología? | ¿Qué mide / permite?                                                   | Ejemplo práctico                                           | En Azure SQL                                          |
+| -------- | ------------------------ | -------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------- |
+| **PITR** | Point-In-Time Restore    | Tecnología                 | Restaurar una base a un momento exacto dentro del período de retención | Restaurar la BD a las 10:04 antes de un borrado accidental | Incluido por defecto (7–35 días según configuración)  |
+| **LTR**  | Long-Term Retention      | Tecnología                 | Retención de backups durante años                                      | Mantener backups 7 años por normativa                      | Configurable (hasta 10 años)                          |
+| **RPO**  | Recovery Point Objective | Objetivo de negocio        | Cuánta pérdida de datos es aceptable                                   | “Máximo 5 minutos de pérdida”                              | Depende de arquitectura (BC ≈ 0, Geo-replication > 0) |
+| **RTO**  | Recovery Time Objective  | Objetivo de negocio        | Cuánto tiempo puede tardar el sistema en volver a estar operativo      | “Debe estar disponible en 2 minutos”                       | HA síncrona → bajo RTO                                |
 
 ## Guía de Selección de Azure SQL según Requisitos Técnicos Ampliado
 
@@ -351,6 +357,12 @@ Azure SQL (Familia de servicios)
 │       │       ├── Tipo redundancia:
 │       │       │       General Purpose → Locally redundant (asincrónica dentro región)
 │       │       │       Business Critical → Zone-redundant (síncrona)
+│       │       ├── RPO:
+│       │       │       General Purpose → > 0 segundos
+│       │       │       Business Critical → ≈ 0
+│       │       ├── RTO:
+│       │       │       General Purpose → Bajo (segundos)
+│       │       │       Business Critical → Muy bajo (segundos)
 │       │       ├── Réplicas:
 │       │       │       General Purpose → 1 réplica asincrónica interna 
 │       │       │       Business Critical → 3 réplicas síncronas (Always On AG)
@@ -364,6 +376,8 @@ Azure SQL (Familia de servicios)
 │       ├── DR: Sí (Auto-failover group / Geo-replication)
 │       │       ├── Tipo redundancia: Geo-replication (entre regiones)
 │       │       ├── Tipo sincronización → Asincrónica
+│       │       ├── RPO → Segundos a minutos (depende del lag)
+│       │       └── RTO → Minutos
 │       │       └── Requiere activación: Sí (no viene configurado)
 │       │       ├── Réplicas:
 │       │       │       Secundaria asincrónica en otra región
@@ -406,13 +420,14 @@ Azure SQL (Familia de servicios)
       │       │       ├── Tipo redundancia: Zone-redundant interna
       │       │       ├── Sincronización: Asincrónica distribuida 
       │       │       └── Built-in: Sí
-      │       │       └── Automatic failover with zero data loss:❌ No (asincrónica)
+      │       │       └── Automatic failover with zero data loss: ❌ No (asincrónica)
       │       │       ├── Réplicas:
       │       │       │       Múltiples réplicas asincrónicas distribuidas
       │       │       ├── Read-only endpoints:
       │       │       │       ✅ Sí (múltiples)
-      │       │       └── Automatic failover with zero data loss:
-      │       │               ❌ No
+      │       │       └── Automatic failover with zero data loss: ❌ No
+      │       │       ├── RPO → > 0 
+      │       │       └── RTO → Bajo (segundos)
       │       │
       │       ├── DR: Sí (Auto-failover group / Geo-replication)
       │       │       ├── Tipo redundancia: Geo-replication
@@ -453,19 +468,23 @@ Azure SQL (Familia de servicios)
             │       ├── HA: Sí (réplicas síncronas locales – Always On AG)
             │       │       ├── Tipo redundancia: Zone-redundant
             │       │       ├── Sincronización: Síncrona
+            │       │       ├── RPO → ≈ 0
+            │       │       └── RTO → Muy bajo (segundos)
             │       │       └── Built-in: Sí
             │       │       └── Automatic failover with zero data loss: ✅ Sí
             │       │       ├── Réplicas:
             │       │       │       3 réplicas síncronas (Always On AG)
-            │       │       ├── Read-only endpoints:
-            │       │       │       ✅ Sí (hasta 3)
-            │       │       └── Automatic failover with zero data loss:
-            │       │               ✅ Sí
+            │       │       ├── Read-only endpoints: ✅ Sí (hasta 3)
+            │       │       │       
+            │       │       └── Automatic failover with zero data loss:  ✅ Sí
+            │       │              
             │       │ 
             │       ├── DR: Sí (Auto-failover group / Geo-replication)
             │       │       ├── Tipo redundancia: Geo-replication
             │       │       ├── Sincronización: Asincrónica entre regiones
             │       │       └── Requiere activación: Sí
+            │       │       ├── RPO → Segundos a minutos
+            │       │       └── RTO → Minutos
             │       │
             │       ├── Read replicas: Sí (hasta 3)
             │       ├── Backups: Automáticos + PITR + LTR
@@ -502,6 +521,12 @@ Azure SQL (Familia de servicios)
                   │       ├── HA: Sí (integrado)
                   │       │       ├── General Purpose → Locally redundant (asincrónica)
                   │       │       ├── Business Critical → Zone-redundant (síncrona)
+                  │       │       ├── General Purpose → Asincrónica
+                  │       │       │       RPO → > 0
+                  │       │       │       RTO → Bajo
+                  │       │       ├── Business Critical → Síncrona
+                  │       │       │       RPO → ≈ 0
+                  │       │       │       RTO → Muy bajo
                   │       │       └── Built-in: Sí
                   │       │       └── Automatic failover with zero data loss:
                   │       │       │       General Purpose → ❌ No
@@ -517,6 +542,9 @@ Azure SQL (Familia de servicios)
                   │       │               Business Critical → ✅ Sí
                   │       │     
                   │       ├── DR: Sí asincrónica entre regiones)
+                  │       │       ├── Sincronización: Asincrónica
+                  │       │       ├── RPO → Segundos a minutos
+                  │       │       └── RTO → Minutos
                   │       ├── Read replicas: Solo si BC / Premium
                   │       ├── Backups: Automáticos
                   │       ├── In-Memory OLTP: Solo si BC / Premium
@@ -548,6 +576,8 @@ Azure SQL (Familia de servicios)
                         │       │       Standard
                         │       │
                         │       ├── HA: Sí (réplica asincrónica)
+                        │       │       ├── RPO → > 0
+                        │       │       └── RTO → Bajo
                         │       │       ├── Tipo redundancia: Locally redundant
                         │       │       └── Built-in: Sí
                         │       │       └── Automatic failover with zero data loss: ❌ No
@@ -559,7 +589,9 @@ Azure SQL (Familia de servicios)
                         │       │     
                         │       ├── DR: Sí (asincrónica)
                         │       │       ├── Tipo redundancia: Geo-replication
-                        │       │       ├── Sincronización: Asincrónica
+                        │       │       ├── Sincronización: Asincrónica  
+                        │       │       ├── RPO → Segundos a minutos
+                        │       │       └── RTO → Minutos
                         │       │       └── Requiere activación: Sí
                         │       │  
                         │       ├── Read replicas: No dedicadas
@@ -598,11 +630,15 @@ Azure SQL (Familia de servicios)
                                 │       │       1 asincrónica interna
                                 │       ├── Read-only endpoints: ❌ No
                                 │       └── Automatic failover with zero data loss: ❌ No
+                                │       ├── RPO → > 0
+                                │       └── RTO → Bajo
                                 │  
                                 ├── DR: Sí (asincrónica)
                                 │       ├── Tipo redundancia: Geo-replication
                                 │       ├── Sincronización: Asincrónica
                                 │       └── Requiere activación: Sí
+                                │       ├── RPO → Segundos a minutos
+                                │       └── RTO → Minutos
                                 │  
                                 ├── Read replicas: No dedicadas
                                 ├── Backups: Automáticos
