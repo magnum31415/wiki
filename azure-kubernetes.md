@@ -1,4 +1,167 @@
 # Azure Kubernetes 
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+## ¿Vas a ejecutar contenedores en Azure?
+````
+¿Vas a ejecutar contenedores en Azure?
+│
+└── Sí
+    │
+    ├── ¿Necesitas orquestación Kubernetes gestionada?
+    │       │
+    │       └── Azure Kubernetes Service (AKS)
+    │               │
+    │               ├── ¿De dónde obtienen las imágenes los pods?
+    │               │
+    │               │       └── Azure Container Registry (ACR)
+    │               │               │
+    │               │               ├── Función:
+    │               │               │       Registro privado de imágenes Docker/OCI
+    │               │               │
+    │               │               ├── Flujo típico:
+    │               │               │       1️⃣ Dev hace build
+    │               │               │       2️⃣ Push a ACR
+    │               │               │       3️⃣ AKS hace pull desde ACR
+    │               │               │
+    │               │               ├── Integración recomendada:
+    │               │               │       az aks update --attach-acr
+    │               │               │       (Permite a AKS autenticarse con ACR vía Managed Identity)
+    │               │               │
+    │               │               ├── Seguridad:
+    │               │               │       RBAC Azure
+    │               │               │       Managed Identity
+    │               │               │       Private Link (Premium)
+    │               │               │
+    │               │               └── ¿Qué SKU elegir?
+    │               │                       Dev/Test → Basic
+    │               │                       Producción → Standard
+    │               │                       Multi-región / Enterprise → Premium
+    │               │
+    │               ├── Escalado en AKS:
+    │               │       HPA → Escala pods
+    │               │       Cluster Autoscaler → Escala nodos
+    │               │       KEDA → Escala por eventos
+    │               │
+    │               ├── Alta disponibilidad:
+    │               │       AKS multi-zone
+    │               │       ACR Premium → Geo-replication
+    │               │
+    │               └── Escenario ideal conjunto:
+    │                       Microservicios
+    │                       CI/CD pipelines
+    │                       Arquitectura cloud-native
+    │
+    └── No Kubernetes
+            │
+            ├── Azure Container Apps → Puede usar ACR
+            ├── Azure App Service (contenedores) → Puede usar ACR
+            └── Azure Functions (contenedores) → Puede usar ACR
+````
+## Azure Container Registry (ACR)
+
+
+
+````
+¿Vas a ejecutar contenedores en Azure?
+│
+└── Sí
+    │
+    ├── Necesitas un registro privado de imágenes
+    │       │
+    │       └── Azure Container Registry (ACR)
+    │               │
+    │               ├── Función: Registro privado de imágenes Docker/OCI
+    │               │
+    │               ├── Flujo típico:
+    │               │       1️⃣ Dev hace build
+    │               │       2️⃣ Push a ACR
+    │               │       3️⃣ AKS hace pull desde ACR
+    │               │
+    │               ├── Integración recomendada:
+    │               │       az aks update --attach-acr
+    │               │       (Permite a AKS autenticarse con ACR vía Managed Identity)
+    │               │
+    │               ├── Seguridad:
+    │               │       RBAC Azure
+    │               │       Managed Identity
+    │               │       Private Link (Premium)
+    │               │
+    │               └── ¿Qué SKU elegir?
+    │               │        Dev/Test → Basic
+    │               │        Producción → Standard
+    │               │        Multi-región / Enterprise → Premium
+    │               │
+    │               ├── Basic SKU
+    │               │       ├── Coste bajo
+    │               │       ├── Throughput limitado
+    │               │       ├── Sin geo-replication
+    │               │       ├── Sin Private Link
+    │               │       └── Escenario ideal:
+    │               │               Desarrollo
+    │               │               Laboratorios
+    │               │               Workloads pequeños
+    │               │
+    │               ├── Standard SKU
+    │               │       ├── Más almacenamiento
+    │               │       ├── Mayor throughput
+    │               │       ├── Webhooks
+    │               │       ├── Sin geo-replication
+    │               │       └── Escenario ideal:
+    │               │               Producción pequeña/mediana
+    │               │               Equipos CI/CD
+    │               │
+    │               └── Premium SKU
+    │                       ├── Geo-replication multi-región
+    │                       ├── Private Link
+    │                       ├── Mayor throughput
+    │                       ├── Content Trust
+    │                       ├── Zone redundancy
+    │                       └── Escenario ideal:
+    │                               Enterprise
+    │                               Multi-región
+    │                               Alta seguridad
+    │
+    │
+    ├── ¿Dónde se ejecutan las imágenes?
+    │       │
+    │       ├── Azure Kubernetes Service (AKS)
+    │       │       │
+    │       │       ├── AKS hace pull de imágenes desde ACR
+    │       │       ├── Integración recomendada:
+    │       │       │       Managed Identity + attach-acr
+    │       │       │
+    │       │       ├── Escalado:
+    │       │       │       HPA → Escala pods
+    │       │       │       Cluster Autoscaler → Escala nodos
+    │       │       │       KEDA → Escala por eventos
+    │       │       │
+    │       │       └── Alta disponibilidad:
+    │       │               AKS multi-zone
+    │       │               ACR Premium → Geo-replication
+    │       │
+    │       ├── Azure Container Apps
+    │       ├── Azure App Service (contenedores)
+    │       └── Azure Functions (contenedores)
+    │       │
+    │       └── Escenario ideal conjunto:
+    │             Microservicios
+    │             CI/CD pipelines
+    │             Arquitectura cloud-native
+    │       │
+    |       └── No Kubernetes
+    |          │
+    |          ├── Azure Container Apps → Puede usar ACR
+    |          ├── Azure App Service (contenedores) → Puede usar ACR
+    |          └── Azure Functions (contenedores) → Puede usar ACR
+    │
+    └── Flujo típico CI/CD
+            │
+            ├── Build imagen
+            ├── Push a ACR
+            └── Servicio (AKS/App Service/etc.) hace pull
+
+````
+
 
 ## Azure Kubernetes Service (AKS)
 
