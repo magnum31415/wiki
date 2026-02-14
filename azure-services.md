@@ -41,249 +41,264 @@
 
 | Servicio | Resumen en pocas palabras | Propósito principal | Orientado a |
 |----------|--------------------------|--------------------|-------------|
-| Azure Analysis Services | Modelo tabular BI en la nube | Análisis empresarial | BI |
-| Azure Arc | Gestión híbrida y multi-cloud | Gobierno centralizado | Infraestructura |
-| Azure Automation | Automatización cloud | Runbooks y tareas | DevOps |
-| Azure Backup | Backup gestionado | Protección de datos | Backup / DR |
-| Azure Blueprints | Plantillas de gobierno | Estándares y compliance | Governance |
-| Azure Data Box | Transferencia física masiva | Migración offline | Migración |
-| Azure Data Box Edge | Edge computing + transferencia | Procesamiento local | Edge |
-| Azure Data Box Gateway | Pasarela híbrida virtual | Transferir datos a Azure | Híbrido |
-| Azure Data Factory | ETL/ELT en la nube | Integración de datos | Data |
-| Azure Data Lake Storage | Data lake escalable | Almacenamiento Big Data | Analytics |
-| Azure Database Migration Service | Migración de bases de datos | Migración DB | Migración |
-| Azure DevOps | CI/CD y gestión DevOps | Desarrollo colaborativo | DevOps |
-| Azure Event Hubs | Streaming masivo de eventos | Ingesta en tiempo real | Big Data |
-| Azure File Sync | Sincroniza file servers | Extensión híbrida | Files |
-| Azure Functions | Serverless compute | Código por eventos | Serverless |
-| Azure Import/Export service | Discos físicos a Azure | Migración offline | Migración |
-| Azure Logs Analytics | Consulta de logs (KQL) | Análisis de logs | Monitorización |
-| Azure Logs Analytics Workspace | Contenedor de logs | Centralización logs | Monitorización |
-| Azure Migrate | Evaluación y migración | Migración infra | Migración |
-| Azure Monitor | Monitorización global | Métricas y alertas | Operaciones |
-| Azure Monitor Activity Log | Log de cambios en Azure | Auditoría | Seguridad |
-| Azure Notification Hubs | Push móvil masivo | Notificaciones | Usuarios |
-| Azure Resource Manager | Motor de despliegue Azure | Infraestructura como código | Infra |
-| Azure Service Bus | Mensajería empresarial | Comunicación apps | Backend |
-| Azure Stack Hub | Azure on-prem | Extensión híbrida | Infraestructura |
-| Azure Storage Explorer | Cliente gráfico almacenamiento | Gestión de blobs/files | Storage |
-| Azure Storage Sync | Sincroniza almacenamiento | Extensión Azure Files | Híbrido |
-| AzCopy | Copia masiva de datos | Transferencia rápida | Storage |
-| Role-based access control (RBAC) | Control de acceso granular | Seguridad | Seguridad |
+| Azure Analysis Services | Motor tabular BI | Modelos analíticos | BI |
+| Azure Arc | Gestión híbrida | Gobierno centralizado | Infra |
+| Azure Automation | Runbooks cloud | Automatización | DevOps |
+| Azure Backup | Backup gestionado | Protección datos | DR |
+| Azure Blueprints | Plantillas governance | Estándares | Governance |
+| Azure Data Box | Migración física | Transferencia offline | Migración |
+| Azure Data Box Edge | Edge + transferencia | Procesamiento local | Edge |
+| Azure Data Box Gateway | Gateway virtual híbrido | Cache + subida | Híbrido |
+| Azure Data Factory | ETL/ELT cloud | Integración datos | Data |
+| Azure Data Lake Storage | Data lake escalable | Big Data | Analytics |
+| Azure Database Migration Service | Migración bases datos | Migración DB | Migración |
+| Azure DevOps | CI/CD | Dev lifecycle | DevOps |
+| Azure Event Hubs | Streaming masivo | Ingesta eventos | Big Data |
+| Azure File Sync | Sincroniza file servers | Extensión Azure Files | Híbrido |
+| Azure Functions | Compute serverless | Ejecución por eventos | Serverless |
+| Azure Import/Export service | Discos físicos | Migración offline | Migración |
+| Azure Logs Analytics | Consulta logs (KQL) | Análisis logs | Monitor |
+| Azure Logs Analytics Workspace | Contenedor logs | Centralización | Monitor |
+| Azure Migrate | Evaluación + migración | Migración infra | Migración |
+| Azure Monitor | Métricas + logs + alertas | Observabilidad | Operaciones |
+| Azure Monitor Activity Log | Log de cambios Azure | Auditoría | Seguridad |
+| Azure Notification Hubs | Push móvil | Notificaciones masivas | Usuarios |
+| Azure Resource Manager | Motor despliegue | IaC | Infra |
+| Azure Service Bus | Mensajería enterprise | Comunicación apps | Backend |
+| Azure Stack Hub | Azure on-prem | Extensión híbrida | Infra |
+| Azure Storage Explorer | Cliente GUI storage | Gestión blobs | Storage |
+| Azure Storage Sync | Sincroniza storage | Extensión Azure Files | Híbrido |
+| AzCopy | CLI transferencia | Copia masiva | Storage |
+| RBAC | Control acceso granular | Seguridad | Seguridad |
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Analysis Services
 
-Servicio PaaS para modelos tabulares de análisis (BI).
+PaaS para modelos tabulares empresariales (semantic layer).  
+En AZ-305 debes asociarlo con soluciones BI centralizadas y rendimiento en consultas analíticas.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Arc
 
-Gestión centralizada de recursos on-prem y multi-cloud.
+Extiende gestión Azure a on-prem y multi-cloud sin mover recursos.  
+Clave para gobierno, Azure Policy y administración híbrida.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Automation
 
-Automatiza tareas mediante runbooks (PowerShell/Python).
+Automatiza tareas mediante runbooks (PowerShell/Python).  
+Usado para mantenimiento, apagado de VMs y automatización operativa.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Backup
 
-Backup gestionado para VMs, SQL, SAP HANA y servidores on-prem.
+Servicio gestionado de backup con retención configurable.  
+En arquitectura se usa para protección de VMs, SQL y cargas críticas.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Blueprints
 
-Plantillas que combinan:
-- ARM templates  
-- Policies  
-- RBAC  
-- Resource Groups  
+Define entornos estandarizados combinando ARM, RBAC y Policy.  
+Importante en escenarios enterprise con compliance y landing zones.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Data Box
 
-Dispositivo físico para migración masiva offline.
+Dispositivo físico para mover grandes volúmenes de datos offline.  
+Se elige cuando el ancho de banda es limitado.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Data Box Edge
 
-Dispositivo físico con procesamiento local (GPU opcional).
+Dispositivo físico con capacidad de procesamiento local (GPU opcional).  
+Ideal para edge computing y preprocesado antes de enviar a Azure.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Data Box Gateway
 
-Dispositivo virtual con caché local para enviar datos vía NFS/SMB.
+Gateway virtual con caché local que sube datos a Azure Storage.  
+Se usa en escenarios híbridos y DR con transferencia continua.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Data Factory
 
-Servicio ETL/ELT cloud para mover y transformar datos.
+Servicio ETL/ELT para integrar y transformar datos.  
+En arquitectura se usa para pipelines de datos y migraciones complejas.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Data Lake Storage
 
-Almacenamiento optimizado para analítica masiva.
+Almacenamiento optimizado para Big Data y analítica masiva.  
+Clave en soluciones de analytics con Synapse, Databricks o Spark.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Database Migration Service
 
-Migración online/offline de bases de datos.
+Migra bases de datos online u offline con mínimo downtime.  
+Se elige cuando se necesita transición controlada a PaaS o Azure VM.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure DevOps
 
-Plataforma CI/CD, repositorios Git, pipelines y boards.
+Plataforma CI/CD con repositorios, pipelines y boards.  
+En AZ-305 aparece en escenarios de automatización y despliegue.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Event Hubs
 
-Streaming masivo de eventos en tiempo real.
+Servicio de streaming masivo para ingestión en tiempo real.  
+Se diferencia de Service Bus por volumen y orientación a Big Data.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure File Sync
 
-Sincroniza servidores locales con Azure Files.
+Sincroniza file servers locales con Azure Files.  
+Permite cloud tiering y extensión híbrida del almacenamiento.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Functions
 
-Serverless compute:
-
-- Consumption → Pago por ejecución  
-- Premium → Sin cold start  
-- Dedicated → En App Service Plan  
+Compute serverless orientado a eventos.  
+Modelos: Consumption (pago por uso), Premium (sin cold start), Dedicated (App Service).
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Import/Export service
 
-Migración mediante envío de discos físicos.
+Permite enviar discos físicos a Azure para migraciones offline.  
+Alternativa cuando Data Box no está disponible.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Logs Analytics
 
-Consulta logs con KQL.
+Servicio para consultar logs con KQL.  
+Parte fundamental de Azure Monitor para troubleshooting.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Logs Analytics Workspace
 
-Contenedor central de logs para Azure Monitor.
+Contenedor lógico donde se almacenan logs.  
+Diseño arquitectónico clave para centralización y retención.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Migrate
 
-Evaluación y migración de VMs, bases de datos y apps.
+Evalúa y migra VMs, apps y bases de datos.  
+Primera herramienta que se usa en proyectos de migración.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Monitor
 
-Monitorización integral de métricas, logs y alertas.
+Servicio central de observabilidad (métricas, logs, alertas).  
+En AZ-305 debes asociarlo con arquitectura resiliente y operativa.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Monitor Activity Log
 
-Registro de cambios en recursos Azure.
+Registra cambios en recursos Azure.  
+Se usa para auditoría y compliance.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Notification Hubs
 
-Push notifications móviles masivas.
+Servicio para enviar push notifications masivas a móviles.  
+No es mensajería backend, sino comunicación con usuarios finales.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Resource Manager
 
-Motor de despliegue de recursos Azure (ARM templates).
+Motor de despliegue de recursos mediante ARM templates.  
+Base de Infraestructura como Código en Azure.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Service Bus
 
-Mensajería empresarial (queues, topics).
+Mensajería enterprise (queues y topics).  
+Se usa para desacoplar microservicios con entrega confiable.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Stack Hub
 
-Azure ejecutándose en tu datacenter.
+Permite ejecutar servicios Azure en tu datacenter.  
+Clave en escenarios híbridos con requisitos regulatorios.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Storage Explorer
 
-Cliente gráfico para gestionar Storage.
+Cliente gráfico para gestionar blobs, files y tables.  
+Herramienta operativa, no arquitectónica.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Storage Sync
 
-Sincroniza almacenamiento local con Azure Files.
+Sincroniza almacenamiento local con Azure Files.  
+Se usa para extender almacenamiento on-prem a la nube.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## AzCopy
 
-Herramienta CLI para copiar datos masivamente a Azure Storage.
+CLI para copiar grandes volúmenes de datos a Azure Storage.  
+Muy usado en migraciones y cargas masivas.
 
 ---
 
 ### 🔝 [Volver al índice](#-índice)
 ## Role-based access control (RBAC)
 
-Control de acceso basado en:
-
-- Security Principal  
-- Role  
-- Scope  
-
-Permite asignar permisos granulares.
+Modelo de autorización basado en Security Principal + Role + Scope.  
+Clave en diseño de seguridad y gobierno en AZ-305.
