@@ -2,7 +2,7 @@
 
 Servicio PaaS basado en SQLServer totalmente gestionado 
 
-## Mapa Jerárquico de Azure SQL (Servicios y Modelos de Compra)
+## Mapa Jerárquico de Azure SQL (Servicios y Modelos de Compra) - Servicios PaaS 
 ````graph
 Azure SQL (Familia de servicios)
 │
@@ -341,7 +341,7 @@ Comparativa: PITR vs RPO vs RTO vs LTR
 | **RPO**  | Recovery Point Objective | Objetivo de negocio        | Cuánta pérdida de datos es aceptable                                   | “Máximo 5 minutos de pérdida”                              | Depende de arquitectura (BC ≈ 0, Geo-replication > 0) |
 | **RTO**  | Recovery Time Objective  | Objetivo de negocio        | Cuánto tiempo puede tardar el sistema en volver a estar operativo      | “Debe estar disponible en 2 minutos”                       | HA síncrona → bajo RTO                                |
 
-## Guía de Selección de Azure SQL según Requisitos Técnicos Ampliado
+## Guía de Selección de Azure SQL (Servicio PaaS) según Requisitos Técnicos -  
 
 ````yml
 
