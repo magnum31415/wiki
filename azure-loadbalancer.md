@@ -26,11 +26,34 @@
 │     │       │       ├── Alcance: Global (multi-región)
 │     │       │       ├── Tipo: Anycast global
 │     │       │       ├── Failover: Automático entre regiones
-│     │       │       ├── WAF: Sí
-│     │       │       └── Uso típico:
-│     │               Apps web multi-región
-│     │               SaaS global
-│     │               Alta disponibilidad global
+│     │       │
+│     │       │       ├── SKUs:
+│     │       │       │
+│     │       │       │   ├── Basic
+│     │       │       │   │       ├── Routing L7: Sí
+│     │       │       │   │       ├── SSL offload: Sí
+│     │       │       │   │       ├── WAF: ❌ No
+│     │       │       │   │       ├── Private Link backend: ❌ No
+│     │       │       │   │       ├── Rules Engine avanzado: Limitado
+│     │       │       │   │       └── Uso típico:
+│     │       │       │           Apps web globales simples
+│     │       │       │           Balanceo multi-región sin requisitos avanzados
+│     │       │       │
+│     │       │       │   └── Premium
+│     │       │       │           ├── Routing L7: Sí
+│     │       │       │           ├── SSL offload: Sí
+│     │       │       │           ├── WAF: ✅ Sí (integrado)
+│     │       │       │           ├── Private Link backend: ✅ Sí
+│     │       │       │           ├── Rules Engine avanzado: Sí
+│     │       │       │           ├── Bot protection: Sí
+│     │       │       │           └── Uso típico:
+│     │       │       │               SaaS enterprise
+│     │       │       │               Exposición segura de backends privados
+│     │       │       │               Requisitos avanzados de seguridad
+│     │       │
+│     │       │       └── Resumen examen:
+│     │       │               Seguridad avanzada / WAF / Private Link → Premium
+│     │       │               Solo balanceo global HTTP básico → Basic
 │     │
 │     │       └── No →
 │     │              ¿Solo necesitas decidir a qué región enviar tráfico?
@@ -62,7 +85,7 @@
       │       │      │       ├── WAF: Sí
       │       │      │       ├── SSL termination: Sí
       │       │      │       └── Uso típico:
-      │       │      │               Aplicaciones web
+      │       │      │               Aplicaciones web regionales
       │       │      │               Protección OWASP
       │       │
       │       │      └── No →
