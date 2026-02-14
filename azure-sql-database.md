@@ -351,6 +351,9 @@ Azure SQL (Familia de servicios)
 │       │       ├── Tipo redundancia:
 │       │       │       General Purpose → Locally redundant (asincrónica dentro región)
 │       │       │       Business Critical → Zone-redundant (síncrona)
+│       │       └── Automatic failover with zero data loss:
+│       │               General Purpose  → ❌ No (asincrónica)
+│       │               Business Critical → ✅ Sí (síncrona)
 │       │
 │       ├── DR: Sí (Auto-failover group / Geo-replication)
 │       │       ├── Tipo redundancia: Geo-replication (entre regiones)
@@ -392,6 +395,8 @@ Azure SQL (Familia de servicios)
       │       │       ├── Tipo redundancia: Zone-redundant interna
       │       │       ├── Sincronización: Asincrónica distribuida 
       │       │       └── Built-in: Sí
+      │       │       └── Automatic failover with zero data loss:
+      │       │               ❌ No (asincrónica)
       │       │
       │       ├── DR: Sí (Auto-failover group / Geo-replication)
       │       │       ├── Tipo redundancia: Geo-replication
@@ -433,6 +438,8 @@ Azure SQL (Familia de servicios)
             │       │       ├── Tipo redundancia: Zone-redundant
             │       │       ├── Sincronización: Síncrona
             │       │       └── Built-in: Sí
+            │       │       └── Automatic failover with zero data loss:
+            │       │               ✅ Sí
             │       │ 
             │       ├── DR: Sí (Auto-failover group / Geo-replication)
             │       │       ├── Tipo redundancia: Geo-replication
@@ -475,6 +482,9 @@ Azure SQL (Familia de servicios)
                   │       │       ├── GP → Locally redundant (asincrónica)
                   │       │       ├── BC → Zone-redundant (síncrona)
                   │       │       └── Built-in: Sí
+                  │       │       └── Automatic failover with zero data loss:
+                  │       │               GP → ❌ No
+                  │       │               BC / Premium → ✅ Sí
                   │       │     
                   │       ├── DR: Sí asincrónica entre regiones)
                   │       ├── Read replicas: Solo si BC / Premium
@@ -510,6 +520,8 @@ Azure SQL (Familia de servicios)
                         │       ├── HA: Sí (réplica asincrónica)
                         │       │       ├── Tipo redundancia: Locally redundant
                         │       │       └── Built-in: Sí
+                        │       │       └── Automatic failover with zero data loss:
+                        │       │               ❌ No
                         │       │     
                         │       ├── DR: Sí (asincrónica)
                         │       │       ├── Tipo redundancia: Geo-replication
@@ -547,6 +559,8 @@ Azure SQL (Familia de servicios)
                                 ├── HA: Sí (réplica asincrónica)
                                 │       ├── Tipo redundancia: Locally redundant
                                 │       └── Built-in: Sí
+                                │       └── Automatic failover with zero data loss:
+                                │               ❌ No
                                 │  
                                 ├── DR: Sí (asincrónica)
                                 │       ├── Tipo redundancia: Geo-replication
