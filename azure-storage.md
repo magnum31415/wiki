@@ -21,7 +21,9 @@ Esto define qué tipo de almacenamiento puedes usar y con qué rendimiento.
 | **Premium – Page Blobs**                 | Discos de VM (VHD)           | SSD        | ❌ No                                | LRS |
 | *(Legacy)* GPv1                          | Antiguo                      | HDD        | Limitado                             | LRS, GRS, RA-GRS |
 
+
 Standard (GPv2) → hasta 5 PiB (Pebibytes) por Storage Account
+
 
 | Tipo de cuenta | Tipo de datos que soporta | Blob Versioning | Soft Delete | Snapshots | Lifecycle Management | Casos de uso típicos |
 |---------------|----------------------------|-----------------|------------|-----------|---------------------|----------------------|
@@ -55,6 +57,9 @@ Standard (GPv2) → hasta 5 PiB (Pebibytes) por Storage Account
 | **RA-GRS** (Read-Access GRS)          | 6 (3 + 3)                | Igual que GRS                                            | Caída de región                 | ✅ Sí (read-only)                 | Apps que leen desde secundaria       |
 | **GZRS** (Geo-Zone Redundant Storage) | 6 (3 ZRS + 3 secundaria) | 3 zonas en primaria + 3 en región secundaria             | Caída de zona + caída de región | ❌ No (solo tras failover)        | Workloads críticos empresariales     |
 | **RA-GZRS**                           | 6                        | Igual que GZRS                                           | Caída zona + región             | ✅ Sí (read-only)                 | Alta disponibilidad + lectura global |
+
+
+![ZRS](./img/azure/azure-zone-redundant-storage.png)
 
 
 ## Access tiers
