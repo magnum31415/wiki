@@ -1,10 +1,10 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
 # 📚 Resumen comparativo de servicios Azure
 
 ## 📑 Índice
 
 - [Tabla comparativa rápida](#tabla-comparativa-rápida)
-- [AzCopy](#azcopy)
 - [Azure Analysis Services](#azure-analysis-services)
 - [Azure Arc](#azure-arc)
 - [Azure Automation](#azure-automation)
@@ -18,19 +18,21 @@
 - [Azure Database Migration Service](#azure-database-migration-service)
 - [Azure DevOps](#azure-devops)
 - [Azure Event Hubs](#azure-event-hubs)
-- [Azure Function](#azure-function)
+- [Azure File Sync](#azure-file-sync)
+- [Azure Functions](#azure-functions)
 - [Azure Import/Export service](#azure-importexport-service)
-- [Azure Log Analytics](#azure-log-analytics)
-- [Azure Log Analytics Workspace](#azure-log-analytics-workspace)
+- [Azure Logs Analytics](#azure-logs-analytics)
+- [Azure Logs Analytics Workspace](#azure-logs-analytics-workspace)
 - [Azure Migrate](#azure-migrate)
 - [Azure Monitor](#azure-monitor)
-- [Azure Monitor (Activity Log)](#azure-monitor-activity-log)
+- [Azure Monitor Activity Log](#azure-monitor-activity-log)
 - [Azure Notification Hubs](#azure-notification-hubs)
-- [Azure Resource Manager (ARM)](#azure-resource-manager-arm)
+- [Azure Resource Manager](#azure-resource-manager)
 - [Azure Service Bus](#azure-service-bus)
 - [Azure Stack Hub](#azure-stack-hub)
 - [Azure Storage Explorer](#azure-storage-explorer)
 - [Azure Storage Sync](#azure-storage-sync)
+- [AzCopy](#azcopy)
 - [Role-based access control (RBAC)](#role-based-access-control-rbac)
 
 ---
@@ -38,171 +40,250 @@
 # 📊 Tabla comparativa rápida
 
 | Servicio | Resumen en pocas palabras | Propósito principal | Orientado a |
-|-----------|--------------------------|--------------------|-------------|
-| Azure Analysis Services | Modelos analíticos tabulares | BI empresarial | Analytics |
-| Azure Automation | Automatización de tareas | Runbooks | Operaciones |
+|----------|--------------------------|--------------------|-------------|
+| Azure Analysis Services | Modelo tabular BI en la nube | Análisis empresarial | BI |
+| Azure Arc | Gestión híbrida y multi-cloud | Gobierno centralizado | Infraestructura |
+| Azure Automation | Automatización cloud | Runbooks y tareas | DevOps |
 | Azure Backup | Backup gestionado | Protección de datos | Backup / DR |
-| Azure Blueprints | Plantillas de gobernanza | Estándares organizativos | Gobierno |
-| Azure Data Factory | ETL/ELT gestionado | Integración de datos | Analytics |
-| Azure Event Hubs | Streaming masivo | Ingesta de eventos | Big Data |
-| Azure Function | Serverless compute | Código bajo demanda | Desarrollo |
-| Azure Log Analytics | Consulta de logs | Análisis de telemetría | Observabilidad |
-| Azure Log Analytics Workspace | Contenedor de logs | Almacenamiento y consulta | Monitorización |
-| Azure Monitor | Monitorización integral | Métricas y logs | Observabilidad |
-| Azure Monitor (Activity Log) | Log de operaciones Azure | Auditoría de cambios | Gobierno |
-| RBAC | Control de acceso por roles | Autorización | Seguridad |
+| Azure Blueprints | Plantillas de gobierno | Estándares y compliance | Governance |
+| Azure Data Box | Transferencia física masiva | Migración offline | Migración |
+| Azure Data Box Edge | Edge computing + transferencia | Procesamiento local | Edge |
+| Azure Data Box Gateway | Pasarela híbrida virtual | Transferir datos a Azure | Híbrido |
+| Azure Data Factory | ETL/ELT en la nube | Integración de datos | Data |
+| Azure Data Lake Storage | Data lake escalable | Almacenamiento Big Data | Analytics |
+| Azure Database Migration Service | Migración de bases de datos | Migración DB | Migración |
+| Azure DevOps | CI/CD y gestión DevOps | Desarrollo colaborativo | DevOps |
+| Azure Event Hubs | Streaming masivo de eventos | Ingesta en tiempo real | Big Data |
+| Azure File Sync | Sincroniza file servers | Extensión híbrida | Files |
+| Azure Functions | Serverless compute | Código por eventos | Serverless |
+| Azure Import/Export service | Discos físicos a Azure | Migración offline | Migración |
+| Azure Logs Analytics | Consulta de logs (KQL) | Análisis de logs | Monitorización |
+| Azure Logs Analytics Workspace | Contenedor de logs | Centralización logs | Monitorización |
+| Azure Migrate | Evaluación y migración | Migración infra | Migración |
+| Azure Monitor | Monitorización global | Métricas y alertas | Operaciones |
+| Azure Monitor Activity Log | Log de cambios en Azure | Auditoría | Seguridad |
+| Azure Notification Hubs | Push móvil masivo | Notificaciones | Usuarios |
+| Azure Resource Manager | Motor de despliegue Azure | Infraestructura como código | Infra |
+| Azure Service Bus | Mensajería empresarial | Comunicación apps | Backend |
+| Azure Stack Hub | Azure on-prem | Extensión híbrida | Infraestructura |
+| Azure Storage Explorer | Cliente gráfico almacenamiento | Gestión de blobs/files | Storage |
+| Azure Storage Sync | Sincroniza almacenamiento | Extensión Azure Files | Híbrido |
+| AzCopy | Copia masiva de datos | Transferencia rápida | Storage |
+| Role-based access control (RBAC) | Control de acceso granular | Seguridad | Seguridad |
 
 ---
 
-## Azure Analysis Services 🔝 [Volver al índice](#-índice)
+### 🔝 [Volver al índice](#-índice)
+## Azure Analysis Services
 
-### 🔎 ¿Qué es?
-Servicio PaaS para modelos tabulares de análisis (similar a SQL Server Analysis Services).
-
-### 🎯 Para qué se usa
-- Modelos semánticos
-- Power BI
-- BI empresarial
-
-### 🧠 Idea clave
-**Modelo analítico centralizado en la nube.**
+Servicio PaaS para modelos tabulares de análisis (BI).
 
 ---
 
-## Azure Automation 🔝 [Volver al índice](#-índice)
+### 🔝 [Volver al índice](#-índice)
+## Azure Arc
 
-### 🔎 ¿Qué es?
-Automatización basada en runbooks (PowerShell / Python).
-
-### 🎯 Casos de uso
-- Apagar VMs
-- Parches automáticos
-- Tareas programadas
-
-### 🧠 Idea clave
-**Automatización operativa en Azure.**
+Gestión centralizada de recursos on-prem y multi-cloud.
 
 ---
 
-## Azure Blueprints 🔝 [Volver al índice](#-índice)
+### 🔝 [Volver al índice](#-índice)
+## Azure Automation
 
-### 🔎 ¿Qué es?
-Servicio para definir y aplicar estándares de gobernanza.
-
-### 🧱 Componentes
-- Blueprint Definition
-- Blueprint Assignment
-- Políticas
-- RBAC
-- ARM templates
-
-### 🧠 Idea clave
-**Gobernanza reusable a nivel de suscripción.**
+Automatiza tareas mediante runbooks (PowerShell/Python).
 
 ---
 
-## Azure Function 🔝 [Volver al índice](#-índice)
+### 🔝 [Volver al índice](#-índice)
+## Azure Backup
 
-### 🔎 ¿Qué es?
-Servicio serverless para ejecutar código bajo demanda.
-
-### 🔁 Tipos de hosting
-
-1️⃣ **Consumption Plan**
-- Escala automática
-- Pago por ejecución
-
-2️⃣ **Premium Plan**
-- Sin cold start
-- Escalado rápido
-
-3️⃣ **App Service Plan**
-- Recursos dedicados
-
-### 🎯 Casos de uso
-- Webhooks
-- Procesamiento de eventos
-- APIs ligeras
-
-### 🧠 Idea clave
-**Azure Functions = Compute serverless basado en eventos.**
+Backup gestionado para VMs, SQL, SAP HANA y servidores on-prem.
 
 ---
 
-## Azure Log Analytics 🔝 [Volver al índice](#-índice)
+### 🔝 [Volver al índice](#-índice)
+## Azure Blueprints
 
-### 🔎 ¿Qué es?
-Motor de consulta de logs usando KQL.
-
-### 🎯 Para qué se usa
-- Consultas avanzadas
-- Alertas
-- Monitorización
-
-### 🧠 Idea clave
-**Lenguaje KQL para análisis de logs.**
+Plantillas que combinan:
+- ARM templates  
+- Policies  
+- RBAC  
+- Resource Groups  
 
 ---
 
-## Azure Log Analytics Workspace 🔝 [Volver al índice](#-índice)
+### 🔝 [Volver al índice](#-índice)
+## Azure Data Box
 
-### 🔎 ¿Qué es?
-Contenedor lógico donde se almacenan los logs.
-
-### 🎯 Contiene
-- Logs de VMs
-- Logs de Azure Monitor
-- Security logs
-
-### 🧠 Idea clave
-**Workspace = Base de datos de logs.**
+Dispositivo físico para migración masiva offline.
 
 ---
 
-## Azure Monitor 🔝 [Volver al índice](#-índice)
+### 🔝 [Volver al índice](#-índice)
+## Azure Data Box Edge
 
-### 🔎 ¿Qué es?
-Servicio central de monitorización en Azure.
-
-### 📊 Incluye
-- Métricas
-- Logs
-- Alertas
-- Dashboards
-
-### 🧠 Idea clave
-**Monitor = Observabilidad completa.**
+Dispositivo físico con procesamiento local (GPU opcional).
 
 ---
 
-## Azure Monitor (Activity Log) 🔝 [Volver al índice](#-índice)
+### 🔝 [Volver al índice](#-índice)
+## Azure Data Box Gateway
 
-### 🔎 ¿Qué es?
-Registro de operaciones administrativas en Azure.
-
-### 🎯 Registra
-- Creación/eliminación de recursos
-- Cambios RBAC
-- Modificaciones de configuración
-
-### 🧠 Idea clave
-**Activity Log = Auditoría de acciones en Azure.**
+Dispositivo virtual con caché local para enviar datos vía NFS/SMB.
 
 ---
 
-## Role-based access control (RBAC) 🔝 [Volver al índice](#-índice)
+### 🔝 [Volver al índice](#-índice)
+## Azure Data Factory
 
-### 🔎 ¿Qué es?
-Sistema de autorización basado en roles.
+Servicio ETL/ELT cloud para mover y transformar datos.
 
-### 🧠 Fórmula clave
-Security Principal + Role + Scope
+---
 
-### 🎯 Alcance
-- Management Group
-- Subscription
-- Resource Group
-- Recurso
+### 🔝 [Volver al índice](#-índice)
+## Azure Data Lake Storage
 
-### 🧠 Idea clave
-**RBAC = Control granular de permisos.**
+Almacenamiento optimizado para analítica masiva.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Database Migration Service
+
+Migración online/offline de bases de datos.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure DevOps
+
+Plataforma CI/CD, repositorios Git, pipelines y boards.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Event Hubs
+
+Streaming masivo de eventos en tiempo real.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure File Sync
+
+Sincroniza servidores locales con Azure Files.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Functions
+
+Serverless compute:
+
+- Consumption → Pago por ejecución  
+- Premium → Sin cold start  
+- Dedicated → En App Service Plan  
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Import/Export service
+
+Migración mediante envío de discos físicos.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Logs Analytics
+
+Consulta logs con KQL.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Logs Analytics Workspace
+
+Contenedor central de logs para Azure Monitor.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Migrate
+
+Evaluación y migración de VMs, bases de datos y apps.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Monitor
+
+Monitorización integral de métricas, logs y alertas.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Monitor Activity Log
+
+Registro de cambios en recursos Azure.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Notification Hubs
+
+Push notifications móviles masivas.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Resource Manager
+
+Motor de despliegue de recursos Azure (ARM templates).
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Service Bus
+
+Mensajería empresarial (queues, topics).
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Stack Hub
+
+Azure ejecutándose en tu datacenter.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Storage Explorer
+
+Cliente gráfico para gestionar Storage.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Azure Storage Sync
+
+Sincroniza almacenamiento local con Azure Files.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## AzCopy
+
+Herramienta CLI para copiar datos masivamente a Azure Storage.
+
+---
+
+### 🔝 [Volver al índice](#-índice)
+## Role-based access control (RBAC)
+
+Control de acceso basado en:
+
+- Security Principal  
+- Role  
+- Scope  
+
+Permite asignar permisos granulares.
