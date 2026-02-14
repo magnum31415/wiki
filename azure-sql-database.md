@@ -399,7 +399,7 @@ Azure SQL (Familia de servicios)
       │               Crecimiento impredecible
       │               Workloads mixtos (OLTP + analítico)
       │               Necesita escalar almacenamiento rápidamente
-│
+      │
       └── No →
             ¿Carga OLTP muy alta / In-Memory / baja latencia?
             │
@@ -431,7 +431,7 @@ Azure SQL (Familia de servicios)
             │               Sistemas críticos
             │               Alta concurrencia
             │               Latencia mínima
-│
+            │
             └── No →
                   ¿Muchas bases con uso variable?
                   │
@@ -465,7 +465,7 @@ Azure SQL (Familia de servicios)
                   │               SaaS multi-tenant
                   │               Muchas bases pequeñas
                   │               Optimización de costes
-│
+                  │
                   └── No →
                         ¿Carga intermitente / dev-test?
                         │
@@ -498,7 +498,7 @@ Azure SQL (Familia de servicios)
                         │               Workloads impredecibles
                         │               Uso intermitente
                         │               Optimización de costes
-│
+                        │
                         └── No → Single DB – General Purpose (Provisioned)
                                 │
                                 ├── Modelos disponibles:
