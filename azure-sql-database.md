@@ -27,6 +27,8 @@ Servicio PaaS basado en SQLServer totalmente gestionado
 ---
 
 
+![azure-sql.png](./img/azure/azure-sql.png)
+
 #  Arquitectura de Azure SQL Database – Hyperscale
 🔝 [Volver al índice](#-índice)
 
