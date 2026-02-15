@@ -11,4 +11,6 @@
 10. [Azure Cosmosdb](https://github.com/magnum31415/wiki/blob/main/azure-cosmosdb.md)
 11. [Azure Virtual Machines](https://github.com/magnum31415/wiki/blob/main/azure-virtual-machines.md)
 12. [Azure storage](https://github.com/magnum31415/wiki/blob/main/azure-storage.md)
-   
+13. [Azure Site Recovery](https://github.com/magnum31415/wiki/blob/main/azure-site-recovery.md)
+
+  
