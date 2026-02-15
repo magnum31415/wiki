@@ -90,6 +90,9 @@ En una subnet activas:
 - 👉 No activas “Azure completo”.
 - 👉 Activar Storage NO activa SQL.
 
+![azure-service-endpoint](./img/azure/azure-service-endpoint.png)
+
+
 #### ✅ Procedimiento recomendado (Private Endpoint)
 **1) Crear Private Endpoint para Azure SQL Database**
 - Azure SQL Server → Networking → Private endpoint connections
