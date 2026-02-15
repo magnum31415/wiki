@@ -1,6 +1,88 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # Azure App Service
+
+
+# 🔵 ¿Qué es Azure App Service?
+
+Azure App Service es un servicio **PaaS (Platform as a Service)** para alojar:
+
+- Aplicaciones web
+- APIs REST
+- Backends móviles
+- Aplicaciones en contenedores
+
+Sin tener que gestionar:
+
+- Servidores
+- Sistema operativo
+- Parches
+- Infraestructura
+
+---
+
+# 🧱 Qué te proporciona
+
+- Hosting gestionado (Windows o Linux)
+- Escalado automático o manual
+- Alta disponibilidad
+- Integración con Azure AD
+- CI/CD desde GitHub, Azure DevOps, etc.
+- SSL y dominios personalizados
+
+---
+
+# 🔷 Cómo funciona
+
+Cuando creas una app, la asignas a un:
+
+## App Service Plan
+
+El App Service Plan define:
+
+- CPU
+- RAM
+- Número de instancias
+- Región
+- Precio
+
+Varias apps pueden compartir el mismo plan y recursos.
+
+---
+
+# 🔷 Tipos principales
+
+- **Web App** → aplicaciones web y APIs
+- **Web App for Containers** → contenedores Docker
+- **Mobile App** → backend móvil
+
+---
+
+# 🔷 Diferencia con otros servicios
+
+| Servicio | Uso principal |
+|----------|--------------|
+| App Service | Apps siempre activas |
+| Azure Functions | Código event-driven |
+| Container Apps | Microservicios en contenedores |
+| AKS | Kubernetes gestionado |
+
+---
+
+# 🎯 Cuándo usarlo
+
+- Aplicación web pública
+- API corporativa
+- Backend estable
+- Necesitas despliegue sin downtime (Deployment Slots)
+
+---
+
+# 🧠 Resumen para examen AZ-305
+
+App Service =  
+Hosting web gestionado en Azure con escalado y alta disponibilidad sin gestionar infraestructura.
+
 # 📘 AZ-305 – Resumen clave para preguntas tipo *App Service Case Study*
 
 Este resumen cubre la teoría que necesitas dominar para responder correctamente preguntas como las del escenario de CVD.
