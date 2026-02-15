@@ -116,6 +116,25 @@ En arquitectura se usa para protección de VMs, SQL y cargas críticas.
 Define entornos estandarizados combinando ARM, RBAC y Policy.  
 Importante en escenarios enterprise con compliance y landing zones.
 
+**Azure Blueprints tiene dos partes principales:**
+
+  1. **Blueprint Definition**  Define qué se va a desplegar y gobernar.
+  2. **Blueprint Assignment**  Es cuando aplicas la definición (Sólo  a nivel de Subscription)
+   
+**Donde se pueden aplicar**
+
+| Componente           | Se crea en                      | Se aplica en |
+| -------------------- | ------------------------------- | ------------ |
+| Blueprint Definition | Management Group o Subscription | —            |
+| Blueprint Assignment | —                               | Subscription |
+
+**🧠 Regla mental examen**
+
+- Definition → nivel organizativo (MG recomendado)
+- Assignment → nivel operativo (Subscription)
+
+![Azure-Blueprints-Artifacts](./img/azure/Azure-Blueprints-Artifacts.png)
+
 ---
 
 ### 🔝 [Volver al índice](#-índice)
