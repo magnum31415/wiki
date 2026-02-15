@@ -44,6 +44,7 @@ Una Azure Policy se puede asignar en cualquier nivel del scope jerárquico de Az
 ````
 Tenant
  └── Management Group
+      ├── Management Group
       └── Subscription
            └── Resource Group
                 └── Resource
@@ -55,6 +56,17 @@ La policy **hereda hacia abajo**.
   - Management Group → impacta todo lo que cuelgue debajo.
   - Subscription → impacta toda la suscripción.
   - Resource Group → solo ese grupo.
+ 
+
+| Nivel                | Puede contener dentro                        | Notas clave examen                                                |
+| -------------------- | -------------------------------------------- | ----------------------------------------------------------------- |
+| **Tenant**           | Management Groups                            | Nivel más alto. Representa la organización en Microsoft Entra ID. |
+| **Management Group** | Management Groups (anidados) y Subscriptions | Permite jerarquía. Las policies y RBAC heredan hacia abajo.       |
+| **Subscription**     | Resource Groups                              | Límite de facturación y aislamiento lógico.                       |
+| **Resource Group**   | Resources                                    | Agrupa recursos relacionados para gestión conjunta.               |
+| **Resource**         | — (no contiene nada)                         | Es el nivel más bajo (VM, Storage, VNet, etc.).                   |
+
+  
 
 ## 🔵 ¿Qué tipos de efectos (Effects) tiene Azure Policy?
 
