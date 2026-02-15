@@ -208,6 +208,19 @@ Es el **conjunto de recursos de cómputo** (CPU, RAM, almacenamiento, instancias
 
 Toda Web App vive dentro de un App Service Plan.
 
+````
+App Service Plan
+        │
+        ├── Web App
+        │       ├── Deployment Stack
+        │       ├── Deployment Slots
+        │       ├── Configuración
+        │       └── Monitoring
+        │
+        └── Web App
+
+````
+
 ---
 
 ## 📌 Qué define
