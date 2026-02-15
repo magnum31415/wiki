@@ -1,6 +1,27 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 # Storage
 
+# 📑 Índice
+
+1. [Azure Managed Disks](#azure-managed-disks)
+2. [Conceptos Generales](#conceptos)
+3. [Tipo de Storage Account (SKU funcional)](#tipo-de-storage-account-sku-funcional)
+4. [Tipos de datos en una Azure Storage Account](#tipos-de-datos-en-una-azure-storage-account)
+5. [Redundancia en Azure Storage](#redundancia-en-azure-storage)
+   - [Caída de región con GRS / RA-GRS](#si-la-región-principal-cae-en-lob-storage-con-grs-geo-redundant-storage)
+6. [Access Tiers y Retención mínima](#retención-mínima-access-tiers)
+7. [Network Security en Azure Storage](#-network-security-en-azure-storage)
+   - [Public Endpoint + Firewall](#1️⃣-public-endpoint--firewall)
+   - [Virtual Network Service Endpoints](#2️⃣-virtual-network-service-endpoints)
+   - [Private Endpoint (Private Link)](#3️⃣-private-endpoint-private-link--importante)
+   - [Trusted Microsoft Services](#4️⃣-trusted-microsoft-services)
+8. [Comparativa Métodos de Seguridad de Red](#comparativa-rápida)
+9. [Modelos de Control de Acceso](#concepto)
+   - [Storage Account Access Key](#-storage-account-access-key)
+   - [Shared Access Signature (SAS)](#-shared-access-signature-sas)
+   - [Stored Access Policy](#-stored-access-policy)
+   - [Resource Lock](#-readonly-resource-lock)
+
 ## Azure Managed Disks
 
 ![Disks Type](./img/azure/azure-managed-disks.png)
@@ -12,6 +33,7 @@
 | **Standard SSD** | Medio                   | Media-baja        | Hasta ~6,000  | Hasta ~750 MB/s  | ❌ No                                    | Web servers, entornos prod ligeros                      | Medio    |
 | **Standard HDD** | Bajo                    | Alta              | Hasta ~2,000  | Hasta ~500 MB/s  | ❌ No                                    | Backup, DEV/TEST, cargas no críticas                    | Bajo     |
 
+---
 
 ## Conceptos
 
@@ -36,7 +58,7 @@ Esto define qué tipo de almacenamiento puedes usar y con qué rendimiento.
 | *(Legacy)* GPv1                          | Antiguo                      | HDD        | Limitado                             | LRS, GRS, RA-GRS |
 
 
-Standard (GPv2) → hasta 5 PiB (Pebibytes) por Storage Account
+- Standard (GPv2) → hasta 5 PiB (Pebibytes) por Storage Account
 
 
 
@@ -57,10 +79,49 @@ Standard (GPv2) → hasta 5 PiB (Pebibytes) por Storage Account
 | Retención legal / protección contra borrado | Versioning + Soft Delete (GPv2) |
 | Automatización de transición de datos       | Lifecycle (solo GPv2)           |
 
-📌 Importante:
+**📌 Importante:**
 
 - Solo Standard GPv2 soporta Hot / Cool / Cold / Archive
 - Las Premium son para rendimiento, no para optimización por acceso
+
+---
+## Tipos de datos en una Azure Storage Account
+
+Una Storage Account puede contener:
+
+````
+Storage Account
+│
+├── Blob (objetos)
+├── Table (NoSQL)
+├── Queue (mensajes)
+└── File (shares SMB/NFS)
+
+````
+
+
+| Tipo de dato                   | Servicio  | Para qué sirve                   | Modelo de datos                              | Caso típico                                    | ¿Soporta REST? |
+| ------------------------------ | --------- | -------------------------------- | -------------------------------------------- | ---------------------------------------------- | -------------- |
+| **Blob Storage**               | Blob      | Almacenamiento de objetos        | No estructurado (archivos/binarios)          | Imágenes, backups, data lake, logs, vídeos     | ✅ Sí           |
+| **Table Storage**              | Table     | Base de datos NoSQL simple       | Key-Value estructurado (PartitionKey/RowKey) | Telemetría, IoT, metadatos, config distribuida | ✅ Sí           |
+| **Queue Storage**              | Queue     | Mensajería asíncrona             | Mensajes simples (hasta 64 KB)               | Desacoplar aplicaciones, procesos background   | ✅ Sí           |
+| **File Storage (Azure Files)** | File      | Compartición de archivos SMB/NFS | Sistema de archivos jerárquico               | Reemplazo de file server on-prem               | ✅ Sí           |
+| **Disk Storage (Page Blob)**   | Page Blob | Discos para VMs                  | Bloques direccionables de 512 bytes          | Discos de máquinas virtuales (VHD)             | ✅ Sí           |
+
+
+**Cómo diferenciarlos rápido (modo examen)**
+
+| Si lees…                               | Servicio correcto |
+| -------------------------------------- | ----------------- |
+| Archivos grandes / multimedia          | Blob              |
+| Datos estructurados NoSQL simples      | Table             |
+| Sistema de colas / procesamiento async | Queue             |
+| File server compartido SMB             | Azure Files       |
+| Disco de máquina virtual               | Page Blob         |
+
+
+
+---
 
 ## Redundancia en Azure Storage
 
@@ -76,8 +137,51 @@ Standard (GPv2) → hasta 5 PiB (Pebibytes) por Storage Account
 
 ![ZRS](./img/azure/azure-zone-redundant-storage.png)
 
+### Si la región principal cae en lob Storage con GRS (Geo-Redundant Storage)
 
-## Access tiers
+**🔵 Si usas Blob Storage con GRS (Geo-Redundant Storage)**
+
+- GRS:
+  - Replica datos asincrónicamente a una región secundaria emparejada.
+  - Pero ❗ No permite acceso a la región secundaria mientras la primaria esté activa.
+
+**🚨 Si la región principal cae**
+
+  - Con GRS normal:
+    - 👉 No puedes acceder automáticamente a la copia secundaria.
+
+  - Debes:
+
+    - 1️⃣ Esperar a que Microsoft declare la región como no recuperable
+    - 2️⃣ Solicitar o ejecutar un account failover
+    - 3️⃣ El secundario se convierte en el nuevo primario
+
+  - Después del failover:
+    - El endpoint cambia internamente
+    - Empiezas a operar desde la región secundaria
+
+**⚠️ Es un proceso manual y definitivo (no reversible automáticamente).**
+
+**🟢 Si usas RA-GRS (Read-Access GRS)**
+
+ - Aquí cambia:
+   - Puedes leer desde la región secundaria en cualquier momento
+   - Pero solo lectura
+   - Escrituras siguen yendo al primario
+ - En caída regional:
+   - Puedes acceder a datos en modo read-only
+   - Luego ejecutar failover si es necesario
+
+**Diferencia rápida**
+
+| Tipo   | ¿Acceso secundario antes del failover? | ¿Failover automático? |
+| ------ | -------------------------------------- | --------------------- |
+| GRS    | ❌ No                                   | ❌ No (manual)         |
+| RA-GRS | ✅ Solo lectura                         | ❌ No (manual)         |
+
+
+
+## Retención mínima Access tiers
 
 | Tier    | Frecuencia   | Coste storage | Coste acceso | Latencia   | Retención mínima |
 |---------|-------------|--------------|-------------|------------|------------------|
@@ -86,7 +190,7 @@ Standard (GPv2) → hasta 5 PiB (Pebibytes) por Storage Account
 | Cold    | Baja        | Bajo         | Alto        | Inmediata  | 90 días          |
 | Archive | Muy baja    | Muy bajo     | Muy alto    | Horas      | 180 días         |
 
-Cambios entre tiers (muy preguntado)
+**Cambios entre tiers (muy preguntado)**
 
  ````
  ✔ Hot ↔ Cool ↔ Cold → inmediato
