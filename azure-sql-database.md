@@ -145,10 +145,35 @@ Si quieres, puedo prepararte un esquema comparativo visual entre:
 ## Funcionalitats
 
 ### Geo-replication
+
 **Geo-replication** provides geographic redundancy and enables read operations only in the secondary region during a primary region outage.
 However, it does not support write operations in the secondary region when the primary region is down.
 
 Active geo-replication is configured per database, and only supports manual failover.
+
+**Cómo funciona Active Geo-Replication**
+- Tienes una base primaria.
+- Creas hasta 4 réplicas secundarias en otras regiones.
+- La replicación es asíncrona.
+- Si cae la primaria: 
+  - Debes ejecutar failover manual.
+
+**Entonces… ¿cuándo es el Failover automático?**
+Cuando usas:
+- **Auto-Failover Group**
+Ese sí:
+- Detecta caída regional.
+- Cambia automáticamente.
+- Mantiene un endpoint único.
+
+
+| Característica      | Active Geo-Replication | Auto-Failover Group |
+| ------------------- | ---------------------- | ------------------- |
+| Replicación         | Asíncrona              | Asíncrona           |
+| Failover automático | ❌ No                   | ✅ Sí                |
+| Endpoint único      | ❌ No                   | ✅ Sí                |
+| DR empresarial      | ⚠️ Parcial             | ✅ Sí                |
+
 
 ---
 
