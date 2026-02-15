@@ -14,6 +14,7 @@
 13. [Azure Site Recovery](https://github.com/magnum31415/wiki/blob/main/azure-site-recovery.md)
 14. [Azure Mysql](https://github.com/magnum31415/wiki/blob/main/azure-mysql.md)
 15. [Azure Functions](https://github.com/magnum31415/wiki/blob/main/azure-functions.md)
+16. [Azure Policy](https://github.com/magnum31415/wiki/blob/main/azure-policy.md)
 
 
 
