@@ -13,4 +13,14 @@
 12. [Azure storage](https://github.com/magnum31415/wiki/blob/main/azure-storage.md)
 13. [Azure Site Recovery](https://github.com/magnum31415/wiki/blob/main/azure-site-recovery.md)
 
-  
+
+# Siglas
+  | Sigla    | Definición completa       | Qué significa en una frase                                                                                         |
+| -------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **RPO**  | Recovery Point Objective  | Cuánta pérdida de datos es aceptable tras un incidente.                                                            |
+| **RTO**  | Recovery Time Objective   | Cuánto tiempo puede estar el sistema caído antes de recuperarse.                                                   |
+| **PITR** | Point-In-Time Restore     | Permite restaurar una base de datos a un momento exacto anterior.                                                  |
+| **LTR**  | Long-Term Retention       | Permite conservar backups durante años para cumplimiento normativo.                                                |
+| **DTU**  | Database Transaction Unit | Métrica combinada de CPU, memoria y IO usada como modelo de rendimiento en Azure SQL.                              |
+| **SKU**  | Stock Keeping Unit        | Identificador comercial que define una combinación concreta de características, capacidad y precio de un servicio. |
+
