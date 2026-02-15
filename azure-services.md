@@ -339,6 +339,14 @@ En AZ-305 debes asociarlo con arquitectura resiliente y operativa.
 Registra cambios en recursos Azure.  
 Se usa para auditoría y compliance.
 
+- Ejemplo:
+  - Crear VM
+  - Modificar NSG
+  - Eliminar Storage Account
+- No registra:
+  - Logs internos de la VM
+  - Eventos del sistema operativo
+    
 ---
 
 ### 🔝 [Volver al índice](#-índice)
