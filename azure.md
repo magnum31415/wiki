@@ -15,12 +15,20 @@
 
 
 # Siglas
-  | Sigla    | Definición completa       | Qué significa en una frase                                                                                         |
-| -------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **RPO**  | Recovery Point Objective  | Cuánta pérdida de datos es aceptable tras un incidente.                                                            |
-| **RTO**  | Recovery Time Objective   | Cuánto tiempo puede estar el sistema caído antes de recuperarse.                                                   |
-| **PITR** | Point-In-Time Restore     | Permite restaurar una base de datos a un momento exacto anterior.                                                  |
-| **LTR**  | Long-Term Retention       | Permite conservar backups durante años para cumplimiento normativo.                                                |
-| **DTU**  | Database Transaction Unit | Métrica combinada de CPU, memoria y IO usada como modelo de rendimiento en Azure SQL.                              |
-| **SKU**  | Stock Keeping Unit        | Identificador comercial que define una combinación concreta de características, capacidad y precio de un servicio. |
+
+| Sigla / Concepto            | Definición completa                                           | Qué significa en una frase                                                                                         |
+| --------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **RPO**                     | Recovery Point Objective                                      | Cuánta pérdida de datos es aceptable tras un incidente.                                                            |
+| **RTO**                     | Recovery Time Objective                                       | Cuánto tiempo puede estar el sistema caído antes de recuperarse.                                                   |
+| **PITR**                    | Point-In-Time Restore                                         | Permite restaurar una base de datos a un momento exacto anterior.                                                  |
+| **LTR**                     | Long-Term Retention                                           | Permite conservar backups durante años para cumplimiento normativo.                                                |
+| **DTU**                     | Database Transaction Unit                                     | Métrica combinada de CPU, memoria y IO usada como modelo de rendimiento en Azure SQL.                              |
+| **SKU**                     | Stock Keeping Unit                                            | Identificador comercial que define una combinación concreta de características, capacidad y precio de un servicio. |
+| **Availability Set**        | Conjunto lógico de VMs distribuidas en Fault y Update Domains | Garantiza que varias VMs no fallen a la vez dentro de la misma región.                                             |
+| **Availability Group (AG)** | Always On Availability Group                                  | Tecnología de SQL Server que replica bases entre instancias con failover automático.                               |
+| **Fault Domain (FD)**       | Dominio de fallo físico                                       | Grupo de recursos que comparten hardware; si ese hardware falla, todo el dominio cae.                              |
+| **Update Domain (UD)**      | Dominio de actualización                                      | Grupo de recursos que se actualizan al mismo tiempo durante mantenimiento planificado.                             |
+| **Failover Group**          | Grupo de conmutación por error entre regiones                 | Permite replicar bases entre regiones y hacer failover automático con endpoint único.                              |
+| **SAML**                    | Security Assertion Markup Language                            | Estándar XML para autenticación federada entre proveedor de identidad y aplicación.                                |
+| **JWT**                     | JSON Web Token                                                | Token compacto en formato JSON usado para autenticación y autorización basada en claims.                           |
 
