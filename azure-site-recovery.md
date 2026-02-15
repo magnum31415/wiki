@@ -13,6 +13,8 @@ Site Recovery can manage replication for:
  - Replication between two Azure Public MECs
  - On-premises VMs, Azure Stack VMs, and physical servers
 
+![azure-site-recovery-sql-vm](./img/azure/azure-site-recovery-sql-vm.png)
+
 
 ## Virtual Machines:
 
