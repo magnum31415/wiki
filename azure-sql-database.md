@@ -244,6 +244,10 @@ Un AG tiene:
 
 ---
 ## Mapa Jerárquico de Azure SQL (Servicios y Modelos de Compra) - Servicios PaaS 
+
+![azure-sql-comparison](./img/azure/azure-sql-comparison.png)
+
+
 ````graph
 Azure SQL (Familia de servicios)
 │
