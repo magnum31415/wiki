@@ -1,3 +1,4 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 # Azure Database for MySQL
 
 ## ¿Qué es Azure Database for MySQL – Flexible Server?
