@@ -141,3 +141,81 @@ Entonces necesitas **configurar el firewall del SQL Server (PaaS Firewall)** par
 - ✅ Permitir esa VNet/Subnet específica
 
 - **Porque con Service Endpoint el firewall es obligatorio para restringir acceso.**
+
+# Azure Network Watcher
+
+Azure Network Watcher es un servicio de diagnóstico y monitorización para redes en Azure. Proporciona herramientas para analizar conectividad, seguridad y tráfico de red.
+
+---
+
+## 🔵 VPN Troubleshoot
+
+Herramienta específica para diagnosticar problemas en **Azure VPN Gateway**.
+
+### ¿Qué hace?
+
+- Verifica el estado de la conexión VPN.
+- Comprueba que el gateway esté correctamente aprovisionado.
+- Valida que el túnel IPsec/IKE esté operativo.
+- Detecta problemas de configuración o conectividad.
+
+### ¿Cuándo usarlo?
+
+- La VPN no conecta.
+- El túnel está caído o inestable.
+- Necesitas validar el estado del gateway.
+
+> Es la herramienta adecuada para troubleshooting de VPN.
+
+---
+
+## 🔵 NSG Diagnostics
+
+Permite analizar cómo las reglas de un **Network Security Group (NSG)** afectan al tráfico.
+
+### ¿Qué hace?
+
+- Indica si el tráfico es **Allow** o **Deny**.
+- Muestra qué regla NSG se está aplicando.
+- Ayuda a validar la configuración de seguridad.
+
+### ¿Cuándo usarlo?
+
+- Una VM no puede comunicarse con otra.
+- Un puerto parece estar bloqueado.
+
+> No sirve para diagnosticar problemas de VPN.
+
+---
+
+## 🔵 Packet Capture
+
+Permite capturar tráfico de red en:
+
+- Máquinas virtuales (VMs)
+- Virtual Machine Scale Sets
+
+### ¿Qué hace?
+
+- Captura paquetes para análisis detallado.
+- Ayuda a detectar anomalías de red.
+- Permite depurar comunicaciones cliente-servidor.
+- Apoya investigaciones de seguridad.
+
+### ¿Cuándo usarlo?
+
+- Problemas de red complejos.
+- Análisis de tráfico en profundidad.
+- Investigación de incidentes.
+
+> No está diseñado específicamente para troubleshooting de VPN.
+
+---
+
+## 🎯 Resumen para examen
+
+| Herramienta        | Uso principal                         | No usar para              |
+|-------------------|----------------------------------------|---------------------------|
+| VPN Troubleshoot  | Diagnóstico de Azure VPN Gateway       | Análisis de NSG           |
+| NSG Diagnostics   | Ver reglas Allow/Deny de un NSG        | Problemas de túnel VPN    |
+| Packet Capture    | Analizar tráfico de red en detalle     | Diagnóstico específico VPN |
