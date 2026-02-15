@@ -278,6 +278,35 @@ Alternativa cuando Data Box no está disponible.
 Servicio para consultar logs con KQL.  
 Parte fundamental de Azure Monitor para troubleshooting.
 
+Es: Motor de análisis de logs centralizado.
+
+- Puede almacenar:
+  - Logs de VMs
+  - Logs de Azure AD
+  - Logs de Network
+  - Logs de Security
+  - Logs personalizados
+- Permite:
+  - Consultas con KQL
+  - Dashboards
+  - Alertas avanzadas
+  - Sentinel
+
+**Azure Activity Log vs Azure Log Analytics**
+| Característica        | **Azure Activity Log**                              | **Azure Log Analytics**                            |
+| --------------------- | --------------------------------------------------- | -------------------------------------------------- |
+| ¿Qué es?              | Registro de operaciones a nivel de suscripción      | Plataforma de análisis de logs basada en KQL       |
+| Nivel                 | Control plane (ARM)                                 | Control + Data plane                               |
+| Qué registra          | Operaciones sobre recursos (create, delete, update) | Logs de recursos, métricas, eventos, Security logs |
+| Alcance               | Por Subscription                                    | Workspace centralizado                             |
+| Retención por defecto | 90 días                                             | Configurable (según plan)                          |
+| Consultas avanzadas   | ❌ No (vista básica)                                 | ✅ Sí (Kusto Query Language - KQL)                  |
+| Exportación           | Sí (Storage, Event Hub, Log Analytics)              | Nativo (ya está en workspace)                      |
+| Soporta alertas       | Sí (básicas)                                        | Sí (avanzadas, basadas en KQL)                     |
+| Uso típico            | Auditoría administrativa                            | Monitorización, seguridad, troubleshooting         |
+| Ejemplo               | “Quién borró una VM”                                | “Qué procesos consumen más CPU en las VMs”         |
+
+
 ---
 
 ### 🔝 [Volver al índice](#-índice)
