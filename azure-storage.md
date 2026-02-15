@@ -182,6 +182,11 @@ Storage Account
 - GRS → No puedes leer del secundario hasta hacer failover
 - RA-GRS → Puedes leer inmediatamente (read-only)
 
+**Cómo interpreta Microsoft “available”**
+- En este tipo de preguntas:
+  - **Available** = protegidos y recuperables
+  - **Accessible / Read access required** = deben poder leerse inmediatamente
+
 ## Retención mínima Access tiers
 
 | Tier    | Frecuencia   | Coste storage | Coste acceso | Latencia   | Retención mínima |
