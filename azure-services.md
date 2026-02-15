@@ -188,6 +188,8 @@ Se diferencia de Service Bus por volumen y orientación a Big Data.
 Sincroniza file servers locales con Azure Files.  
 Permite cloud tiering y extensión híbrida del almacenamiento.
 
+![azure-file-sync](./img/azure/.svg)
+
 ---
 
 ### 🔝 [Volver al índice](#-índice)
