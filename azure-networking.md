@@ -1,12 +1,42 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 # Networking
 
- | Escenario                                                        | Servicio recomendado        |
+## Virtual network peering 
+
+![azure-vnet-peering](./img/azure/azure-vnet-peering.png)
+
+Enables you to seamlessly connect two or more Virtual Networks in Azure.
+The virtual networks appear as one for connectivity purposes. The traffic between virtual machines in peered virtual networks uses the Microsoft backbone infrastructure.
+Like traffic between virtual machines in the same network, traffic is routed through Microsoft’s private network only.
+
+To to connect the two VNets in different regions, you need to configure Azure Virtual Network Peering.
+
+## Azure Virtual Network Gateway or VPN Gateway
+Azure VPN Gateway (tipo de Virtual Network Gateway) es el servicio que permite conectar una VNet de Azure con tu red on-premises mediante un túnel cifrado sobre Internet.
+
+Puntos clave:
+
+- 🔐 Usa IPsec/IKE (IKEv1 o IKEv2) para cifrar el tráfico.
+- 🌐 Permite conexión Site-to-Site (S2S) entre tu CPD y Azure.
+- 🧩 Cada VNet solo puede tener un VPN Gateway.
+- 🔗 Puedes crear varias conexiones hacia ese gateway.
+- 📶 Todas las conexiones comparten el ancho de banda del gateway.
+
+En resumen:
+**Es la opción estándar cuando necesitas conectividad segura sobre Internet entre tu red local y Azure, sin usar un circuito dedicado como ExpressRoute.**
+
+---
+
+## Escenarios
+
+| Escenario                                                        | Servicio recomendado        |
 | ---------------------------------------------------------------- | --------------------------- |
 | Conexión económica y rápida                                      | Virtual WAN + VPN           |
 | Empresa mediana con tráfico regional                             | ExpressRoute Standard       |
 | Empresa grande con tráfico global                                | ExpressRoute Premium        |
 | Corporación multinacional con alto throughput y conexión directa | ExpressRoute Premium Direct |
+
+---
 
 | Servicio                                    | Úsalo cuando…                                                                                                                                     | Tipo de conexión                                 | Ventajas clave                                                                 | Alcance                            |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------ | ---------------------------------- |
@@ -15,7 +45,8 @@
 | 🟣 **ExpressRoute Premium Direct**          | - Necesitas conectividad global entre regiones<br>- Alto volumen de tráfico<br>- Conexión directa a Microsoft<br>- Alta resiliencia y 10/100 Gbps | Conexión física directa a Microsoft              | - Máximo rendimiento<br>- Control total<br>- Escenarios enterprise/global      | Global                             |
 | 🟢 **ExpressRoute Standard Direct**         | - Conexión directa a Microsoft<br>- No necesitas conectividad global<br>- Alto tráfico regional                                                   | Conexión física directa a Microsoft              | - Alto rendimiento<br>- Más económico que Premium Direct<br>- Enfoque regional | Regional                           |
 
- 
+---
+## Arbol de decisión  
 ````
 ¿Necesitas conexión privada dedicada a Azure?
 │
