@@ -987,7 +987,10 @@ o configuración específica del motor SQL?
                                 │       │
                                 │       ├── Patching: Automático
                                 │       ├── Escalado sin downtime: Sí
-                                │       ├── Escalado automático: Sí (computación)
+                                │       ├── Escalado automático: Sí (computación),
+                                |       │       ├──Escala automáticamente la computación según la carga y se factura por segundo.
+                                |       │       └──Se pausa automáticamente en inactividad y solo cobra almacenamiento.
+                                │       │
                                 │       ├── Computación: Dedicada pero elástica
                                 │       ├── Almacenamiento: Remoto
                                 │       ├── Compatible 100% SQL Server: No
