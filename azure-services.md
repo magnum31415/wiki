@@ -116,6 +116,48 @@ En arquitectura se usa para protección de VMs, SQL y cargas críticas.
 Define entornos estandarizados combinando ARM, RBAC y Policy.  
 Importante en escenarios enterprise con compliance y landing zones.
 
+**¿Para qué sirven realmente los Azure Blueprints?**
+
+``Estandarizar y automatizar la creación de suscripciones seguras y gobernadas.``
+
+Piensa en esto:
+
+- Cuando creas una nueva suscripción en una empresa, normalmente necesitas:
+  - Políticas obligatorias
+  - RBAC preconfigurado
+  - Resource Groups creados
+  - Networking base
+  - Tags obligatorios
+- En vez de hacerlo manualmente cada vez…
+  - 👉 Usas un Blueprint.
+
+**Analogía simple**
+
+ `` Blueprint = plantilla corporativa de suscripción``
+
+**Qué puede incluir un Blueprint**
+
+- Azure Policy
+- Role Assignments
+- ARM templates
+- Resource Groups
+
+**🎯 Ejemplo real**
+
+Empresa crea un Blueprint llamado:
+
+``Corp-Standard-Subscription``
+
+- Incluye:
+  - Policy: Solo regiones EU
+  - Policy: Tags obligatorios
+  - RBAC: Security Team como Reader
+  - Resource Group: Networking
+  - VNet base
+-Cada vez que crean una nueva suscripción:
+  - → La asignan al Blueprint
+  - → Todo se despliega automáticamente
+
 **Azure Blueprints tiene dos partes principales:**
 
   1. **Blueprint Definition**  Define qué se va a desplegar y gobernar.
