@@ -148,6 +148,9 @@ Se usa en escenarios híbridos y DR con transferencia continua.
 Servicio ETL/ELT para integrar y transformar datos.  
 En arquitectura se usa para pipelines de datos y migraciones complejas.
 
+
+![Azure-data-factory-data-lake](./img/azure/Azure-data-factory-data-lake.png)
+
 ---
 
 ### 🔝 [Volver al índice](#-índice)
