@@ -1160,6 +1160,44 @@ Migración a Azure SQL
 | **Azure Database Migration Service (DMS)** | Servicio PaaS en Azure         | Orquestar migraciones online/offline              | ✅ Sí                                      | ❌ No (ejecuta migración) | Azure (servicio gestionado) | Migraciones productivas con mínimo downtime      |
 | **SQL Server Management Studio (SSMS)**    | Cliente completo Windows       | Administración avanzada de SQL Server             | ❌ No (no migra como herramienta dedicada) | ❌ No                     | Windows                     | Administración DBA tradicional                   |
 
+### Arbol
+
+````
+¿Quieres migrar una base de datos a Azure?
+│
+├── No →
+│       ¿Solo quieres administrar o ejecutar consultas?
+│       │
+│       ├── Administración avanzada (Agent, Always On, Jobs)?
+│       │       → SQL Server Management Studio (SSMS)
+│       │
+│       └── Desarrollo ligero / multiplataforma / notebooks?
+│               → Azure Data Studio
+│
+└── Sí →
+        ¿El origen NO es SQL Server? (Oracle, MySQL, DB2, Access…)
+        │
+        ├── Sí →
+        │       → SQL Server Migration Assistant (SSMA)
+        │
+        └── No (Origen es SQL Server) →
+                ¿Quieres evaluar compatibilidad antes de migrar?
+                │
+                ├── Sí →
+                │       → Azure SQL Migration Extension
+                │          (dentro de Azure Data Studio)
+                │
+                └── No / Ya evaluado →
+                        ¿Necesitas migración online con mínimo downtime?
+                        │
+                        ├── Sí →
+                        │       → Azure Database Migration Service (DMS)
+                        │
+                        └── No (offline aceptable) →
+                                → Azure Database Migration Service (DMS)
+
+````
+
 
 
 ## Azure Data Studio (ADS) vs SQL Server Management Studio (SSMS)
