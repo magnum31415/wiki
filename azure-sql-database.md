@@ -10,8 +10,9 @@ Servicio PaaS basado en SQLServer totalmente gestionado
 2. [Funcionalidades](#funcionalidades)
    - [Zone Redundancy](#azure-sql-database-with-zone-redundancy)
    - [Geo-replication](#geo-replication)
-   - [Failover Group](#azure-sql-database-failover-group)
+   - [Failover Group](#azure-sql-failover-group-o-auto-failover-group)
    - [Availability Group](#availability-group-ag)
+   - [Tabla comparativa](#tabla-comparativa)
 3. [Mapa Jerárquico de Azure SQL](#mapa-jerárquico-de-azure-sql-servicios-y-modelos-de-compra---servicios-paas)
 4. [Guía de Selección PaaS](#guía-de-selección-de-azure-sql-según-requisitos-técnicos)
 5. [Tabla Completa Comparativa](#tabla-completa-agrupada-por-servicio)
@@ -224,7 +225,7 @@ Active geo-replication is configured per database, and only supports manual fail
 | Pensado para           | Casos puntuales        | DR empresarial           |
 
 
-## Auto-Failover Group
+## Azure SQL Failover Group o Auto-Failover Group
 🔝 [Volver al índice](#-índice)
 
 Ese sí:
@@ -324,6 +325,23 @@ Un AG tiene:
 ``→ Se promueve automáticamente una secundaria.``
 
 **La aplicación no cambia el connection string.**
+
+## Tabla comparativa 
+🔝 [Volver al índice](#-índice)
+
+| Característica         | **Zone Redundancy**               | **Geo-replication** | **Failover Group**           | **Availability Group (AG)** |
+| ---------------------- | --------------------------------- | ------------------- | ---------------------------- | --------------------------- |
+| Objetivo principal     | Alta disponibilidad (HA)          | DR básico           | DR empresarial automatizado  | HA / DR configurable        |
+| Alcance                | Misma región (Availability Zones) | Entre regiones      | Entre regiones               | Dentro o entre regiones     |
+| Tipo de replicación    | Síncrona                          | Asíncrona           | Asíncrona                    | Síncrona o asíncrona        |
+| RPO                    | ≈ 0                               | > 0                 | > 0                          | 0 (si síncrona)             |
+| RTO                    | Muy bajo (segundos)               | Manual (minutos)    | Minutos (automático posible) | Muy bajo (segundos)         |
+| Failover automático    | ✅ Sí                              | ❌ No                | ✅ Sí (si se configura)       | ✅ Sí (si síncrono)          |
+| Endpoint único estable | ✅ Sí                              | ❌ No                | ✅ Sí                         | ✅ Sí (Listener)             |
+| Nivel configuración    | Base de datos                     | Base individual     | Grupo de bases               | Grupo de bases              |
+| Pensado para           | Caída de zona                     | Réplica secundaria  | Caída de región completa     | SQL Server tradicional      |
+| Dónde aplica           | Azure SQL Database / MI           | Azure SQL Database  | Azure SQL Database / MI      | SQL Server on-prem o en VM  |
+
 
 ---
 ## Mapa Jerárquico de Azure SQL (Servicios y Modelos de Compra) - Servicios PaaS 
@@ -665,6 +683,7 @@ Azure SQL (Familia de servicios)
 </table>
 
 ### Comparativa: PITR vs RPO vs RTO vs LTR
+🔝 [Volver al índice](#-índice)
 
 | Concepto | Significado              | ¿Es objetivo o tecnología? | ¿Qué mide / permite?                                                   | Ejemplo práctico                                           | En Azure SQL                                          |
 | -------- | ------------------------ | -------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------- |
@@ -1025,6 +1044,7 @@ o configuración específica del motor SQL?
 
 ````
 ## DR
+🔝 [Volver al índice](#-índice)
 -👉 Zone-redundant ≠ DR
 -👉 DR es entre regiones (asincrónico)
 
@@ -1040,6 +1060,7 @@ o configuración específica del motor SQL?
 
 
 ## 🌳 Árbol de Herramientas de Migración a Azure SQL
+🔝 [Volver al índice](#-índice)
 ````
 Migración a Azure SQL
 │
