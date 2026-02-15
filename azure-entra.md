@@ -305,6 +305,10 @@ Access Reviews = Control periódico de privilegios para evitar acumulación de p
 
 🔝 [Volver al índice](#-índice)
 
+**Clave AZ-305**
+
+Enterprise Applications = Gestión de acceso y autenticación de aplicaciones dentro del tenant (SSO + permisos + Conditional Access).
+
 **¿Qué es?**  
 Representa las aplicaciones que usan tu tenant para autenticarse (SaaS o apps internas).
 
@@ -317,12 +321,38 @@ Cuando registras o integras una app:
   - Conditional Access
   - Consentimientos
 
+### 🔐 SAML-based Single Sign-On (SSO)
+
+Las **Enterprise Applications en Microsoft Entra ** permiten integrar aplicaciones (incluidas on-premises) mediante  **SAML-based Single Sign-On (SSO) **.
+
+- Al configurar una aplicación como Enterprise Application:
+  - Se establece federación basada en SAML.
+  - Los usuarios se autentican en Entra ID.
+  - Entra emite una SAML Assertion firmada.
+  - El usuario accede a la aplicación sin volver a introducir credenciales.
+
+👉 Resultado: **Inicio de sesión único (SSO)**.
+
+![Azure-AD-Enterprise-App-SAML-SSO](./img/azure/Azure-AD-Enterprise-App-SAML-SSO.png)
+
+### 🛡 Conditional Access
+
+Las políticas de Conditional Access permiten aplicar controles de seguridad según condiciones como:
+- Ubicación
+- Dispositivo
+- Nivel de riesgo
+- Estado del usuario
+Ejemplo típico:
+- Si el usuario accede desde una ubicación diferente → Requerir MFA
+
+Esto añade una capa adicional de seguridad verificando múltiples factores antes de conceder acceso.
+
+
 **Diferencia clave examen**
 - App Registration = definición global de la app.
 - Enterprise Application = instancia en tu tenant.
 
-**Clave AZ-305**
-Enterprise Applications = Gestión de acceso a aplicaciones dentro del tenant.
+
 
 ---
 
