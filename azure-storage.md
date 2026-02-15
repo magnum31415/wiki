@@ -179,7 +179,8 @@ Storage Account
 | GRS    | ❌ No                                   | ❌ No (manual)         |
 | RA-GRS | ✅ Solo lectura                         | ❌ No (manual)         |
 
-
+- GRS → No puedes leer del secundario hasta hacer failover
+- RA-GRS → Puedes leer inmediatamente (read-only)
 
 ## Retención mínima Access tiers
 
