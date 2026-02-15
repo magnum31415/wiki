@@ -323,7 +323,7 @@ Cuando registras o integras una app:
 
 ### 🔐 SAML-based Single Sign-On (SSO)
 
-Las **Enterprise Applications en Microsoft Entra ** permiten integrar aplicaciones (incluidas on-premises) mediante  **SAML-based Single Sign-On (SSO) **.
+Las **Enterprise Applications en Microsoft Entra** permiten integrar aplicaciones (incluidas on-premises) mediante  **SAML-based Single Sign-On (SSO)**.
 
 - Al configurar una aplicación como Enterprise Application:
   - Se establece federación basada en SAML.
