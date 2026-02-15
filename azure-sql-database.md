@@ -4,7 +4,27 @@
 Servicio PaaS basado en SQLServer totalmente gestionado 
 
 ---
-##  Arquitectura de Azure SQL Database – Hyperscale
+# 📑 Índice
+
+1. [Arquitectura Hyperscale](#arquitectura-de-azure-sql-database--hyperscale)
+2. [Funcionalidades](#funcionalidades)
+   - [Zone Redundancy](#azure-sql-database-with-zone-redundancy)
+   - [Geo-replication](#geo-replication)
+   - [Failover Group](#azure-sql-database-failover-group)
+   - [Availability Group](#availability-group-ag)
+3. [Mapa Jerárquico de Azure SQL](#mapa-jerárquico-de-azure-sql-servicios-y-modelos-de-compra---servicios-paas)
+4. [Guía de Selección PaaS](#guía-de-selección-de-azure-sql-según-requisitos-técnicos)
+5. [Tabla Completa Comparativa](#tabla-completa-agrupada-por-servicio)
+6. [PITR vs RPO vs RTO vs LTR](#comparativa-pitr-vs-rpo-vs-rto-vs-ltr)
+7. [Guía Completa Selección (IaaS + PaaS)](#guía-de-selección-de-azure-sql--según-requisitos-técnicos--)
+8. [DR](#dr)
+9. [Árbol de Herramientas de Migración](#-árbol-de-herramientas-de-migración-a-azure-sql)
+
+---
+
+
+#  Arquitectura de Azure SQL Database – Hyperscale
+🔝 [Volver al índice](#-índice)
 
 La imagen representa la **arquitectura interna de Azure SQL Database en el tier Hyperscale**.
 
@@ -142,9 +162,37 @@ Si quieres, puedo prepararte un esquema comparativo visual entre:
 
 
 
-## Funcionalitats
+# Funcionalitats
+🔝 [Volver al índice](#-índice)
 
-### Geo-replication
+### Azure SQL Database with Zone Redundancy
+🔝 [Volver al índice](#-índice)
+
+Es una opción de alta disponibilidad dentro de una misma región, donde la base de datos se replica automáticamente entre Availability Zones distintas.
+
+**Tipo de replicación**
+- Es síncrona.
+- Objetivo: RPO = 0 (sin pérdida de datos).
+- Es alta disponibilidad (HA), no DR regional.
+
+**Cuando activas Zone Redundancy:**
+
+- Azure crea réplicas síncronas en distintas zonas físicas dentro de la misma región.
+- Si una zona completa cae (ej: AZ1), la base sigue funcionando desde otra (AZ2/AZ3).
+- El failover es automático.
+- No hay cambio en la connection string.
+
+|             | Zone Redundancy | Geo-Replication     |
+| ----------- | --------------- | ------------------- |
+| Alcance     | Misma región    | Entre regiones      |
+| Replicación | Síncrona        | Asíncrona           |
+| RPO         | 0               | Puede haber pérdida |
+| DR regional | ❌ No            | ✅ Sí                |
+
+
+
+## Geo-replication
+🔝 [Volver al índice](#-índice)
 
 **Geo-replication** provides geographic redundancy and enables read operations only in the secondary region during a primary region outage.
 However, it does not support write operations in the secondary region when the primary region is down.
@@ -152,6 +200,9 @@ However, it does not support write operations in the secondary region when the p
 Active geo-replication is configured per database, and only supports manual failover.
 
 **Cómo funciona Active Geo-Replication**
+- Se configura por base de datos individual.
+- Cada DB replica y hace failover de forma independiente.
+- Si tienes 10 bases → debes configurarlo 10 veces.
 - Tienes una base primaria.
 - Creas hasta 4 réplicas secundarias en otras regiones.
 - La replicación es asíncrona.
@@ -159,13 +210,7 @@ Active geo-replication is configured per database, and only supports manual fail
   - Debes ejecutar failover manual.
 
 **Entonces… ¿cuándo es el Failover automático?**
-Cuando usas:
-- **Auto-Failover Group**
-Ese sí:
-- Detecta caída regional.
-- Cambia automáticamente.
-- Mantiene un endpoint único.
-
+- Cuando usas:  - **Auto-Failover Group**
 
 | Característica      | Active Geo-Replication | Auto-Failover Group |
 | ------------------- | ---------------------- | ------------------- |
@@ -173,11 +218,23 @@ Ese sí:
 | Failover automático | ❌ No                   | ✅ Sí                |
 | Endpoint único      | ❌ No                   | ✅ Sí                |
 | DR empresarial      | ⚠️ Parcial             | ✅ Sí                |
+| Nivel de configuración | Base individual        | Grupo de bases           |
+| Failover               | Manual                 | Automático               |
+| Cambia una sola DB     | ✅                      | ❌ (cambia todo el grupo) |
+| Pensado para           | Casos puntuales        | DR empresarial           |
 
 
----
+## Auto-Failover Group
+🔝 [Volver al índice](#-índice)
 
-### Azure SQL Database Failover Group
+Ese sí:
+- Detecta caída regional.
+- Cambia automáticamente.
+- Mantiene un endpoint único.
+- Se configura a nivel de servidor lógico (Azure SQL Database).
+- Dentro del Failover Group puedes añadir varias bases de datos.
+- El failover se hace en bloque, todas juntas.
+
 
 Un Failover Group es un mecanismo de disaster recovery (DR) entre regiones para:
 - Azure SQL Database (Single DB / Elastic Pool)
@@ -235,7 +292,8 @@ No es síncrona, por lo tanto:
 - Agrupa múltiples bases en una sola operación
 
 ---
-### Availability Group (AG)
+## Availability Group (AG)
+🔝 [Volver al índice](#-índice)
 
 Un Availability Group (AG) es una tecnología de alta disponibilidad (HA) y opcionalmente disaster recovery (DR) de Microsoft SQL Server, basada en Windows Server Failover Clustering (WSFC).
 Permite replicar una o varias bases de datos entre varias instancias de SQL Server.
@@ -269,6 +327,7 @@ Un AG tiene:
 
 ---
 ## Mapa Jerárquico de Azure SQL (Servicios y Modelos de Compra) - Servicios PaaS 
+🔝 [Volver al índice](#-índice)
 
 ![azure-sql-comparison](./img/azure/azure-sql-comparison.png)
 
@@ -329,6 +388,8 @@ Azure SQL (Familia de servicios)
 
 
 ## Guía de Selección de Azure SQL según Requisitos Técnicos
+🔝 [Volver al índice](#-índice)
+
 ````yaml
 ¿Necesita compatibilidad casi total con SQL Server (SQL Agent, cross-DB, CLR)?
 │
@@ -431,6 +492,7 @@ Azure SQL (Familia de servicios)
 
 ````
 ## Tabla Completa Agrupada por Servicio
+🔝 [Volver al índice](#-índice)
 
 <table border="1" cellpadding="6" cellspacing="0">
 <thead>
@@ -602,7 +664,7 @@ Azure SQL (Familia de servicios)
 </tbody>
 </table>
 
-Comparativa: PITR vs RPO vs RTO vs LTR
+### Comparativa: PITR vs RPO vs RTO vs LTR
 
 | Concepto | Significado              | ¿Es objetivo o tecnología? | ¿Qué mide / permite?                                                   | Ejemplo práctico                                           | En Azure SQL                                          |
 | -------- | ------------------------ | -------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------- |
@@ -612,6 +674,7 @@ Comparativa: PITR vs RPO vs RTO vs LTR
 | **RTO**  | Recovery Time Objective  | Objetivo de negocio        | Cuánto tiempo puede tardar el sistema en volver a estar operativo      | “Debe estar disponible en 2 minutos”                       | HA síncrona → bajo RTO                                |
 
 ## Guía de Selección de Azure SQL  según Requisitos Técnicos -  
+🔝 [Volver al índice](#-índice)
 
 ````yml
 ¿Necesita control total del sistema operativo
