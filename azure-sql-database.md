@@ -1067,61 +1067,51 @@ o configuración específica del motor SQL?
 ````
 Migración a Azure SQL
 │
-├── 1️⃣ Herramientas de evaluación / compatibilidad
+├── 1️⃣ ¿Necesitas migrar?
 │       │
-│       └── SQL Server Migration Assistant (SSMA)
-│               │
-│               ├── Qué es:
-│               │       Herramienta para convertir y migrar bases
-│               │       desde otros motores a SQL Server/Azure SQL
-│               │
-│               ├── Orígenes soportados:
-│               │       Oracle
-│               │       MySQL
-│               │       PostgreSQL
-│               │       DB2
-│               │       Access
-│               │
-│               ├── Función principal:
-│               │       Analizar compatibilidad
-│               │       Convertir esquema
-│               │       Migrar datos
-│               │
-│               └── Uso típico:
-│                       Migración heterogénea (no SQL Server)
-│
-│
-├── 2️⃣ Herramientas de evaluación para SQL Server
+│       ├── No →
+│       │       ¿Qué necesitas hacer?
 │       │
-│       └── Azure SQL Migration Extension (en Azure Data Studio)
-│               │
-│               ├── Qué es:
-│               │       Extensión que analiza SQL Server
-│               │       antes de migrar a Azure
-│               │
-│               ├── Función principal:
-│               │       Evaluación de compatibilidad
-│               │       Identificar problemas
-│               │       Recomendar destino:
-│               │             Azure SQL Database
-│               │             Managed Instance
-│               │             SQL en VM
-│               │
-│               └── Uso típico:
-│                       Assessment previo a migración
+│       │       ├── Administración avanzada (SQL Agent, Always On, Jobs)?
+│       │       │       → SQL Server Management Studio (SSMS)
+│       │       │
+│       │       └── Consultas, desarrollo ligero, multiplataforma?
+│       │               → Azure Data Studio (ADS)
+│       │
+│       └── Sí →
 │
 │
-├── 3️⃣ Orquestador de migración online/offline
+├── 2️⃣ Fase de Evaluación (Assessment)
+│       │
+│       ├── ¿Origen NO es SQL Server?
+│       │       (Oracle, MySQL, PostgreSQL, DB2, Access)
+│       │
+│       │       → SQL Server Migration Assistant (SSMA)
+│       │            - Analiza compatibilidad
+│       │            - Convierte esquema
+│       │            - Migra datos
+│       │
+│       └── ¿Origen es SQL Server?
+│               │
+│               → Azure SQL Migration Extension
+│                    (dentro de Azure Data Studio)
+│                    - Evalúa compatibilidad
+│                    - Identifica breaking changes
+│                    - Recomienda destino:
+│                          Azure SQL Database
+│                          Managed Instance
+│                          SQL en VM
+│
+│
+├── 3️⃣ Fase de Migración (Ejecución)
 │       │
 │       └── Azure Database Migration Service (DMS)
 │               │
-│               ├── Qué es:
-│               │       Servicio PaaS en Azure
-│               │       que ejecuta la migración
+│               ├── Servicio PaaS en Azure
 │               │
 │               ├── Soporta:
-│               │       Migraciones online (mínimo downtime)
-│               │       Migraciones offline
+│               │       - Migración Online (mínimo downtime)
+│               │       - Migración Offline
 │               │
 │               ├── Orígenes:
 │               │       SQL Server
@@ -1130,24 +1120,24 @@ Migración a Azure SQL
 │               │       PostgreSQL
 │               │
 │               └── Uso típico:
-│                       Migraciones productivas
-│                       Migraciones con mínimo downtime
+│                       Producción
+│                       Sistemas críticos
+│                       Migración con continuidad
 │
 │
-└── 4️⃣ Entorno cliente
+└── 4️⃣ Entorno Cliente / Gestión
         │
-        └── Azure Data Studio
-                │
-                ├── Qué es:
-                │       Cliente ligero para gestionar SQL
-                │
-                ├── No migra por sí solo
-                │
-                ├── Puede usar:
-                │       Azure SQL Migration Extension
-                │
-                └── Uso típico:
-                        Gestión y análisis
+        ├── Azure Data Studio
+        │       - Cliente moderno
+        │       - Multiplataforma
+        │       - Usa Migration Extension
+        │
+        └── SQL Server Management Studio (SSMS)
+                - Administración avanzada
+                - Always On
+                - SQL Agent
+                - Configuración profunda
+
 
 ````
 ### Tabla comparativa herramientas migracion azure
@@ -1160,43 +1150,6 @@ Migración a Azure SQL
 | **Azure Database Migration Service (DMS)** | Servicio PaaS en Azure         | Orquestar migraciones online/offline              | ✅ Sí                                      | ❌ No (ejecuta migración) | Azure (servicio gestionado) | Migraciones productivas con mínimo downtime      |
 | **SQL Server Management Studio (SSMS)**    | Cliente completo Windows       | Administración avanzada de SQL Server             | ❌ No (no migra como herramienta dedicada) | ❌ No                     | Windows                     | Administración DBA tradicional                   |
 
-### Arbol
-
-````
-¿Quieres migrar una base de datos a Azure?
-│
-├── No →
-│       ¿Solo quieres administrar o ejecutar consultas?
-│       │
-│       ├── Administración avanzada (Agent, Always On, Jobs)?
-│       │       → SQL Server Management Studio (SSMS)
-│       │
-│       └── Desarrollo ligero / multiplataforma / notebooks?
-│               → Azure Data Studio
-│
-└── Sí →
-        ¿El origen NO es SQL Server? (Oracle, MySQL, DB2, Access…)
-        │
-        ├── Sí →
-        │       → SQL Server Migration Assistant (SSMA)
-        │
-        └── No (Origen es SQL Server) →
-                ¿Quieres evaluar compatibilidad antes de migrar?
-                │
-                ├── Sí →
-                │       → Azure SQL Migration Extension
-                │          (dentro de Azure Data Studio)
-                │
-                └── No / Ya evaluado →
-                        ¿Necesitas migración online con mínimo downtime?
-                        │
-                        ├── Sí →
-                        │       → Azure Database Migration Service (DMS)
-                        │
-                        └── No (offline aceptable) →
-                                → Azure Database Migration Service (DMS)
-
-````
 
 
 
