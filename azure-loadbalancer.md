@@ -13,6 +13,8 @@
 | Gestionar APIs            | **API Management**        |
 
 
+![azure-load-balancing-options](./img/azure/azure-load-balancing-options.png)
+
 ````
 ¿Necesitas balanceo GLOBAL entre varias regiones?
 │
