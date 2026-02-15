@@ -20,6 +20,9 @@ Servicio PaaS basado en SQLServer totalmente gestionado
 7. [Guía Completa Selección (IaaS + PaaS)](#guía-de-selección-de-azure-sql--según-requisitos-técnicos--)
 8. [DR](#dr)
 9. [Árbol de Herramientas de Migración](#-árbol-de-herramientas-de-migración-a-azure-sql)
+10. [Tabla comparativa herramientas migración Azure](#tabla-comparativa-herramientas-migracion-azure)
+11.  [Azure Data Studio (ADS) vs SQL Server Management Studio (SSMS)](#azure-data-studio-ads-vs-sql-server-management-studio-ssms)
+
 
 ---
 
@@ -1147,3 +1150,55 @@ Migración a Azure SQL
                         Gestión y análisis
 
 ````
+### Tabla comparativa herramientas migracion azure
+
+| Herramienta                                | Tipo                           | Para qué sirve                                    | Migra datos                               | Evalúa compatibilidad    | Dónde se ejecuta            | Uso típico                                       |
+| ------------------------------------------ | ------------------------------ | ------------------------------------------------- | ----------------------------------------- | ------------------------ | --------------------------- | ------------------------------------------------ |
+| **SQL Server Migration Assistant (SSMA)**  | Herramienta cliente            | Migrar desde otros motores a SQL Server/Azure SQL | ✅ Sí                                      | ✅ Sí                     | Local (Windows)             | Migración heterogénea (Oracle, MySQL, DB2, etc.) |
+| **Azure SQL Migration Extension**          | Extensión de Azure Data Studio | Analizar SQL Server antes de migrar a Azure       | ❌ No directamente (evalúa)                | ✅ Sí                     | Dentro de Azure Data Studio | Assessment previo a migración                    |
+| **Azure Data Studio (ADS)**                | Cliente ligero multiplataforma | Gestión y consultas SQL                           | ❌ No (por sí solo)                        | ❌ No (sin extensión)     | Windows, macOS, Linux       | Desarrollo y administración ligera               |
+| **Azure Database Migration Service (DMS)** | Servicio PaaS en Azure         | Orquestar migraciones online/offline              | ✅ Sí                                      | ❌ No (ejecuta migración) | Azure (servicio gestionado) | Migraciones productivas con mínimo downtime      |
+| **SQL Server Management Studio (SSMS)**    | Cliente completo Windows       | Administración avanzada de SQL Server             | ❌ No (no migra como herramienta dedicada) | ❌ No                     | Windows                     | Administración DBA tradicional                   |
+
+
+
+## Azure Data Studio (ADS) vs SQL Server Management Studio (SSMS)
+
+| Característica                                 | **Azure Data Studio (ADS)**     | **SQL Server Management Studio (SSMS)** |
+| ---------------------------------------------- | ------------------------------- | --------------------------------------- |
+| Tipo de herramienta                            | Cliente moderno multiplataforma | Cliente clásico Windows                 |
+| Sistema operativo                              | Windows, macOS, Linux           | Solo Windows                            |
+| Enfoque principal                              | Desarrollo y consultas          | Administración completa                 |
+| Interfaz                                       | Ligera, estilo VS Code          | Completa, estilo MMC clásico            |
+| Gestión avanzada (Agent, Jobs, Linked Servers) | ❌ Limitada                      | ✅ Completa                              |
+| Extensiones                                    | ✅ Sí (Marketplace)              | ❌ No                                    |
+| Notebooks (Jupyter)                            | ✅ Sí                            | ❌ No                                    |
+| Soporte Azure nativo                           | Muy bueno                       | Bueno                                   |
+| Performance tuning GUI avanzado                | Limitado                        | Completo                                |
+| Ideal para                                     | Desarrolladores / Cloud         | DBAs tradicionales                      |
+
+### 🧠 Diferencia conceptual
+- **🔹 Azure Data Studio**
+  - Pensado para:
+    - Consultas
+    - Desarrollo
+    - Azure-first
+    - Multiplataforma
+  - Más ligero y moderno
+  - Soporta notebooks y extensiones
+
+- **🔹 SSMS**
+  - Pensado para:
+    - Administración profunda
+    - Configuración avanzada
+    - SQL Agent
+    - Always On
+  - Herramienta tradicional de DBA
+
+### 🎯 Regla rápida tipo examen
+
+- “Administrar SQL Agent, configurar Always On” → SSMS
+- “Trabajo en Mac/Linux o notebooks” → Azure Data Studio
+- “Gestión avanzada de SQL Server on-prem” → SSMS
+- “Entorno cloud moderno y scripts” → ADS
+
