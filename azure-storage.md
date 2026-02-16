@@ -134,6 +134,25 @@ Storage Account
 | **GZRS** (Geo-Zone Redundant Storage) | 6 (3 ZRS + 3 secundaria) | 3 zonas en primaria + 3 en región secundaria             | Caída de zona + caída de región | ❌ No (solo tras failover)        | Workloads críticos empresariales     |
 | **RA-GZRS**                           | 6                        | Igual que GZRS                                           | Caída zona + región             | ✅ Sí (read-only)                 | Alta disponibilidad + lectura global |
 
+## Conversiones permitidas entre tipos de redundancia
+
+**Regla general importante**
+
+- ✅ Puedes aumentar nivel de resiliencia
+- ⚠️ Algunas conversiones requieren que la región soporte ZRS/GZRS
+- ❌ No puedes cambiar entre LRS y ZRS directamente (requiere recrear)
+- ❌ No puedes convertir de GRS a ZRS directamente
+- ❌ No puedes convertir de GZRS a ZRS
+
+| Desde ↓     | Puede convertirse a →              |
+| ----------- | ---------------------------------- |
+| **LRS**     | GRS, RA-GRS, ZRS*, GZRS*, RA-GZRS* |
+| **ZRS**     | GZRS, RA-GZRS                      |
+| **GRS**     | RA-GRS, GZRS*, RA-GZRS*            |
+| **RA-GRS**  | GRS, GZRS*, RA-GZRS*               |
+| **GZRS**    | RA-GZRS                            |
+| **RA-GZRS** | GZRS                               |
+
 
 ![ZRS](./img/azure/azure-zone-redundant-storage.png)
 
