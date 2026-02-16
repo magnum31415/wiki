@@ -267,7 +267,133 @@ Ejemplos de roles:
 - “Legacy application” → Keys
 
 ---
+# 🌐 Azure Table Storage vs Azure Cosmos DB  
+## (con tipo de datos ideal para cada uno)
 
-# 🔎 Arquitectura moderna recomendada
+---
+
+# 🔷 1️⃣ Azure Table Storage
+
+## 🔎 Qué es
+Servicio NoSQL simple dentro de una **Storage Account**.  
+Modelo basado en:
+- PartitionKey
+- RowKey
+- Entidades tipo clave-valor
+
+---
+
+## 📦 Tipo de datos ideal
+
+Azure Table Storage es ideal para:
+
+- Datos estructurados simples
+- Entidades planas (sin relaciones complejas)
+- Clave-valor
+- Logs ligeros
+- Metadatos
+- Configuración de aplicaciones
+- Datos con bajo volumen de consultas complejas
+- Workloads donde el coste es crítico
+
+### ❌ No es ideal para:
+- Consultas complejas
+- Relaciones entre entidades
+- JSON anidado complejo
+- Multi-región activa
+- Workloads críticos con SLA estrictos
+
+---
+
+## 🎯 Escenario típico
+
+Guardar:
+- Eventos de auditoría
+- Información de dispositivos IoT básica
+- Configuraciones por usuario
+- Catálogo pequeño sin joins
+
+---
+
+# 🔷 2️⃣ Azure Cosmos DB
+
+## 🔎 Qué es
+Base de datos NoSQL distribuida globalmente, con SLA de latencia y disponibilidad.
+
+Soporta múltiples APIs:
+- SQL (Core)
+- MongoDB
+- Cassandra
+- Table
+- Gremlin
+
+---
+
+## 📦 Tipo de datos ideal
+
+Azure Cosmos DB es ideal para:
+
+- Documentos JSON complejos
+- Datos semiestructurados
+- Datos jerárquicos
+- Multi-tenant
+- Alta concurrencia
+- Datos distribuidos globalmente
+- Modelos basados en particiones
+- Workloads con latencia <10ms
+- Eventos de alto volumen
+- Aplicaciones SaaS
+
+### Soporta muy bien:
+- JSON anidado
+- Documentos grandes
+- Eventos en streaming
+- Catálogos grandes
+- Datos de usuario globales
+- Gaming
+- Telemetría IoT masiva
+
+---
+
+## 🎯 Escenario típico
+
+- App web global con millones de usuarios
+- Backend de e-commerce
+- Plataforma SaaS multi-región
+- Sistema IoT con alta escritura
+- Aplicación con consistencia configurable
+
+---
+
+# 📊 Comparativa enfocada en tipo de datos
+
+| Tipo de dato | Table Storage | Cosmos DB |
+|--------------|--------------|------------|
+| Clave-valor simple | ✅ Ideal | ✅ |
+| JSON complejo | ❌ | ✅ Ideal |
+| Datos jerárquicos | ❌ | ✅ |
+| Alta concurrencia | ⚠️ Limitado | ✅ |
+| Multi-región activa | ❌ | ✅ |
+| Logs simples | ✅ Ideal | ⚠️ |
+| IoT masivo | ⚠️ | ✅ Ideal |
+| Catálogo global | ❌ | ✅ |
+| Bajo coste prioritario | ✅ | ❌ |
+
+---
+
+# 🧠 Regla mental AZ-305
+
+- Datos simples, bajo coste → **Table Storage**
+- JSON complejo, global, crítico → **Cosmos DB**
+- SLA de latencia y multi-región → **Cosmos DB**
+- Solo necesitas tablas básicas → **Table Storage**
+
+---
+
+# 🎯 Frase final para memorizar
+
+Table Storage = datos simples y baratos.  
+Cosmos DB = datos complejos, globales y de misión crítica.
+
 
 
