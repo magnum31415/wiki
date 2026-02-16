@@ -154,7 +154,6 @@ Roles predefinidos por Microsoft.
 
 ### Roles típicos
 
-# 🔐 Roles Azure más típicos (AZ-305)
 
 | Rol | Puede hacer | No puede hacer | Escenario típico de uso |
 |-----|------------|----------------|--------------------------|
