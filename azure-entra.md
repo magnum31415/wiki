@@ -3,88 +3,77 @@
 # 📚 Fundamentos de identidad, suscripciones y roles en Azure
 
 ---
-
 # 📑 Índice
 
-## 1. 📊 Tabla resumen conceptual
-
-## 2. Tipos de Licencias en Azure
-### 2.1 Microsoft Entra ID
-- Free
-- Premium P1
-- Premium P2
-
-### 2.2 Enterprise Mobility + Security (EMS)
-- EMS E3
-- EMS E5
-
-### 2.3 Microsoft Defender
-- Defender for Cloud
-- Defender for Endpoint
-
-### 2.4 Tipos de Suscripción Azure
-- Pay-As-You-Go
-- Enterprise Agreement (EA)
-- Microsoft Customer Agreement (MCA)
-- Cloud Solution Provider (CSP)
-
-### 2.5 Resumen Comparativo
+## 📊 Resumen conceptual
+- [Tabla resumen conceptual](#-tabla-resumen-conceptual)
 
 ---
 
-## 3. Microsoft Entra Tenant
-
-## 4. Azure Subscription
-
-## 5. Roles en Azure
-### 5.1 ¿Qué son los roles?
-### 5.2 Tipos de roles en Azure
-- Entra Roles
-- RBAC Roles
-- Data Plane Roles
-
-### 5.3 Microsoft Entra Roles (Directory Roles)
-### 5.4 Azure RBAC Roles (Control Plane)
-### 5.5 Roles Built-in frecuentes
-### 5.6 Custom Roles
-### 5.7 Scope de asignación de roles
-- Management Group
-- Subscription
-- Resource Group
-- Recurso
-
-### 5.8 Diferencias críticas para AZ-305
+## 💳 Tipos de Licencias en Azure
+- [Tipos de Licencias en Azure](#tipos-de-licencias-en-azure)
+  - [Microsoft Entra ID](#1️⃣-microsoft-entra-id-antes-azure-ad)
+  - [Enterprise Mobility + Security (EMS)](#2️⃣-enterprise-mobility--security-ems)
+  - [Microsoft Defender](#3️⃣-microsoft-defender)
+  - [Tipos de Suscripción Azure](#4️⃣-tipos-de-suscripción-azure)
+  - [Resumen Comparativo](#-resumen-comparativo)
 
 ---
 
-## 6. Microsoft Entra ID – Autenticación y Acceso
-### 6.1 Continuous Access Evaluation (CAE)
-### 6.2 Conditional Access Policies
-### 6.3 OpenID Connect (OIDC)
-### 6.4 Multi-Factor Authentication (MFA)
-### 6.5 Access Reviews
-### 6.6 Enterprise Applications
-- SAML-based SSO
-- Conditional Access
-- Diferencia: App Registration vs Enterprise Application
-
-### 6.7 Azure AD Application Proxy
+## 🏢 Estructura organizativa en Azure
+- [Microsoft Entra tenant](#microsoft-entra-tenant)
+- [Azure Subscription](#azure-subscription)
+- [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
 
 ---
 
-## 7. Microsoft Entra ID Governance
-### 7.1 Entra ID Governance (Servicio)
-### 7.2 Access Reviews (Feature)
+## 🔐 Roles y permisos
+- [Tipos de roles en Azure](#tipos-de-roles-en-azure)
+  - [Diferencia clave examen AZ-305](#-diferencia-clave-examen-az-305)
+  - [Roles que NO son RBAC](#roles-que-no-son-rbac-azure-resource-manager)
+  - [Azure RBAC Roles (Control Plane)](#azure-rbac-roles-control-plane)
+  - [Custom Roles](#2️⃣-custom-roles)
+  - [Microsoft Entra Roles (nivel identidad)](#3️⃣-microsoft-entra-roles-nivel-identidad)
+- [Scope donde se asignan roles](#scope-donde-se-asignan-roles)
+- [Diferencia crítica para AZ-305](#diferencia-crítica-para-az-305)
 
 ---
 
-## 8. Microsoft Entra ID como Identity Provider
-### 8.1 Entra ID (IdP)
-### 8.2 OAuth 2.0
-- Componentes
-- Flujo simplificado
+## 🔐 Autenticación y acceso (Microsoft Entra ID)
+- [Continuous Access Evaluation (CAE)](#continuous-access-evaluation-cae)
+- [Conditional Access Policies (CAP)](#conditional-access-policies-cap)
+- [OpenID Connect (OIDC)](#openid-connect-oidc)
+- [Multi-Factor Authentication (MFA)](#multi-factor-authentication-mfa)
+- [Access Reviews](#access-reviews)
+- [Azure AD Enterprise Applications](#azure-ad-enterprise-applications)
+- [Azure AD Application Proxy](#azure-ad-application-proxy)
+- [Resumen rápido para examen](#-resumen-rápido-para-examen)
 
-### 8.3 Access Token (Bearer Token)
+---
+
+## 🛡 Identity Governance
+- [Microsoft Entra ID Governance](#-microsoft-entra-id-governance)
+- [Feature: Access Reviews (Governance)](#-feature-access-reviews)
+
+---
+
+## 🔑 OAuth 2.0 y autenticación moderna
+- [Microsoft Entra ID (Identity Provider)](#1️⃣-microsoft-entra-id-identity-provider---teoría-resumida-oauth-20--entra-id--web-api)
+- [OAuth 2.0 (Autorización)](#2️⃣-oauth-20-autorización)
+- [Access Token (Bearer Token)](#3️⃣-access-token-bearer-token)
+
+---
+
+## 🚨 Privileged Identity Management
+- [Privileged Identity Management (PIM)](#privileged-identity-management-pim)
+  - [¿Para qué sirve?](#-para-qué-sirve)
+  - [Qué controla PIM](#-qué-controla-pim)
+  - [Problema que resuelve](#-problema-que-resuelve)
+  - [Ejemplo real](#-ejemplo-real)
+  - [Funcionalidades clave](#-funcionalidades-clave)
+
+
+
 
 ---
 
@@ -738,5 +727,93 @@ Token JWT firmado digitalmente que contiene:
 
 Se envía en el header:
 
-```http
+````http
 Authorization: Bearer <token>
+````
+
+# Privileged Identity Management (PIM)
+
+## 🔎 ¿Qué es?
+
+**Privileged Identity Management (PIM)** es un servicio de **Microsoft Entra ID** que permite **gestionar, controlar y auditar accesos privilegiados** en Azure y en el tenant.
+
+👉 Sí, es parte de **Microsoft Entra ID (Identity Governance)**.
+
+---
+
+# 🎯 ¿Para qué sirve?
+
+Sirve para aplicar el principio de **Just-In-Time (JIT)** en roles privilegiados.
+
+En vez de que un usuario tenga permisos altos permanentemente:
+
+- Se le asigna el rol como *eligible* (elegible)
+- Lo activa solo cuando lo necesita
+- Puede requerir:
+  - MFA
+  - Justificación
+  - Aprobación
+- El rol expira automáticamente tras un tiempo
+
+---
+
+# 🧠 Qué controla PIM
+
+Puede gestionar:
+
+### 1️⃣ Roles de Microsoft Entra (Directory Roles)
+Ejemplo:
+- Global Administrator
+- Security Administrator
+
+### 2️⃣ Roles RBAC de Azure
+Ejemplo:
+- Owner
+- Contributor
+- User Access Administrator
+
+---
+
+# 🔒 Problema que resuelve
+
+Sin PIM:
+- Un usuario puede ser Owner 24/7
+- Si le roban credenciales → riesgo crítico
+
+Con PIM:
+- Solo tiene privilegios cuando los activa
+- El acceso es temporal
+- Todo queda auditado
+
+---
+
+# 📌 Ejemplo real
+
+Empresa financiera:
+
+- Juan es ingeniero cloud.
+- No debe ser Owner permanente.
+- Se le asigna Owner como *eligible*.
+- Cuando necesita hacer un cambio crítico:
+  1. Activa el rol desde PIM.
+  2. Introduce justificación.
+  3. Hace MFA.
+  4. Tiene acceso durante 2 horas.
+  5. El rol se desactiva automáticamente.
+
+👉 Resultado: menos superficie de ataque.
+
+---
+
+# 🧩 Funcionalidades clave
+
+- Just-In-Time access
+- Aprobaciones
+- MFA obligatorio
+- Expiración automática
+- Alertas de riesgo
+- Auditoría de activaciones
+- Access Reviews para roles privilegiados
+
+
+
