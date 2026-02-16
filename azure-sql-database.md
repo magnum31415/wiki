@@ -6,7 +6,7 @@ Servicio PaaS basado en SQLServer totalmente gestionado
 ---
 # 📑 Índice
 
-1. [Azure SQL Database – Modelo DTU](#azure-sqldatabase–--modelo-dtu)
+1. [Azure SQL Database – Modelo DTU](#azure-sql-database–--modelo-dtu)
 2. [Arquitectura Hyperscale](#arquitectura-de-azure-sql-database--hyperscale)
 3. [Funcionalidades](#funcionalidades)
    - [Zone Redundancy](#azure-sql-database-with-zone-redundancy)
