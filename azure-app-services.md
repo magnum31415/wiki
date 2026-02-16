@@ -1,6 +1,7 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
-# Azure App Service
+
+
 # 📑 Índice
 
 1. [Azure App Service](#azure-app-service)
@@ -37,6 +38,8 @@
 
 17. [Flujo completo de funcionamiento](#-flujo-completo-de-funcionamiento)
 
+# Azure App Service
+Azure App Service es un servicio PaaS de Azure que permite alojar aplicaciones web y APIs con escalado y alta disponibilidad sin gestionar servidores ni infraestructura.
 
 # 📊 Resumen comparativo
 
