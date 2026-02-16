@@ -55,6 +55,17 @@ Cosmos DB es **multi-modelo**:
 - Table API
 - Gremlin (graph)
 
+
+| API                | Tipo de dato ideal                   | Modelo         | Cuándo usarla                                                           | Ejemplo real                                                  |
+| ------------------ | ------------------------------------ | -------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **SQL (Core API)** | Documentos JSON estructurados        | Document-based | Aplicaciones web modernas, catálogos, perfiles de usuario, IoT          | App global que guarda pedidos en formato JSON                 |
+| **MongoDB API**    | Documentos JSON/BSON                 | Document-based | Migraciones desde MongoDB on-prem o apps que ya usan drivers MongoDB    | Startup que ya usa MongoDB y quiere migrar sin cambiar código |
+| **Cassandra API**  | Datos distribuidos de alta escritura | Wide-column    | Workloads masivos con alta concurrencia y baja latencia                 | Sistema de telemetría o IoT con millones de eventos           |
+| **Gremlin API**    | Grafos (nodos y relaciones)          | Graph          | Modelar relaciones complejas                                            | Red social, motor de recomendaciones                          |
+| **Table API**      | Datos clave-valor simples            | Key-Value      | Aplicaciones sencillas, bajo coste, migración desde Azure Table Storage | App ligera que almacena configuraciones por usuario           |
+
+
+
 ---
 
 ## 🚀 Características clave
