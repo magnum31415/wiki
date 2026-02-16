@@ -430,5 +430,98 @@ Ejemplo:
   No es un control de acceso a datos.
 
 
+# 📂 ¿Qué es HNS (Hierarchical Namespace)?
 
+## 🔎 Definición
+
+**HNS (Hierarchical Namespace)** es una funcionalidad de **Azure Data Lake Storage Gen2** que permite organizar los datos en una estructura real de:
+
+- Carpetas
+- Subcarpetas
+- Archivos
+
+👉 Como un sistema de archivos tradicional (tipo NTFS o Linux).
+
+---
+
+# 🧠 ¿Qué cambia cuando activas HNS?
+
+Sin HNS (Blob Storage normal):
+
+- Las carpetas son solo “prefijos” en el nombre del blob
+- No existen realmente
+- Operaciones como renombrar carpeta son lentas (copiar + borrar)
+
+Con HNS:
+
+- Las carpetas existen como entidades reales
+- Se soportan operaciones atómicas
+- Mejor rendimiento en operaciones masivas
+
+---
+
+# 🎯 Capacidades clave que habilita HNS
+
+## 1️⃣ Seguridad a nivel carpeta y archivo
+
+Permite:
+
+- ACLs estilo POSIX
+- Permisos por usuario y grupo
+- Control granular por directorio
+
+Ejemplo:
+- Usuario A puede leer `/data/finance`
+- Usuario B solo `/data/hr`
+
+👉 Esto no es posible con Blob tradicional.
+
+---
+
+## 2️⃣ Operaciones más rápidas
+
+Con HNS:
+
+- Rename directory → operación atómica
+- Move directory → instantáneo
+- Delete masivo → más eficiente
+
+Sin HNS:
+- Se debe copiar y borrar uno a uno
+
+---
+
+## 3️⃣ Integración con herramientas Big Data
+
+HNS es necesario para:
+
+- Azure Data Lake Gen2
+- Apache Spark
+- Databricks
+- Hadoop-compatible workloads
+
+---
+
+# 📊 Comparación rápida
+
+| Característica | Blob Storage normal | ADLS Gen2 (HNS activado) |
+|---------------|--------------------|---------------------------|
+| Carpetas reales | ❌ | ✅ |
+| ACL por archivo | ❌ | ✅ |
+| Rename rápido | ❌ | ✅ |
+| Compatible Hadoop | ❌ | ✅ |
+| Workloads Big Data | Limitado | Ideal |
+
+---
+
+# 🎯 Regla mental AZ-305
+
+Si lees:
+
+- “File and directory-level security”
+- “ACL”
+- “Faster rename operations”
+- “Big Data / Data Lake”
+
+👉 Piensa en **Storage Account con Hierarchical Namespace habilitado (ADLS Gen2)**
 
