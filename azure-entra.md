@@ -6,13 +6,41 @@
 
 # 📑 Índice
 
-- [Tabla resumen conceptual](#tabla-resumen-conceptual)
-- [Microsoft Entra tenant](#microsoft-entra-tenant)
-- [Azure Subscription](#azure-subscription)
-- [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
-- [Access Reviews](#access-reviews)
-- [Azure AD Enterprise Applications](#azure-ad-enterprise-applications)
-- [Azure AD Application Proxy](#azure-ad-application-proxy)
+1. [Tabla resumen conceptual](#-tabla-resumen-conceptual)
+
+2. [Microsoft Entra Tenant](#microsoft-entra-tenant)
+
+3. [Azure Subscription](#azure-subscription)
+
+4. [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
+
+5. [Tipos de roles en Azure](#tipos-de-roles-en-azure)
+   - [Azure Built-in Roles](#1️⃣-azure-built-in-roles)
+   - [Custom Roles](#2️⃣-custom-roles)
+   - [Microsoft Entra Roles (nivel identidad)](#3️⃣-microsoft-entra-roles-nivel-identidad)
+
+6. [Scope donde se asignan roles](#scope-donde-se-asignan-roles)
+
+7. [Diferencia crítica para AZ-305](#diferencia-crítica-para-az-305)
+
+8. [Microsoft Entra ID – Conceptos clave de autenticación y acceso](#-microsoft-entra-id--conceptos-clave-de-autenticación-y-acceso)
+   - [Continuous Access Evaluation (CAE)](#continuous-access-evaluation-cae)
+   - [Conditional Access Policies (CAP)](#conditional-access-policies-cap)
+   - [OpenID Connect (OIDC)](#openid-connect-oidc)
+   - [Multi-Factor Authentication (MFA)](#multi-factor-authentication-mfa)
+   - [Access Reviews](#access-reviews)
+
+9. [Azure AD Enterprise Applications](#azure-ad-enterprise-applications)
+   - [SAML-based Single Sign-On (SSO)](#-saml-based-single-sign-on-sso)
+   - [Conditional Access](#-conditional-access)
+
+10. [Azure AD Application Proxy](#azure-ad-application-proxy)
+
+11. [Resumen rápido para examen](#-resumen-rápido-para-examen)
+
+12. [Microsoft Entra ID Governance](#-microsoft-entra-id-governance)
+   - [Azure Service: Microsoft Entra ID Governance](#-azure-service-microsoft-entra-id-governance)
+   - [Feature: Access Reviews](#-feature-access-reviews)
 
 ---
 
@@ -389,3 +417,43 @@ Application Proxy = Publicar aplicaciones on-prem de forma segura usando identid
 | Access Reviews | Revisión periódica de accesos |
 | Enterprise Applications | Gestión de acceso a apps en el tenant |
 | Application Proxy | Publicar apps on-prem con identidad Entra |
+
+
+# # 🔐 Microsoft Entra ID Governance
+
+## 🔹 Azure Service: Microsoft Entra ID Governance
+
+Servicio cloud que permite **gestionar y controlar el acceso de usuarios a recursos** dentro de Microsoft Entra ID (antes Azure AD).
+
+Su objetivo es asegurar que:
+- Solo las personas adecuadas tengan acceso.
+- El acceso sea revisado periódicamente.
+- Se cumplan requisitos de seguridad y compliance.
+
+Incluye funcionalidades como:
+- Gestión del ciclo de vida de identidades.
+- Control de acceso privilegiado.
+- Revisiones de acceso.
+- Políticas de gobernanza.
+
+👉 En resumen: ayuda a mantener el acceso limpio, controlado y auditado.
+
+---
+
+## 🔹 Feature: Access Reviews
+
+Funcionalidad dentro de Entra ID Governance que permite **revisar periódicamente quién tiene acceso a qué recursos**.
+
+Permite:
+- Crear revisiones automáticas (mensuales, trimestrales, etc.).
+- Asignar revisores (ej: administradores o responsables).
+- Confirmar o eliminar accesos.
+- Revocar automáticamente accesos innecesarios.
+
+Ejemplo típico:
+- Revisar mensualmente qué usuarios (incluidos invitados/guest) tienen acceso a una aplicación.
+- El administrador valida si aún lo necesitan.
+- Si no → el acceso se elimina automáticamente.
+
+👉 En resumen: automatiza la revisión y limpieza de permisos.
+
