@@ -6,26 +6,57 @@ Servicio PaaS basado en SQLServer totalmente gestionado
 ---
 # 📑 Índice
 
-1. [Arquitectura Hyperscale](#arquitectura-de-azure-sql-database--hyperscale)
-2. [Funcionalidades](#funcionalidades)
+1. [Azure SQL Database – Modelo DTU](#azure-sqldatabase–modelo-dtu)
+2. [Arquitectura Hyperscale](#arquitectura-de-azure-sql-database--hyperscale)
+3. [Funcionalidades](#funcionalidades)
    - [Zone Redundancy](#azure-sql-database-with-zone-redundancy)
    - [Geo-replication](#geo-replication)
    - [Failover Group](#azure-sql-failover-group-o-auto-failover-group)
    - [Availability Group](#availability-group-ag)
    - [Tabla comparativa](#tabla-comparativa)
-3. [Mapa Jerárquico de Azure SQL](#mapa-jerárquico-de-azure-sql-servicios-y-modelos-de-compra---servicios-paas)
-4. [Guía de Selección PaaS](#guía-de-selección-de-azure-sql-según-requisitos-técnicos)
-5. [Tabla Completa Comparativa](#tabla-completa-agrupada-por-servicio)
-6. [PITR vs RPO vs RTO vs LTR](#comparativa-pitr-vs-rpo-vs-rto-vs-ltr)
-7. [Guía Completa Selección (IaaS + PaaS)](#guía-de-selección-de-azure-sql--según-requisitos-técnicos--)
-8. [DR](#dr)
-9. [Árbol de Herramientas de Migración](#-árbol-de-herramientas-de-migración-a-azure-sql)
-10. [Tabla comparativa herramientas migración Azure](#tabla-comparativa-herramientas-migracion-azure)
-11.  [Azure Data Studio (ADS) vs SQL Server Management Studio (SSMS)](#azure-data-studio-ads-vs-sql-server-management-studio-ssms)
+4. [Mapa Jerárquico de Azure SQL](#mapa-jerárquico-de-azure-sql-servicios-y-modelos-de-compra---servicios-paas)
+5. [Guía de Selección PaaS](#guía-de-selección-de-azure-sql-según-requisitos-técnicos)
+6. [Tabla Completa Comparativa](#tabla-completa-agrupada-por-servicio)
+7. [PITR vs RPO vs RTO vs LTR](#comparativa-pitr-vs-rpo-vs-rto-vs-ltr)
+8. [Guía Completa Selección (IaaS + PaaS)](#guía-de-selección-de-azure-sql--según-requisitos-técnicos--)
+9. [DR](#dr)
+10. [Árbol de Herramientas de Migración](#-árbol-de-herramientas-de-migración-a-azure-sql)
+11. [Tabla comparativa herramientas migración Azure](#tabla-comparativa-herramientas-migracion-azure)
+12.  [Azure Data Studio (ADS) vs SQL Server Management Studio (SSMS)](#azure-data-studio-ads-vs-sql-server-management-studio-ssms)
 
 
 ---
+# Azure SQL Database – Modelo DTU
 
+El modelo **DTU (Database Transaction Unit)** combina en una sola métrica:
+- CPU
+- Memoria
+- I/O
+Se divide en tiers y cada tier tiene distintos niveles (SKUs).
+
+## Tiers y niveles DTU
+| Tier         | Nivel (SKU) | DTUs | Tamaño máximo BD | Uso típico                   |
+| ------------ | ----------- | ---- | ---------------- | ---------------------------- |
+| **Basic**    | Basic       | 5    | 2 GB             | Dev/Test, cargas muy ligeras |
+| **Standard** | S0          | 10   | 250 GB           | Producción ligera            |
+|              | S1          | 20   | 250 GB           | Producción media             |
+|              | S2          | 50   | 250 GB           | Producción media-alta        |
+|              | S3          | 100  | 1 TB             | Producción exigente          |
+|              | S4          | 200  | 1 TB             | Workloads altos              |
+|              | S6          | 400  | 1 TB             | Alta concurrencia            |
+|              | S7          | 800  | 1 TB             | Carga muy alta               |
+|              | S9          | 1600 | 1 TB             | Enterprise media             |
+|              | S12         | 3000 | 1 TB             | Enterprise alta              |
+| **Premium**  | P1          | 125  | 1 TB             | Alta disponibilidad          |
+|              | P2          | 250  | 1 TB             | Workloads críticos           |
+|              | P4          | 500  | 1 TB             | Alto rendimiento             |
+|              | P6          | 1000 | 1 TB             | Enterprise crítica           |
+|              | P11         | 1750 | 4 TB             | Muy alta carga               |
+|              | P15         | 4000 | 4 TB             | Máximo rendimiento           |
+
+
+
+---
 
 ![azure-sql.png](./img/azure/azure-sql.png)
 
