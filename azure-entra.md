@@ -148,11 +148,67 @@ Un rol no es una persona, es un conjunto de permisos.
 
 # Tipos de roles en Azure
 
-## 1️⃣ Azure Built-in Roles
+## 🔶 Diferencia clave examen AZ-305
 
-Roles predefinidos por Microsoft.
+| Tipo de Rol | Controla | Ejemplo |
+|-------------|----------|----------|
+| Entra Role | Identidad y directorio | Global Admin |
+| RBAC Role | Recursos Azure | Contributor |
+| Data Plane Role | Acceso a datos | Storage Blob Data Reader |
+
+### 🎯 Regla mental rápida
+
+- ¿Gestiona usuarios, MFA, SSO, Conditional Access? → **Entra Role**
+- ¿Gestiona VMs, Storage, SQL, redes? → **RBAC**
+- ¿Accede a datos dentro del recurso? → **Data Plane Role**
+
+##  Roles que NO son RBAC (Azure Resource Manager)
+
+No todos los “roles” en Azure son RBAC sobre recursos.  
+Algunos pertenecen al **plano de identidad (Microsoft Entra ID)** y no gestionan recursos como VMs, Storage o SQL.
+
+### Microsoft Entra Roles (Directory Roles)
+
+Estos roles gestionan **identidad y seguridad del tenant**, no recursos Azure.
+
+Ejemplos:
+
+| Rol | Qué controla | ¿Es RBAC sobre recursos Azure? |
+|------|-------------|--------------------------------|
+| Global Administrator | Control total del tenant Entra | ❌ No |
+| Application Administrator | Gestionar App Registrations | ❌ No |
+| Security Administrator | Configuración de seguridad identidad | ❌ No |
+| Conditional Access Administrator | Políticas de acceso condicional | ❌ No |
+| Privileged Role Administrator | Asignación de roles Entra | ❌ No |
+| User Administrator | Crear y gestionar usuarios | ❌ No |
+| Groups Administrator | Gestionar grupos | ❌ No |
+| Identity Governance Administrator | Access Reviews, lifecycle | ❌ No |
+
+👉 Estos roles viven en **Microsoft Entra ID**, no en Azure Resource Manager.
+
+
+## Azure RBAC Roles (Control Plane)
+
+Estos SÍ son RBAC y gestionan recursos Azure:
+
+- Owner
+- Contributor
+- Reader
+- Network Contributor
+- Storage Account Contributor
+- SQL Contributor
+- etc.
+
+👉 Se asignan en:
+- Management Group
+- Subscription
+- Resource Group
+- Recurso
+
 
 ### Roles típicos
+
+Roles predefinidos por Microsoft.
 
 
 | Rol | Puede hacer | No puede hacer | Escenario típico de uso |
