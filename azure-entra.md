@@ -15,7 +15,11 @@
 4. [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
 
 5. [Tipos de roles en Azure](#tipos-de-roles-en-azure)
-   - [Azure Built-in Roles](#1️⃣-azure-built-in-roles)
+   - [Diferencia clave examen AZ-305](#-diferencia-clave-examen-az-305)
+   - [Roles que NO son RBAC](#roles-que-no-son-rbac-azure-resource-manager)
+   - [Microsoft Entra Roles (Directory Roles)](#microsoft-entra-roles-directory-roles)
+   - [Azure RBAC Roles (Control Plane)](#azure-rbac-roles-control-plane)
+   - [Roles típicos](#roles-típicos)
    - [Custom Roles](#2️⃣-custom-roles)
    - [Microsoft Entra Roles (nivel identidad)](#3️⃣-microsoft-entra-roles-nivel-identidad)
 
@@ -32,7 +36,7 @@
 
 9. [Azure AD Enterprise Applications](#azure-ad-enterprise-applications)
    - [SAML-based Single Sign-On (SSO)](#-saml-based-single-sign-on-sso)
-   - [Conditional Access](#-conditional-access)
+   - [Conditional Access (en aplicaciones)](#-conditional-access)
 
 10. [Azure AD Application Proxy](#azure-ad-application-proxy)
 
@@ -46,11 +50,26 @@
 
 # 📊 Tabla resumen conceptual
 
-| Concepto       | Qué es                                       |
-|---------------|----------------------------------------------|
-| Tenant        | Identidad y seguridad                        |
-| Subscription  | Facturación y contenedor de recursos         |
-| Resource Group| Agrupación lógica dentro de una subscription |
+
+| Concepto | Qué controla | Ejemplo |
+|-----------|-------------|----------|
+| Tenant | Identidad y seguridad | Empresa con 500 usuarios, grupos y políticas MFA centralizadas |
+| Subscription | Facturación y contenedor de recursos | Suscripción separada para PROD y otra para DEV |
+| Resource Group | Agrupación lógica dentro de una subscription | RG “rg-app-prod” que contiene VM + SQL + Storage de una app |
+| RBAC Role | Recursos Azure | Asignar Contributor a un equipo sobre una Subscription |
+| Entra Role | Identidad y directorio | Global Administrator que gestiona usuarios y MFA |
+| Azure Policy | Lo que está permitido crear | Bloquear creación de VMs fuera de West Europe |
+| Resource Lock | Evita borrar o modificar | Lock “CanNotDelete” en un Storage crítico |
+| CAE | Revocación inmediata de acceso | Usuario deshabilitado → pierde acceso sin esperar expiración del token |
+| Conditional Access | Reglas dinámicas de acceso | Exigir MFA si el login viene desde fuera del país |
+| OIDC | Protocolo de autenticación moderno | Login con Microsoft en una aplicación web |
+| MFA | Verificación multifactor | Usuario introduce contraseña + código de Microsoft Authenticator |
+| Access Reviews | Revisión periódica de accesos | Revisar cada mes los usuarios que tienen acceso a una app SaaS |
+| Enterprise Applications | Gestión de acceso a apps en el tenant | Configurar SAML SSO para Salesforce |
+| Application Proxy | Publicar apps on-prem con identidad Entra | Publicar una app interna IIS sin abrir puertos inbound |
+| Entra Role | Identidad y directorio | Global Admin |
+| RBAC Role | Recursos Azure | Contributor |
+| Data Plane Role | Acceso a datos | Storage Blob Data Reader |
 
 ---
 
