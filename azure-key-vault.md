@@ -10,23 +10,35 @@ Azure Key Vault tiene **dos tiers principales**:
 
 # 📊 Comparativa de Tiers
 
-| Característica | Standard | Premium |
-|---------------|----------|----------|
-| Secretos (passwords, connection strings) | ✅ | ✅ |
-| Claves software (RSA, EC) | ✅ | ✅ |
-| Claves HSM | ❌ | ✅ |
-| Azure Managed HSM soporte | ❌ | ✅ |
-| Protección con FIPS 140-2 Level 2 | ❌ | ✅ |
-| Bring Your Own Key (BYOK) con HSM | ❌ | ✅ |
-| Integración con Azure Storage Encryption | ✅ | ✅ |
-| Integración con Azure Disk Encryption | ✅ | ✅ |
-| Acceso con RBAC | ✅ | ✅ |
-| Access Policies | ✅ | ✅ |
-| Soft Delete | ✅ (obligatorio) | ✅ |
-| Purge Protection | ✅ | ✅ |
-| Private Endpoint | ✅ | ✅ |
-| Coste | Bajo | Más alto |
+| Característica | Key Vault Standard | Key Vault Premium | Azure Managed HSM |
+|---------------|-------------------|-------------------|--------------------|
+| Secretos (passwords, connection strings) | ✅ | ✅ | ❌ (solo claves) |
+| Claves software (RSA, EC) | ✅ | ✅ | ❌ |
+| Claves HSM | ❌ | ✅ | ✅ |
+| HSM dedicado (single-tenant) | ❌ | ❌ | ✅ |
+| Protección FIPS 140-2 Level 2 | ❌ | ✅ | ❌ |
+| Protección FIPS 140-2 Level 3 | ❌ | ❌ | ✅ |
+| Bring Your Own Key (BYOK) con HSM | ❌ | ✅ | ✅ |
+| Security domain dedicado por cliente | ❌ | ❌ | ✅ |
+| Integración con Azure Storage Encryption | ✅ | ✅ | ✅ |
+| Integración con Azure Disk Encryption | ✅ | ✅ | ✅ |
+| Acceso con RBAC | ✅ | ✅ | ✅ |
+| Access Policies | ✅ | ✅ | ❌ (solo RBAC) |
+| Soft Delete | ✅ (obligatorio) | ✅ | ✅ |
+| Purge Protection | ✅ | ✅ | ✅ |
+| Private Endpoint | ✅ | ✅ | ✅ |
+| Alta disponibilidad entre zonas | ✅ | ✅ | ✅ (cluster multi-nodo) |
+| Coste | Bajo | Más alto | Alto |
 
+
+- **Standard** → secretos y claves software.
+- **Premium** → claves HSM (multi-tenant, FIPS Level 2).
+- **Managed HSM** → HSM dedicado, FIPS Level 3, aislamiento criptográfico real.
+
+ **Regla mental rápida**
+- ¿Solo secretos? → Standard  
+- ¿HSM pero sin aislamiento físico dedicado? → Premium  
+- ¿FIPS 140-2 Level 3 + security domain dedicado? → Azure Managed HSM
 
 ### Azure Key Vault – Disponibilidad y Resiliencia
 
