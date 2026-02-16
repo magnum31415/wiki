@@ -26,7 +26,7 @@ Servicio PaaS basado en SQLServer totalmente gestionado
 
 
 ---
-# Azure SQL Database – Modelo DTU
+# Azure SQL Database Modelo DTU
 
 El modelo **DTU (Database Transaction Unit)** combina en una sola métrica:
 - CPU
