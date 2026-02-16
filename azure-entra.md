@@ -817,5 +817,77 @@ Empresa financiera:
 - Auditoría de activaciones
 - Access Reviews para roles privilegiados
 
+# 📊 Métodos de autenticación híbrida en Microsoft Entra ID
+
+## Comparativa rápida
+
+| Método | Dónde se valida la contraseña | Infraestructura on-prem necesaria | Alta disponibilidad | Complejidad | Cuándo usarlo | Clave examen AZ-305 |
+|----------|------------------------------|-----------------------------------|---------------------|-------------|--------------|------------------|
+| **PHS** (Password Hash Synchronization) | En la nube (Entra ID) | Solo Entra Connect | Alta (servicio cloud) | Baja | Escenario híbrido estándar | ✅ Recomendado por Microsoft |
+| **PTA** (Pass-Through Authentication) | En el AD on-prem | Agentes PTA en servidores on-prem | Depende de los agentes desplegados | Media | Cuando no se permite sincronizar hash | Requiere conectividad constante |
+| **AD FS** (Federation Services) | En AD on-prem vía federación | Infraestructura AD FS completa (farm + WAP + certificados) | Depende del diseño on-prem | Alta | Requisitos avanzados (smart card, claims personalizadas) | ❌ Más complejo y costoso |
+
+---
+
+# 🧠 Resumen conceptual
+
+## 🔹 PHS – Password Hash Synchronization
+
+- Sincroniza el hash de la contraseña (no texto plano).
+- Autenticación se realiza en Microsoft Entra ID.
+- No depende del AD on-prem para login.
+- Soporta:
+  - Conditional Access
+  - Identity Protection
+  - Continuous Access Evaluation (CAE)
+
+👉 Opción más simple, más resiliente y recomendada.
+
+---
+
+## 🔹 PTA – Pass-Through Authentication
+
+- La contraseña no se almacena en Azure.
+- Entra envía la validación a un agente on-prem.
+- Si el AD on-prem no está disponible, no hay autenticación.
+
+👉 Útil cuando la política prohíbe sincronizar hashes.
+
+---
+
+## 🔹 AD FS – Federation Services
+
+- Autenticación completamente federada.
+- Entra redirige al usuario al entorno AD FS.
+- Permite:
+  - Smart Cards
+  - Autenticación avanzada
+  - Claims personalizadas
+
+👉 Solo cuando existen requisitos específicos que PHS/PTA no cubren.
+
+---
+
+# 🎯 Regla mental para AZ-305
+
+| Requisito | Solución correcta |
+|------------|------------------|
+| Simplicidad + alta resiliencia | PHS |
+| No sincronizar hashes | PTA |
+| Claims avanzadas / autenticación personalizada | AD FS |
+
+---
+
+# 🧩 Flujo simplificado
+
+## PHS
+Usuario → Entra ID → Autenticación en la nube
+
+## PTA
+Usuario → Entra ID → Agente PTA → AD on-prem → Resultado
+
+## AD FS
+Usuario → Entra ID → Redirección a AD FS → Validación en AD → Token emitido
+
 
 
