@@ -6,45 +6,85 @@
 
 # 📑 Índice
 
-1. [Tabla resumen conceptual](#-tabla-resumen-conceptual)
+## 1. 📊 Tabla resumen conceptual
 
-2. [Microsoft Entra Tenant](#microsoft-entra-tenant)
+## 2. Tipos de Licencias en Azure
+### 2.1 Microsoft Entra ID
+- Free
+- Premium P1
+- Premium P2
 
-3. [Azure Subscription](#azure-subscription)
+### 2.2 Enterprise Mobility + Security (EMS)
+- EMS E3
+- EMS E5
 
-4. [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
+### 2.3 Microsoft Defender
+- Defender for Cloud
+- Defender for Endpoint
 
-5. [Tipos de roles en Azure](#tipos-de-roles-en-azure)
-   - [Diferencia clave examen AZ-305](#-diferencia-clave-examen-az-305)
-   - [Roles que NO son RBAC](#roles-que-no-son-rbac-azure-resource-manager)
-   - [Microsoft Entra Roles (Directory Roles)](#microsoft-entra-roles-directory-roles)
-   - [Azure RBAC Roles (Control Plane)](#azure-rbac-roles-control-plane)
-   - [Roles típicos](#roles-típicos)
-   - [Custom Roles](#2️⃣-custom-roles)
-   - [Microsoft Entra Roles (nivel identidad)](#3️⃣-microsoft-entra-roles-nivel-identidad)
+### 2.4 Tipos de Suscripción Azure
+- Pay-As-You-Go
+- Enterprise Agreement (EA)
+- Microsoft Customer Agreement (MCA)
+- Cloud Solution Provider (CSP)
 
-6. [Scope donde se asignan roles](#scope-donde-se-asignan-roles)
+### 2.5 Resumen Comparativo
 
-7. [Diferencia crítica para AZ-305](#diferencia-crítica-para-az-305)
+---
 
-8. [Microsoft Entra ID – Conceptos clave de autenticación y acceso](#-microsoft-entra-id--conceptos-clave-de-autenticación-y-acceso)
-   - [Continuous Access Evaluation (CAE)](#continuous-access-evaluation-cae)
-   - [Conditional Access Policies (CAP)](#conditional-access-policies-cap)
-   - [OpenID Connect (OIDC)](#openid-connect-oidc)
-   - [Multi-Factor Authentication (MFA)](#multi-factor-authentication-mfa)
-   - [Access Reviews](#access-reviews)
+## 3. Microsoft Entra Tenant
 
-9. [Azure AD Enterprise Applications](#azure-ad-enterprise-applications)
-   - [SAML-based Single Sign-On (SSO)](#-saml-based-single-sign-on-sso)
-   - [Conditional Access (en aplicaciones)](#-conditional-access)
+## 4. Azure Subscription
 
-10. [Azure AD Application Proxy](#azure-ad-application-proxy)
+## 5. Roles en Azure
+### 5.1 ¿Qué son los roles?
+### 5.2 Tipos de roles en Azure
+- Entra Roles
+- RBAC Roles
+- Data Plane Roles
 
-11. [Resumen rápido para examen](#-resumen-rápido-para-examen)
+### 5.3 Microsoft Entra Roles (Directory Roles)
+### 5.4 Azure RBAC Roles (Control Plane)
+### 5.5 Roles Built-in frecuentes
+### 5.6 Custom Roles
+### 5.7 Scope de asignación de roles
+- Management Group
+- Subscription
+- Resource Group
+- Recurso
 
-12. [Microsoft Entra ID Governance](#-microsoft-entra-id-governance)
-   - [Azure Service: Microsoft Entra ID Governance](#-azure-service-microsoft-entra-id-governance)
-   - [Feature: Access Reviews](#-feature-access-reviews)
+### 5.8 Diferencias críticas para AZ-305
+
+---
+
+## 6. Microsoft Entra ID – Autenticación y Acceso
+### 6.1 Continuous Access Evaluation (CAE)
+### 6.2 Conditional Access Policies
+### 6.3 OpenID Connect (OIDC)
+### 6.4 Multi-Factor Authentication (MFA)
+### 6.5 Access Reviews
+### 6.6 Enterprise Applications
+- SAML-based SSO
+- Conditional Access
+- Diferencia: App Registration vs Enterprise Application
+
+### 6.7 Azure AD Application Proxy
+
+---
+
+## 7. Microsoft Entra ID Governance
+### 7.1 Entra ID Governance (Servicio)
+### 7.2 Access Reviews (Feature)
+
+---
+
+## 8. Microsoft Entra ID como Identity Provider
+### 8.1 Entra ID (IdP)
+### 8.2 OAuth 2.0
+- Componentes
+- Flujo simplificado
+
+### 8.3 Access Token (Bearer Token)
 
 ---
 
@@ -72,8 +112,88 @@
 | Data Plane Role | Acceso a datos | Storage Blob Data Reader |
 
 ---
+# Tipos de Licencias en Azure
 
-## Microsoft Entra tenant
+## 1️⃣ Microsoft Entra ID (antes Azure AD)
+
+### 🔹 Free
+- Gestión básica de usuarios y grupos
+- Single Sign-On (SSO)
+- Sin funcionalidades avanzadas de seguridad
+
+### 🔹 P1 (Premium P1)
+- Incluye todo lo de Free
+- Acceso Condicional
+- Self-Service Password Reset (con write-back)
+- Dynamic Groups
+- Soporte para identidad híbrida
+- Orientado a empresas con necesidades de control de acceso
+
+### 🔹 P2 (Premium P2)
+- Incluye todo lo de P1
+- Identity Protection (detección de riesgos)
+- Privileged Identity Management (PIM)
+- Acceso Just-in-Time para roles administrativos
+- Recomendado para entornos con altos requisitos de seguridad
+
+---
+
+## 2️⃣ Enterprise Mobility + Security (EMS)
+
+### 🔹 EMS E3
+- Incluye Entra ID P1
+- Microsoft Intune
+- Protección básica de identidad
+
+### 🔹 EMS E5
+- Incluye Entra ID P2
+- Identity Protection
+- Seguridad avanzada y análisis de riesgos
+
+---
+
+## 3️⃣ Microsoft Defender
+
+### 🔹 Defender for Cloud
+- Plan gratuito (CSPM básico)
+- Planes de pago por workload (Servers, SQL, Containers, etc.)
+
+### 🔹 Microsoft Defender for Endpoint
+- Plan 1
+- Plan 2 (EDR avanzado)
+
+---
+
+## 4️⃣ Tipos de Suscripción Azure
+
+### 🔹 Pay-As-You-Go
+- Pago por consumo
+- Sin compromiso mínimo
+
+### 🔹 Enterprise Agreement (EA)
+- Para grandes organizaciones
+- Compromiso de consumo anual
+
+### 🔹 Microsoft Customer Agreement (MCA)
+- Modelo contractual moderno
+- Facturación flexible
+
+### 🔹 Cloud Solution Provider (CSP)
+- A través de partner
+- Facturación gestionada por proveedor
+
+---
+
+# 📌 Resumen Comparativo
+
+| Categoría      | Nivel Básico | Nivel Intermedio | Nivel Avanzado |
+|---------------|-------------|------------------|----------------|
+| Entra ID      | Free       | P1               | P2             |
+| Seguridad     | Defender básico | Plan 1     | Plan 2         |
+| Contrato Azure| PayG       | MCA              | EA             |
+
+
+# Microsoft Entra tenant
 
 🔝 [Volver al índice](#-índice)
 
@@ -565,4 +685,58 @@ Ejemplo típico:
 - Si no → el acceso se elimina automáticamente.
 
 👉 En resumen: automatiza la revisión y limpieza de permisos.
+---
 
+# 1️⃣ Microsoft Entra ID (Identity Provider) - Teoría resumida OAuth 2.0 + Entra ID + Web API
+
+## Qué es
+Servicio de identidad (IdP) que:
+- Autentica usuarios
+- Emite tokens (JWT)
+- Soporta OAuth 2.0 y OpenID Connect
+
+## Clave examen
+- Entra **genera los access tokens**
+- No la app
+- No la API
+
+---
+
+# 2️⃣ OAuth 2.0 (Autorización)
+
+## Qué es
+Protocolo que permite que una aplicación acceda a un recurso en nombre del usuario sin almacenar su contraseña.
+
+## Componentes
+
+| Rol | Quién es en Azure |
+|------|------------------|
+| Resource Owner | Usuario |
+| Client | Web App |
+| Authorization Server | Microsoft Entra |
+| Resource Server | Web API |
+
+## Flujo simplificado
+
+1. Usuario se autentica en Entra  
+2. Entra devuelve Access Token  
+3. Web App llama a API con Bearer Token  
+4. API valida token y autoriza  
+
+---
+
+# 3️⃣ Access Token (Bearer Token)
+
+## Qué es
+Token JWT firmado digitalmente que contiene:
+
+- Identidad del usuario
+- Scopes
+- Roles
+- Expiración
+- Firma
+
+Se envía en el header:
+
+```http
+Authorization: Bearer <token>
