@@ -328,8 +328,30 @@ Primera herramienta que se usa en proyectos de migración.
 ### 🔝 [Volver al índice](#-índice)
 ## Azure Monitor
 
-Servicio central de observabilidad (métricas, logs, alertas).  
-En AZ-305 debes asociarlo con arquitectura resiliente y operativa.
+Servicio central de monitorización en Azure.
+
+- Recolecta:
+  - Métricas
+  - Logs
+  - Diagnósticos
+  - Activity Logs
+  - Telemetría de aplicaciones
+- 📌 Qué monitoriza
+  - Máquinas virtuales
+  - Redes
+  - Bases de datos
+  - Storage
+  - Apps
+  - Recursos Azure en general
+
+````
+Azure Monitor
+   ├── Log Analytics (Logs centralizados)
+   └── Application Insights (telemetría de aplicaciones)
+````
+
+- 👉 Azure Monitor es el paraguas.
+  - Los otros dos son componentes dentro de él.
 
 ---
 
