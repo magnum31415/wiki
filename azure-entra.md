@@ -678,6 +678,8 @@ Ejemplo típico:
 
 # 1️⃣ Microsoft Entra ID (Identity Provider) - Teoría resumida OAuth 2.0 + Entra ID + Web API
 
+![Azure-AD-OAuth-2](./img/azure/Azure-AD-OAuth-2.png)
+
 ## Qué es
 Servicio de identidad (IdP) que:
 - Autentica usuarios
