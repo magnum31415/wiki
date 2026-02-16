@@ -41,17 +41,23 @@
 # Azure App Service
 Azure App Service es un servicio PaaS de Azure que permite alojar aplicaciones web y APIs con escalado y alta disponibilidad sin gestionar servidores ni infraestructura.
 
+![Azure-App-Service-Plan-Windows](./img/azure/Azure-App-Service-Plan-Windows.png)
+
+
 # 📊 Resumen comparativo
 
 | Concepto | Nivel | Qué controla | Coste |
 |----------|-------|--------------|-------|
 | App Service Plan | Infraestructura base | CPU, RAM, instancias | Medio |
-| ASE | Infraestructura aislada | Red privada + aislamiento | Alto |
+| App Service Environment "ASE" | Infraestructura aislada | Red privada + aislamiento | Alto |
 | Deployment Slot | Funcionalidad app | Versiones sin downtime | Bajo |
 | Deployment Stack | Runtime | Tecnología (.NET, Python…) | N/A 
 
-- App Service Plan → Alquilas espacio en un edificio compartido.  
-- ASE → Tienes tu propio edificio privado.
+**Símil**
+- **App Service Plan** → Alquilas espacio en un edificio compartido.  
+- **App Service Environment** → Tienes tu propio edificio privado.
+- **Deployment Stack** → Es el tipo de maquinaria y herramientas que usas dentro del local (Python, .NET, Node, etc.).
+- **Deployment Slot** → Tienes un segundo local dentro del mismo edificio para probar la nueva versión antes de abrirla al público.
 
 # 🎯 Claves examen rápidas
 
