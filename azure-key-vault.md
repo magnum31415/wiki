@@ -42,15 +42,16 @@ Azure Key Vault tiene **dos tiers principales**:
 
 ### Azure Key Vault – Disponibilidad y Resiliencia
 
-| Característica                  | Standard | Premium |
-| ------------------------------- | -------- | ------- |
-| Alta disponibilidad regional    | ✅        | ✅       |
-| Zone redundancy                 | ✅        | ✅       |
-| Replicación a región secundaria | ✅        | ✅       |
-| HSM (Hardware-backed keys)      | ❌        | ✅       |
-| FIPS 140-2 Level 2              | ❌        | ✅       |
 
-
+| Característica                  | Standard | Premium | Azure Managed HSM |
+| ------------------------------- | -------- | ------- | ----------------- |
+| Alta disponibilidad regional    | ✅        | ✅       | ✅                 |
+| Zone redundancy                 | ✅        | ✅       | ✅                 |
+| Replicación a región secundaria | ✅        | ✅       | ❌ (Dedicado por cluster, no replicación automática) |
+| HSM (Hardware-backed keys)      | ❌        | ✅       | ✅                 |
+| FIPS 140-2 Level 2              | ❌        | ✅       | ❌ (Managed HSM va más allá) |
+| FIPS 140-2 Level 3              | ❌        | ❌       | ✅                 |
+| Aislamiento dedicado (Security domain) | ❌ | ❌ | ✅ (Cada HSM tiene su dominio de seguridad) |
 
 
 ---
