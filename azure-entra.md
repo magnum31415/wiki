@@ -136,7 +136,7 @@ Forma parte de RBAC (Role-Based Access Control).
 
 **Fórmula mental para el examen:**
 
-Security Principal + Role + Scope
+``Permiso RBAC = Security Principal + Role + Scope``
 
 - Security Principal = usuario, grupo, app
 - Role = conjunto de permisos
@@ -152,14 +152,49 @@ Un rol no es una persona, es un conjunto de permisos.
 
 Roles predefinidos por Microsoft.
 
-### Roles básicos
+### Roles típicos
 
-| Rol                         | Puede hacer                    | No puede hacer             |
-|-----------------------------|--------------------------------|----------------------------|
-| Owner                       | Control total                  | —                          |
-| Contributor                 | Crear y modificar recursos     | Asignar roles              |
-| Reader                      | Ver recursos                   | Modificar                  |
-| User Access Administrator   | Asignar roles                  | Gestionar recursos         |
+# 🔐 Roles Azure más típicos (AZ-305)
+
+| Rol | Puede hacer | No puede hacer | Escenario típico de uso |
+|-----|------------|----------------|--------------------------|
+| Owner | Control total sobre recursos y permisos | — | Administrador completo de una suscripción |
+| Contributor | Crear y modificar recursos | Asignar roles | Equipo técnico que gestiona infraestructura |
+| Reader | Ver recursos | Modificar o borrar | Auditoría o equipo de reporting |
+| User Access Administrator | Asignar roles RBAC | Gestionar recursos | Equipo IAM que gestiona permisos |
+| Network Contributor | Gestionar redes (VNet, NSG, LB) | Asignar roles | Equipo de networking |
+| Virtual Machine Contributor | Crear y administrar VMs | Gestionar red completa | Equipo de sistemas |
+| Storage Account Contributor | Gestionar cuentas de almacenamiento | Asignar roles | Equipo que administra storage |
+| Storage Blob Data Contributor | Leer/escribir blobs | Gestionar configuración de la cuenta | App que necesita acceso a datos Blob |
+| SQL DB Contributor | Gestionar bases Azure SQL | Gestionar servidor completo | DBA gestionando bases PaaS |
+| SQL Server Contributor | Gestionar servidor SQL lógico | Acceso a datos internos | Administrador de servidor SQL |
+| Cosmos DB Account Contributor | Gestionar cuentas Cosmos | Acceso granular a datos | Equipo que despliega NoSQL |
+| Cosmos DB Built-in Data Contributor | Leer/escribir datos Cosmos | Configurar cuenta | Aplicación backend |
+| Cosmos DB Built-in Data Reader | Leer datos Cosmos | Escribir datos | Reporting sobre Cosmos |
+| Web Plan Contributor | Gestionar App Service Plan | Asignar roles | Administrador de hosting web |
+| Website Contributor | Gestionar Web Apps | Cambiar plan base | Equipo DevOps |
+| Application Insights Component Contributor | Gestionar App Insights | Control de recursos externos | Equipo de monitorización |
+| Monitoring Contributor | Gestionar Azure Monitor | Acceso total recursos | Equipo observabilidad |
+| Key Vault Contributor | Gestionar vault | Acceso a secretos | Administrador de Key Vault |
+| Key Vault Secrets User | Leer secretos | Gestionar vault | Aplicación que consume secretos |
+| Backup Contributor | Gestionar backups | Asignar roles | Equipo de backup |
+| Reservations Administrator | Gestionar reservas de capacidad | Gestionar recursos | Equipo financiero optimizando costes |
+| Cost Management Contributor | Gestionar presupuestos y costes | Crear recursos | Equipo FinOps |
+| Security Admin (Entra) | Gestionar políticas seguridad tenant | Gestionar recursos Azure | Equipo seguridad identidad |
+| Global Administrator (Entra) | Control total del tenant | — | Administración del directorio |
+| Privileged Role Administrator | Gestionar roles Entra | Gestionar recursos Azure | Gestión de roles privilegiados |
+
+---
+
+## 🧠 Claves rápidas AZ-305
+
+- Owner = todo.
+- Contributor ≠ puede asignar roles.
+- Data roles (Blob/Cosmos) = acceso a datos, no a infraestructura.
+- Roles Entra ≠ RBAC Azure.
+- FinOps → Reservations / Cost Management.
+- Seguridad identidad → Entra roles.
+
 
 Claves examen:
 
