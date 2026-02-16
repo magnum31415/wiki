@@ -209,6 +209,17 @@ Se usa en escenarios híbridos y DR con transferencia continua.
 Servicio ETL/ELT para integrar y transformar datos.  
 En arquitectura se usa para pipelines de datos y migraciones complejas.
 
+| Componente                   | Qué es                           | Para qué sirve                       | Ejemplo típico examen                         |
+| ---------------------------- | -------------------------------- | ------------------------------------ | --------------------------------------------- |
+| **Pipeline**                 | Contenedor lógico de actividades | Orquestar procesos ETL/ELT           | Ejecutar copia + transformación + SP en orden |
+| **Activity**                 | Tarea dentro del pipeline        | Ejecutar una acción concreta         | Copy, Stored Procedure, Databricks            |
+| **Copy Activity**            | Actividad de movimiento de datos | Import / Export datos entre sistemas | SQL → Blob Storage                            |
+| **Dataset**                  | Definición del dato              | Describe estructura y ubicación      | Tabla SQL, CSV en Data Lake                   |
+| **Linked Service**           | Definición de conexión           | Configura acceso a origen/destino    | Conexión a Oracle on-prem                     |
+| **Integration Runtime (IR)** | Motor de ejecución               | Ejecuta actividades                  | Self-hosted IR para on-prem                   |
+| **Data Flow**                | Transformación visual            | Transformar datos sin código         | Join + Aggregate + Filter                     |
+| **Trigger**                  | Disparador automático            | Ejecutar pipelines automáticamente   | Schedule diario 02:00                         |
+| **Monitoring**               | Panel de seguimiento             | Ver ejecuciones y errores            | Ver fallo en actividad Copy                   |
 
 ![Azure-data-factory-data-lake](./img/azure/Azure-data-factory-data-lake.png)
 
