@@ -39,7 +39,28 @@
 17. [Flujo completo de funcionamiento](#-flujo-completo-de-funcionamiento)
 
 # Azure App Service
+
 Azure App Service es un servicio PaaS de Azure que permite alojar aplicaciones web y APIs con escalado y alta disponibilidad sin gestionar servidores ni infraestructura.
+
+Es el **servicio PaaS** completo para alojar aplicaciones web.
+
+- Incluye:
+  - Web Apps
+  - API Apps
+  - WebJobs
+  - Mobile Apps
+  - (Base de Azure Functions en algunos escenarios)
+
+- 👉 Es el servicio global.
+
+| Concepto                      | Qué es                                                | Nivel                   |
+| ----------------------------- | ----------------------------------------------------- | ----------------------- |
+| Azure App Service             | Servicio PaaS completo                                | Servicio                |
+| App Service Plan              | Recursos de cómputo                                   | Infraestructura         |
+| Azure Web App                 | Aplicación individual                                 | Aplicación              |
+| App Service Environment (ASE) | Despliegue dedicado de App Service dentro de una VNet | Infraestructura aislada |
+
+
 
 ![Azure-App-Service-Plan-Windows](./img/azure/Azure-App-Service-Plan-Windows.png)
 
@@ -213,7 +234,26 @@ Varias apps pueden compartir el mismo plan y recursos.
 
 ## 🔎 ¿Qué es?
 
-Es el **conjunto de recursos de cómputo** (CPU, RAM, almacenamiento, instancias) donde se ejecutan tus aplicaciones.
+Es el **conjunto de recursos de cómputo**  donde se ejecutan tus aplicaciones.
+
+- Define:
+  - CPU
+  - RAM
+  - Región
+  - Número de instancias
+  - Tier (Basic, Standard, Premium…)
+
+
+| Tier                      | Uso típico             | CPU/RAM dedicados | Autoescalado | Deployment Slots | VNet Integration      | SLA    |
+| ------------------------- | ---------------------- | ----------------- | ------------ | ---------------- | --------------------- | ------ |
+| **Free (F1)**             | Pruebas / labs         | ❌ Compartido      | ❌            | ❌                | ❌                     | ❌      |
+| **Shared (D1)**           | Dev pequeño            | ❌ Compartido      | ❌            | ❌                | ❌                     | ❌      |
+| **Basic (B1-B3)**         | Producción pequeña     | ✅                 | ❌            | ❌                | ❌                     | 99.95% |
+| **Standard (S1-S3)**      | Producción media       | ✅                 | ✅            | ✅                | ✅ (outbound)          | 99.95% |
+| **Premium v2/v3 (P1v3…)** | Alta carga             | ✅                 | ✅            | ✅                | ✅ (mejor rendimiento) | 99.95% |
+| **Isolated (I1…)**        | Entorno dedicado (ASE) | ✅ Dedicado        | ✅            | ✅                | ✅ (completo)          | 99.95% |
+
+
 
 Toda Web App vive dentro de un App Service Plan.
 
