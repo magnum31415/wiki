@@ -8,6 +8,7 @@
 - [Azure Analysis Services](#azure-analysis-services)
 - [Azure Arc](#azure-arc)
 - [Azure Automation](#azure-automation)
+- [Azure Application Insights](#azure-application-insights)
 - [Azure Backup](#azure-backup)
 - [Azure Blueprints](#azure-blueprints)
 - [Azure Data Box](#azure-data-box)
@@ -83,6 +84,73 @@
 
 PaaS para modelos tabulares empresariales (semantic layer).  
 En AZ-305 debes asociarlo con soluciones BI centralizadas y rendimiento en consultas analíticas.
+
+---
+### 🔝 [Volver al índice](#-índice)
+## Azure Application Insights 
+
+Azure Application Insights es un servicio de **monitorización APM (Application Performance Monitoring)** que recopila telemetría de aplicaciones en tiempo real.
+
+### 🔎 Tipos de datos / logs que recopila
+
+#### 1️⃣ Requests
+- Peticiones HTTP entrantes
+- Tiempo de respuesta
+- Código de estado (200, 500, etc.)
+- Tasa de éxito / fallo
+
+👉 Permite detectar lentitud o errores en endpoints.
+
+#### 2️⃣ Dependencies
+- Llamadas salientes a:
+  - SQL
+  - APIs externas
+  - Storage
+  - Service Bus
+- Duración y éxito/fallo
+
+👉 Útil para identificar cuellos de botella externos.
+
+#### 3️⃣ Exceptions
+- Errores y excepciones no controladas
+- Stack trace
+- Severidad
+
+👉 Clave para troubleshooting.
+
+#### 4️⃣ Traces
+- Logs personalizados generados por la aplicación
+- Mensajes informativos o de diagnóstico
+
+👉 Equivalente a logs tipo `log.info()`.
+
+#### 5️⃣ Metrics
+- CPU
+- Memoria
+- Tiempo de respuesta
+- Throughput
+- Contadores personalizados
+
+👉 Para análisis de rendimiento.
+
+#### 6️⃣ Availability Tests
+- Pruebas sintéticas (ping/web test)
+- Verifica disponibilidad desde distintas regiones
+
+👉 Monitorización externa.
+
+### 🎯 Resumen rápido
+
+Application Insights recopila:
+- Requests
+- Dependencies
+- Exceptions
+- Traces
+- Metrics
+- Availability tests
+
+👉 Se usa para analizar rendimiento y detectar fallos **sin modificar la infraestructura**.
+
 
 ---
 
