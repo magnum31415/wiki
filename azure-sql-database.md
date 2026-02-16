@@ -264,6 +264,86 @@ Active geo-replication is configured per database, and only supports manual fail
 ## Azure SQL Failover Group o Auto-Failover Group
 🔝 [Volver al índice](#-índice)
 
+Un **Failover Group (FOG)** es un mecanismo de **Disaster Recovery (DR)** que replica bases de datos entre **dos regiones de Azure*** y permite realizar **failover automático o manual** si la región primaria falla.
+
+Un Failover Group es un mecanismo de DR entre regiones para Azure SQL PaaS que replica bases de datos y ofrece un endpoint único con failover automático o manual.
+
+- 👉 Solo aplica a:
+  - Azure SQL Database
+  - Azure SQL Managed Instance
+- ❌ No aplica a:
+  - SQL Server en VM
+  - SQL on-premises
+  - Azure Site Recovery
+
+### 🎯 ¿Qué problema resuelve?
+
+Si la región primaria deja de estar disponible:
+
+- Las bases ya están replicadas en otra región.
+- Se realiza failover.
+- La aplicación se reconecta automáticamente.
+- Se reduce el tiempo de caída.
+- 
+**Arquitectura básica**
+````
+Región A (Primary)
+   └── SQL Server lógico
+         └── Database(s)
+                ↓
+        Replicación asincrónica
+                ↓
+Región B (Secondary)
+   └── SQL Server lógico
+         └── Replica(s)
+
+````
+
+### Concepto clave: el Listener (endpoint único)
+
+El Failover Group crea un **endpoint global único**:
+``
+miapp-fog.database.windows.net
+``
+
+La aplicación siempre usa ese endpoint.
+
+Si ocurre un failover:
+- El endpoint apunta automáticamente al nuevo primario.
+- No hay que cambiar el connection string.
+👉 Esto es lo que lo hace transparente para la aplicación.
+
+### ⚙️ Tipo de replicación
+
+- Replicación asincrónica
+- RPO > 0 (posible mínima pérdida de datos)
+- RTO bajo (minutos)
+
+###  Tipos de failover
+
+1️⃣ Automático
+- Se define un periodo de gracia.
+- Si el primario no vuelve, se conmuta automáticamente.
+2️⃣ Manual
+- El administrador ejecuta el failover.
+
+### Qué puede proteger
+
+| Servicio             | Qué replica        |
+| -------------------- | ------------------ |
+| Azure SQL Database   | Una o varias bases |
+| SQL Managed Instance | Toda la instancia  |
+
+
+### 🧩 Diferencia con Alta Disponibilidad (HA)
+
+| Mecanismo           | Qué protege                      |
+| ------------------- | -------------------------------- |
+| Alta disponibilidad | Fallos dentro de la misma región |
+| Failover Group      | Caída completa de una región     |
+
+
+
 Ese sí:
 - Detecta caída regional.
 - Cambia automáticamente.
@@ -271,6 +351,7 @@ Ese sí:
 - Se configura a nivel de servidor lógico (Azure SQL Database).
 - Dentro del Failover Group puedes añadir varias bases de datos.
 - El failover se hace en bloque, todas juntas.
+
 
 
 Un Failover Group es un mecanismo de disaster recovery (DR) entre regiones para:
