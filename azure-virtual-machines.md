@@ -15,7 +15,7 @@ These are the recommended disk cache settings for data disks:
 
 
 
-## Availability Set
+## AZURE Availability Set
 
 | Concepto          | Protege contra                | Nivel                   |
 | ----------------- | ----------------------------- | ----------------------- |
