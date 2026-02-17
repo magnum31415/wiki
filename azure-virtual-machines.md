@@ -129,3 +129,214 @@ Esto cumple:
 
 **Nota: Azure no te garantiza exactamente “esta” tabla, pero sí el principio de “lo más equilibrado posible”. 
 Para el cálculo de planned maintenance, lo que manda es el UD con más VMs.**
+
+
+# ⚖ Availability Set vs Virtual Machine Scale Sets VMSS
+
+---
+
+# 🧠 Concepto básico
+
+Availability Set
+→ Alta disponibilidad básica para pocas VMs
+
+VM Scale Set
+→ Alta disponibilidad + escalado automático
+
+---
+
+# 📦 1️⃣ Availability Set
+
+📍 Qué es:
+Agrupa VMs para distribuirlas en distintos Fault Domains y Update Domains.
+
+📍 Qué hace:
+- Evita que todas las VMs caigan por mantenimiento o fallo físico.
+- No escala automáticamente.
+- No gestiona VMs como grupo dinámico.
+
+````mermaid
+flowchart TB
+
+    subgraph AVSET["Availability Set"]
+
+        subgraph FD1["Fault Domain 1"]
+            VM1[VM 1]
+            VM2[VM 2]
+        end
+
+        subgraph FD2["Fault Domain 2"]
+            VM3[VM 3]
+            VM4[VM 4]
+        end
+
+    end
+
+    FD1 --- FD2
+
+````
+
+📍 Pensado para:
+- 2–3 VMs manuales
+- Arquitectura clásica
+- Workloads estables
+
+📍 No permite:
+- Autoscaling
+- Gestión masiva
+- Escalado dinámico
+
+---
+
+# 📦 2️⃣ Virtual Machine Scale Sets VMSS
+
+📍 Qué es:
+Conjunto de VMs idénticas que se gestionan como una unidad.
+
+📍 Qué hace:
+- Escalado automático (horizontal)
+- Integración con Load Balancer
+- Distribución en zonas
+- Gestión centralizada
+
+Cuando creas un VM Scale Set puedes elegir:
+
+1️⃣ Regional (una sola zona implícita)  
+2️⃣ Zonal (una zona específica)  
+3️⃣ Multi-zone (distribuido entre varias Availability Zones)
+
+Depende de cómo lo configures.
+
+----mermaid
+flowchart LR
+
+    %% REGIONAL VMSS
+    subgraph REGIONAL_VMSS["VM Scale Set - Regional"]
+        direction TB
+        R1[Instancia VM 1]
+        R2[Instancia VM 2]
+        R3[Instancia VM 3]
+
+        R1 --- R2
+        R2 --- R3
+
+        RNote[Distribuidas en Fault Domains<br>Misma región<br>Misma zona implícita]
+    end
+
+    %% MULTI ZONE VMSS
+    subgraph MULTI_ZONE_VMSS["VM Scale Set - Multi Zone"]
+        direction TB
+        
+        subgraph Z1["Availability Zone 1"]
+            Z1A[VM]
+        end
+
+        subgraph Z2["Availability Zone 2"]
+            Z2A[VM]
+        end
+
+        subgraph Z3["Availability Zone 3"]
+            Z3A[VM]
+        end
+
+        Z1A --- Z2A
+        Z2A --- Z3A
+    end
+
+    %% Forzar layout horizontal
+    REGIONAL_VMSS --- MULTI_ZONE_VMSS
+````
+
+
+---
+
+## 📊 Modos posibles
+
+| Tipo de despliegue | Alta disponibilidad | Multi-AZ |
+|--------------------|--------------------|----------|
+| Regional | Fault Domains internos | ❌ |
+| Zonal | En una sola AZ | ❌ |
+| Multi-zone | Distribuido en varias AZ | ✅ |
+
+
+##📍 Pensado para:
+- Aplicaciones con picos de carga
+- Web frontends
+- Microservicios
+- Workloads cloud-native
+
+📍 Permite:
+- Autoscale con Azure Monitor
+- Escalar manual o automático
+- Rolling upgrades
+- Integración con AKS
+
+---
+
+# 📊 Comparativa clara
+
+| Característica | Availability Set | VM Scale Set |
+|---------------|-----------------|--------------|
+| Alta disponibilidad | ✅ | ✅ |
+| Fault Domains | ✅ | ✅ |
+| Update Domains | ✅ | ✅ |
+| Escalado automático | ❌ | ✅ |
+| Gestión como grupo | ❌ | ✅ |
+| Integración Load Balancer | Manual | Integrado |
+| Ideal para producción dinámica | ❌ | ✅ |
+| Soporta miles de VMs | ❌ | ✅ |
+
+---
+
+# 🎯 Preguntas típicas de examen
+
+Si el requisito dice:
+
+"Evitar downtime por mantenimiento"
+→ Availability Set
+
+"Escalar automáticamente según CPU"
+→ VM Scale Set
+
+"Aplicación web con picos de tráfico"
+→ VM Scale Set
+
+"Solo necesito 2 VMs redundantes"
+→ Availability Set
+
+---
+
+# 🧠 Diferencia arquitectónica clave
+
+Availability Set:
+Distribuye VMs que tú creas manualmente.
+
+Scale Set:
+Crea y gestiona automáticamente múltiples instancias idénticas.
+
+---
+
+# 🔄 Relación con AKS
+
+AKS usa internamente:
+
+→ VM Scale Sets para sus nodos.
+
+---
+
+# 📌 Regla mental examen
+
+Availability Set = Alta disponibilidad básica  
+Scale Set = Alta disponibilidad + Escalado automático  
+
+---
+
+# 🔥 Resumen ultra corto
+
+Availability Set:
+Evita caída simultánea.
+
+VM Scale Set:
+Evita caída + escala automáticamente.
+
+
