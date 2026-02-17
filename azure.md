@@ -44,4 +44,4 @@
 | **Failover Group**          | Grupo de conmutación por error entre regiones                 | Permite replicar bases entre regiones y hacer failover automático con endpoint único.                              |
 | **SAML**                    | Security Assertion Markup Language                            | Estándar XML para autenticación federada entre proveedor de identidad y aplicación. Basado en XML para SSO entre sistemas. Es sataetful, pesado , apps legacy /corporativas                               |
 | **JWT**                     | JSON Web Token                                                | Token compacto en formato JSON usado para autenticación y autorización basada en claims. Token ligero y firmado que contiene los claims del usaurio. Es stateless,  ligero/rápido, apis/,microservicos/cloud                           |
-|**NVA** | Network Virtual Appliance | |
+|**NVA** | Network Virtual Appliance | Un dispositivo de red tradicional (firewall, router, IDS…) pero en versión máquina virtual dentro de Azure.|
