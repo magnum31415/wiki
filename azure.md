@@ -18,6 +18,7 @@
 17. [Azure App Services](https://github.com/magnum31415/wiki/blob/main/azure-app-services.md)
 18. [Azure Logic Apps](https://github.com/magnum31415/wiki/blob/main/azure-logic-apps.md)
 19. [Azure Key Vault](https://github.com/magnum31415/wiki/blob/main/azure-key-vault.md)
+20. [Azure Hybrid Benefit](https://github.com/magnum31415/wiki/blob/main/azure-hybrid-benefit.md)
 
 
 
