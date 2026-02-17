@@ -12,6 +12,8 @@ Servicio PaaS basado en SQLServer totalmente gestionado
 - [Azure SQL Database Modelo DTU](#azure-sql-database-modelo-dtu)
   - [Tiers y niveles DTU](#tiers-y-niveles-dtu)
 
+- [Azure SQL Database – Modelo vCore](#azure-sql-database--modelo-vcore)
+
 - [Arquitectura de Azure SQL Database – Hyperscale](#arquitectura-de-azure-sql-database--hyperscale)
   - [🏗 Componentes principales](#-componentes-principales)
 
@@ -147,10 +149,100 @@ Se divide en tiers y cada tier tiene distintos niveles (SKUs).
 |              | P11         | 1750 | 4 TB             | Muy alta carga               |
 |              | P15         | 4000 | 4 TB             | Máximo rendimiento           |
 
+---
 
+# Azure SQL Database – Modelo vCore
+
+El modelo **vCore (Virtual Core)** separa explícitamente:
+
+- CPU (nº de vCores)
+- Memoria
+- Almacenamiento
+- Tipo de almacenamiento (remoto o local SSD según tier)
+
+Se divide en **Service Tiers**.
 
 ---
 
+## Service Tiers vCore
+
+| Service Tier        | Arquitectura                                   | Uso típico                           |
+|---------------------|-----------------------------------------------|--------------------------------------|
+| **General Purpose** | Compute separado del storage (remoto)         | Producción estándar                  |
+| **Business Critical** | Compute + almacenamiento local SSD         | OLTP crítico, baja latencia          |
+| **Hyperscale**      | Arquitectura distribuida (page servers)       | BD muy grandes (hasta 100 TB+)       |
+
+---
+
+# 📊 Tiers y niveles vCore (Single Database)
+
+## 🔹 General Purpose
+
+| vCores | Memoria aprox | Tamaño máximo BD | Equivalente DTU aprox | Uso típico |
+|--------|---------------|------------------|------------------------|------------|
+| 2      | ~10 GB       | 4 TB             | S2–S3                  | Producción media |
+| 4      | ~20 GB       | 4 TB             | S4                     | Producción media-alta |
+| 8      | ~40 GB       | 4 TB             | S6                     | Alta concurrencia |
+| 16     | ~80 GB       | 4 TB             | S9                     | Enterprise media |
+| 24–80  | Escalable    | 4 TB             | S12                    | Enterprise alta |
+
+✔ Almacenamiento remoto  
+✔ Alta disponibilidad incluida  
+❌ In-Memory OLTP  
+
+---
+
+## 🔹 Business Critical
+
+| vCores | Memoria aprox | Tamaño máximo BD | Equivalente DTU aprox | Uso típico |
+|--------|---------------|------------------|------------------------|------------|
+| 2      | ~10 GB       | 4 TB             | P1                     | Alta disponibilidad |
+| 4      | ~20 GB       | 4 TB             | P2                     | Workloads críticos |
+| 8      | ~40 GB       | 4 TB             | P4                     | Alto rendimiento |
+| 16     | ~80 GB       | 4 TB             | P6                     | Enterprise crítica |
+| 24–80  | Escalable    | 4 TB             | P11–P15                | Máximo rendimiento |
+
+✔ Almacenamiento local SSD  
+✔ Réplicas síncronas (Always On interno)  
+✔ RPO ≈ 0  
+✔ In-Memory OLTP  
+
+---
+
+## 🔹 Hyperscale
+
+| vCores | Memoria aprox | Tamaño máximo BD | Equivalente conceptual |
+|--------|---------------|------------------|------------------------|
+| 2–80   | Escalable     | 100 TB+          | No equivalente en DTU  |
+
+✔ Compute desacoplado del storage  
+✔ Múltiples réplicas de lectura  
+✔ Snapshots rápidos  
+✔ Escalado casi inmediato  
+
+---
+
+# 🧠 Equivalencia mental rápida
+
+| DTU       | vCore equivalente        |
+|------------|--------------------------|
+| Basic      | GP bajo                  |
+| Standard   | General Purpose          |
+| Premium    | Business Critical        |
+| —          | Hyperscale (solo vCore)  |
+
+---
+
+# 🎯 Regla mental AZ-305
+
+- Standard (DTU) → General Purpose  
+- Premium (DTU) → Business Critical  
+- Grandes bases → Hyperscale  
+- Azure Hybrid Benefit → Solo vCore  
+
+
+
+---
 ![azure-sql.png](./img/azure/azure-sql.png)
 
 #  Arquitectura de Azure SQL Database – Hyperscale
