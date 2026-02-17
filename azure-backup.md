@@ -168,6 +168,153 @@ Backup nativo de:
 Sin necesidad de agente.
 
 ---
+# 📋 1️⃣ Backup Policy
+
+Una **Backup Policy** define:
+
+> Cómo y cuándo se hacen los backups  
+> Cuánto tiempo se conservan
+
+Es un objeto reutilizable que se asocia a recursos.
+
+## Incluye:
+
+- Backup Schedule (frecuencia)
+- Retention Policy (retención)
+
+## Ejemplo:
+
+- Backup diario a las 22:00
+- Retención:
+  - 30 días
+  - 12 meses
+  - 5 años
+
+## Punto importante examen
+
+- Una policy puede aplicarse a múltiples recursos.
+- Cambiar la policy afecta a todos los recursos asociados.
+- No almacena datos, solo define configuración.
+
+---
+
+# ⏰ 2️⃣ Backup Schedule
+
+El **Backup Schedule** forma parte de la Backup Policy.
+
+Define:
+
+> Cuándo se ejecuta el backup
+
+Puede ser:
+
+- Diario
+- Semanal
+- (En algunos workloads) Horario
+
+Ejemplo:
+
+- Todos los días a las 23:00
+- Cada domingo a las 02:00
+
+⚠️ Importante:
+Schedule ≠ Retention  
+Uno define cuándo se ejecuta  
+El otro cuánto tiempo se guarda
+
+---
+
+# 🗂 3️⃣ Backup Logs
+
+Los **Backup Logs** permiten:
+
+- Ver si el backup fue exitoso
+- Detectar fallos
+- Auditar ejecuciones
+- Diagnosticar problemas
+
+Se pueden consultar en:
+
+- Recovery Services Vault
+- Azure Monitor
+- Log Analytics (si está habilitado)
+
+Información típica:
+
+- Inicio/fin del job
+- Estado (Completed / Failed)
+- Tamaño del backup
+- Duración
+
+---
+
+# 🏗 4️⃣ Backup Infrastructure
+
+La **Backup Infrastructure** es la arquitectura que hace posible el backup.
+
+Incluye:
+
+## 🔹 Recovery Services Vault
+Contenedor lógico donde se almacenan:
+
+- Backup policies
+- Backup jobs
+- Restore points
+- Configuración
+
+## 🔹 Backup Agents / Extensions
+
+Dependiendo del workload:
+
+- VM Extension (para Azure VMs)
+- MARS Agent (on-premises)
+- Azure Backup Server
+- SQL Backup Extension
+
+## 🔹 Storage gestionado por Azure
+
+- Azure gestiona almacenamiento
+- Replicación configurable:
+  - LRS
+  - GRS
+  - ZRS
+
+---
+
+# 🧠 Relación entre los conceptos
+
+Recurso (VM / SQL / Files)
+        ↓
+Backup Policy
+        ↓
+Backup Schedule
+        ↓
+Backup Job
+        ↓
+Recovery Services Vault
+        ↓
+Backup Logs
+
+---
+
+# 🎯 Puntos típicos de examen (AZ-104 / AZ-305)
+
+✔ Backup Policy define frecuencia + retención  
+✔ Schedule define cuándo  
+✔ Vault es obligatorio  
+✔ Backup no usa la subnet GatewaySubnet  
+✔ GRS permite restauración regional  
+
+---
+
+# 📌 Resumen rápido
+
+| Concepto | Qué es | Qué controla |
+|----------|--------|--------------|
+| Backup Policy | Configuración lógica | Frecuencia + Retención |
+| Backup Schedule | Parte de la policy | Momento de ejecución |
+| Backup Logs | Registro de ejecuciones | Estado y auditoría |
+| Backup Infrastructure | Arquitectura subyacente | Dónde y cómo se almacena |
 
 
 ---
