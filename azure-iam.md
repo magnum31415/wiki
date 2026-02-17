@@ -172,4 +172,145 @@ Data Plane = Acceso a datos reales
 
 ---
 
-Si quieres, te hago ahora un diagrama jerárquico tipo mapa mental visual que te lo deja grabado para el examen.
+# Control plane vs Data plane
+
+````mermaid
+flowchart LR
+
+    %% DATA PLANE
+    subgraph DATA_PLANE
+        direction TB
+        D1[Usuario / Aplicación]
+        D2[Servicio Azure<br>Storage / SQL / Service Bus]
+        D3[Datos<br>Blobs / Tablas / Filas / Mensajes]
+
+        D1 --> D2
+        D2 --> D3
+    end
+
+    %% CONTROL PLANE
+    subgraph CONTROL_PLANE
+        direction TB
+        C1[Usuario / Portal / CLI / ARM Template]
+        C2[Azure Resource Manager ARM]
+        C3[Recurso Azure<br>VM / Storage / VNet / SQL]
+
+        C1 --> C2
+        C2 --> C3
+    end
+
+    %% Forzar layout horizontal
+    DATA_PLANE --- CONTROL_PLANE
+
+````
+
+# 📦 ¿Cómo dar permisos de lectura en blobs (Data Plane) en Azure?
+
+Para permitir que alguien lea blobs dentro de una Storage Account debes usar:
+
+👉 Azure RBAC con roles de Data Plane
+
+NO basta con darle "Reader" en la Storage Account.
+
+---
+
+# 🧠 Paso 1: Entender el error típico
+
+Rol:
+Reader
+
+Resultado:
+✔ Puede ver la Storage Account
+❌ No puede leer los blobs
+
+Porque:
+Reader = Control Plane
+Leer blobs = Data Plane
+
+---
+
+# 🛠 Paso 2: Asignar rol correcto (Data Plane RBAC)
+
+Debes asignar uno de estos roles:
+
+- Storage Blob Data Reader → Solo lectura
+- Storage Blob Data Contributor → Leer y escribir
+- Storage Blob Data Owner → Control total sobre blobs
+
+---
+
+# 📍 Dónde se asigna
+
+Portal:
+
+Storage Account  
+→ Access Control (IAM)  
+→ Add role assignment  
+→ Seleccionar:
+
+Storage Blob Data Reader
+
+→ Asignar al usuario / grupo / Managed Identity
+
+---
+
+# 📌 Scope recomendado
+
+Puedes asignarlo en:
+
+- Nivel Storage Account
+- Nivel Resource Group
+- Nivel Subscription
+- Nivel Container específico (más granular)
+
+Para mínimo privilegio:
+Asignarlo a nivel de Container.
+
+---
+
+# 🔐 Alternativa: SAS Token
+
+También puedes dar acceso mediante:
+
+Shared Access Signature (SAS)
+
+Pero:
+- Es temporal
+- Es menos gobernable
+- No usa identidad Azure AD
+
+En entornos empresariales se recomienda:
+
+👉 Azure AD + RBAC
+
+---
+
+# 📊 Resumen claro
+
+| Necesidad | Qué hacer |
+|------------|------------|
+| Ver que existe la Storage Account | Reader |
+| Leer blobs | Storage Blob Data Reader |
+| Subir blobs | Storage Blob Data Contributor |
+| Control total blobs | Storage Blob Data Owner |
+
+---
+
+# 🎯 Pregunta típica examen
+
+"Un usuario tiene Reader pero no puede descargar blobs."
+
+Respuesta correcta:
+Debe asignarse Storage Blob Data Reader.
+
+---
+
+# 🧠 Regla mental
+
+Reader = Ver el recurso  
+Data Reader = Leer el contenido  
+
+---
+
+Si quieres, te explico también cuándo necesitas habilitar "Azure AD integration" en Storage para que esto funcione correctamente, que es otra trampa frecuente.
+
