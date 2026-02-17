@@ -1,0 +1,163 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+# Disaster Recovery
+
+# 📊 Azure Servicios Comunes vs Disaster Recovery Recomendado
+
+| Servicio Azure | Tipo | DR recomendado | Cómo funciona el DR | Notas clave examen |
+|---------------|------|----------------|----------------------|-------------------|
+| Virtual Machines (IaaS) | IaaS | Azure Site Recovery (ASR) | Replica discos a otra región y permite failover | DR real = replicación continua |
+| SQL Server en VM | IaaS | Always On AG + ASR | AG para HA, ASR para DR regional | HA ≠ DR |
+| Azure SQL Database (PaaS) | PaaS | Auto-Failover Group | Replica base a región secundaria | DR gestionado por plataforma |
+| Azure SQL Managed Instance | PaaS | Auto-Failover Group | Failover entre regiones | Similar a SQL DB pero a nivel instancia |
+| Azure Storage Account | PaaS | GRS / RA-GRS / GZRS | Replicación automática entre regiones | Elegir redundancia correcta |
+| Azure App Service | PaaS | Multi-region + Front Door | Despliegue en 2 regiones + balanceo global | Slots ≠ DR |
+| Azure Kubernetes Service (AKS) | PaaS | Multi-region + backup etcd | Cluster duplicado en otra región | No tiene DR automático nativo |
+| Azure Functions | Serverless | Multi-region deployment | Deploy en varias regiones + Front Door | Stateless facilita DR |
+| Azure Cosmos DB | PaaS | Multi-region replication | Replicación activa-activa opcional | SLA 99.999% multi-region |
+| Azure Virtual Network | IaaS Networking | Re-deploy + IaC | ARM/Bicep/Terraform para recrear | Networking no se replica automáticamente |
+| Azure Load Balancer | Networking | Re-deploy en región secundaria | Parte de arquitectura multi-región | Es regional |
+| Azure Application Gateway | Networking | Multi-region + Front Door | Gateway por región | WAF por región |
+| Azure Key Vault | PaaS | Geo-redundant (Standard/Premium) | Replicación automática | Managed HSM requiere diseño específico |
+| Microsoft Entra ID | SaaS | N/A (global service) | Servicio global Microsoft | No requiere DR del cliente |
+
+## Reglas mentales rápidas (AZ-305)
+
+- IaaS → Azure Site Recovery
+- SQL PaaS → Auto-Failover Group
+- Storage → Elegir redundancia correcta (GRS/GZRS)
+- Web/App → Multi-región + Front Door
+- Cosmos DB → Multi-region nativo
+- Entra ID → Servicio global (no diseñar DR)
+
+  # 🏗 DR en Azure – Modelo por 4 Niveles (Enfoque Arquitectónico AZ-305)
+
+---
+
+## 1️⃣ Región / Zona (Infraestructura física)
+
+Pregunta clave:
+> ¿Contra qué tipo de fallo me estoy protegiendo?
+
+| Nivel | Protege contra | Tecnología típica |
+|-------|---------------|------------------|
+| Locally Redundant | Fallo de hardware | LRS |
+| Zone-Redundant | Caída de una Availability Zone | Zone Redundancy |
+| Geo-Redundant | Caída regional | Geo-replication |
+| Multi-region activo | DR completo empresarial | Arquitectura activa-activa |
+
+🎯 Claves examen:
+- "Protect against zone-level failure" → Zone-Redundant  
+- "Protect against regional outage" → Geo-replication / Failover Group  
+
+---
+
+## 2️⃣ Plataforma (Compute Layer)
+
+Pregunta clave:
+> ¿Dónde corre mi aplicación?
+
+| Plataforma | DR típico |
+|------------|----------|
+| VM (IaaS) | Azure Site Recovery |
+| App Service | Deploy en región secundaria |
+| AKS | Cluster secundario en otra región |
+| Azure Functions | Re-deploy multi-región |
+
+🎯 Regla:
+- IaaS → necesitas configurar DR explícitamente (ASR).
+- PaaS → muchas veces el DR viene integrado.
+
+---
+
+## 3️⃣ Servicio (Servicio gestionado específico)
+
+Pregunta clave:
+> ¿El servicio ya incluye DR nativo?
+
+| Servicio | DR nativo |
+|----------|-----------|
+| Azure SQL Database | Failover Group |
+| Azure SQL Managed Instance | Auto-Failover Group |
+| Azure Storage | GRS / RA-GRS |
+| Cosmos DB | Multi-region writes |
+
+🎯 Clave examen:
+Antes de proponer ASR, revisa si el servicio ya tiene DR integrado.
+
+---
+
+## 4️⃣ Datos (Persistencia y recuperación)
+
+Pregunta clave:
+> ¿Puedo recuperar datos borrados o corruptos?
+
+| Mecanismo | Qué cubre | Impacto en RPO | Impacto en RTO |
+|------------|----------|---------------|---------------|
+| PITR | Restaurar a un punto exacto en el tiempo | Bajo (hasta el último log disponible) | Medio (minutos mientras restaura) |
+| LTR | Retención de backups durante años | Alto (depende del último backup almacenado) | Alto (restauración completa) |
+| Backup automático | Copias periódicas completas/diferenciales/log | Depende de frecuencia de backup | Medio |
+| Snapshots | Restauración rápida basada en snapshot | Bajo | Bajo (recuperación rápida) |
+
+---
+
+### 📌 Recordatorio clave
+
+| Concepto | Qué significa |
+|----------|--------------|
+| **RPO (Recovery Point Objective)** | Cuánta pérdida de datos es aceptable |
+| **RTO (Recovery Time Objective)** | Cuánto tiempo puede tardar en recuperarse |
+
+---
+
+⚠ DR ≠ Backup  
+
+- **DR** protege contra caída de infraestructura (región, zona, servidor).
+- **Backup** protege contra borrado accidental, corrupción o errores lógicos.
+- RPO y RTO son **objetivos de negocio**, no tecnologías.
+
+---
+
+# 🧠 Modelo mental completo
+
+````
+Infraestructura (zona/región)
+↓
+Compute (VM / App / AKS)
+↓
+Servicio (SQL / Storage / etc.)
+↓
+Datos (Backup / PITR / LTR)
+````
+
+
+Si falta una capa → la arquitectura está incompleta.
+
+---
+
+# 🎯 Ejemplo típico AZ-305
+
+Escenario:
+- Web App
+- Azure SQL
+- Requisito: minimizar downtime y pérdida de datos ante caída regional
+
+Solución por capas:
+
+1️⃣ Región → secundaria emparejada  
+2️⃣ Plataforma → Web App desplegada en ambas regiones  
+3️⃣ Servicio → Failover Group  
+4️⃣ Datos → PITR + LTR configurado  
+
+---
+
+# 🏁 Resumen ultra-rápido
+
+- Zona protege contra fallo local.
+- Región protege contra desastre regional.
+- Servicio puede tener DR nativo.
+- Backup protege contra pérdida lógica de datos.
+
+
+
+
