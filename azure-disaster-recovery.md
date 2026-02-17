@@ -159,6 +159,96 @@ Solución por capas:
 - Servicio puede tener DR nativo.
 - Backup protege contra pérdida lógica de datos.
 
+---
+
+# Availability Group (AG)
+
+**Un Availability Group (AG) es un sistema que mantiene una copia sincronizada de tu base de datos en otro servidor para que, 
+si el principal se cae, otro tome el control automáticamente sin que la aplicación lo note.**
+
+- Availability Grou es principalmente HA.
+- Auto-Failover Group es DR regional en PaaS.
+
+Sirve para:
+
+- Alta disponibilidad (HA)
+- Minimizar downtime
+- Evitar pérdida de datos (si es síncrono)
+
+````
+              La aplicación
+                    │
+                    ▼
+            ┌─────────────────┐
+            │   AG Listener   │  ← Dirección virtual (DNS)
+            └─────────┬───────┘
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+  ┌───────────────┐      ┌───────────────┐
+  │  SQL Server 1 │      │  SQL Server 2 │
+  │   (Primary)   │◄────►│  (Secondary)  │
+  │  Lee/Escribe  │      │  Copia en vivo│
+  └───────────────┘      └───────────────┘
+
+````
+
+- Si el **Primary** se cae:
+  - **Secondary** → se convierte en Primary
+  - La aplicación sigue usando el mismo Listener.
 
 
+Usado en:
+- SQL Server on-prem
+- SQL Server en Azure VM (IaaS)
 
+**Está pensado principalmente para: ✅ Alta disponibilidad (HA)**
+
+- Fallo de VM
+- Fallo de nodo
+- Failover en segundos
+- Puede ser síncrono → RPO ≈ 0
+
+**¿Puede usarse para DR?**
+Sí.
+Pero:
+ - Debes configurarlo tú entre regiones
+ - Es más complejo
+ - No es “automático PaaS”
+
+👉 AG = HA fuerte + DR posible pero manual/arquitectónico
+
+--- 
+
+#🔷 Auto-Failover Group (FOG)
+
+Usado en:
+- Azure SQL Database
+- Azure SQL Managed Instance
+
+**Está pensado para: ✅ DR entre regiones**
+
+- Replicación asincrónica
+- Endpoint único
+- Failover automático opcional
+- RPO > 0
+- RTO minutos
+
+**¿Es HA local?**
+- No.
+- La HA local ya viene integrada en el servicio PaaS.
+
+👉 FOG = DR regional gestionado por Azure
+
+| Tecnología          | Principal objetivo | Tipo de servicio |
+| ------------------- | ------------------ | ---------------- |
+| AG                  | HA (y opcional DR) | IaaS             |
+| Auto-Failover Group | DR regional        | PaaS             |
+
+
+- SQL Server en VM → AG
+- Azure SQL PaaS → Auto-Failover Group
+- RPO = 0 obligatorio → AG síncrono
+- DR sencillo entre regiones → Auto-Failover Group
+- AG protege el servidor.
+- Failover Group protege la región.
