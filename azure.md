@@ -22,6 +22,8 @@
 21. [Azure Recovery Services](https://github.com/magnum31415/wiki/blob/main/azure-reovery-services.md)
 22. [Azure Backup](https://github.com/magnum31415/wiki/blob/main/azure-backup.md)
 23. [Azure Disaster Recovery](https://github.com/magnum31415/wiki/blob/main/azure-disaster-recovery.md)
+24. [Azure CIDR](https://github.com/magnum31415/wiki/blob/main/azure-cidr.md)
+
 
 
 
