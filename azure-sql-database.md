@@ -6,26 +6,119 @@ Servicio PaaS basado en SQLServer totalmente gestionado
 ---
 # 📑 Índice
 
-1. [Azure SQL Database – Modelo DTU](#azure-sql-database–modelo-dtu)
-2. [Arquitectura Hyperscale](#arquitectura-de-azure-sql-database--hyperscale)
-3. [Funcionalidades](#funcionalidades)
-   - [Zone Redundancy](#azure-sql-database-with-zone-redundancy)
-   - [Geo-replication](#geo-replication)
-   - [Failover Group](#azure-sql-failover-group-o-auto-failover-group)
-   - [Availability Group](#availability-group-ag)
-   - [Tabla comparativa](#tabla-comparativa)
-4. [Mapa Jerárquico de Azure SQL](#mapa-jerárquico-de-azure-sql-servicios-y-modelos-de-compra---servicios-paas)
-5. [Guía de Selección PaaS](#guía-de-selección-de-azure-sql-según-requisitos-técnicos)
-6. [Tabla Completa Comparativa](#tabla-completa-agrupada-por-servicio)
-7. [PITR vs RPO vs RTO vs LTR](#comparativa-pitr-vs-rpo-vs-rto-vs-ltr)
-8. [Guía Completa Selección (IaaS + PaaS)](#guía-de-selección-de-azure-sql--según-requisitos-técnicos--)
-9. [DR](#dr)
-10. [Árbol de Herramientas de Migración](#-árbol-de-herramientas-de-migración-a-azure-sql)
-11. [Tabla comparativa herramientas migración Azure](#tabla-comparativa-herramientas-migracion-azure)
-12.  [Azure Data Studio (ADS) vs SQL Server Management Studio (SSMS)](#azure-data-studio-ads-vs-sql-server-management-studio-ssms)
+- [🔍 DTU vs vCore en Azure SQL](#-dtu-vs-vcore-en-azure-sql)
+
+
+- [Azure SQL Database Modelo DTU](#azure-sql-database-modelo-dtu)
+  - [Tiers y niveles DTU](#tiers-y-niveles-dtu)
+
+- [Arquitectura de Azure SQL Database – Hyperscale](#arquitectura-de-azure-sql-database--hyperscale)
+  - [🏗 Componentes principales](#-componentes-principales)
+
+- [Funcionalitats](#funcionalitats)
+
+- [Azure SQL Database with Zone Redundancy](#azure-sql-database-with-zone-redundancy)
+
+- [Geo-replication](#geo-replication)
+
+- [Azure SQL Failover Group o Auto-Failover Group](#azure-sql-failover-group-o-auto-failover-group)
+
+- [Availability Group (AG)](#availability-group-ag)
+
+- [Tabla comparativa](#tabla-comparativa)
+
+- [Mapa Jerárquico de Azure SQL (Servicios y Modelos de Compra) - Servicios PaaS](#mapa-jerárquico-de-azure-sql-servicios-y-modelos-de-compra---servicios-paas)
+
+- [Guía de Selección de Azure SQL según Requisitos Técnicos](#guía-de-selección-de-azure-sql-según-requisitos-técnicos)
+
+- [Tabla Completa Agrupada por Servicio](#tabla-completa-agrupada-por-servicio)
+
+- [Comparativa: PITR vs RPO vs RTO vs LTR](#comparativa-pitr-vs-rpo-vs-rto-vs-ltr)
+
+- [Guía de Selección de Azure SQL según Requisitos Técnicos - IaaS vs PaaS](#guía-de-selección-de-azure-sql-según-requisitos-técnicos--)
+
+- [DR](#dr)
+
+- [🌳 Árbol de Herramientas de Migración a Azure SQL](#-árbol-de-herramientas-de-migración-a-azure-sql)
+
+- [Tabla comparativa herramientas migracion azure](#tabla-comparativa-herramientas-migracion-azure)
+
+- [Azure Data Studio (ADS) vs SQL Server Management Studio (SSMS)](#azure-data-studio-ads-vs-sql-server-management-studio-ssms)
+
 
 
 ---
+# 🔍 DTU vs vCore en Azure SQL
+
+Azure SQL Database ofrece **dos modelos de compra** para dimensionar rendimiento:
+
+- **DTU (Database Transaction Unit)** → Modelo simplificado
+- **vCore (Virtual Core)** → Modelo detallado y flexible
+
+---
+
+## 📊 Comparativa rápida
+
+| Característica | DTU | vCore |
+|---------------|------|-------|
+| Modelo | Unidad combinada (CPU + RAM + IO) | CPU y memoria separadas |
+| Transparencia de recursos | ❌ No visible | ✅ vCores y RAM explícitos |
+| Escalabilidad | Por niveles (Basic, S0, S1…) | Ajustas nº de vCores |
+| Flexibilidad | Baja | Alta |
+| Azure Hybrid Benefit | ❌ No | ✅ Sí |
+| Reserved Capacity | ❌ No | ✅ Sí |
+| Ideal para | Workloads pequeños/medios | Producción y cargas críticas |
+
+---
+
+## 🧠 ¿Qué es DTU?
+
+DTU es una unidad abstracta que combina:
+
+- CPU
+- Memoria
+- IO
+
+Microsoft define niveles cerrados:
+- Basic
+- Standard (S0, S1, S2…)
+- Premium (P1, P2…)
+
+👉 Más simple, menos control.
+
+---
+
+## 🧠 ¿Qué es vCore?
+
+vCore te permite elegir explícitamente:
+
+- Número de CPUs virtuales
+- Memoria asignada
+- Tipo de almacenamiento
+
+Permite además:
+- Azure Hybrid Benefit (usar licencias propias)
+- Reserved Capacity (ahorro)
+- Mayor previsibilidad de rendimiento
+
+👉 Modelo recomendado en entornos empresariales.
+
+---
+
+## 🎯 Regla mental AZ-305
+
+- “Modelo simple y económico” → **DTU**
+- “Control granular de recursos” → **vCore**
+- “Uso de licencias propias” → **vCore**
+- “Workload crítico / producción” → **vCore**
+
+---
+
+## 🏁 Resumen en una frase
+
+**DTU = modelo simple y cerrado.**  
+**vCore = modelo flexible, optimizable y empresarial.**
+
 # Azure SQL Database Modelo DTU
 
 El modelo **DTU (Database Transaction Unit)** combina en una sola métrica:
