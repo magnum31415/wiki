@@ -828,11 +828,35 @@ Empresa financiera:
 | **AD FS** (Federation Services) | En AD on-prem vía federación | Infraestructura AD FS completa (farm + WAP + certificados) | Depende del diseño on-prem | Alta | Requisitos avanzados (smart card, claims personalizadas) | ❌ Más complejo y costoso |
 
 ---
+# Métodos de autenticación híbrida
 
-# 🧠 Resumen conceptual
+Son **métodos de autenticación híbrida** que permiten a usuarios de un Active Directory on-premises autenticarse en Microsoft Entra ID (Azure AD).
+
+Se usan cuando una organización tiene:
+
+- Active Directory local
+- Microsoft Entra ID en la nube
+- Identidades sincronizadas con Azure AD Connect
+
 
 ## 🔹 PHS – Password Hash Synchronization
 
+**Qué es:**  
+Método donde el hash de la contraseña del AD on-prem se sincroniza a Microsoft Entra ID.
+
+**Cómo funciona:**
+- El usuario se autentica directamente contra Entra ID.
+- No depende del AD on-prem para validar la contraseña.
+
+**Ventajas:**
+- Más simple
+- Más resiliente
+- Funciona incluso si el AD on-prem está caído
+- Soporta Conditional Access, Identity Protection y CAE
+
+👉 Es la opción recomendada en la mayoría de escenarios.
+
+**Resumen**
 - Sincroniza el hash de la contraseña (no texto plano).
 - Autenticación se realiza en Microsoft Entra ID.
 - No depende del AD on-prem para login.
@@ -847,9 +871,31 @@ Empresa financiera:
 
 ## 🔹 PTA – Pass-Through Authentication
 
+**Qué es:**  
+Método donde la validación de la contraseña ocurre en el AD on-prem.
+
+**Cómo funciona:**
+- Entra recibe el login.
+- Reenvía la validación a un agente on-prem.
+- El AD valida la contraseña.
+
+**Importante:**
+- No almacena la contraseña en la nube.
+- Aplica las políticas de seguridad del AD local.
+- Si el AD on-prem no está disponible, no hay autenticación.
+
+👉 Se usa cuando no se permite sincronizar hashes.
+
+**Resumen**
 - La contraseña no se almacena en Azure.
 - Entra envía la validación a un agente on-prem.
 - Si el AD on-prem no está disponible, no hay autenticación.
+- AD security and password policies can be enforced.
+
+❌ No implica:
+- Sincronización bidireccional de credenciales.
+- Leak credential report.
+- Que las credenciales se almacenen en Entra ID.
 
 👉 Útil cuando la política prohíbe sincronizar hashes.
 
@@ -857,6 +903,26 @@ Empresa financiera:
 
 ## 🔹 AD FS – Federation Services
 
+**Qué es:**  
+Modelo de autenticación federada.
+
+**Cómo funciona:**
+- Entra redirige al usuario al servidor AD FS on-prem.
+- AD FS autentica y devuelve un token.
+
+**Permite:**
+- Smart Cards
+- Claims personalizadas
+- Autenticación avanzada específica
+
+**Desventaja:**
+- Infraestructura compleja
+- Mayor mantenimiento
+- Dependencia total del entorno on-prem
+
+👉 Solo recomendable si hay requisitos avanzados que PHS/PTA no cubren.
+
+**Resumen**
 - Autenticación completamente federada.
 - Entra redirige al usuario al entorno AD FS.
 - Permite:
