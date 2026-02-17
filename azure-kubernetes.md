@@ -1,7 +1,46 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+# 📑 Índice
+
+
+
+## 🐳 Azure Kubernetes & Contenedores
+
+- [Azure Kubernetes](#azure-kubernetes)
+- [Azure Container Registry (ACR)](#azure-container-registry-acr)
+- [Azure Kubernetes Service (AKS)](#azure-kubernetes-service-aks)
+
+---
+
+## 📦 Azure Container Registry (ACR)
+
+- [Tiers de Azure Container Registry](#-tiers-de-azure-container-registry)
+- [Diferencia conceptual rápida](#-diferencia-conceptual-rápida)
+- [¿Qué es Geo-replication?](#-qué-es-geo-replication)
+- [Seguridad en ACR](#-seguridad-en-acr)
+- [Preguntas típicas de examen](#-preguntas-típicas-de-examen)
+- [Resumen ultra rápido examen](#-resumen-ultra-rápido-examen)
+
+---
+
+## ☸ Azure Kubernetes Service (AKS)
+
+- [Escalado en AKS](#-1️⃣-escalado-autoscaling)
+- [Cluster Autoscaler](#cluster-autoscaler)
+- [HPA (Horizontal Pod Autoscaler)](#-1️⃣-escalado-autoscaling)
+- [KEDA](#-1️⃣-escalado-autoscaling)
+- [VPA (Vertical Pod Autoscaler)](#-1️⃣-escalado-autoscaling)
+- [Virtual Nodes](#-1️⃣-escalado-autoscaling)
+- [Azure Arc-enabled Kubernetes](#-2️⃣-gobernanza-y-gestión-híbrida)
+
+---
+
+## 🚀 Flujo CI/CD y ejecución
+
+- [Flujo típico CI/CD](#-flujo-típico-cicd)
+- [¿Dónde se ejecutan las imágenes?](#-vas-a-ejecutar-contenedores-en-azure)
+
 # Azure Kubernetes 
-
-
 ## ¿Vas a ejecutar contenedores en Azure?
 ````
 ¿Vas a ejecutar contenedores en Azure?
@@ -310,3 +349,115 @@ Azure Kubernetes Service (AKS)
 
 ````
 ### Cluster Autoscaler
+
+# 📦 Azure Container Registry (ACR) – Tiers y Resumen Examen
+
+Azure Container Registry es el servicio privado de Azure para almacenar imágenes Docker y artefactos OCI.
+
+---
+
+# 📊 Tiers de Azure Container Registry
+
+| Característica | Basic | Standard | Premium |
+|---------------|--------|----------|----------|
+| Uso típico | Dev/Test | Producción pequeña | Producción empresarial |
+| Webhooks | ❌ | ✅ | ✅ |
+| Geo-replication | ❌ | ❌ | ✅ |
+| Zone redundancy | ❌ | ❌ | ✅ |
+| Private Link | ❌ | ❌ | ✅ |
+| Network rules (Firewall) | ❌ | ❌ | ✅ |
+| Customer-managed keys (CMK) | ❌ | ❌ | ✅ |
+| Content trust | ❌ | ❌ | ✅ |
+| Mayor throughput | Bajo | Medio | Alto |
+| SLA más alto | ❌ | ❌ | ✅ |
+
+---
+
+# 🧠 Diferencia conceptual rápida
+
+## 🔹 Basic
+- Para pruebas
+- Sin características de red avanzada
+- Sin replicación
+
+## 🔹 Standard
+- Añade webhooks
+- Mejor rendimiento
+- No tiene red privada avanzada
+
+## 🔹 Premium
+- Multi-región (Geo-replication)
+- Integración con Private Link
+- Seguridad avanzada
+- Alto rendimiento
+- Soporta escenarios empresariales
+
+---
+
+# 🌍 ¿Qué es Geo-replication?
+
+Permite replicar el registry en múltiples regiones.
+
+Beneficios:
+- Baja latencia
+- Alta disponibilidad regional
+- Cumplimiento normativo
+
+Solo disponible en **Premium**.
+
+---
+
+# 🔐 Seguridad en ACR
+
+Opciones de autenticación:
+
+- Azure AD (Microsoft Entra ID)
+- Managed Identity
+- Service Principal
+- Admin user (no recomendado en producción)
+
+---
+
+# 🎯 Preguntas típicas de examen
+
+### ❓ Necesitas replicar imágenes en varias regiones
+→ Premium
+
+### ❓ Necesitas acceso privado desde VNet
+→ Premium (Private Link)
+
+### ❓ Solo entorno dev simple
+→ Basic
+
+### ❓ Necesitas webhooks
+→ Standard o Premium
+
+---
+
+# 📌 Resumen ultra rápido examen
+
+| Si el requisito menciona… | Tier correcto |
+|---------------------------|---------------|
+| Multi-región | Premium |
+| Private Endpoint | Premium |
+| Firewall | Premium |
+| Solo pruebas | Basic |
+| Webhooks | Standard |
+
+---
+
+# 🧠 Regla mental
+
+Basic = laboratorio  
+Standard = producción simple  
+Premium = enterprise real  
+
+---
+
+Si quieres, puedo añadir también la diferencia entre:
+
+ACR vs Docker Hub vs Azure Container Instances  
+que suele aparecer mezclado en escenarios AZ-305.
+
+
+
