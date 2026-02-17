@@ -422,6 +422,43 @@ Servicio central de monitorización en Azure.
   - Storage
   - Apps
   - Recursos Azure en general
+    
+En Azure Monitor las alertas se construyen con dos componentes principales:
+
+- **Alert Rule** → Detecta una condición
+  - "Si ocurre X condición → dispara una alerta"
+- **Action Group** → Define qué hacer cuando se cumple
+
+###  Componentes de una Alert Rule
+
+| Componente | Función |
+|------------|----------|
+| Scope | Qué recurso(s) se monitorizan |
+| Condition | Qué métrica o evento dispara la alerta |
+| Action Group | Qué acciones ejecutar |
+
+
+### 🔎 Tipos de Alert Rules
+
+#### 1️⃣ Metric Alert
+- Basadas en métricas numéricas
+- Evaluación casi en tiempo real
+- No requiere Log Analytics
+
+Ejemplo:
+CPU > 80% durante 5 minutos
+
+---
+
+#### 2️⃣ Log Alert
+- Basadas en consultas KQL
+- Requieren Log Analytics Workspace
+- Muy flexibles
+
+Ejemplo:
+```kql
+AzureActivity
+| where ActivityStatus == "Failed"
 
 ````
 Azure Monitor
