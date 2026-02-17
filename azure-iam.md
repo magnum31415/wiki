@@ -1,5 +1,41 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+# 📑 Índice
+
+- [Comparativa Completa Seguridad y Control en Azure](#-comparativa-completa-seguridad-y-control-en-azure)
+
+## 🔐 Modelos de Control
+
+- [Azure RBAC IAM](#1️⃣-azure-rbac-iam)
+- [Microsoft Entra ID Roles](#2️⃣-microsoft-entra-id-roles-antes-azure-ad-roles)
+- [Data Plane RBAC](#3️⃣-data-plane-rbac)
+- [Azure Policy](#4️⃣-azure-policy)
+- [Resource Locks](#5️⃣-resource-locks)
+- [Azure Access Policies](#6️⃣-azure-access-policies)
+
+## 📊 Comparativas y Ejemplos
+
+- [Comparativa Visual](#-comparativa-visual)
+- [Ejemplo completo práctico](#-ejemplo-completo-práctico)
+- [Regla mental examen](#-regla-mental-examen)
+- [La clave para no confundirte](#-la-clave-para-no-confundirte)
+
+## 🧠 Arquitectura
+
+- [Control plane vs Data plane](#control-plane-vs-data-plane)
+
+## 📦 Data Plane práctico
+
+- [Cómo dar permisos de lectura en blobs](#-cómo-dar-permisos-de-lectura-en-blobs-data-plane-en-azure)
+- [Paso 1 Entender el error típico](#-paso-1-entender-el-error-típico)
+- [Paso 2 Asignar rol correcto](#-paso-2-asignar-rol-correcto-data-plane-rbac)
+- [Dónde se asigna](#-dónde-se-asigna)
+- [Scope recomendado](#-scope-recomendado)
+- [Alternativa SAS Token](#-alternativa-sas-token)
+- [Resumen claro](#-resumen-claro)
+- [Pregunta típica examen](#-pregunta-típica-examen)
+- [Regla mental](#-regla-mental)
+
 # 🔐 Comparativa Completa: Seguridad y Control en Azure
 
 ---
