@@ -459,5 +459,158 @@ Si quieres, puedo añadir también la diferencia entre:
 ACR vs Docker Hub vs Azure Container Instances  
 que suele aparecer mezclado en escenarios AZ-305.
 
+---
+
+# 🔷 ¿Qué es Azure Workload Identity?
+
+**Azure Workload Identity permite que un pod de AKS se autentique directamente en Microsoft Entra ID sin usar secretos ni credenciales almacenadas.**
+
+**Azure Workload Identity = identidad segura por pod en AKS sin secretos.**
+
+| Método                          | Identidad por pod | Usa secretos | Recomendado |
+| ------------------------------- | ----------------- | ------------ | ----------- |
+| Service Principal               | ❌                 | ✅            | No          |
+| Managed Identity nodo           | ❌                 | ❌            | Limitado    |
+| Azure AD Pod Identity (antiguo) | ⚠️                | ❌            | Deprecado   |
+| **Azure Workload Identity**     | ✅                 | ❌            | ✅ Sí        |
+
+## 🔎 ¿Qué problema resuelve?
+
+Antes, en AKS:
+- Se usaban Service Principals
+- O Managed Identity del nodo
+- O secretos en Kubernetes
+Problemas:
+- Credenciales almacenadas
+- Todos los pods comparten identidad
+- No hay granularidad por microservicio
+
+Riesgo de seguridad
+
+## ✅ Qué hace Azure Workload Identity
+
+Permite:
+- Asignar identidad Entra ID a cada pod
+- Autenticación basada en federación OIDC
+- Sin secretos almacenados
+- Permisos RBAC independientes
+Cada pod puede:
+- Acceder a Key Vault
+- Acceder a Cosmos DB
+- Acceder a Storage
+- Usar RBAC
+- Generar logs auditables
+
+
+````
+Pod en AKS
+   ↓
+Service Account Kubernetes
+   ↓
+Token OIDC firmado por AKS
+   ↓
+Microsoft Entra ID (federation)
+   ↓
+Access token para recurso Azure
+
+````
+
+No hay:
+- Password
+- Secret
+- Certificado almacenado
+
+## 🔐 Ventajas clave
+
+- Principio de mínimo privilegio
+- Auditoría granular
+- Sin credenciales hardcoded
+- Integración nativa con Entra ID
+- Seguridad cloud-native
+
+##🎯 Cuándo usarlo (examen AZ-305)
+
+Si ves:
+- AKS
+- Microservicios
+- Acceso a Key Vault / Storage / Cosmos
+- Least privilege
+- No secrets
+👉 Respuesta correcta: Azure Workload Identity
+
+
+## 🧠 Respuesta clara
+
+**Azure Workload Identity NO es un servicio independiente.**  
+No es un rol.  
+No es un recurso que creas directamente en el portal.
+
+👉 Es un **mecanismo de federación de identidad** entre AKS y Microsoft Entra ID.
+
+---
+
+# 🔎 Entonces, ¿qué es realmente?
+
+Es una **técnica de autenticación basada en OIDC (OpenID Connect Federation)** que permite que un pod en AKS obtenga un token de acceso de Microsoft Entra ID sin usar secretos.
+
+No es un servicio como Key Vault o Cosmos DB.
+
+---
+
+# 🏗 Componentes reales que intervienen
+
+Cuando implementas Azure Workload Identity, estás combinando:
+
+## En AKS:
+- OIDC issuer habilitado en el cluster
+- Service Account de Kubernetes anotada
+
+## En Microsoft Entra ID:
+- Managed Identity (normalmente User Assigned)
+- Federated Identity Credential asociada
+
+## En Azure:
+- Asignaciones RBAC sobre los recursos (Key Vault, Cosmos, etc.)
+
+---
+
+# 📦 Clasificación correcta
+
+| ¿Qué es? | Respuesta |
+|-----------|-----------|
+| Servicio Azure independiente | ❌ No |
+| Rol RBAC | ❌ No |
+| Recurso con SKU | ❌ No |
+| Técnica de autenticación | ✅ Sí |
+| Mecanismo de federación OIDC | ✅ Sí |
+| Feature integrada de AKS + Entra ID | ✅ Sí |
+
+---
+
+# 🔁 Flujo simplificado
+
+````
+Pod en AKS
+↓
+Service Account
+↓
+Token OIDC del cluster
+↓
+Federación con Entra ID
+↓
+Token de acceso para recurso Azure
+````
+
+
+No hay:
+- Password
+- Secret
+- Certificado almacenado
+
+---
+
+# 🎯 Definición tipo examen
+
+> Azure Workload Identity es un mecanismo de federación OIDC que permite a los pods de AKS autenticarse en Microsoft Entra ID usando una identidad administrada sin almacenar secretos.
 
 
