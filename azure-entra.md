@@ -3,75 +3,66 @@
 # 📚 Fundamentos de identidad, suscripciones y roles en Azure
 
 ---
+
 # 📑 Índice
 
-## 📊 Resumen conceptual
-- [Tabla resumen conceptual](#-tabla-resumen-conceptual)
-
----
-
-## 💳 Tipos de Licencias en Azure
+- [📊 Tabla resumen conceptual](#-tabla-resumen-conceptual)
 - [Tipos de Licencias en Azure](#tipos-de-licencias-en-azure)
-  - [Microsoft Entra ID](#1️⃣-microsoft-entra-id-antes-azure-ad)
-  - [Enterprise Mobility + Security (EMS)](#2️⃣-enterprise-mobility--security-ems)
-  - [Microsoft Defender](#3️⃣-microsoft-defender)
-  - [Tipos de Suscripción Azure](#4️⃣-tipos-de-suscripción-azure)
-  - [Resumen Comparativo](#-resumen-comparativo)
+  - [1️⃣ Microsoft Entra ID](#1️⃣-microsoft-entra-id-antes-azure-ad)
+    - [Free](#-free)
+    - [P1 (Premium P1)](#-p1-premium-p1)
+    - [P2 (Premium P2)](#-p2-premium-p2)
+  - [2️⃣ Enterprise Mobility + Security (EMS)](#2️⃣-enterprise-mobility--security-ems)
+    - [EMS E3](#-ems-e3)
+    - [EMS E5](#-ems-e5)
+  - [3️⃣ Microsoft Defender](#3️⃣-microsoft-defender)
+    - [Defender for Cloud](#-defender-for-cloud)
+    - [Defender for Endpoint](#-defender-for-endpoint)
+  - [4️⃣ Tipos de Suscripción Azure](#4️⃣-tipos-de-suscripción-azure)
+    - [Pay-As-You-Go](#-pay-as-you-go)
+    - [Enterprise Agreement (EA)](#-enterprise-agreement-ea)
+    - [Microsoft Customer Agreement (MCA)](#-microsoft-customer-agreement-mca)
+    - [Cloud Solution Provider (CSP)](#-cloud-solution-provider-csp)
 
----
+- [📌 Resumen Comparativo](#-resumen-comparativo)
 
-## 🏢 Estructura organizativa en Azure
 - [Microsoft Entra tenant](#microsoft-entra-tenant)
 - [Azure Subscription](#azure-subscription)
 - [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
-
----
-
-## 🔐 Roles y permisos
 - [Tipos de roles en Azure](#tipos-de-roles-en-azure)
   - [Diferencia clave examen AZ-305](#-diferencia-clave-examen-az-305)
   - [Roles que NO son RBAC](#roles-que-no-son-rbac-azure-resource-manager)
   - [Azure RBAC Roles (Control Plane)](#azure-rbac-roles-control-plane)
   - [Custom Roles](#2️⃣-custom-roles)
-  - [Microsoft Entra Roles (nivel identidad)](#3️⃣-microsoft-entra-roles-nivel-identidad)
-- [Scope donde se asignan roles](#scope-donde-se-asignan-roles)
-- [Diferencia crítica para AZ-305](#diferencia-crítica-para-az-305)
+  - [Microsoft Entra Roles](#3️⃣-microsoft-entra-roles-nivel-identidad)
+  - [Scope donde se asignan roles](#scope-donde-se-asignan-roles)
+  - [Diferencia crítica para AZ-305](#diferencia-crítica-para-az-305)
 
----
+- [🔐 Microsoft Entra ID – Conceptos clave](#-microsoft-entra-id--conceptos-clave-de-autenticación-y-acceso)
+  - [Continuous Access Evaluation (CAE)](#continuous-access-evaluation-cae)
+  - [Conditional Access Policies (CAP)](#conditional-access-policies-cap)
+  - [OpenID Connect (OIDC)](#openid-connect-oidc)
+  - [Multi-Factor Authentication (MFA)](#multi-factor-authentication-mfa)
+  - [Access Reviews](#access-reviews)
+  - [Azure AD Enterprise Applications](#azure-ad-enterprise-applications)
+  - [Azure AD Application Proxy](#azure-ad-application-proxy)
 
-## 🔐 Autenticación y acceso (Microsoft Entra ID)
-- [Continuous Access Evaluation (CAE)](#continuous-access-evaluation-cae)
-- [Conditional Access Policies (CAP)](#conditional-access-policies-cap)
-- [OpenID Connect (OIDC)](#openid-connect-oidc)
-- [Multi-Factor Authentication (MFA)](#multi-factor-authentication-mfa)
-- [Access Reviews](#access-reviews)
-- [Azure AD Enterprise Applications](#azure-ad-enterprise-applications)
-- [Azure AD Application Proxy](#azure-ad-application-proxy)
-- [Resumen rápido para examen](#-resumen-rápido-para-examen)
+- [🔐 Microsoft Entra ID Governance](#-microsoft-entra-id-governance)
+  - [Azure Service: Microsoft Entra ID Governance](#-azure-service-microsoft-entra-id-governance)
+  - [Feature: Access Reviews](#-feature-access-reviews)
 
----
+- [1️⃣ Microsoft Entra ID (Identity Provider)](#1️⃣-microsoft-entra-id-identity-provider---teoría-resumida-oauth-20--entra-id--web-api)
+- [2️⃣ OAuth 2.0 (Autorización)](#2️⃣-oauth-20-autorización)
+- [3️⃣ Access Token (Bearer Token)](#3️⃣-access-token-bearer-token)
 
-## 🛡 Identity Governance
-- [Microsoft Entra ID Governance](#-microsoft-entra-id-governance)
-- [Feature: Access Reviews (Governance)](#-feature-access-reviews)
-
----
-
-## 🔑 OAuth 2.0 y autenticación moderna
-- [Microsoft Entra ID (Identity Provider)](#1️⃣-microsoft-entra-id-identity-provider---teoría-resumida-oauth-20--entra-id--web-api)
-- [OAuth 2.0 (Autorización)](#2️⃣-oauth-20-autorización)
-- [Access Token (Bearer Token)](#3️⃣-access-token-bearer-token)
-
----
-
-## 🚨 Privileged Identity Management
 - [Privileged Identity Management (PIM)](#privileged-identity-management-pim)
-  - [¿Para qué sirve?](#-para-qué-sirve)
-  - [Qué controla PIM](#-qué-controla-pim)
-  - [Problema que resuelve](#-problema-que-resuelve)
-  - [Ejemplo real](#-ejemplo-real)
-  - [Funcionalidades clave](#-funcionalidades-clave)
 
+- [📊 Métodos de autenticación híbrida](#-métodos-de-autenticación-híbrida-en-microsoft-entra-id)
+- [¿Qué es Azure AD Connect?](#qué-es-azure-ad-connect)
+- [Métodos de autenticación híbrida](#métodos-de-autenticación-híbrida)
+  - [PHS – Password Hash Synchronization](#-phs--password-hash-synchronization)
+  - [PTA – Pass-Through Authentication](#-pta--pass-through-authentication)
+  - [AD FS – Federation Services](#-ad-fs--federation-services)
 
 
 
@@ -828,6 +819,66 @@ Empresa financiera:
 | **AD FS** (Federation Services) | En AD on-prem vía federación | Infraestructura AD FS completa (farm + WAP + certificados) | Depende del diseño on-prem | Alta | Requisitos avanzados (smart card, claims personalizadas) | ❌ Más complejo y costoso |
 
 ---
+# ¿Qué es Azure AD Connect?
+
+**Azure AD Connect** (ahora llamado **Microsoft Entra Connect**) es la herramienta que se instala en un servidor **on-premises** para sincronizar Active Directory con Microsoft Entra ID (Azure AD).
+
+ **🎯 Resumen en una frase**  Azure AD Connect es el servicio on-prem que sincroniza identidades entre Active Directory local y Microsoft Entra ID en la nube.
+
+ **🧠 Importante para examen AZ-305**
+
+- Azure AD Connect = puente entre AD on-prem y Entra
+- Es necesario en entornos híbridos
+- Permite PHS, PTA o federación
+- No es obligatorio en entornos cloud-only
+
+---
+
+## 🏗 ¿Dónde se instala?
+
+Se instala en:
+
+- Un servidor Windows dentro del dominio on-prem
+- Unido al Active Directory local
+- Con conectividad hacia Internet (saliente hacia Azure)
+- No se instala en Azure.
+- No es un servicio SaaS.
+- Es un componente on-prem.
+
+
+## 🔄 ¿Qué hace exactamente?
+
+Permite:
+
+### 1️⃣ Sincronización de identidades
+- Usuarios
+- Grupos
+- Contactos
+
+AD → Microsoft Entra ID
+
+### 2️⃣ Sincronización de contraseñas (según método)
+
+Dependiendo del modelo elegido:
+
+| Método | Qué hace |
+|--------|----------|
+| PHS | Sincroniza hash de contraseña |
+| PTA | No sincroniza hash, valida contra AD |
+| AD FS | Autenticación federada |
+
+### 3️⃣ Writeback (opcional)
+
+Permite sincronización inversa:
+
+- Password Writeback
+- Group Writeback
+- Device Writeback
+
+Microsoft Entra ID → AD
+
+
+
 # Métodos de autenticación híbrida
 
 Son **métodos de autenticación híbrida** que permiten a usuarios de un Active Directory on-premises autenticarse en Microsoft Entra ID (Azure AD).
