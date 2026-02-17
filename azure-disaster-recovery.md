@@ -4,22 +4,23 @@
 
 # 📊 Azure Servicios Comunes vs Disaster Recovery Recomendado
 
-| Servicio Azure | Tipo | DR recomendado | Cómo funciona el DR | Notas clave examen |
-|---------------|------|----------------|----------------------|-------------------|
-| Virtual Machines (IaaS) | IaaS | Azure Site Recovery (ASR) | Replica discos a otra región y permite failover | DR real = replicación continua |
-| SQL Server en VM | IaaS | Always On AG + ASR | AG para HA, ASR para DR regional | HA ≠ DR |
-| Azure SQL Database (PaaS) | PaaS | Auto-Failover Group | Replica base a región secundaria | DR gestionado por plataforma |
-| Azure SQL Managed Instance | PaaS | Auto-Failover Group | Failover entre regiones | Similar a SQL DB pero a nivel instancia |
-| Azure Storage Account | PaaS | GRS / RA-GRS / GZRS | Replicación automática entre regiones | Elegir redundancia correcta |
-| Azure App Service | PaaS | Multi-region + Front Door | Despliegue en 2 regiones + balanceo global | Slots ≠ DR |
-| Azure Kubernetes Service (AKS) | PaaS | Multi-region + backup etcd | Cluster duplicado en otra región | No tiene DR automático nativo |
-| Azure Functions | Serverless | Multi-region deployment | Deploy en varias regiones + Front Door | Stateless facilita DR |
-| Azure Cosmos DB | PaaS | Multi-region replication | Replicación activa-activa opcional | SLA 99.999% multi-region |
-| Azure Virtual Network | IaaS Networking | Re-deploy + IaC | ARM/Bicep/Terraform para recrear | Networking no se replica automáticamente |
-| Azure Load Balancer | Networking | Re-deploy en región secundaria | Parte de arquitectura multi-región | Es regional |
-| Azure Application Gateway | Networking | Multi-region + Front Door | Gateway por región | WAF por región |
-| Azure Key Vault | PaaS | Geo-redundant (Standard/Premium) | Replicación automática | Managed HSM requiere diseño específico |
-| Microsoft Entra ID | SaaS | N/A (global service) | Servicio global Microsoft | No requiere DR del cliente |
+| Servicio Azure | Tipo | DR recomendado | Cómo funciona el DR | Failover | Notas clave examen |
+|---------------|------|----------------|----------------------|----------|-------------------|
+| Virtual Machines (IaaS) | IaaS | Azure Site Recovery (ASR) | Replica discos a otra región y permite failover | Manual (automatizable con runbooks) | DR real = replicación continua |
+| SQL Server en VM | IaaS | Always On AG + ASR | AG para HA, ASR para DR regional | AG: Automático (si síncrono) / ASR: Manual | HA ≠ DR |
+| Azure SQL Database (PaaS) | PaaS | Auto-Failover Group | Replica base a región secundaria | Automático o Manual | DR gestionado por plataforma |
+| Azure SQL Managed Instance | PaaS | Auto-Failover Group | Failover entre regiones | Automático o Manual | Similar a SQL DB pero a nivel instancia |
+| Azure Storage Account | PaaS | GRS / RA-GRS / GZRS | Replicación automática entre regiones | Manual (Microsoft puede iniciar en desastre mayor) | Elegir redundancia correcta |
+| Azure App Service | PaaS | Multi-region + Front Door | Despliegue en 2 regiones + balanceo global | Automático (si Front Door) | Slots ≠ DR |
+| Azure Kubernetes Service (AKS) | PaaS | Multi-region + backup etcd | Cluster duplicado en otra región | Manual (requiere orquestación) | No tiene DR automático nativo |
+| Azure Functions | Serverless | Multi-region deployment | Deploy en varias regiones + Front Door | Automático (si Front Door) | Stateless facilita DR |
+| Azure Cosmos DB | PaaS | Multi-region replication | Replicación activa-activa opcional | Automático | SLA 99.999% multi-region |
+| Azure Virtual Network | IaaS Networking | Re-deploy + IaC | ARM/Bicep/Terraform para recrear | Manual | Networking no se replica automáticamente |
+| Azure Load Balancer | Networking | Re-deploy en región secundaria | Parte de arquitectura multi-región | Manual (depende del diseño) | Es regional |
+| Azure Application Gateway | Networking | Multi-region + Front Door | Gateway por región | Automático (si Front Door) | WAF por región |
+| Azure Key Vault | PaaS | Geo-redundant (Standard/Premium) | Replicación automática | Automático (gestionado por plataforma) | Managed HSM requiere diseño específico |
+| Microsoft Entra ID | SaaS | N/A (global service) | Servicio global Microsoft | N/A | No requiere DR del cliente |
+
 
 ## Reglas mentales rápidas (AZ-305)
 
