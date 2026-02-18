@@ -62,13 +62,15 @@ Esto define qué tipo de almacenamiento puedes usar y con qué rendimiento.
 
 
 
-| Tipo de cuenta | Tipo de datos que soporta | Blob Versioning | Soft Delete | Snapshots | Lifecycle Management | Casos de uso típicos |
-|---------------|----------------------------|-----------------|------------|-----------|---------------------|----------------------|
-| **Standard – General Purpose v2 (GPv2)** | Blob, File, Queue, Table | ✅ Sí (Blob) | ✅ Sí (Blob & File) | ✅ Sí (Blob) | ✅ Sí (Hot/Cool/Cold/Archive + Delete) | Workloads generales, backup, data lake, archivos híbridos, optimización de costes |
-| **Premium – Block Blobs** | Blob (alto rendimiento) | ✅ Sí | ✅ Sí | ✅ Sí | ❌ No (sin Archive/Cold) | Streaming, media, ingestión masiva, alto throughput |
-| **Premium – File Shares** | Azure Files (SMB/NFS) | ❌ No | ✅ Sí | ❌ No (usa backup nativo) | ❌ No | File servers empresariales, lift-and-shift de shares |
-| **Premium – Page Blobs** | Page Blobs (VHD discos VM) | ❌ No | ❌ No | ❌ No | ❌ No | Discos de máquinas virtuales (IaaS) |
-| **(Legacy) GPv1** | Blob, File, Queue, Table | ❌ Limitado | ❌ Limitado | ✅ Básico | ❌ No | Entornos antiguos (no recomendado para nuevos despliegues) |
+
+
+| Tipo de cuenta                           | Tipo de datos que soporta  | Blob Versioning | Soft Delete        | Snapshots                | Lifecycle Management                  | Object Replication | Casos de uso típicos                                      |
+| ---------------------------------------- | -------------------------- | --------------- | ------------------ | ------------------------ | ------------------------------------- | ------------------ | --------------------------------------------------------- |
+| **Standard – General Purpose v2 (GPv2)** | Blob, File, Queue, Table   | ✅ Sí (Blob)     | ✅ Sí (Blob & File) | ✅ Sí (Blob)              | ✅ Sí (Hot/Cool/Cold/Archive + Delete) | ✅ Sí (solo Blob)   | Workloads generales, backup, data lake, DR entre regiones |
+| **Premium – Block Blobs**                | Blob (alto rendimiento)    | ✅ Sí            | ✅ Sí               | ✅ Sí                     | ❌ No (sin Archive/Cold)               | ❌ No               | Streaming, media, ingestión masiva, alto throughput       |
+| **Premium – File Shares**                | Azure Files (SMB/NFS)      | ❌ No            | ✅ Sí               | ❌ No (usa backup nativo) | ❌ No                                  | ❌ No               | File servers empresariales, lift-and-shift de shares      |
+| **Premium – Page Blobs**                 | Page Blobs (VHD discos VM) | ❌ No            | ❌ No               | ❌ No                     | ❌ No                                  | ❌ No               | Discos de máquinas virtuales (IaaS)                       |
+| **(Legacy) GPv1**                        | Blob, File, Queue, Table   | ❌ Limitado      | ❌ Limitado         | ✅ Básico                 | ❌ No                                  | ❌ No               | Entornos antiguos (no recomendado)                        |
 
 
 
