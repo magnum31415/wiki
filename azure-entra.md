@@ -91,25 +91,51 @@
 # 📊 Tabla resumen conceptual
 
 
+# 📊 Tabla resumen conceptual ampliada
+
 | Concepto | Qué controla | Ejemplo |
 |-----------|-------------|----------|
 | Tenant | Identidad y seguridad | Empresa con 500 usuarios, grupos y políticas MFA centralizadas |
 | Subscription | Facturación y contenedor de recursos | Suscripción separada para PROD y otra para DEV |
-| Resource Group | Agrupación lógica dentro de una subscription | RG “rg-app-prod” que contiene VM + SQL + Storage de una app |
-| RBAC Role | Recursos Azure | Asignar Contributor a un equipo sobre una Subscription |
-| Entra Role | Identidad y directorio | Global Administrator que gestiona usuarios y MFA |
-| Azure Policy | Lo que está permitido crear | Bloquear creación de VMs fuera de West Europe |
-| Resource Lock | Evita borrar o modificar | Lock “CanNotDelete” en un Storage crítico |
-| CAE | Revocación inmediata de acceso | Usuario deshabilitado → pierde acceso sin esperar expiración del token |
-| Conditional Access | Reglas dinámicas de acceso | Exigir MFA si el login viene desde fuera del país |
-| OIDC | Protocolo de autenticación moderno | Login con Microsoft en una aplicación web |
-| MFA | Verificación multifactor | Usuario introduce contraseña + código de Microsoft Authenticator |
-| Access Reviews | Revisión periódica de accesos | Revisar cada mes los usuarios que tienen acceso a una app SaaS |
-| Enterprise Applications | Gestión de acceso a apps en el tenant | Configurar SAML SSO para Salesforce |
-| Application Proxy | Publicar apps on-prem con identidad Entra | Publicar una app interna IIS sin abrir puertos inbound |
-| Entra Role | Identidad y directorio | Global Admin |
-| RBAC Role | Recursos Azure | Contributor |
-| Data Plane Role | Acceso a datos | Storage Blob Data Reader |
+| Resource Group | Agrupación lógica dentro de una subscription | RG “rg-app-prod” que contiene VM + SQL + Storage |
+| RBAC Role | Recursos Azure (control plane) | Asignar Contributor sobre una Subscription |
+| Data Plane Role | Acceso a datos dentro del recurso | Storage Blob Data Reader |
+| Entra Role | Identidad y directorio | Global Administrator |
+| Azure Policy | Lo que está permitido crear | Bloquear VMs fuera de West Europe |
+| Resource Lock | Protección contra borrado/modificación | Lock “CanNotDelete” en Storage crítico |
+| CAE | Revocación inmediata de acceso | Usuario deshabilitado pierde acceso al instante |
+| Conditional Access | Reglas dinámicas de acceso | Exigir MFA fuera del país |
+| OIDC | Protocolo moderno de autenticación | Login con Microsoft en app web |
+| OAuth 2.0 | Autorización delegada | Web App accede a API con Bearer Token |
+| Access Token (JWT) | Credencial firmada para acceso a APIs | Header Authorization: Bearer |
+| MFA | Verificación multifactor | Password + código Authenticator |
+| Access Reviews | Revisión periódica de accesos | Revisar acceso de usuarios B2B |
+| Enterprise Applications | Gestión de apps integradas en el tenant | Configurar SAML SSO para Salesforce |
+| App Registration | Definición global de una aplicación | Registrar una API protegida por Entra |
+| Application Proxy | Publicar apps on-prem con identidad Entra | Publicar app IIS interna sin puertos inbound |
+| PIM (Privileged Identity Management) | Acceso Just-In-Time a roles privilegiados | Activar Owner por 2 horas |
+| Entitlement Management | Gestión automatizada de acceso por paquetes | Access Package para equipo Finance |
+| Managed Identity | Autenticación servicio → servicio sin secretos | Web App accede a Key Vault sin client_secret |
+| Service Principal | Identidad de aplicación en Entra ID | Backend autenticándose contra API |
+| Azure AD Connect / Entra Connect | Sincronización AD on-prem → Entra ID | Sincronizar usuarios híbridos |
+| PHS | Autenticación en la nube con hash sincronizado | Usuario AD autenticándose en Entra |
+| PTA | Validación de contraseña en AD on-prem | Login validado por agente PTA |
+| AD FS | Autenticación federada | Redirección a servidor AD FS |
+| Identity Protection | Detección de riesgo de identidad | Bloquear usuario con login sospechoso |
+| Identity Governance | Gobierno del ciclo de vida de identidades | Automatizar revisión y expiración de accesos |
+| EMS E3 | Suite con Entra ID P1 + Intune | Empresa con Conditional Access |
+| EMS E5 | Suite con Entra ID P2 + seguridad avanzada | Entorno con PIM e Identity Protection |
+| Entra ID Free | Gestión básica de identidad | Usuarios + SSO básico |
+| Entra ID P1 | Conditional Access + Dynamic Groups | Control por dispositivo compliant |
+| Entra ID P2 | PIM + Identity Protection | Acceso Just-In-Time |
+| Defender for Cloud | Seguridad de workloads Azure | Protección de VMs y SQL |
+| Defender for Endpoint | Seguridad avanzada de dispositivos | EDR en Windows 10 |
+| Pay-As-You-Go | Modelo de pago por consumo | Startup sin compromiso anual |
+| Enterprise Agreement (EA) | Contrato corporativo anual | Gran empresa con consumo elevado |
+| Microsoft Customer Agreement (MCA) | Modelo contractual moderno | Facturación flexible |
+| CSP (Cloud Solution Provider) | Suscripción gestionada por partner | Partner gestiona facturación |
+| Custom Role | Rol RBAC personalizado | Permitir solo Start/Stop VM |
+
 
 ---
 # Tipos de Licencias en Azure
