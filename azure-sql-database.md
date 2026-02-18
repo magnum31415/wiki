@@ -446,6 +446,7 @@ Active geo-replication is configured per database, and only supports manual fail
 | Pensado para           | Casos puntuales        | DR empresarial           |
 
 
+
 ## Azure SQL Failover Group o Auto-Failover Group
 🔝 [Volver al índice](#-índice)
 
@@ -460,6 +461,24 @@ Un Failover Group es un mecanismo de DR entre regiones para Azure SQL PaaS que r
   - SQL Server en VM
   - SQL on-premises
   - Azure Site Recovery
+
+
+Si configuras **Auto-Failover Group, ya estás activando geo-replicación automáticamente.**
+
+👉 No necesitas activar Active Geo-Replication aparte.
+
+Auto-Failover Group **internamente usa geo-replication.**
+
+````vnbet
+Auto-Failover Group
+    = Geo-Replication
+    + Failover automático opcional
+    + Endpoint DNS único
+    + Gestión a nivel servidor
+
+````
+
+
 
 ### 🎯 ¿Qué problema resuelve?
 
