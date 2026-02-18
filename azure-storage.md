@@ -125,14 +125,41 @@ Storage Account
 
 ## Redundancia en Azure Storage
 
-| Redundancia                           | Nº réplicas              | ¿Dónde se replica?                                       | Protege contra                  | Acceso a región secundaria       | Caso típico                          |
-| ------------------------------------- | ------------------------ | -------------------------------------------------------- | ------------------------------- | -------------------------------- | ------------------------------------ |
-| **LRS** (Locally Redundant Storage)   | 3                        | Mismo datacenter, misma región                           | Fallo de disco / rack local     | ❌ No                             | Datos no críticos, entorno DEV       |
-| **ZRS** (Zone Redundant Storage)      | 3                        | 3 Availability Zones dentro de la misma región           | Caída de zona completa          | ❌ No                             | Alta disponibilidad regional         |
-| **GRS** (Geo-Redundant Storage)       | 6 (3 + 3)                | 3 en región primaria + 3 en región secundaria emparejada | Caída total de región           | ❌ No (solo tras failover manual) | DR entre regiones                    |
-| **RA-GRS** (Read-Access GRS)          | 6 (3 + 3)                | Igual que GRS                                            | Caída de región                 | ✅ Sí (read-only)                 | Apps que leen desde secundaria       |
-| **GZRS** (Geo-Zone Redundant Storage) | 6 (3 ZRS + 3 secundaria) | 3 zonas en primaria + 3 en región secundaria             | Caída de zona + caída de región | ❌ No (solo tras failover)        | Workloads críticos empresariales     |
-| **RA-GZRS**                           | 6                        | Igual que GZRS                                           | Caída zona + región             | ✅ Sí (read-only)                 | Alta disponibilidad + lectura global |
+# 📊 Azure Storage – Modelos de Redundancia
+
+| Redundancia | Nº réplicas | Reg Pri (tipo y nº copias) | Reg Sec (tipo y nº copias) | ¿Dónde se replica? | Protege contra | Acceso a región secundaria | Caso típico |
+|-------------|------------|---------------------------|----------------------------|--------------------|----------------|----------------------------|-------------|
+| **LRS** (Locally Redundant Storage) | 3 | 3 copias LRS (1 datacenter) | — | Mismo datacenter, misma región | Fallo de disco / rack local | ❌ No | Datos no críticos, entorno DEV |
+| **ZRS** (Zone Redundant Storage) | 3 | 3 copias ZRS (3 zonas) | — | 3 Availability Zones dentro de la misma región | Caída de zona completa | ❌ No | Alta disponibilidad regional |
+| **GRS** (Geo-Redundant Storage) | 6 | 3 copias LRS (1 DC) | 3 copias LRS (1 DC) | 3 en región primaria + 3 en región secundaria emparejada | Caída total de región | ❌ No (solo tras failover manual) | DR entre regiones |
+| **RA-GRS** (Read-Access GRS) | 6 | 3 copias LRS (1 DC) | 3 copias LRS (1 DC) | Igual que GRS | Caída de región | ✅ Sí (read-only) | Apps que leen desde secundaria |
+| **GZRS** (Geo-Zone Redundant Storage) | 6 | 3 copias ZRS (3 zonas) | 3 copias LRS (1 DC) | 3 zonas en primaria + 3 en región secundaria | Caída de zona + caída de región | ❌ No (solo tras failover) | Workloads críticos empresariales |
+| **RA-GZRS** | 6 | 3 copias ZRS (3 zonas) | 3 copias LRS (1 DC) | Igual que GZRS | Caída zona + región | ✅ Sí (read-only) | Alta disponibilidad + lectura global |
+
+---
+
+
+
+
+# 🧠 Claves rápidas para memorizar
+
+- **LRS** → 3 copias en un DC.
+- **ZRS** → 3 copias en 3 zonas.
+- **GRS** → LRS primaria + LRS secundaria.
+- **RA-GRS** → Igual que GRS + lectura secundaria.
+- **GZRS** → ZRS primaria + LRS secundaria.
+- **RA-GZRS** → Igual que GZRS + lectura secundaria.
+
+---
+
+# 🎯 Regla mental AZ-305
+
+Si el requisito menciona:
+
+- “Protección frente a caída de zona” → ZRS o GZRS  
+- “Protección frente a caída regional” → GRS o GZRS  
+- “Necesito leer desde la región secundaria” → RA-*  
+- “Máxima protección estándar” → RA-GZRS  
 
 ## Conversiones permitidas entre tipos de redundancia
 
