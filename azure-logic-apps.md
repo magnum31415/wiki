@@ -1,7 +1,28 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
 # 🔄 Azure Logic Apps
 
-## 🔎 ¿Qué es?
+---
+
+# 📑 Índice
+
+- [🔎 ¿Qué es?](#-qué-es)
+- [🎯 ¿Qué resuelve?](#-qué-resuelve)
+- [🧩 Cómo funciona](#-cómo-funciona)
+- [🔌 Conectores](#-conectores)
+- [🎨 Logic Apps Designer](#-logic-apps-designer)
+  - [🔧 Elementos del Designer](#-elementos-del-logic-apps-designer)
+- [🏗 Tipos de Logic Apps](#-tipos-de-logic-apps)
+  - [📊 Consumption vs Standard](#-azure-logic-apps--consumption-vs-standard)
+- [⚙️ Workflow Settings](#️-workflow-settings-en-azure-logic-apps)
+  - [🔢 Concurrency por defecto](#-concurrency-por-defecto)
+- [🎯 Cuándo usar Logic Apps](#-cuándo-usar-logic-apps)
+- [🧠 Claves examen AZ-305](#-clave-examen-az-305)
+- [🧠 Regla mental final](#-regla-mental)
+
+---
+
+# 🔎 ¿Qué es?
 
 Azure Logic Apps es un servicio **serverless de automatización e integración** que permite crear flujos de trabajo (workflows) para conectar aplicaciones, datos y servicios sin escribir apenas código.
 
@@ -9,7 +30,7 @@ Azure Logic Apps es un servicio **serverless de automatización e integración**
 
 ---
 
-## 🎯 ¿Qué resuelve?
+# 🎯 ¿Qué resuelve?
 
 - Automatizar procesos empresariales
 - Integrar sistemas cloud y on-prem
@@ -21,20 +42,23 @@ Ejemplo típico:
 
 ---
 
-## 🧩 Cómo funciona
+# 🧩 Cómo funciona
 
 Una Logic App se compone de:
 
-### 1️⃣ Trigger
-Evento que inicia el flujo.
+## 1️⃣ Trigger
+Evento que inicia el flujo.  
+Solo puede haber **un trigger por Logic App**.
+
 Ejemplos:
 - When an HTTP request is received
 - When a blob is created
 - When an email arrives
 - Recurrence (timer)
 
-### 2️⃣ Actions
+## 2️⃣ Actions
 Pasos que se ejecutan después del trigger.
+
 Ejemplos:
 - Crear archivo
 - Llamar API
@@ -44,7 +68,7 @@ Ejemplos:
 
 ---
 
-## 🔌 Conectores
+# 🔌 Conectores
 
 Logic Apps tiene cientos de conectores predefinidos:
 
@@ -75,8 +99,6 @@ Permite:
 - Manejar bucles (for each)
 - Ver el flujo en formato gráfico
 
----
-
 ## 🧠 Qué hace el Designer
 
 - Genera automáticamente el JSON del workflow
@@ -86,15 +108,9 @@ Permite:
 Internamente, una Logic App es un archivo JSON,
 pero el Designer lo abstrae visualmente.
 
-
-# 🔧 Elementos del Logic Apps Designer
-
-En **Azure Logic Apps Designer**, construyes un workflow usando bloques visuales.  
-Cada bloque tiene un tipo y una función específica.
-
 ---
 
-####  🧠 Resumen rápido
+# 🔧 Elementos del Logic Apps Designer
 
 | Elemento | Qué hace |
 |----------|----------|
@@ -107,129 +123,16 @@ Cada bloque tiene un tipo y una función específica.
 | Variables | Guardar datos temporales |
 | HTTP | Llamar APIs |
 
-**🎯 Regla mental examen AZ-305**
+### Control Blocks
 
-Trigger → Evento  
-Action → Tarea  
-Condition → Decisión  
-Control → Lógica avanzada
-
-### 1️⃣ Trigger (Disparador)
-
-#### 🔎 ¿Qué es?
-Es el evento que **inicia el workflow**.
-
-Solo puede haber **un trigger por Logic App**.
-
-#####  📌 Ejemplos
-- When an HTTP request is received
-- When a blob is created
-- When a new email arrives
-- Recurrence (cada X minutos)
-
-👉 Sin trigger, el flujo no empieza.
-
-
-### 2️⃣ Action (Acción)
-
-#### 🔎 ¿Qué es?
-Es un paso que ejecuta una tarea después del trigger.
-
-Puedes tener múltiples actions en secuencia.
-
-#### 📌 Ejemplos
-- Create blob
-- Insert row in SQL
-- Send email
-- Call HTTP endpoint
-- Post message in Teams
-
-👉 Son las “instrucciones” del flujo.
-
-
-
-### 3️⃣ Condition (Control de condición)
-
-#### 🔎 ¿Qué es?
-Bloque de control lógico tipo **if/else**.
-
-Evalúa una condición y ejecuta acciones distintas según el resultado.
-
-#### 📌 Ejemplo
-Si `Amount > 1000`  
-→ Enviar aprobación  
-Si no  
-→ Procesar automáticamente
-
-👉 Permite tomar decisiones dentro del flujo.
-
-
-
-### 4️⃣ Control (Bloques de control)
-
-Son estructuras que organizan la lógica del flujo.
-
-#### 🔹 For each
-Itera sobre una colección (array).
-
-Ejemplo:
-- Para cada archivo en una carpeta → copiarlo.
-
-#### 🔹 Until
-Ejecuta acciones hasta que se cumpla una condición.
-
-#### 🔹 Scope
-Agrupa varias acciones dentro de un bloque lógico.
-
-
-### 5️⃣ Switch
-
-#### 🔎 ¿Qué es?
-Alternativa avanzada a Condition.
-
-Permite múltiples casos (como switch/case en programación).
-
-Ejemplo:
-Según el tipo de pedido:
-- Case A → Flujo 1
-- Case B → Flujo 2
-- Default → Flujo estándar
-
-### 6️⃣ Variables
-
-Permiten almacenar valores temporales dentro del flujo.
-
-Tipos comunes:
-- String
-- Integer
-- Array
-- Boolean
-
-Se usan para:
-- Acumular resultados
-- Guardar estados intermedios
-
-
-
-### 7️⃣ HTTP
-
-Acción especial para:
-
-- Llamar APIs externas
-- Consumir servicios REST
-- Integrar sistemas personalizados
-
-Muy usada en integración enterprise.
-
-
-
-
-
-
+- **For each** → Itera sobre colecciones
+- **Until** → Ejecuta hasta cumplir condición
+- **Scope** → Agrupa acciones
+- **Switch** → Múltiples casos
+- **Variables** → Guardar datos temporales
+- **HTTP** → Llamar APIs externas
 
 ---
-
-[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # 🏗 Tipos de Logic Apps
 
@@ -238,6 +141,7 @@ Muy usada en integración enterprise.
 - Pago por ejecución
 - Escalado automático
 - Ideal para flujos intermitentes
+- SLA 99.9%
 
 ## 2️⃣ Standard (Single-tenant)
 
@@ -245,15 +149,78 @@ Muy usada en integración enterprise.
 - Mejor rendimiento
 - Integración con VNet
 - Más parecido a App Service
+- SLA 99.95%
 
 ---
 
-# 🧠 Diferencia rápida para examen AZ-305
+# 📊 Azure Logic Apps – Consumption vs Standard
 
-| Concepto | Qué es |
-|----------|--------|
-| Azure Logic Apps | Servicio serverless para automatizar e integrar sistemas |
-| Logic Apps Designer | Interfaz visual para crear los workflows |
+| Característica | Consumption | Standard |
+|---------------|-------------|----------|
+| Modelo de ejecución | Multitenant | Single-tenant |
+| Modelo de pago | Pago por ejecución | Pago por instancia |
+| Escalado | Automático | Manual / automático |
+| VNet Integration | Limitada | Nativa |
+| Built-in connectors | No | Sí |
+| Acceso a sistema de archivos | No | Sí |
+| Desarrollo local | No | Sí |
+| Integration Account | Externo | Integrable |
+| Cold start | Puede existir | Menor impacto |
+| Casos ideales | Flujos ligeros | Integraciones críticas |
+
+---
+
+# ⚙️ Workflow Settings en Azure Logic Apps
+
+## 🔎 ¿Qué son?
+
+Configuraciones avanzadas que controlan cómo se ejecuta el workflow.
+
+No definen qué hace el flujo,  
+sino cómo se comporta.
+
+---
+
+## 🧠 Configuraciones principales
+
+### 1️⃣ Concurrency
+Controla ejecuciones paralelas.
+
+### 2️⃣ Retry Policy
+Controla reintentos ante fallo.
+
+### 3️⃣ Timeout
+Tiempo máximo de ejecución.
+
+### 4️⃣ Secure Inputs / Outputs
+Protección de datos sensibles.
+
+### 5️⃣ Run History Retention
+Tiempo de retención de logs.
+
+### 6️⃣ Trigger Conditions
+Condiciones adicionales en el trigger.
+
+### 7️⃣ Managed Identity
+Autenticación segura sin secretos.
+
+### 8️⃣ Integration Account
+Integración B2B (EDI, AS2, XSLT).
+
+---
+
+# 🔢 Concurrency por defecto
+
+## Consumption
+
+- Ejecuta múltiples instancias en paralelo por defecto.
+- Escala automáticamente.
+- Límite configurable hasta 50 ejecuciones paralelas.
+
+## Standard
+
+- Depende del App Service Plan.
+- No hay valor fijo universal.
 
 ---
 
@@ -266,7 +233,20 @@ Muy usada en integración enterprise.
 
 ---
 
+# 🧠 Clave examen AZ-305
+
+| Problema | Setting |
+|----------|--------|
+| Control de carga | Concurrency |
+| API inestable | Retry policy |
+| Seguridad datos | Secure inputs/outputs |
+| Acceso sin secretos | Managed Identity |
+| Escenario B2B | Integration Account |
+
+---
+
 # 🧠 Regla mental
 
 Logic Apps = Automatización sin código  
-Designer = Editor visual del flujo
+Designer = Editor visual  
+Workflow Settings = Cómo se ejecuta el flujo
