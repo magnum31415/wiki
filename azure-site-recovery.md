@@ -18,6 +18,63 @@ Replica VMs → No ejecuta VMs secundarias → Arranca solo si hay desastre → 
 
 ![azure-site-recovery-sql-vm](./img/azure/azure-site-recovery-sql-vm.png)
 
+
+| Característica | Azure Site Recovery |
+|---------------|--------------------|
+| Tipo de servicio | Disaster Recovery (DR) |
+| ¿Es Backup? | ❌ No |
+| ¿Es Alta Disponibilidad local (HA)? | ❌ No |
+| Objetivo principal | Recuperación ante desastre completo (datacenter o región) |
+| Qué replica | Máquinas completas (VMs o físicas) |
+| Nivel de replicación | Nivel de máquina (disco/infraestructura), no aplicación |
+| Tipo de protección | Infraestructura completa |
+| Regiones soportadas | Cualquier región Azure |
+| Azure → Azure | ✅ Sí |
+| On-prem → Azure | ✅ Sí |
+| Azure Stack → Azure | ✅ Sí |
+| Azure Public MEC | ✅ Sí |
+| Servidores físicos | ✅ Sí |
+| ¿Replica aplicaciones (SQL/IIS)? | ❌ No (replica VM completa) |
+| ¿Mantiene VM secundaria encendida? | ❌ No |
+| ¿Consume compute en secundario antes del failover? | ❌ No |
+| ¿Dónde guarda datos replicados? | Azure Storage |
+| RPO (Recovery Point Objective) | ~5 minutos (crash-consistent) |
+| RPO con consistencia aplicación | ~1 hora (application-consistent) |
+| RTO (Recovery Time Objective) | Normalmente < 15 minutos |
+| Failover por defecto | Manual |
+| Planned failover | ✅ Sí |
+| Unplanned failover | ✅ Sí |
+| Failover automático nativo | ❌ No |
+| Automatización posible | ✅ Con Azure Automation + Recovery Plans |
+| Permite failback | ✅ Sí |
+| Protección ante caída de región | ✅ Sí |
+| Protección ante caída de VM individual | ❌ No (eso es HA) |
+| Protección ante error lógico en DB | ❌ No |
+| SLA | 99.9% para el servicio |
+| Coste | Bajo mientras no hay failover (solo storage + replicación) |
+| Tipo de consistencia | Crash-consistent y Application-consistent |
+| Orquestación de recuperación | ✅ Recovery Plans |
+| Test Failover sin impacto | ✅ Sí |
+
+---
+
+# 🧠 Diferencia clave frente a otras soluciones
+
+| Servicio | Qué protege | Failover automático |
+|-----------|-------------|--------------------|
+| Availability Zones | Fallo de zona | ✅ Sí |
+| SQL Availability Group | Base de datos | ✅ Sí |
+| SQL Failover Group | Base de datos | ✅ Sí |
+| Azure Site Recovery | Infraestructura completa (VMs) | ❌ No (manual por defecto) |
+
+---
+
+# 🎯 Resumen mental rápido
+
+Azure Site Recovery =
+
+Replica VMs → No ejecuta VMs secundarias → Arranca solo en desastre → Permite failback → DR completo de infraestructura
+
 **🧠 Qué problema resuelve**
 
 Si tu datacenter o región Azure cae:
