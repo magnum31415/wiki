@@ -68,24 +68,18 @@
   - [Diferencia con RBAC](#-diferencia-con-rbac-tradicional)
   - [Casos de uso](#-casos-de-uso-típicos)
 
-- [🔐 Managed Identity en Azure](#-managed-identity-en-azure)
 
+- [🔎 ¿Qué es una Managed Identity?](#-qué-es-una-managed-identity)
 - [🎯 ¿Qué problema resuelve?](#-qué-problema-resuelve)
-
 - [🧠 ¿Cómo funciona?](#-cómo-funciona)
-
 - [🏗 Tipos de Managed Identity](#-tipos-de-managed-identity)
-  - [1️⃣ System-Assigned](#1️⃣-system-assigned)
-  - [2️⃣ User-Assigned](#2️⃣-user-assigned)
-
+  - [1️⃣ System-assigned Managed Identity](#1️⃣-system-assigned-managed-identity)
+  - [2️⃣ User-assigned Managed Identity](#2️⃣-user-assigned-managed-identity)
 - [📌 Ejemplo típico](#-ejemplo-típico)
-
 - [🔎 Qué NO es](#-qué-no-es)
-
 - [🧩 Diferencias clave](#-diferencias-clave)
-
+- [📊 Comparación System vs User Assigned](#-comparación-system-vs-user-assigned)
 - [🧠 Regla mental (AZ-305)](#-regla-mental-az-305)
-
 ---
 
 # 📊 Tabla resumen conceptual
@@ -1286,23 +1280,30 @@ Es una **funcionalidad de Identity Governance** dentro de Microsoft Entra ID (re
 
 ---
 
-# 🔐 Managed Identity en Azure
+# 🔎 ¿Qué es una Managed Identity?
 
-Una **Managed Identity** es una identidad gestionada automáticamente por **Microsoft Entra ID** que permite que un recurso de Azure se autentique contra otros servicios **sin usar contraseñas, secretos o certificados almacenados en código**.
+Una **Managed Identity** es una identidad gestionada automáticamente por **Microsoft Entra ID** que permite que un recurso de Azure (por ejemplo, una VM o una Web App) se autentique contra otros recursos protegidos por Entra ID (como Azure Key Vault) **sin necesidad de almacenar secretos, contraseñas o certificados en el código**.
 
-👉 Es identidad para aplicaciones o recursos, no para personas.
+👉 Es una identidad para **recursos de Azure**, no para personas.
+
+La plataforma Azure se encarga de:
+
+- Crear la identidad en Entra ID  
+- Gestionar las credenciales  
+- Rotarlas automáticamente  
+- Eliminarla si corresponde  
 
 ---
 
 # 🎯 ¿Qué problema resuelve?
 
-Sin Managed Identity:
+## ❌ Sin Managed Identity
 
 - Guardas secretos en código o variables de entorno.
 - Debes rotar credenciales manualmente.
 - Existe riesgo de fuga de secretos.
 
-Con Managed Identity:
+## ✅ Con Managed Identity
 
 - Azure crea y gestiona la identidad.
 - No hay secretos que almacenar.
@@ -1312,11 +1313,12 @@ Con Managed Identity:
 
 # 🧠 ¿Cómo funciona?
 
-1. Habilitas Managed Identity en un recurso (VM, Web App, Function, etc.).
-2. Azure crea automáticamente un **Service Principal** en Entra ID.
-3. Asignas permisos RBAC sobre el recurso destino.
-4. La aplicación solicita un token al endpoint interno de Azure.
-5. Accede al recurso usando ese token.
+Cuando habilitas una Managed Identity:
+
+1. Azure crea automáticamente un **Service Principal** en Microsoft Entra ID.
+2. Le asignas permisos RBAC sobre el recurso destino (ej: Key Vault).
+3. El recurso obtiene un token desde el endpoint interno de Azure.
+4. Se autentica contra el recurso destino sin usar secretos.
 
 Todo sin manejar credenciales manualmente.
 
@@ -1324,38 +1326,104 @@ Todo sin manejar credenciales manualmente.
 
 # 🏗 Tipos de Managed Identity
 
-## 1️⃣ System-Assigned
-
-- Se crea automáticamente al habilitarla en un recurso.
-- Vive y muere con el recurso.
-- Solo una identidad por recurso.
-
-**Ejemplo:**  
-Una VM con Managed Identity accede a Key Vault.
+Existen **dos tipos**:
 
 ---
 
-## 2️⃣ User-Assigned
+## 1️⃣ System-assigned Managed Identity
 
-- Se crea como recurso independiente.
-- Puede asignarse a múltiples recursos.
-- Persiste aunque borres un recurso.
+Es una identidad que se crea automáticamente cuando la habilitas en un recurso de Azure.
 
-**Ejemplo:**  
-Varias Web Apps comparten la misma identidad para acceder a Storage.
+### 📌 Características
 
----
+- Está asociada a **un único recurso**
+- Vive y muere con el recurso
+- Si eliminas el recurso → se elimina la identidad automáticamente
+- Solo puede existir una por recurso
+
+### 👤 ¿A quién se le puede asignar?
+
+Solo a **recursos de Azure**, como:
+
+- Virtual Machines
+- App Services
+- Azure Functions
+- Logic Apps
+- AKS
+- Azure Automation
+- etc.
+
+❌ No se puede asignar a usuarios humanos  
+❌ No se puede asignar a grupos  
+❌ No permite login interactivo  
+
+### 👨‍💼 ¿Quién puede habilitarla?
+
+Un usuario con permisos suficientes sobre el recurso, por ejemplo:
+
+- Owner
+- Contributor
+- Rol con permisos para modificar la identidad del recurso
+
+### 📌 Ejemplo 
+``Una VM con Managed Identity accede a Key Vault.``
+
+## 2️⃣ User-assigned Managed Identity
+
+Es una identidad que se crea como un recurso separado en Azure y luego se asocia a uno o varios recursos.
+
+⚠️ "User-assigned" **NO significa usuario humano**.
+
+Significa que la identidad:
+
+- Se crea como un recurso independiente
+- Puede asignarse manualmente a uno o varios recursos
+- Persiste aunque borres un recurso
+
+### 📌 Características
+
+- Es independiente del ciclo de vida de los recursos
+- Puede asignarse a múltiples recursos
+- Puede haber varias user-assigned identities en un mismo recurso
+- No se elimina automáticamente al borrar un recurso
+
+### 👤 ¿A quién se le puede asignar?
+
+Solo a **recursos de Azure**, como:
+
+- VM
+- Web App
+- Function
+- AKS
+- etc.
+
+❌ No se asigna a personas  
+❌ No es una cuenta de usuario  
+❌ No permite login interactivo  
+
+### 👨‍💼 ¿Quién puede crearla y asignarla?
+
+Un usuario con permisos RBAC adecuados, por ejemplo:
+
+- Owner
+- Contributor
+- Rol con permisos sobre `Microsoft.ManagedIdentity/userAssignedIdentities`
+
+### 📌 Ejemplo
+``Varias Web Apps comparten la misma identidad para acceder a Storage. ``
 
 # 📌 Ejemplo típico
 
 Una Azure Web App necesita leer un secreto en Key Vault.
 
-### ❌ Sin Managed Identity
+## ❌ Sin Managed Identity
+
 - Guardas `client_id` y `client_secret`.
 - Los almacenas en configuración.
 - Riesgo de exposición.
 
-### ✅ Con Managed Identity
+## ✅ Con Managed Identity
+
 - Habilitas identidad en la Web App.
 - Asignas rol **Key Vault Secrets User**.
 - El código obtiene el token automáticamente.
@@ -1379,8 +1447,21 @@ Es para **autenticación servicio → servicio**.
 |----------|------------|
 | App Registration | Autenticación de usuarios o aplicaciones |
 | Managed Identity | Autenticación de recursos Azure |
-| Service Principal | Identidad de aplicación en Entra ID |
+| Service Principal | Identidad técnica en Entra ID |
 | RBAC | Permisos sobre recursos |
+
+---
+
+# 📊 Comparación System vs User Assigned
+
+| Característica | System-assigned | User-assigned |
+|---------------|----------------|---------------|
+| Se crea junto al recurso | ✅ | ❌ |
+| Recurso independiente | ❌ | ✅ |
+| Se elimina al borrar el recurso | ✅ | ❌ |
+| Puede compartirse entre recursos | ❌ | ✅ |
+| Es identidad humana | ❌ | ❌ |
+| Requiere creación manual previa | ❌ | ✅ |
 
 ---
 
@@ -1389,7 +1470,5 @@ Es para **autenticación servicio → servicio**.
 Si el enunciado dice:
 
 > "Una aplicación necesita acceder a Key Vault / Storage / SQL sin almacenar credenciales"
-
-La respuesta correcta suele ser:
 
 👉 **Managed Identity**
