@@ -114,7 +114,7 @@
 | App Registration | Definición global de una aplicación | Registrar una API protegida por Entra |
 | Application Proxy | Publicar apps on-prem con identidad Entra | Publicar app IIS interna sin puertos inbound |
 | PIM (Privileged Identity Management) | Acceso Just-In-Time a roles privilegiados | Activar Owner por 2 horas |
-| Entitlement Management | Gestión automatizada de acceso por paquetes | Access Package para equipo Finance |
+| Microsoft Entra Entitlement Management | Gestión automatizada del acceso mediante paquetes (Access Packages) | Usuario solicita paquete Finance con expiración automática |
 | Managed Identity | Autenticación servicio → servicio sin secretos | Web App accede a Key Vault sin client_secret |
 | Service Principal | Identidad de aplicación en Entra ID | Backend autenticándose contra API |
 | Azure AD Connect / Entra Connect | Sincronización AD on-prem → Entra ID | Sincronizar usuarios híbridos |
@@ -135,6 +135,7 @@
 | Microsoft Customer Agreement (MCA) | Modelo contractual moderno | Facturación flexible |
 | CSP (Cloud Solution Provider) | Suscripción gestionada por partner | Partner gestiona facturación |
 | Custom Role | Rol RBAC personalizado | Permitir solo Start/Stop VM |
+
 
 
 ---
