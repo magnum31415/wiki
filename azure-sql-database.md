@@ -837,16 +837,19 @@ Azure SQL (Familia de servicios)
 <thead>
 <tr>
 <th rowspan="2">Característica</th>
-<th colspan="3">Azure SQL Database – Single Database</th>
-<th colspan="2">Azure SQL Database – Elastic Pool</th>
+
+<th colspan="4">Azure SQL Database – Single Database</th>
+<th colspan="3">Azure SQL Database – Elastic Pool</th>
 <th colspan="2">Azure SQL Managed Instance</th>
 </tr>
 <tr>
-<th>General Purpose</th>
-<th>Business Critical</th>
-<th>Hyperscale</th>
-<th>General Purpose</th>
-<th>Business Critical</th>
+<th>Basic (DTU)</th>
+<th>Standard (DTU)</th>
+<th>Premium (DTU)</th>
+<th>General Purpose (vCore)</th>
+<th>Standard Pool (DTU)</th>
+<th>Premium Pool (DTU)</th>
+<th>General Purpose (vCore)</th>
 <th>General Purpose</th>
 <th>Business Critical</th>
 </tr>
@@ -854,154 +857,80 @@ Azure SQL (Familia de servicios)
 <tbody>
 
 <tr>
-<td>Modelo basado en vCore</td>
+<td>Modelo basado en DTU</td>
 <td>✅</td><td>✅</td><td>✅</td>
+<td>❌</td>
 <td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
+<td>❌</td>
+<td>❌</td><td>❌</td>
 </tr>
 
 <tr>
-<td>Modelo basado en DTU disponible</td>
-<td>✅</td><td>❌</td><td>❌</td>
-<td>✅</td><td>❌</td>
+<td>Modelo basado en vCore</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>✅</td>
 <td>❌</td><td>❌</td>
+<td>✅</td>
+<td>✅</td><td>✅</td>
 </tr>
 
 <tr>
 <td>In-Memory OLTP</td>
-<td>❌</td><td>✅</td><td>❌</td>
+<td>❌</td><td>❌</td><td>✅</td>
+<td>❌</td>
 <td>❌</td><td>✅</td>
+<td>❌</td>
 <td>❌</td><td>✅</td>
-</tr>
-
-<tr>
-<td>Memory-Optimized Tables</td>
-<td>❌</td><td>✅</td><td>❌</td>
-<td>❌</td><td>✅</td>
-<td>❌</td><td>✅</td>
-</tr>
-
-<tr>
-<td>Columnstore Indexes</td>
-<td>✅</td><td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-</tr>
-
-<tr>
-<td>Alta disponibilidad integrada</td>
-<td>✅</td><td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-</tr>
-
-<tr>
-<td>Recuperación ante desastres (Geo-replication)</td>
-<td>✅</td><td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-</tr>
-
-<tr>
-<td>Auto-failover groups</td>
-<td>✅</td><td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
 </tr>
 
 <tr>
 <td>Réplicas de solo lectura dedicadas</td>
-<td>❌</td><td>✅</td><td>✅</td>
+<td>❌</td><td>❌</td><td>✅</td>
+<td>❌</td>
 <td>❌</td><td>✅</td>
+<td>❌</td>
 <td>❌</td><td>✅</td>
 </tr>
 
 <tr>
-<td>Escalado sin downtime</td>
-<td>✅</td><td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
+<td>Almacenamiento SSD local</td>
+<td>❌</td><td>❌</td><td>✅</td>
+<td>❌</td>
+<td>❌</td><td>✅</td>
+<td>❌</td>
+<td>❌</td><td>✅</td>
 </tr>
 
 <tr>
 <td>Escalado automático de computación</td>
-<td>✅ (solo Serverless)</td><td>❌</td><td>❌</td>
-<td>❌</td><td>❌</td>
-<td>❌</td><td>❌</td>
-</tr>
-
-<tr>
-<td>Modo Serverless disponible</td>
-<td>✅</td><td>❌</td><td>❌</td>
-<td>❌</td><td>❌</td>
-<td>❌</td><td>❌</td>
-</tr>
-
-<tr>
-<td>Auto-pause disponible</td>
-<td>✅</td><td>❌</td><td>❌</td>
-<td>❌</td><td>❌</td>
-<td>❌</td><td>❌</td>
-</tr>
-
-<tr>
-<td>Almacenamiento local SSD</td>
-<td>❌</td><td>✅</td><td>❌</td>
-<td>❌</td><td>✅</td>
-<td>❌</td><td>✅</td>
-</tr>
-
-<tr>
-<td>Almacenamiento remoto</td>
-<td>✅</td><td>❌</td><td>✅</td>
-<td>✅</td><td>❌</td>
-<td>✅</td><td>❌</td>
-</tr>
-
-<tr>
-<td>Recursos dedicados</td>
-<td>✅</td><td>✅</td><td>✅</td>
-<td>❌</td><td>❌</td>
-<td>✅</td><td>✅</td>
-</tr>
-
-<tr>
-<td>SQL Agent disponible</td>
 <td>❌</td><td>❌</td><td>❌</td>
+<td>✅ (Serverless)</td>
 <td>❌</td><td>❌</td>
-<td>✅</td><td>✅</td>
+<td>❌</td>
+<td>❌</td><td>❌</td>
 </tr>
 
 <tr>
-<td>Consultas cross-database completas</td>
+<td>Modo Serverless</td>
 <td>❌</td><td>❌</td><td>❌</td>
+<td>✅</td>
 <td>❌</td><td>❌</td>
-<td>✅</td><td>✅</td>
+<td>❌</td>
+<td>❌</td><td>❌</td>
 </tr>
 
 <tr>
-<td>Compatibilidad casi total con SQL Server</td>
+<td>SQL Agent</td>
 <td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td>
 <td>❌</td><td>❌</td>
-<td>✅</td><td>✅</td>
-</tr>
-
-<tr>
-<td>Compatible con Azure Hybrid Benefit</td>
-<td>✅</td><td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
-</tr>
-
-<tr>
-<td>Compatible con Reserved Capacity</td>
-<td>✅</td><td>✅</td><td>✅</td>
-<td>✅</td><td>✅</td>
+<td>❌</td>
 <td>✅</td><td>✅</td>
 </tr>
 
 </tbody>
 </table>
+
 
 ### Comparativa: PITR vs RPO vs RTO vs LTR
 🔝 [Volver al índice](#-índice)
