@@ -771,15 +771,78 @@ Se envía en el header:
 Authorization: Bearer <token>
 ````
 
+---
+
 # Privileged Identity Management (PIM)
 
-## 🔎 ¿Qué es?
+## 🔎 ¿Qué es PIM?
 
 **Privileged Identity Management (PIM)** es un servicio de **Microsoft Entra ID** que permite **gestionar, controlar y auditar accesos privilegiados** en Azure y en el tenant.
 
 👉 Sí, es parte de **Microsoft Entra ID (Identity Governance)**.
 
+**PIM** es un servicio de **Microsoft Entra ID (Identity Governance)** que permite:
+- Asignar roles como eligible
+- Exigir MFA para activación
+- Exigir justificación
+- Requerir aprobación
+- Definir duración máxima
+- Auditar activaciones
+
+👉 Es el sistema de gobierno de privilegios.
+
+Ejemplo:
+
+- Usuario es eligible Owner
+- Lo activa por 2 horas
+- Luego se desactiva automáticamente
+
 ---
+
+## 🔎 ¿Qué es JIT?
+
+**Just-In-Time (JIT)** es el principio de:
+- No tener privilegios permanentes.
+- Solo activarlos cuando se necesitan.
+
+No es un producto. Es un **modelo de seguridad**. 
+**PIM implementa JIT.**
+- PIM = herramienta
+- JIT = estrategia
+
+### Qué puede gestionar PIM
+
+#### 1️⃣ Roles de Microsoft Entra
+
+- Global Administrator
+- Security Administrator
+- Privileged Role Administrator
+
+#### 2️⃣ Roles RBAC Azure
+
+- Owner
+- Contributor
+- User Access Administrator
+
+### 🎯 Flujo típico con PIM (JIT)
+
+1. Usuario es eligible
+2.  Activa rol
+3.  Introduce justificación
+4.  Hace MFA
+5.  (Opcional) Espera aprobación
+6.  Obtiene acceso temporal
+7.  Expira automáticamente
+
+#### Error típico en examen
+
+Si el enunciado dice:
+- “Se requiere acceso temporal a rol Owner”
+La respuesta es:
+- 👉 PIM
+
+No “JIT”, porque JIT no es un servicio en Azure.
+
 
 # 🎯 ¿Para qué sirve?
 
@@ -854,6 +917,34 @@ Empresa financiera:
 - Alertas de riesgo
 - Auditoría de activaciones
 - Access Reviews para roles privilegiados
+
+## 📊 PIM vs JIT (PIM) vs JIT VM Access (Defender for Cloud)
+
+ **🎯 Resumen conceptual**
+
+- **PIM** = Servicio completo de gobierno de privilegios.
+- **JIT en PIM** = Activación temporal de roles.
+- **JIT VM Access** = Apertura temporal de puertos en VMs.
+
+| Característica | PIM (Privileged Identity Management) | JIT en PIM | JIT VM Access (Defender for Cloud) |
+|---------------|----------------------------------------|------------|-------------------------------------|
+| Qué es | Servicio de gobierno de acceso privilegiado | Modelo de activación temporal dentro de PIM | Control temporal de acceso a puertos de VM |
+| Tipo de control | Identidad y roles | Activación temporal de roles | Red / acceso a VM (RDP / SSH) |
+| Aplica sobre | Roles Entra ID + RBAC Azure | Roles elegibles en PIM | Máquinas virtuales |
+| Actúa sobre | Permisos administrativos | Permisos administrativos | Puertos 3389 (RDP) / 22 (SSH) |
+| Acceso permanente | Puede configurarse como eligible o active | No permanente (temporal) | No permanente (abre puerto temporalmente) |
+| Duración configurable | Sí | Sí (1h, 2h, 8h…) | Sí (duración máxima apertura puerto) |
+| Requiere MFA | Sí (configurable) | Sí | No necesariamente (depende de acceso VM) |
+| Puede requerir aprobación | Sí | Sí | No |
+| Justificación obligatoria | Sí | Sí | No |
+| Control de franja horaria fija | ❌ No | ❌ No | ❌ No |
+| Auditoría de activaciones | Sí | Sí | Sí (logs de acceso) |
+| Protección principal | Minimizar privilegios permanentes | Acceso temporal a roles | Reducir exposición de puertos abiertos |
+| Ejemplo típico | Usuario es eligible Owner | Activa Owner por 2 horas | Abre RDP por 1 hora desde IP específica |
+| Nivel de seguridad | Identidad (Identity Governance) | Identity Governance | Seguridad de red / superficie de ataque |
+| Servicio relacionado | Microsoft Entra ID | Microsoft Entra ID | Microsoft Defender for Cloud |
+
+
 
 # 📊 Métodos de autenticación híbrida en Microsoft Entra ID
 
