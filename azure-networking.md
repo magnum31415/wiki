@@ -223,22 +223,20 @@ Permite capturar tráfico de red en:
 
 # Azure Virtual WAN
 
-| Característica                                | **Virtual WAN – Standard**       | **Virtual WAN – Advanced (Secured Virtual Hub)** |
-| --------------------------------------------- | -------------------------------- | ------------------------------------------------ |
-| Conectividad básica (VNet, VPN, ExpressRoute) | ✅ Sí                             | ✅ Sí                                             |
-| Site-to-Site VPN                              | ✅ Sí                             | ✅ Sí                                             |
-| Point-to-Site VPN                             | ✅ Sí                             | ✅ Sí                                             |
-| ExpressRoute                                  | ✅ Sí                             | ✅ Sí                                             |
-| Branch-to-branch transit                      | ✅ Sí                             | ✅ Sí                                             |
-| Routing centralizado (hub-and-spoke global)   | ✅ Sí                             | ✅ Sí                                             |
-| Azure Firewall integrado en el hub            | ❌ No (se implementa manualmente) | ✅ Sí (integrado nativamente)                     |
-| Firewall Manager integration                  | ❌ No                             | ✅ Sí                                             |
-| Políticas de seguridad centralizadas          | ❌ No                             | ✅ Sí                                             |
-| Inspección de tráfico entre VNets             | ❌ Limitado                       | ✅ Sí                                             |
-| Inspección de tráfico Internet-bound          | ❌ No nativo                      | ✅ Sí                                             |
-| Forced tunneling a firewall                   | Manual                           | ✅ Integrado                                      |
-| Seguridad gestionada desde Virtual WAN        | ❌ No                             | ✅ Sí                                             |
-| Coste                                         | 💰 Más bajo                      | 💰💰 Más alto                                    |
+| Característica | Basic | Standard |
+|---------------|--------|----------|
+| Site-to-Site VPN | ✅ Sí | ✅ Sí |
+| Point-to-Site VPN | ❌ No | ✅ Sí |
+| ExpressRoute | ❌ No | ✅ Sí |
+| Conectividad Hub-to-VNet | ❌ No | ✅ Sí |
+| Branch-to-Branch Transit | ❌ No | ✅ Sí |
+| Global Transit Network | ❌ No | ✅ Sí |
+| Routing intent & policies | ❌ No | ✅ Sí |
+| Secured Virtual Hub (Azure Firewall integrado) | ❌ No | ✅ Sí |
+| Inspección de tráfico Internet | ❌ No | ✅ Sí (con Secured Hub) |
+| Inspección de tráfico entre VNets | ❌ No | ✅ Sí (con Secured Hub) |
+| Coste | 💰 Más bajo | 💰💰 Más alto |
+
 
 ---
 ## Diferencias clave
