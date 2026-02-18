@@ -405,6 +405,9 @@ Diseño arquitectónico clave para centralización y retención.
 Evalúa y migra VMs, apps y bases de datos.  
 Primera herramienta que se usa en proyectos de migración.
 
+designed to assess on-premises infrastructure and provide insights into the TCO of the migration, 
+as well as recommendations for the appropriate size of Virtual Machines required for Azure.
+
 ---
 
 ### 🔝 [Volver al índice](#-índice)
