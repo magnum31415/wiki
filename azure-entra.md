@@ -7,38 +7,33 @@
 # 📑 Índice
 
 - [📊 Tabla resumen conceptual](#-tabla-resumen-conceptual)
+
 - [Tipos de Licencias en Azure](#tipos-de-licencias-en-azure)
-  - [1️⃣ Microsoft Entra ID](#1️⃣-microsoft-entra-id-antes-azure-ad)
-    - [Free](#-free)
-    - [P1 (Premium P1)](#-p1-premium-p1)
-    - [P2 (Premium P2)](#-p2-premium-p2)
+  - [1️⃣ Microsoft Entra ID (antes Azure AD)](#1️⃣-microsoft-entra-id-antes-azure-ad)
   - [2️⃣ Enterprise Mobility + Security (EMS)](#2️⃣-enterprise-mobility--security-ems)
-    - [EMS E3](#-ems-e3)
-    - [EMS E5](#-ems-e5)
   - [3️⃣ Microsoft Defender](#3️⃣-microsoft-defender)
-    - [Defender for Cloud](#-defender-for-cloud)
-    - [Defender for Endpoint](#-defender-for-endpoint)
   - [4️⃣ Tipos de Suscripción Azure](#4️⃣-tipos-de-suscripción-azure)
-    - [Pay-As-You-Go](#-pay-as-you-go)
-    - [Enterprise Agreement (EA)](#-enterprise-agreement-ea)
-    - [Microsoft Customer Agreement (MCA)](#-microsoft-customer-agreement-mca)
-    - [Cloud Solution Provider (CSP)](#-cloud-solution-provider-csp)
 
 - [📌 Resumen Comparativo](#-resumen-comparativo)
 
 - [Microsoft Entra tenant](#microsoft-entra-tenant)
-- [Azure Subscription](#azure-subscription)
-- [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
-- [Tipos de roles en Azure](#tipos-de-roles-en-azure)
-  - [Diferencia clave examen AZ-305](#-diferencia-clave-examen-az-305)
-  - [Roles que NO son RBAC](#roles-que-no-son-rbac-azure-resource-manager)
-  - [Azure RBAC Roles (Control Plane)](#azure-rbac-roles-control-plane)
-  - [Custom Roles](#2️⃣-custom-roles)
-  - [Microsoft Entra Roles](#3️⃣-microsoft-entra-roles-nivel-identidad)
-  - [Scope donde se asignan roles](#scope-donde-se-asignan-roles)
-  - [Diferencia crítica para AZ-305](#diferencia-crítica-para-az-305)
 
-- [🔐 Microsoft Entra ID – Conceptos clave](#-microsoft-entra-id--conceptos-clave-de-autenticación-y-acceso)
+- [Azure Subscription](#azure-subscription)
+
+- [¿Qué son los roles en Azure?](#qué-son-los-roles-en-azure)
+
+- [Tipos de roles en Azure](#tipos-de-roles-en-azure)
+  - [Roles que NO son RBAC (Microsoft Entra Roles)](#roles-que-no-son-rbac-azure-resource-manager)
+  - [Azure RBAC Roles (Control Plane)](#azure-rbac-roles-control-plane)
+  - [Roles típicos](#roles-típicos)
+  - [Custom Roles](#2️⃣-custom-roles)
+  - [Microsoft Entra Roles (nivel identidad)](#3️⃣-microsoft-entra-roles-nivel-identidad)
+
+- [Scope donde se asignan roles](#scope-donde-se-asignan-roles)
+
+- [Diferencia crítica para AZ-305](#diferencia-crítica-para-az-305)
+
+- [Microsoft Entra ID – Conceptos clave de autenticación y acceso](#-microsoft-entra-id--conceptos-clave-de-autenticación-y-acceso)
   - [Continuous Access Evaluation (CAE)](#continuous-access-evaluation-cae)
   - [Conditional Access Policies (CAP)](#conditional-access-policies-cap)
   - [OpenID Connect (OIDC)](#openid-connect-oidc)
@@ -47,23 +42,31 @@
   - [Azure AD Enterprise Applications](#azure-ad-enterprise-applications)
   - [Azure AD Application Proxy](#azure-ad-application-proxy)
 
-- [🔐 Microsoft Entra ID Governance](#-microsoft-entra-id-governance)
-  - [Azure Service: Microsoft Entra ID Governance](#-azure-service-microsoft-entra-id-governance)
-  - [Feature: Access Reviews](#-feature-access-reviews)
+- [Microsoft Entra ID Governance](#-microsoft-entra-id-governance)
+  - [Access Reviews (Governance)](#-feature-access-reviews)
 
-- [1️⃣ Microsoft Entra ID (Identity Provider)](#1️⃣-microsoft-entra-id-identity-provider---teoría-resumida-oauth-20--entra-id--web-api)
-- [2️⃣ OAuth 2.0 (Autorización)](#2️⃣-oauth-20-autorización)
-- [3️⃣ Access Token (Bearer Token)](#3️⃣-access-token-bearer-token)
+- [OAuth 2.0 + Entra ID + Web API](#1️⃣-microsoft-entra-id-identity-provider---teoría-resumida-oauth-20--entra-id--web-api)
+  - [OAuth 2.0](#2️⃣-oauth-20-autorización)
+  - [Access Token (Bearer Token)](#3️⃣-access-token-bearer-token)
 
 - [Privileged Identity Management (PIM)](#privileged-identity-management-pim)
 
-- [📊 Métodos de autenticación híbrida](#-métodos-de-autenticación-híbrida-en-microsoft-entra-id)
-- [¿Qué es Azure AD Connect?](#qué-es-azure-ad-connect)
-- [Métodos de autenticación híbrida](#métodos-de-autenticación-híbrida)
+- [Métodos de autenticación híbrida](#-métodos-de-autenticación-híbrida-en-microsoft-entra-id)
+  - [Comparativa rápida](#comparativa-rápida)
+  - [¿Qué es Azure AD Connect?](#qué-es-azure-ad-connect)
   - [PHS – Password Hash Synchronization](#-phs--password-hash-synchronization)
   - [PTA – Pass-Through Authentication](#-pta--pass-through-authentication)
   - [AD FS – Federation Services](#-ad-fs--federation-services)
+  - [Regla mental para AZ-305](#-regla-mental-para-az-305)
+  - [Flujos simplificados](#-flujo-simplificado)
 
+- [Microsoft Entra Entitlement Management](#-microsoft-entra-entitlement-management)
+  - [Access Package](#1️⃣-access-package)
+  - [Catálogo](#2️⃣-catalogo)
+  - [Policies](#3️⃣-policies-políticas)
+  - [Flujo de funcionamiento](#-flujo-de-funcionamiento)
+  - [Diferencia con RBAC](#-diferencia-con-rbac-tradicional)
+  - [Casos de uso](#-casos-de-uso-típicos)
 
 
 ---
@@ -1007,4 +1010,141 @@ Usuario → Entra ID → Agente PTA → AD on-prem → Resultado
 Usuario → Entra ID → Redirección a AD FS → Validación en AD → Token emitido
 
 
+---
+# 🔐 Microsoft Entra Entitlement Management
+
+**Microsoft Entra Entitlement Management** es una funcionalidad de **Microsoft Entra ID** que permite **automatizar, gobernar y auditar el acceso** a recursos dentro de una organización.
+
+Está orientado a resolver problemas de:
+
+- Accesos manuales
+- Permisos acumulados sin control
+- Falta de expiración
+- Auditoría compleja
+
+---
+
+# 🎯 ¿Qué problema soluciona?
+
+En entornos empresariales, dar acceso suele implicar:
+
+- Añadir usuarios a varios grupos
+- Asignar aplicaciones
+- Dar permisos temporales
+- Gestionar aprobaciones manuales
+
+Esto genera:
+
+- 🔴 Accesos excesivos
+- 🔴 Usuarios con permisos antiguos
+- 🔴 Dificultad para auditorías
+
+Entitlement Management centraliza y automatiza todo ese proceso.
+
+---
+
+# 🧠 Conceptos Clave
+
+## 1️⃣ Access Package
+
+Es el elemento principal.
+
+Un **Access Package** agrupa:
+
+- Grupos de seguridad
+- Aplicaciones empresariales
+- Sitios de SharePoint
+- Roles
+
+Ejemplo:
+````
+Access Package: Finance-Team
+- Grupo: Finance-Users
+- App: ERP-System
+- SharePoint: Finance Docs
+````
+En lugar de asignar cada recurso manualmente, el usuario solicita un único paquete.
+
+---
+
+## 2️⃣ Catálogo
+
+Los Access Packages se organizan dentro de un **Catálogo**.
+
+Ejemplo:
+
+- Catálogo IT
+- Catálogo Finance
+- Catálogo Partners
+
+Permite delegar administración por área.
+
+---
+
+## 3️⃣ Policies (Políticas)
+
+Las políticas definen:
+
+- Quién puede solicitar el acceso
+- Quién debe aprobarlo
+- Duración del acceso
+- Revisión periódica obligatoria
+- Expiración automática
+
+Ejemplo:
+
+- Solo empleados internos pueden solicitarlo
+- Requiere aprobación del manager
+- Expira en 90 días
+- Revisión cada 6 meses
+
+---
+
+# 🔄 Flujo de funcionamiento
+
+1. Usuario solicita un Access Package
+2. Se activa flujo de aprobación
+3. Si se aprueba → Se asignan automáticamente los recursos
+4. Al expirar → Se revocan automáticamente
+
+Todo queda auditado.
+
+---
+
+# 🏗 ¿Qué es técnicamente?
+
+No es:
+
+- ❌ Un rol
+- ❌ Un grupo
+- ❌ Una aplicación
+
+Es una **funcionalidad de Identity Governance** dentro de Microsoft Entra ID (requiere licencia P2 o Entra ID Governance).
+
+---
+
+# 🔍 Diferencia con RBAC tradicional
+
+| RBAC tradicional | Entitlement Management |
+|------------------|------------------------|
+| Asignación manual | Solicitud de paquetes |
+| Sin expiración automática | Con expiración automática |
+| Sin aprobación integrada | Con workflows de aprobación |
+| Sin revisiones periódicas | Con Access Reviews |
+
+---
+
+# 🎯 Casos de uso típicos
+
+- Acceso temporal a proyectos
+- Gestión de usuarios externos (B2B)
+- Onboarding / Offboarding
+- Entornos regulados
+- Control de accesos sensibles
+
+---
+
+# 🧠 Resumen
+
+> Entitlement Management permite **paquetizar, aprobar, auditar y expirar accesos automáticamente** dentro de Microsoft Entra ID.
 
