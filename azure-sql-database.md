@@ -838,8 +838,8 @@ Azure SQL (Familia de servicios)
 <tr>
 <th rowspan="2">Característica</th>
 
-<th colspan="4">Azure SQL Database – Single Database</th>
-<th colspan="3">Azure SQL Database – Elastic Pool</th>
+<th colspan="6">Azure SQL Database – Single Database</th>
+<th colspan="4">Azure SQL Database – Elastic Pool</th>
 <th colspan="2">Azure SQL Managed Instance</th>
 </tr>
 <tr>
@@ -847,84 +847,329 @@ Azure SQL (Familia de servicios)
 <th>Standard (DTU)</th>
 <th>Premium (DTU)</th>
 <th>General Purpose (vCore)</th>
+<th>Business Critical (vCore)</th>
+<th>Hyperscale (vCore)</th>
+
 <th>Standard Pool (DTU)</th>
 <th>Premium Pool (DTU)</th>
 <th>General Purpose (vCore)</th>
+<th>Business Critical (vCore)</th>
+
 <th>General Purpose</th>
 <th>Business Critical</th>
 </tr>
 </thead>
+
 <tbody>
 
-<tr>
-<td>Modelo basado en DTU</td>
-<td>✅</td><td>✅</td><td>✅</td>
-<td>❌</td>
-<td>✅</td><td>✅</td>
-<td>❌</td>
-<td>❌</td><td>❌</td>
-</tr>
-
+<!-- =======================
+     MODELOS DE COMPRA
+     ======================= -->
 <tr>
 <td>Modelo basado en vCore</td>
 <td>❌</td><td>❌</td><td>❌</td>
-<td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
 <td>❌</td><td>❌</td>
-<td>✅</td>
+<td>✅</td><td>✅</td>
 <td>✅</td><td>✅</td>
 </tr>
 
 <tr>
+<td>Modelo basado en DTU disponible</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>✅</td><td>✅</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+</tr>
+
+<!-- =======================
+     FEATURES SQL
+     ======================= -->
+<tr>
 <td>In-Memory OLTP</td>
 <td>❌</td><td>❌</td><td>✅</td>
-<td>❌</td>
+<td>❌</td><td>✅</td><td>❌</td>
 <td>❌</td><td>✅</td>
-<td>❌</td>
 <td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Memory-Optimized Tables</td>
+<td>❌</td><td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td><td>❌</td>
+<td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Columnstore Indexes</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>SQL Agent disponible</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Consultas cross-database completas</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Compatibilidad casi total con SQL Server</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<!-- =======================
+     ALMACENAMIENTO / ARQUITECTURA
+     ======================= -->
+<tr>
+<td>Almacenamiento local SSD (para datos primarios)</td>
+<td>❌</td><td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td><td>❌</td>
+<td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td>
+<td>❌</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Almacenamiento remoto</td>
+<td>✅</td><td>✅</td><td>❌</td>
+<td>✅</td><td>❌</td><td>✅</td>
+<td>✅</td><td>❌</td>
+<td>✅</td><td>❌</td>
+<td>✅</td><td>❌</td>
+</tr>
+
+<tr>
+<td>Recursos dedicados</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>✅</td><td>✅</td>
 </tr>
 
 <tr>
 <td>Réplicas de solo lectura dedicadas</td>
 <td>❌</td><td>❌</td><td>✅</td>
-<td>❌</td>
+<td>❌</td><td>✅</td><td>✅</td>
 <td>❌</td><td>✅</td>
-<td>❌</td>
+<td>❌</td><td>✅</td>
 <td>❌</td><td>✅</td>
 </tr>
 
+<!-- =======================
+     ESCALADO
+     ======================= -->
 <tr>
-<td>Almacenamiento SSD local</td>
-<td>❌</td><td>❌</td><td>✅</td>
-<td>❌</td>
-<td>❌</td><td>✅</td>
-<td>❌</td>
-<td>❌</td><td>✅</td>
+<td>Escalado sin downtime (cambio de tamaño)</td>
+<td>✅*</td><td>✅*</td><td>✅*</td>
+<td>✅*</td><td>✅*</td><td>✅*</td>
+<td>✅*</td><td>✅*</td>
+<td>✅*</td><td>✅*</td>
+<td>✅*</td><td>✅*</td>
 </tr>
 
 <tr>
 <td>Escalado automático de computación</td>
 <td>❌</td><td>❌</td><td>❌</td>
-<td>✅ (Serverless)</td>
+<td>✅ (solo Serverless)</td><td>❌</td><td>❌</td>
 <td>❌</td><td>❌</td>
-<td>❌</td>
 <td>❌</td><td>❌</td>
-</tr>
-
-<tr>
-<td>Modo Serverless</td>
-<td>❌</td><td>❌</td><td>❌</td>
-<td>✅</td>
-<td>❌</td><td>❌</td>
-<td>❌</td>
 <td>❌</td><td>❌</td>
 </tr>
 
 <tr>
-<td>SQL Agent</td>
+<td>Modo Serverless disponible</td>
 <td>❌</td><td>❌</td><td>❌</td>
-<td>❌</td>
+<td>✅</td><td>❌</td><td>❌</td>
 <td>❌</td><td>❌</td>
-<td>❌</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+</tr>
+
+<tr>
+<td>Auto-pause disponible</td>
+<td>❌</td><td>❌</td><td>❌</td>
+<td>✅ (Serverless)</td><td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+<td>❌</td><td>❌</td>
+</tr>
+
+<!-- =======================
+     HA / DR (lo que pedías)
+     ======================= -->
+<tr>
+<td>Alta disponibilidad integrada (intra-región)</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Zone Redundancy (AZ) disponible (intra-región)</td>
+<td>❌</td><td>❌</td><td>✅*</td>
+<td>✅*</td><td>✅</td><td>✅*</td>
+<td>❌</td><td>✅*</td>
+<td>✅*</td><td>✅</td>
+<td>✅*</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Failover por caída de zona (Zone outage)</td>
+<td>✅ (plataforma)</td><td>✅ (plataforma)</td><td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅ (plataforma)</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Zero data loss en failover por zona (RPO ≈ 0)</td>
+<td>❌</td><td>❌</td><td>✅*</td>
+<td>❌*</td><td>✅</td><td>❌*</td>
+<td>❌</td><td>✅*</td>
+<td>❌*</td><td>✅</td>
+<td>❌*</td><td>✅</td>
+</tr>
+
+<tr>
+<td>DR multi-región (Active Geo-Replication)</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Auto-failover groups (DR multi-región)</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>RPO típico ante caída REGIONAL (con geo-replication / failover group)</td>
+<td>&gt;0 (async)</td><td>&gt;0 (async)</td><td>&gt;0 (async)</td>
+<td>&gt;0 (async)</td><td>&gt;0 (async)</td><td>&gt;0 (async)</td>
+<td>&gt;0 (async)</td><td>&gt;0 (async)</td>
+<td>&gt;0 (async)</td><td>&gt;0 (async)</td>
+<td>&gt;0 (async)</td><td>&gt;0 (async)</td>
+</tr>
+
+<tr>
+<td>RTO típico ante caída REGIONAL (con failover group)</td>
+<td>minutos*</td><td>minutos*</td><td>minutos*</td>
+<td>minutos*</td><td>minutos*</td><td>minutos*</td>
+<td>minutos*</td><td>minutos*</td>
+<td>minutos*</td><td>minutos*</td>
+<td>minutos*</td><td>minutos*</td>
+</tr>
+
+<tr>
+<td>Failover DR regional</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+<td>Auto (failover group) o Manual</td>
+</tr>
+
+<tr>
+<td>Zero data loss en failover REGIONAL</td>
+<td>❌ (async)</td><td>❌ (async)</td><td>❌ (async)</td>
+<td>❌ (async)</td><td>❌ (async)</td><td>❌ (async)</td>
+<td>❌ (async)</td><td>❌ (async)</td>
+<td>❌ (async)</td><td>❌ (async)</td>
+<td>❌ (async)</td><td>❌ (async)</td>
+</tr>
+
+<tr>
+<td>Backups automáticos (PITR)</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Restore desde backups (manual / operador)</td>
+<td>✅ (manual)</td><td>✅ (manual)</td><td>✅ (manual)</td>
+<td>✅ (manual)</td><td>✅ (manual)</td><td>✅ (manual)</td>
+<td>✅ (manual)</td><td>✅ (manual)</td>
+<td>✅ (manual)</td><td>✅ (manual)</td>
+<td>✅ (manual)</td><td>✅ (manual)</td>
+</tr>
+
+<tr>
+<td>Uso típico de backups como DR principal</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+<td>⚠️ Solo si aceptas RTO/RPO altos</td>
+</tr>
+
+<!-- =======================
+     COSTES
+     ======================= -->
+<tr>
+<td>Compatible con Azure Hybrid Benefit</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+</tr>
+
+<tr>
+<td>Compatible con Reserved Capacity</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
+<td>✅</td><td>✅</td>
 <td>✅</td><td>✅</td>
 </tr>
 
