@@ -31,6 +31,13 @@ Azure Key Vault tiene **dos tiers principales**:
 | Coste | Bajo | Más alto | Alto |
 
 
+| Servicio           | ¿Usa HSM? | Tipo de HSM                | FIPS 140-2 |
+| ------------------ | --------- | -------------------------- | ---------- |
+| Key Vault Standard | ❌ No      | Software                   | —          |
+| Key Vault Premium  | ✅ Sí      | HSM multi-tenant           | Level 2    |
+| Azure Managed HSM  | ✅ Sí      | HSM dedicado single-tenant | Level 3    |
+
+
 - **Standard** → secretos y claves software.
 - **Premium** → claves HSM (multi-tenant, FIPS Level 2).
 - **Managed HSM** → HSM dedicado, FIPS Level 3, aislamiento criptográfico real.
