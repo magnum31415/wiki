@@ -219,3 +219,75 @@ Permite capturar tráfico de red en:
 | VPN Troubleshoot  | Diagnóstico de Azure VPN Gateway       | Análisis de NSG           |
 | NSG Diagnostics   | Ver reglas Allow/Deny de un NSG        | Problemas de túnel VPN    |
 | Packet Capture    | Analizar tráfico de red en detalle     | Diagnóstico específico VPN |
+
+
+# Azure Virtual WAN
+
+| Característica                                | **Virtual WAN – Standard**       | **Virtual WAN – Advanced (Secured Virtual Hub)** |
+| --------------------------------------------- | -------------------------------- | ------------------------------------------------ |
+| Conectividad básica (VNet, VPN, ExpressRoute) | ✅ Sí                             | ✅ Sí                                             |
+| Site-to-Site VPN                              | ✅ Sí                             | ✅ Sí                                             |
+| Point-to-Site VPN                             | ✅ Sí                             | ✅ Sí                                             |
+| ExpressRoute                                  | ✅ Sí                             | ✅ Sí                                             |
+| Branch-to-branch transit                      | ✅ Sí                             | ✅ Sí                                             |
+| Routing centralizado (hub-and-spoke global)   | ✅ Sí                             | ✅ Sí                                             |
+| Azure Firewall integrado en el hub            | ❌ No (se implementa manualmente) | ✅ Sí (integrado nativamente)                     |
+| Firewall Manager integration                  | ❌ No                             | ✅ Sí                                             |
+| Políticas de seguridad centralizadas          | ❌ No                             | ✅ Sí                                             |
+| Inspección de tráfico entre VNets             | ❌ Limitado                       | ✅ Sí                                             |
+| Inspección de tráfico Internet-bound          | ❌ No nativo                      | ✅ Sí                                             |
+| Forced tunneling a firewall                   | Manual                           | ✅ Integrado                                      |
+| Seguridad gestionada desde Virtual WAN        | ❌ No                             | ✅ Sí                                             |
+| Coste                                         | 💰 Más bajo                      | 💰💰 Más alto                                    |
+
+---
+## Diferencias clave
+
+### 🔹 Basic
+- Solo soporta **Site-to-Site VPN**
+- No soporta ExpressRoute
+- No soporta Point-to-Site VPN
+- No permite conectividad entre VNets
+- No permite tránsito entre sucursales
+- No incluye capacidades de seguridad integradas
+- Pensado para escenarios simples
+
+---
+
+### 🔹 Standard
+Incluye todas las capacidades:
+
+- Site-to-Site VPN
+- Point-to-Site VPN
+- ExpressRoute
+- Conectividad VNet
+- Tránsito global entre hubs
+- Routing avanzado
+- Soporte para **Secured Virtual Hub**
+- Integración con Azure Firewall
+- Inspección centralizada de tráfico
+
+---
+
+## Clave para examen (AZ-305)
+
+Si el escenario menciona:
+
+- ExpressRoute  
+- Conectividad entre VNets  
+- Seguridad centralizada  
+- Azure Firewall gestionado  
+- Routing policies  
+
+👉 La respuesta es **Standard**.
+
+Si solo menciona:
+
+- Site-to-Site VPN básica  
+
+👉 Puede ser **Basic**.
+
+
+
+
+![azure-virtual-wan](./img/azure/azure-virtual-wan.png)
