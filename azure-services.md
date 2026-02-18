@@ -4,11 +4,13 @@
 
 ## 📑 Índice
 
-- [Tabla comparativa rápida](#tabla-comparativa-rápida)
+
+
+- [Tabla comparativa rápida](#-tabla-comparativa-rápida)
 - [Azure Analysis Services](#azure-analysis-services)
+- [Azure Application Insights](#azure-application-insights)
 - [Azure Arc](#azure-arc)
 - [Azure Automation](#azure-automation)
-- [Azure Application Insights](#azure-application-insights)
 - [Azure Backup](#azure-backup)
 - [Azure Blueprints](#azure-blueprints)
 - [Azure Data Box](#azure-data-box)
@@ -17,6 +19,7 @@
 - [Azure Data Factory](#azure-data-factory)
 - [Azure Data Lake Storage](#azure-data-lake-storage)
 - [Azure Database Migration Service](#azure-database-migration-service)
+- [Azure Databricks](#azure-databricks)
 - [Azure DevOps](#azure-devops)
 - [Azure Event Hubs](#azure-event-hubs)
 - [Azure File Sync](#azure-file-sync)
@@ -578,3 +581,7 @@ Clave en arquitecturas de Big Data y análisis empresarial a gran escala.
 Azure Synapse Analytics service, formerly known as Azure SQL Data Warehouse, is a cloud-based analytics service that combines big data and data warehousing capabilities. It allows you to analyze large volumes of data and provides integration with Azure Data Lake Storage and Azure Data Factory. Given the need for a data warehouse and big data analytics system in the desired target state, Azure Synapse Analytics service is the most appropriate choice.
 
 ---
+### 🔝 [Volver al índice](#-índice)
+## Azure Databricks
+
+Azure Databricks is an Apache Spark-based analytics platform optimized for Azure. It provides large-scale data processing for both batch and streaming workloads, simplifies data science on large datasets, offers an optimized spark engine, and supports Scala R language. 
