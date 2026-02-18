@@ -456,9 +456,11 @@ CPU > 80% durante 5 minutos
 - Muy flexibles
 
 Ejemplo:
-```kql
+````kql
 AzureActivity
 | where ActivityStatus == "Failed"
+````
+
 
 ````
 Azure Monitor
@@ -572,5 +574,7 @@ Se usa junto a Event Hubs o IoT Hub para transformar y enrutar datos en streamin
 
 Plataforma analítica unificada que combina Data Warehouse, Spark y Data Lake.  
 Clave en arquitecturas de Big Data y análisis empresarial a gran escala.
+
+Azure Synapse Analytics service, formerly known as Azure SQL Data Warehouse, is a cloud-based analytics service that combines big data and data warehousing capabilities. It allows you to analyze large volumes of data and provides integration with Azure Data Lake Storage and Azure Data Factory. Given the need for a data warehouse and big data analytics system in the desired target state, Azure Synapse Analytics service is the most appropriate choice.
 
 ---
