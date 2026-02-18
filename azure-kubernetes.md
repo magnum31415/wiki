@@ -40,6 +40,22 @@
 - [Flujo típico CI/CD](#-flujo-típico-cicd)
 - [¿Dónde se ejecutan las imágenes?](#-vas-a-ejecutar-contenedores-en-azure)
 
+##  CNI (Container Networking Interface)
+
+- [🌐 CNI (Container Networking Interface)](#-cni-container-networking-interface)
+- [🎯 ¿Qué problema resuelve?](#-qué-problema-resuelve)
+- [🧠 ¿Cómo funciona?](#-cómo-funciona)
+- [🧩 Componentes clave](#-componentes-clave)
+- [☸️ CNI en Kubernetes](#️-cni-en-kubernetes)
+- [☁️ CNI en Azure (AKS)](#️-cni-en-azure-aks)
+  - [1️⃣ Azure CNI](#1️⃣-azure-cni)
+  - [2️⃣ Kubenet (legacy)](#2️⃣-kubenet-legacy)
+- [🔎 Diferencia importante](#-diferencia-importante)
+- [📌 Resumen rápido](#-resumen-rápido)
+
+
+
+
 # Azure Kubernetes 
 ## ¿Vas a ejecutar contenedores en Azure?
 ````
@@ -613,4 +629,98 @@ No hay:
 
 > Azure Workload Identity es un mecanismo de federación OIDC que permite a los pods de AKS autenticarse en Microsoft Entra ID usando una identidad administrada sin almacenar secretos.
 
+
+# 🌐 CNI (Container Networking Interface)
+
+**CNI (Container Networking Interface)** es una especificación estándar que define cómo se configuran las redes para contenedores en entornos como Kubernetes.
+
+No es un producto, sino una **interfaz/estándar** que permite que diferentes plugins de red proporcionen conectividad a los contenedores.
+
+---
+
+# 🎯 ¿Qué problema resuelve?
+
+Cuando se crea un contenedor, necesita:
+
+- Una dirección IP
+- Conectividad de red
+- Reglas de enrutamiento
+- Acceso a otros servicios
+
+CNI define **cómo el runtime del contenedor (como containerd)** solicita a un plugin de red que configure todo eso automáticamente.
+
+---
+
+# 🧠 ¿Cómo funciona?
+
+Cuando Kubernetes crea un Pod:
+
+1. El runtime del contenedor invoca el plugin CNI.
+2. El plugin:
+   - Asigna una IP
+   - Configura interfaces virtuales
+   - Aplica reglas de routing
+3. El Pod queda conectado a la red del clúster.
+
+---
+
+# 🧩 Componentes clave
+
+| Componente | Función |
+|------------|----------|
+| Especificación CNI | Define cómo interactúan runtime y plugin |
+| Plugin CNI | Implementa la red (Calico, Azure CNI, Flannel, etc.) |
+| Runtime (containerd) | Llama al plugin cuando crea el contenedor |
+
+---
+
+# ☸️ CNI en Kubernetes
+
+Kubernetes **no implementa red directamente**.  
+Delegaa la red a plugins CNI.
+
+Ejemplos comunes:
+
+- Calico
+- Flannel
+- Cilium
+- Azure CNI (en AKS)
+
+---
+
+# ☁️ CNI en Azure (AKS)
+
+En Azure Kubernetes Service (AKS) existen dos modelos principales:
+
+## 1️⃣ Azure CNI
+
+- Cada Pod obtiene una IP de la VNet.
+- Integración directa con red Azure.
+- Ideal cuando necesitas:
+  - Integración con recursos en la VNet
+  - Control granular de red
+
+## 2️⃣ Kubenet (legacy)
+
+- Pods usan red interna.
+- Se hace NAT hacia la VNet.
+- Más simple pero menos flexible.
+
+---
+
+# 🔎 Diferencia importante
+
+| Azure CNI | Kubenet |
+|------------|---------|
+| IP real en VNet | IP interna NAT |
+| Más integración empresarial | Más simple |
+| Requiere más IPs disponibles | Consume menos IPs |
+
+---
+
+# 📌 Resumen rápido
+
+> CNI es el estándar que permite configurar la red de contenedores automáticamente en Kubernetes mediante plugins especializados.
+
+En AKS, Azure CNI es la implementación empresarial más común.
 
