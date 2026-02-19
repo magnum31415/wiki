@@ -77,6 +77,7 @@ Azure SQL
 │   │   │   │   ├── In-Memory → ❌
 │   │   │   │   ├── Always On síncrono → ❌
 │   │   │   │   ├── Storage → Remoto
+│   │   │   │   ├── RPO = > 0
 │   │   │   │   ├── 🔹 Réplicas locales → 2 réplicas (1 primary + 1 secondary asincrónica)
 │   │   │   │   └── 🌍 Réplicas remotas → Opcional → hasta 4 secundarias (1 primary + n secondary asincrónicas)
 │   │   │   │
@@ -84,6 +85,7 @@ Azure SQL
 │   │   │   │   ├── In-Memory → ❌
 │   │   │   │   ├── Always On síncrono → ❌
 │   │   │   │   ├── Storage → Remoto
+│   │   │   │   ├── RPO = > 0
 │   │   │   │   ├── 🔹 Réplicas locales → 2 réplicas (1 primary + 1 secondary asincrónica)
 │   │   │   │   └── 🌍 Réplicas remotas → Opcional → hasta 4 secundarias asincrónicas
 │   │   │   │
