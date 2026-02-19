@@ -127,6 +127,10 @@ Storage Account
 
 ---
 
+![TD-Azure-Table-Storage-16-02-2026.png](./img/azure/TD-Azure-Table-Storage-16-02-2026.png)
+
+---
+
 ## Redundancia en Azure Storage
 
 # 📊 Azure Storage – Modelos de Redundancia
