@@ -182,6 +182,17 @@ Azure SQL
         └── 🌍 Réplicas remotas → Opcional → 1 primary + 1 secondary asincrónica
 
 ````
+---
+
+| Tier              | Read replica local | Failover local automático |
+| ----------------- | ------------------ | ------------------------- |
+| Basic             | ❌                  | ✅                         |
+| Standard          | ❌                  | ✅                         |
+| General Purpose   | ❌                  | ✅                         |
+| Premium           | ✅                  | ✅                         |
+| Business Critical | ✅                  | ✅                         |
+| Hyperscale        | ✅                  | ✅                         |
+
 
 ---
 # Tiers con Replicación ASÍNCRONA interna
