@@ -8,8 +8,11 @@ Es un servicio de Disaster Recovery (DR) que replica máquinas (VMs o físicas) 
 - 👉 No es alta disponibilidad local.
   
 -🔹 Es **recuperación ante desastre completo.**
+
 -🔹 ASR es principalmente para **replicación entre regiones**.
+
 -🔹 **No está diseñado para replicación entre Availability Zones**.
+
 
 **Resumen mental rápido**
 
