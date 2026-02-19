@@ -343,4 +343,22 @@ Evita caída simultánea.
 VM Scale Set:
 Evita caída + escala automáticamente.
 
+---
 
+# Tipos de VM más importantes en Azure
+
+
+| Serie        | Características principales             | CPU / RAM perfil                        | Casos ideales                                                    | No ideal para           |
+| ------------ | --------------------------------------- | --------------------------------------- | ---------------------------------------------------------------- | ----------------------- |
+| **B-series** | Burstable (modelo de créditos CPU)      | CPU baja base + picos temporales        | Dev/Test, aplicaciones con uso intermitente, bajo coste          | Producción crítica 24/7 |
+| **D-series** | Propósito general, buen balance CPU/RAM | Balanceado                              | Aplicaciones empresariales, APIs, servidores web, bases pequeñas | HPC, ML pesado          |
+| **N-series** | GPUs (NVIDIA)                           | CPU + GPU                               | Machine Learning, IA, renderizado, inferencia, simulación        | Workloads sin GPU       |
+| **H-series** | High Performance Computing              | CPU muy alta, baja latencia, InfiniBand | Simulación científica, modelado financiero, cargas HPC           | Aplicaciones estándar   |
+
+
+| Si la pregunta dice…       | Piensa en… |
+| -------------------------- | ---------- |
+| Low cost / intermittent    | B-series   |
+| Balanced workload          | D-series   |
+| AI / GPU / rendering       | N-series   |
+| Scientific computing / HPC | H-series   |
