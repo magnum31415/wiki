@@ -1,4 +1,23 @@
-[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+ Documento principal: [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+# Índice – Load Balancing en Azure
+
+## 📌 Contenido
+
+- [LoadBalancer](#loadbalancer)
+  - [¿Qué Load Balancer usar en Azure?](#qué-load-balancer-usar-en-azure)
+  - [Comparativa Load Balancing en Azure (Referencia AZ-305)](#-comparativa-load-balancing-en-azure-referencia-az-305)
+  - [Árbol de decisión – ¿Qué servicio elegir?](#-árbol-de-decisión--qué-servicio-elegir)
+  - [Azure Application Gateway](#azure-application-gateway)
+  - [SSL Termination](#ssl-termination)
+  - [Azure Front Door – Tiers y Características (AZ-305)](#azure-front-door--tiers-y-características-az-305)
+    - [Tiers disponibles](#tiers-disponibles)
+    - [Tabla comparativa](#tabla-comparativa)
+    - [Diferencia clave para examen](#diferencia-clave-para-examen)
+    - [Regla mental rápida](#regla-mental-rápida)
+
+
+
 # LoadBalancer
 
 ## ¿Qué Load Balancer usar en Azure?
@@ -173,3 +192,55 @@ SSL termination refers to the process of decrypting encrypted traffic before pas
 
 Azure Application Gateway is specifically designed to offer advanced routing capabilities, SSL offloading (which alleviates the load on web servers), and autoscaling features to efficiently handle varying traffic loads.
 **Azure Front Door** . Although it supports SSL offloading, this service is not a load balancer. Azure Front Door is a global, scalable entry-point that uses the Microsoft global edge network to create fast, secure, and widely scalable web applications.
+
+
+# Azure Front Door – Tiers y Características (AZ-305)
+
+## Tiers disponibles
+- Standard
+- Premium
+(Front Door Classic está en retirada y no es foco actual de examen)
+
+---
+
+## Tabla comparativa
+
+| Característica | Standard | Premium |
+|---------------|----------|----------|
+| Global HTTP/HTTPS Load Balancing | ✅ | ✅ |
+| Anycast global | ✅ | ✅ |
+| Health probes automáticos | ✅ | ✅ |
+| Path-based routing | ✅ | ✅ |
+| Host-based routing | ✅ | ✅ |
+| Redirecciones / Rewrites | ✅ | ✅ |
+| Rules Engine | ✅ | ✅ |
+| CDN integrado (edge caching) | ✅ | ✅ |
+| Compresión | ✅ | ✅ |
+| TLS termination | ✅ | ✅ |
+| Certificados gestionados | ✅ | ✅ |
+| WAF | ✅ | ✅ |
+| Private Link hacia backend | ❌ | ✅ |
+| Soporte para backend privado (App Service privado, AKS privado, etc.) | ❌ | ✅ |
+
+---
+
+## Diferencia clave para examen
+
+### Standard
+- Aplicaciones públicas globales
+- CDN + WAF + Global Load Balancer
+- Backend público
+
+### Premium
+- Todo lo anterior
+- Soporte Private Link
+- Backend privado (no expuesto a Internet)
+- Arquitectura Zero Trust
+
+---
+
+## Regla mental rápida
+
+Standard = Web pública global + CDN + WAF  
+Premium = Standard + Private Link (backend privado)
+
