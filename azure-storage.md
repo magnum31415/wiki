@@ -102,13 +102,15 @@ Storage Account
 ````
 
 
-| Tipo de dato                   | Servicio  | Para qué sirve                   | Modelo de datos                              | Caso típico                                    | ¿Soporta REST? |
-| ------------------------------ | --------- | -------------------------------- | -------------------------------------------- | ---------------------------------------------- | -------------- |
-| **Blob Storage**               | Blob      | Almacenamiento de objetos        | No estructurado (archivos/binarios)          | Imágenes, backups, data lake, logs, vídeos     | ✅ Sí           |
-| **Table Storage**              | Table     | Base de datos NoSQL simple       | Key-Value estructurado (PartitionKey/RowKey) | Telemetría, IoT, metadatos, config distribuida | ✅ Sí           |
-| **Queue Storage**              | Queue     | Mensajería asíncrona             | Mensajes simples (hasta 64 KB)               | Desacoplar aplicaciones, procesos background   | ✅ Sí           |
-| **File Storage (Azure Files)** | File      | Compartición de archivos SMB/NFS | Sistema de archivos jerárquico               | Reemplazo de file server on-prem               | ✅ Sí           |
-| **Disk Storage (Page Blob)**   | Page Blob | Discos para VMs                  | Bloques direccionables de 512 bytes          | Discos de máquinas virtuales (VHD)             | ✅ Sí           |
+
+
+| Tipo de dato                   | Servicio  | Para qué sirve                   | Modelo de datos                              | Caso típico                                    | ¿Soporta REST? | **Formato aceptado**                                                                               |
+| ------------------------------ | --------- | -------------------------------- | -------------------------------------------- | ---------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------- |
+| **Blob Storage**               | Blob      | Almacenamiento de objetos        | No estructurado (archivos/binarios)          | Imágenes, backups, data lake, logs, vídeos     | ✅ Sí           | **Cualquier formato**: `.xml`, `.json`, `.csv`, `.parquet`, `.pdf`, `.jpg`, `.zip`, binarios, etc. |
+| **Table Storage**              | Table     | Base de datos NoSQL simple       | Key-Value estructurado (PartitionKey/RowKey) | Telemetría, IoT, metadatos, config distribuida | ✅ Sí           | Datos estructurados tipo **JSON (entidades)** vía API; no guarda archivos como `.xml` o `.pdf`     |
+| **Queue Storage**              | Queue     | Mensajería asíncrona             | Mensajes simples (hasta 64 KB)               | Desacoplar aplicaciones, procesos background   | ✅ Sí           | Texto/Base64. Puede contener **JSON o XML como string**                                            |
+| **File Storage (Azure Files)** | File      | Compartición de archivos SMB/NFS | Sistema de archivos jerárquico               | Reemplazo de file server on-prem               | ✅ Sí           | **Cualquier formato de archivo** (como un file server tradicional)                                 |
+| **Disk Storage (Page Blob)**   | Page Blob | Discos para VMs                  | Bloques direccionables de 512 bytes          | Discos de máquinas virtuales (VHD)             | ✅ Sí           | Formato **VHD/VHDX** (almacenamiento de bloques, no archivos lógicos)                              |
 
 
 **Cómo diferenciarlos rápido (modo examen)**
