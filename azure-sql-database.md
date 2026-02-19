@@ -158,6 +158,42 @@ Azure SQL
         └── Muy baja latencia → ✅
 ````
 
+---
+# Tiers con Replicación ASÍNCRONA interna
+
+Significa que: **Asíncrono = el commit no espera a la réplica**
+
+- Azure mantiene **otra copia del motor SQL dentro de la misma región**
+- Pero **el commit de la transacción NO espera a que esa copia confirme**
+- La replicación del log ocurre después
+  
+````
+Cliente → Primary replica → Commit OK
+               ↓ (envía log después)
+           Secondary replica
+````
+
+**Esto se produce en**
+- **Basic (DTU)** : Replica asíncrona interna, Storage remoto , RPO > 0
+- **Standard (DTU)** : Replica asíncrona interna, Storage remoto, RPO > 0
+- **General Purpose (vCore)**: Replica asíncrona interna, Compute separado de storage, RPO > 0
+- **Azure SQL Managed Instance - General Purpose** : Replica asíncrona interna, Storage remoto, RPO > 0
+- **Hyperscale** : Arquitectura distinta (log service + page servers), pero también: Replicación no síncrona clásica
+
+
+# Tiers con Replicación SÍNCRONA interna
+
+- **Premium (DTU)**
+- **Business Critical (vCore)**
+
+````
+Cliente → Primary
+              ↓ (espera confirmación síncrona)
+         Secondary confirma
+              ↓
+         Commit OK
+````
+
 # 🔍 DTU vs vCore en Azure SQL
 
 Azure SQL Database ofrece **dos modelos de compra** para dimensionar rendimiento:
