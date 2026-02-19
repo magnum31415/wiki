@@ -362,3 +362,82 @@ Evita caída + escala automáticamente.
 | Balanced workload          | D-series   |
 | AI / GPU / rendering       | N-series   |
 | Scientific computing / HPC | H-series   |
+
+
+# Azure Dedicated Host vs Host Group
+
+---
+
+## 🔹 Azure Dedicated Host
+
+👉 Es el **servidor físico real** en el datacenter de Azure.
+
+- Es hardware dedicado solo para tu organización.
+- Dentro de él se ejecutan tus máquinas virtuales.
+- No compartes ese servidor físico con otros clientes.
+- Cumple requisitos de aislamiento, compliance y licenciamiento.
+- Se implementa dentro de una **Availability Zone específica** (si el Host Group está asociado a zona).
+
+📌 Es el recurso que realmente “corre” las VMs.
+
+### 📍 Alcance
+- ✅ Nivel: **Zona**
+- ❌ No es multizona
+- ❌ No es regional por sí mismo
+
+---
+
+## 🔹 Host Group
+
+👉 Es un **contenedor lógico que agrupa Dedicated Hosts**.
+
+- No es hardware.
+- Es una estructura organizativa.
+- Se crea en una **región específica**.
+- Puede asociarse a **una Availability Zone concreta**.
+- Permite distribuir hosts entre **fault domains**.
+- Para usar múltiples zonas, necesitas **un Host Group por zona**.
+
+📌 Es el recurso que organiza los Dedicated Hosts.
+
+### 📍 Alcance
+- ✅ Nivel: **Región**
+- ✅ Puede asociarse a **Zona**
+- ❌ No es multizona (un Host Group pertenece a una sola zona)
+
+---
+
+## 🔹 Relación entre ambos
+
+Host Group
+└── Dedicated Host (servidor físico)
+└── Virtual Machines
+
+
+1. Primero creas un **Host Group**
+2. Dentro agregas uno o más **Dedicated Hosts**
+3. Luego despliegas VMs en esos hosts
+
+---
+
+## 🔹 Analogía sencilla
+
+- **Host Group** = Un edificio  
+- **Dedicated Host** = Un piso completo del edificio  
+- **VMs** = Oficinas dentro del piso  
+
+El edificio organiza.  
+El piso es el recurso físico real.
+
+---
+
+## 🔹 Diferencias clave
+
+| Azure Dedicated Host | Host Group |
+|----------------------|------------|
+| Servidor físico dedicado | Contenedor lógico |
+| Ejecuta máquinas virtuales | Organiza Dedicated Hosts |
+| Aporta aislamiento físico | Define región y zona |
+| Es hardware | No es hardware |
+| Nivel: Zona | Nivel: Región + Zona |
+
