@@ -63,6 +63,8 @@ Azure SQL
 │   ├── Almacenamiento local SSD → Depende de la VM
 │   ├── RPO ≈ 0 → Solo si configuras síncrono
 │   ├── Muy baja latencia → Depende del diseño
+│   ├── 🔹 Réplicas locales → Depende de tu AG (1 primary + 0–n secondary)
+│   ├── 🌍 Réplicas remotas → Depende de tu configuración (1 primary + n secondary)
 │   └── HA/DR → ❌ No viene de serie (lo configuras tú)
 │
 ├── Azure SQL Database (PaaS)
@@ -74,12 +76,16 @@ Azure SQL
 │   │   │   ├── Basic
 │   │   │   │   ├── In-Memory → ❌
 │   │   │   │   ├── Always On síncrono → ❌
-│   │   │   │   └── Storage → Remoto
+│   │   │   │   ├── Storage → Remoto
+│   │   │   │   ├── 🔹 Réplicas locales → 2 réplicas (1 primary + 1 secondary asincrónica)
+│   │   │   │   └── 🌍 Réplicas remotas → Opcional → hasta 4 secundarias (1 primary + n secondary asincrónicas)
 │   │   │   │
 │   │   │   ├── Standard
 │   │   │   │   ├── In-Memory → ❌
 │   │   │   │   ├── Always On síncrono → ❌
-│   │   │   │   └── Storage → Remoto
+│   │   │   │   ├── Storage → Remoto
+│   │   │   │   ├── 🔹 Réplicas locales → 2 réplicas (1 primary + 1 secondary asincrónica)
+│   │   │   │   └── 🌍 Réplicas remotas → Opcional → hasta 4 secundarias asincrónicas
 │   │   │   │
 │   │   │   └── Premium  ⇄ (equivale a Business Critical)
 │   │   │       │
@@ -89,7 +95,9 @@ Azure SQL
 │   │   │       ├── Always On síncrono → ✅
 │   │   │       ├── Almacenamiento local SSD → ✅
 │   │   │       ├── RPO ≈ 0 → ✅
-│   │   │       └── Muy baja latencia → ✅
+│   │   │       ├── Muy baja latencia → ✅
+│   │   │       ├── 🔹 Réplicas locales → 4 réplicas (1 primary + 3 secondary síncronas)
+│   │   │       └── 🌍 Réplicas remotas → Opcional → 1 primary + hasta 4 secondary asincrónicas
 │   │   │
 │   │   └── Modelo vCore
 │   │       │
@@ -100,17 +108,21 @@ Azure SQL
 │   │       │   ├── Always On síncrono → ❌ (réplica asíncrona)
 │   │       │   ├── Storage → Remoto
 │   │       │   ├── RPO → > 0
-│   │       │   └── Latencia → Media
+│   │       │   ├── Latencia → Media
+│   │       │   ├── 🔹 Réplicas locales → 2 réplicas (1 primary + 1 secondary asincrónica)
+│   │       │   └── 🌍 Réplicas remotas → Opcional → 1 primary + hasta 4 secondary asincrónicas
 │   │       │
 │   │       ├── Business Critical  ⇄ Premium
 │   │       │   │
 │   │       │   ├── In-Memory OLTP → ✅
 │   │       │   ├── Memory-optimized tables → ✅
 │   │       │   ├── Columnstore indexes → ✅
-│   │       │   ├── Always On síncrono → ✅ (3 réplicas)
+│   │       │   ├── Always On síncrono → ✅
 │   │       │   ├── Almacenamiento local SSD → ✅
 │   │       │   ├── RPO ≈ 0 → ✅
-│   │       │   └── Muy baja latencia → ✅
+│   │       │   ├── Muy baja latencia → ✅
+│   │       │   ├── 🔹 Réplicas locales → 4 réplicas (1 primary + 3 secondary síncronas)
+│   │       │   └── 🌍 Réplicas remotas → Opcional → 1 primary + 1 secondary asincrónica (Auto-failover group)
 │   │       │
 │   │       └── Hyperscale
 │   │           │
@@ -120,7 +132,9 @@ Azure SQL
 │   │           ├── Always On síncrono → ❌
 │   │           ├── Storage → Arquitectura distribuida
 │   │           ├── RPO → > 0
-│   │           └── Latencia → Baja-media (no ultra baja OLTP)
+│   │           ├── Latencia → Baja-media
+│   │           ├── 🔹 Réplicas locales → 1 primary + múltiples secondary compute (asincrónicas)
+│   │           └── 🌍 Réplicas remotas → Opcional → 1 primary + n secondary asincrónicas
 │   │
 │   └── Elastic Pool
 │       │
@@ -129,14 +143,18 @@ Azure SQL
 │       │   ├── Always On síncrono → ✅
 │       │   ├── Storage → Local SSD
 │       │   ├── RPO ≈ 0 → ✅
-│       │   └── Muy baja latencia → ✅
+│       │   ├── Muy baja latencia → ✅
+│       │   ├── 🔹 Réplicas locales → 4 réplicas (1 primary + 3 secondary síncronas)
+│       │   └── 🌍 Réplicas remotas → Opcional → 1 primary + n secondary asincrónicas
 │       │
 │       └── vCore Business Critical Pool
 │           ├── In-Memory OLTP → ✅
 │           ├── Always On síncrono → ✅
 │           ├── Storage → Local SSD
 │           ├── RPO ≈ 0 → ✅
-│           └── Muy baja latencia → ✅
+│           ├── Muy baja latencia → ✅
+│           ├── 🔹 Réplicas locales → 4 réplicas (1 primary + 3 secondary síncronas)
+│           └── 🌍 Réplicas remotas → Opcional → 1 primary + 1 secondary asincrónica
 │
 └── Azure SQL Managed Instance
     │
@@ -145,7 +163,9 @@ Azure SQL
     │   ├── Always On síncrono → ❌ (asincrónica)
     │   ├── Storage → Remoto
     │   ├── RPO → > 0
-    │   └── Latencia → Media
+    │   ├── Latencia → Media
+    │   ├── 🔹 Réplicas locales → 2 réplicas (1 primary + 1 secondary asincrónica)
+    │   └── 🌍 Réplicas remotas → Opcional → 1 primary + 1 secondary asincrónica
     │
     └── Business Critical
         │
@@ -155,7 +175,10 @@ Azure SQL
         ├── Always On síncrono → ✅
         ├── Almacenamiento local SSD → ✅
         ├── RPO ≈ 0 → ✅
-        └── Muy baja latencia → ✅
+        ├── Muy baja latencia → ✅
+        ├── 🔹 Réplicas locales → 4 réplicas (1 primary + 3 secondary síncronas)
+        └── 🌍 Réplicas remotas → Opcional → 1 primary + 1 secondary asincrónica
+
 ````
 
 ---
