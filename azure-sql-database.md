@@ -50,6 +50,114 @@ Servicio PaaS basado en SQLServer totalmente gestionado
 
 
 ---
+# Azure SQL – Árbol con características técnicas
+````
+Azure SQL
+│
+├── SQL Server on Azure Virtual Machines (IaaS)
+│   │
+│   ├── In-Memory OLTP → ✅ (si lo configuras)
+│   ├── Memory-optimized tables → ✅
+│   ├── Columnstore indexes → ✅
+│   ├── Always On síncrono → ✅ (si configuras AG)
+│   ├── Almacenamiento local SSD → Depende de la VM
+│   ├── RPO ≈ 0 → Solo si configuras síncrono
+│   ├── Muy baja latencia → Depende del diseño
+│   └── HA/DR → ❌ No viene de serie (lo configuras tú)
+│
+├── Azure SQL Database (PaaS)
+│   │
+│   ├── Single Database
+│   │   │
+│   │   ├── Modelo DTU
+│   │   │   │
+│   │   │   ├── Basic
+│   │   │   │   ├── In-Memory → ❌
+│   │   │   │   ├── Always On síncrono → ❌
+│   │   │   │   └── Storage → Remoto
+│   │   │   │
+│   │   │   ├── Standard
+│   │   │   │   ├── In-Memory → ❌
+│   │   │   │   ├── Always On síncrono → ❌
+│   │   │   │   └── Storage → Remoto
+│   │   │   │
+│   │   │   └── Premium  ⇄ (equivale a Business Critical)
+│   │   │       │
+│   │   │       ├── In-Memory OLTP → ✅
+│   │   │       ├── Memory-optimized tables → ✅
+│   │   │       ├── Columnstore indexes → ✅
+│   │   │       ├── Always On síncrono → ✅
+│   │   │       ├── Almacenamiento local SSD → ✅
+│   │   │       ├── RPO ≈ 0 → ✅
+│   │   │       └── Muy baja latencia → ✅
+│   │   │
+│   │   └── Modelo vCore
+│   │       │
+│   │       ├── General Purpose
+│   │       │   ├── In-Memory OLTP → ❌
+│   │       │   ├── Memory-optimized tables → ❌
+│   │       │   ├── Columnstore → ✅
+│   │       │   ├── Always On síncrono → ❌ (réplica asíncrona)
+│   │       │   ├── Storage → Remoto
+│   │       │   ├── RPO → > 0
+│   │       │   └── Latencia → Media
+│   │       │
+│   │       ├── Business Critical  ⇄ Premium
+│   │       │   │
+│   │       │   ├── In-Memory OLTP → ✅
+│   │       │   ├── Memory-optimized tables → ✅
+│   │       │   ├── Columnstore indexes → ✅
+│   │       │   ├── Always On síncrono → ✅ (3 réplicas)
+│   │       │   ├── Almacenamiento local SSD → ✅
+│   │       │   ├── RPO ≈ 0 → ✅
+│   │       │   └── Muy baja latencia → ✅
+│   │       │
+│   │       └── Hyperscale
+│   │           │
+│   │           ├── In-Memory OLTP → ❌
+│   │           ├── Memory-optimized tables → ❌
+│   │           ├── Columnstore → ✅
+│   │           ├── Always On síncrono → ❌
+│   │           ├── Storage → Arquitectura distribuida
+│   │           ├── RPO → > 0
+│   │           └── Latencia → Baja-media (no ultra baja OLTP)
+│   │
+│   └── Elastic Pool
+│       │
+│       ├── DTU Premium Pool
+│       │   ├── In-Memory OLTP → ✅
+│       │   ├── Always On síncrono → ✅
+│       │   ├── Storage → Local SSD
+│       │   ├── RPO ≈ 0 → ✅
+│       │   └── Muy baja latencia → ✅
+│       │
+│       └── vCore Business Critical Pool
+│           ├── In-Memory OLTP → ✅
+│           ├── Always On síncrono → ✅
+│           ├── Storage → Local SSD
+│           ├── RPO ≈ 0 → ✅
+│           └── Muy baja latencia → ✅
+│
+└── Azure SQL Managed Instance
+    │
+    ├── General Purpose
+    │   ├── In-Memory OLTP → ❌
+    │   ├── Always On síncrono → ❌ (asincrónica)
+    │   ├── Storage → Remoto
+    │   ├── RPO → > 0
+    │   └── Latencia → Media
+    │
+    └── Business Critical
+        │
+        ├── In-Memory OLTP → ✅
+        ├── Memory-optimized tables → ✅
+        ├── Columnstore indexes → ✅
+        ├── Always On síncrono → ✅
+        ├── Almacenamiento local SSD → ✅
+        ├── RPO ≈ 0 → ✅
+        └── Muy baja latencia → ✅
+````
+
 # 🔍 DTU vs vCore en Azure SQL
 
 Azure SQL Database ofrece **dos modelos de compra** para dimensionar rendimiento:
