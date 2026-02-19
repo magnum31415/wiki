@@ -223,7 +223,7 @@ Permite capturar tráfico de red en:
 
 # Azure Virtual WAN
 
-| Característica | Basic | Standard |
+| Azure Virtual WAN Característica | Basic  SKU | Standard   SKU |
 |---------------|--------|----------|
 | Site-to-Site VPN | ✅ Sí | ✅ Sí |
 | Point-to-Site VPN | ❌ No | ✅ Sí |
