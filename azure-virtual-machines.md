@@ -156,6 +156,7 @@ Agrupa VMs para distribuirlas en distintos Fault Domains y Update Domains.
 - No gestiona VMs como grupo dinámico.
 
 ````mermaid
+
 flowchart TB
 
     subgraph AVSET["Availability Set"]
@@ -208,6 +209,7 @@ Cuando creas un VM Scale Set puedes elegir:
 Depende de cómo lo configures.
 
 ----mermaid
+
 flowchart LR
 
     %% REGIONAL VMSS
