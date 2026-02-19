@@ -728,6 +728,9 @@ Es una opción de alta disponibilidad dentro de una misma región, donde la base
 ## Geo-replication
 🔝 [Volver al índice](#-índice)
 
+![azure-sql-geo-replication](./img/azure/azure-sql-geo-replication.png)
+
+
 **Geo-replication** provides geographic redundancy and enables read operations only in the secondary region during a primary region outage.
 However, it does not support write operations in the secondary region when the primary region is down.
 
