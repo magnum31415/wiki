@@ -195,6 +195,138 @@ Azure SQL
 
 
 ---
+
+# Backups
+
+| Tipo                                     | ¿`BACKUP DATABASE` manual T-SQL? | Manual Restore Capability (PITR/LTR) | PITR                   | LTR                      |
+| ---------------------------------------- | -------------------------------- | ------------------------------------ | ---------------------- | ------------------------ |
+| **IaaS (SQL en VM)**                     | ✅ Sí                             | ✅ Sí                                 | Depende de tu política | Ilimitado (según diseño) |
+| **PaaS Basic (DTU)**                     | ❌                                | ✅ Sí (PITR)                          | 7 días                 | ❌                        |
+| **PaaS Standard (DTU)**                  | ❌                                | ✅ Sí (PITR + LTR)                    | 7–35 días              | Hasta 10 años            |
+| **PaaS Premium (DTU)**                   | ❌                                | ✅ Sí (PITR + LTR)                    | 7–35 días              | Hasta 10 años            |
+| **vCore – General Purpose**              | ❌                                | ✅ Sí (PITR + LTR)                    | 7–35 días              | Hasta 10 años            |
+| **vCore – Business Critical**            | ❌                                | ✅ Sí (PITR + LTR)                    | 7–35 días              | Hasta 10 años            |
+| **Hyperscale (vCore)**                   | ❌                                | ✅ Sí (PITR + LTR)                    | Hasta 35 días          | Hasta 10 años            |
+| **Managed Instance – General Purpose**   | ❌                                | ✅ Sí (PITR + LTR)                    | 7–35 días              | Hasta 10 años            |
+| **Managed Instance – Business Critical** | ❌                                | ✅ Sí (PITR + LTR)                    | 7–35 días              | Hasta 10 años            |
+
+
+## 📌 PITR  
+**Point-In-Time Restore**: capacidad de restaurar la base de datos a un momento exacto dentro del periodo de retención (por ejemplo, “como estaba ayer a las 14:32”).
+
+## 📌 LTR  
+**Long-Term Retention**: almacenamiento de copias de seguridad durante años (hasta 10 en Azure SQL) para cumplimiento normativo o auditoría.
+
+---
+
+## 📌 RPO  
+**Recovery Point Objective**: cuánto dato puedes perder como máximo tras un fallo (ej. 0 segundos, 5 minutos, 1 hora).
+
+## 📌 RTO  
+**Recovery Time Objective**: cuánto tiempo máximo puede estar el sistema caído hasta volver a estar operativo.
+
+---
+
+## 🎯 Diferencia clave
+
+- **PITR y LTR** → mecanismos de backup y restauración.  
+- **RPO y RTO** → objetivos de recuperación ante desastres (métricas de negocio).
+
+> **PITR/LTR = cómo restauras**  
+> **RPO/RTO = cuánto puedes perder y cuánto puedes tardar en volver**
+
+
+````
+Azure SQL
+│
+├── SQL Server on Azure Virtual Machines (IaaS)
+│   │
+│   ├── Backups manuales → ✅ Sí (FULL / DIFF / LOG)
+│   ├── Restauración manual → ✅ Sí (RESTORE DATABASE)
+│   ├── Retención → Ilimitada (según tu política)
+│   ├── También soporta Azure Backup → Hasta años (según política)
+│   │
+│   └── (El resto igual que lo tenías)
+│
+├── Azure SQL Database (PaaS)
+│   │
+│   ├── Single Database
+│   │   │
+│   │   ├── Modelo DTU
+│   │   │   │
+│   │   │   ├── Basic
+│   │   │   │   ├── Backups manuales (BACKUP DATABASE) → ❌ No
+│   │   │   │   ├── Export .bacpac → ✅ Sí
+│   │   │   │   ├── Restauración manual (PITR) → ✅ Sí
+│   │   │   │   ├── Retención PITR → 7 días
+│   │   │   │   ├── Long-Term Retention (LTR) → ❌ No
+│   │   │   │
+│   │   │   ├── Standard
+│   │   │   │   ├── Backups manuales → ❌ No
+│   │   │   │   ├── Export .bacpac → ✅ Sí
+│   │   │   │   ├── Restauración manual (PITR) → ✅ Sí
+│   │   │   │   ├── Retención PITR → 7–35 días
+│   │   │   │   ├── LTR → ✅ Sí (hasta 10 años)
+│   │   │   │
+│   │   │   └── Premium ⇄ Business Critical
+│   │   │       │
+│   │   │       ├── Backups manuales → ❌ No
+│   │   │       ├── Export .bacpac → ✅ Sí
+│   │   │       ├── Restauración manual (PITR) → ✅ Sí
+│   │   │       ├── Retención PITR → 7–35 días
+│   │   │       ├── LTR → ✅ Sí (hasta 10 años)
+│   │   │
+│   │   └── Modelo vCore
+│   │       │
+│   │       ├── General Purpose
+│   │       │   ├── Backups manuales → ❌ No
+│   │       │   ├── Export .bacpac → ✅ Sí
+│   │       │   ├── Restauración manual (PITR) → ✅ Sí
+│   │       │   ├── Retención PITR → 7–35 días
+│   │       │   ├── LTR → ✅ Sí (hasta 10 años)
+│   │       │
+│   │       ├── Business Critical
+│   │       │   ├── Backups manuales → ❌ No
+│   │       │   ├── Export .bacpac → ✅ Sí
+│   │       │   ├── Restauración manual (PITR) → ✅ Sí
+│   │       │   ├── Retención PITR → 7–35 días
+│   │       │   ├── LTR → ✅ Sí (hasta 10 años)
+│   │       │
+│   │       └── Hyperscale
+│   │           ├── Backups manuales → ❌ No
+│   │           ├── Export .bacpac → ✅ Sí
+│   │           ├── Restauración manual (PITR) → ✅ Sí
+│   │           ├── Retención PITR → Hasta 35 días
+│   │           ├── LTR → ✅ Sí (hasta 10 años)
+│   │
+│   └── Elastic Pool
+│       │
+│       ├── Backups manuales → ❌ No
+│       ├── Export .bacpac → ✅ Sí
+│       ├── Restauración manual (PITR) → ✅ Sí
+│       ├── Retención PITR → 7–35 días
+│       ├── LTR → ✅ Sí (hasta 10 años)
+│
+└── Azure SQL Managed Instance
+    │
+    ├── General Purpose
+    │   ├── Backups manuales → ❌ No (gestionados por Azure)
+    │   ├── Export .bacpac → ✅ Sí
+    │   ├── Restauración manual (PITR) → ✅ Sí
+    │   ├── Retención PITR → 7–35 días
+    │   ├── LTR → ✅ Sí (hasta 10 años)
+    │
+    └── Business Critical
+        │
+        ├── Backups manuales → ❌ No
+        ├── Export .bacpac → ✅ Sí
+        ├── Restauración manual (PITR) → ✅ Sí
+        ├── Retención PITR → 7–35 días
+        ├── LTR → ✅ Sí (hasta 10 años)
+````
+
+
+---
 # Tiers con Replicación ASÍNCRONA interna
 
 Significa que: **Asíncrono = el commit no espera a la réplica**
