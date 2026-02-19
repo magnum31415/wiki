@@ -724,6 +724,42 @@ Es una opción de alta disponibilidad dentro de una misma región, donde la base
 | DR regional | ❌ No            | ✅ Sí                |
 
 
+### Sin Zone Redundancy
+
+````pgsql
+Region: West Europe
+   Zone 1
+      ├── Primary
+      ├── Secondary
+      ├── Secondary
+      └── Secondary
+
+````
+
+- 4 réplicas (Business Critical / Premium)
+- Replicación síncrona
+- RPO ≈ 0
+- Pero todas pueden estar en la misma AZ
+
+Si cae la zona → posible indisponibilidad.
+
+### Con Zone Redundancy
+````
+Region: West Europe
+
+   Zone 1 → Primary
+   Zone 2 → Secondary
+   Zone 3 → Secondary
+   Zone 1/2/3 → Secondary
+
+````
+
+- Réplicas distribuidas físicamente
+- Replicación síncrona
+- RPO = 0
+- Failover automático
+-No cambia la connection string
+
 
 ## Geo-replication
 🔝 [Volver al índice](#-índice)
