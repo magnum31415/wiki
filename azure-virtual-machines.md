@@ -208,7 +208,9 @@ Cuando creas un VM Scale Set puedes elegir:
 
 Depende de cómo lo configures.
 
-----mermaid
+----
+
+````mermaid
 
 flowchart LR
 
