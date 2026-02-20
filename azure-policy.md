@@ -128,10 +128,12 @@ Esto sirve para:
 - Detectar recursos ya existentes que no cumplen
 - Marcar estado de compliance
 
-  | Momento                  | Qué ocurre            |
+
+| Momento                  | Qué ocurre            |
 | ------------------------ | --------------------- |
 | Antes de crear/modificar | Puede bloquear (Deny) |
 | Evaluación periódica     | Solo marca compliance |
+
 
 ## Orden correcto para aplicar Remediation
 
