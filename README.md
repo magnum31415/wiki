@@ -11,6 +11,8 @@
 8. [Vagrant Boxes](https://github.com/magnum31415/wiki/blob/main/vagrant-box.md)
 9. [Oracle](https://github.com/magnum31415/wiki/blob/main/oracle.md)
 10. [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+12. [FinOPs](https://github.com/magnum31415/wiki/blob/main/finops.md)
+
 
 
 
