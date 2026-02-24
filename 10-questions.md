@@ -29,13 +29,18 @@
 6. [Diagnóstico de Apply Lag](#5-si-el-apply-lag-empieza-a-crecer-cómo-lo-diagnosticas)
 7. [Standby desincronizado varios días](#6-qué-harías-si-el-standby-está-desincronizado-por-varios-días)
 8. [Migración 12c → 19c con Data Guard](#7-cómo-planificarías-migración-12c--19c-con-data-guard)
-
+9. [Estrategia de migración de datacenter con Data Guard y mínimo downtime](#8-actualmente-tenemos-una-base-de-datos-productiva-que-ya-funciona-con-oracle-data-guard-primary--standby-vamos-a-migrar-a-un-nuevo-proveedor-de-datacenterqué-estrategia-plantearías-para-hacer-la-migración-con-mínimo-downtime-y-mínimo-riesgo-manteniendo-alta-disponibilidad-durante-el-proceso)
 ---
 
 ## 🌐 Subnetting
 
 1. [Hosts válidos en una red /27](#1-cuántos-hosts-válidos-hay-en-una-red-27)
 2. [Dividir 192.168.1.0/24 en 4 subredes](#2-tienes-la-red-1921681024-si-necesitas-4-subredes-iguales-qué-máscara-usarías-y-cuántos-hosts-tendría-cada-una)
+
+
+## 🔧 Automatización
+
+1. [Despliegue y mantenimiento automatizado de agente en 500 servidores](#1-tenemos-que-desplegar-y-mantener-actualizado-un-agente-en-500-servidores-linux-productivos-el-proceso-debe-ser-automatizado-seguro-auditable-y-con-mínimo-riesgo-cómo-lo-diseñarías-de-extremo-a-extremo)
 
 
 ## Unix
@@ -360,68 +365,58 @@ Debe demostrar visión arquitectónica.
 
 ---
 
+### 8. Actualmente tenemos una base de datos productiva que ya funciona con Oracle Data Guard (Primary + Standby). Vamos a migrar a un nuevo proveedor de datacenter.¿Qué estrategia plantearías para hacer la migración con mínimo downtime y mínimo riesgo, manteniendo alta disponibilidad durante el proceso?
 
-## Subnetting
-
-### 1. ¿Cuántos hosts válidos hay en una red /27?
-- 32 - 27 = 5 bits para hosts
-- 2⁵ = 32 direcciones
-- Hosts válidos = 32 - 2 = 30
-
-| Tipo               | Dirección    |
-| ------------------ | ------------ |
-| Dirección de red   | 192.168.1.0  |
-| Primer host válido | 192.168.1.1  |
-| Último host válido | 192.168.1.30 |
-| Broadcast          | 192.168.1.31 |
+**Supongamos escenario actual:**
+- DC1 → Primary
+- DC2 → Standby
+Y ahora quieres ir a:
+- DC3 (nuevo proveedor)
 
 
-### 2. Tienes la red 192.168.1.0/24. Si necesitas 4 subredes iguales, ¿qué máscara usarías y cuántos hosts tendría cada una?
+``Añadiría el nuevo datacenter como standby adicional, sincronizaría completamente, validaría su estado y luego haría un switchover planificado hacia el nuevo site. Mantendría el antiguo primary como standby durante un periodo de transición para garantizar rollback.``
 
-**¿Qué significa /24?** : 
-Un prefijo **/24** indica:
-- 24 bits para red
-- 32 - 24 = **8 bits para hosts**
+**1. Crear nuevo Standby en el nuevo datacenter (DC3)**
 
-Direcciones totales: 2⁸ = 256 direcciones
+- Montar infraestructura nueva.
+- Instalar Oracle misma versión/parches.
+- Añadir DC3 como nuevo standby adicional.
 
-Rango original: 192.168.1.0 – 192.168.1.255
+Es decir, pasar temporalmente a:
+- DC1 → Primary
+- DC2 → Standby
+- DC3 → Standby
 
-**¿Cuántos bits necesito para 4 subredes?**
+Aquí debe mencionar:
 
-- Queremos 4 subredes.
-- Buscamos un número n tal que:
-- 2ⁿ = 4
-Eso ocurre con: n = 2 👉 Necesitamos tomar **2 bits** del campo de hosts.
+- Posibilidad de múltiples standbys.
+- Ajustar LOG_ARCHIVE_DEST.
+- Validar red y latencia.
+- Verificar apply lag.
 
-**Nueva máscara** 
+Si no sabe que Data Guard permite múltiples standbys → nivel medio-bajo.
 
-- Si antes era:  /24
-- Y tomamos 2 bits más: /24 + 2 = /26
+**2. Validar sincronización completa en DC3**
 
-✅ Nueva máscara: **/26**  y en formato decimal: 255.255.255.192
+- Lag = 0.
+- Pruebas de apertura read-only.
+- Validar backups en nuevo site.
+- Validar rendimiento.
 
-**¿Cuántos hosts por subred?**
+**3. Switchover hacia el nuevo datacenter**
 
-Ahora quedan: 32 - 26 = 6 bits para hosts
-Direcciones totales por subred: 2⁶ = 64 direcciones
-Hosts válidos: 64 - 2 = 62 hosts (Se restan la dirección de red y broadcast)
+Cuando DC3 está 100% sincronizado:
+- Switchover planificado.
+- DC3 pasa a ser Primary.
+- DC1 o DC2 pueden quedar como standby.
+Sin pérdida de datos.
 
-**Subredes resultantes**
+**4. Mantener el antiguo site como standby temporal**
 
-- En /26 los saltos son de 64 direcciones.
-
-Las 4 subredes son:
-1. 192.168.1.0/26     → 0 – 63  
-2. 192.168.1.64/26    → 64 – 127  
-3. 192.168.1.128/26   → 128 – 191  
-4. 192.168.1.192/26   → 192 – 255  
-
- **Respuesta final**
-
-- Máscara: **/26 (255.255.255.192)**
-- Hosts por subred: **62**
-- Total subredes creadas: **4**
+Muy importante:
+- No desmontar inmediatamente DC1.
+- Mantenerlo como standby durante periodo de estabilización.
+- Permite rollback rápido con switchover inverso.
 
 
 ---
@@ -490,6 +485,108 @@ Las 4 subredes son:
 
 
 ---
+
+## Subnetting
+
+### 1. ¿Cuántos hosts válidos hay en una red /27?
+- 32 - 27 = 5 bits para hosts
+- 2⁵ = 32 direcciones
+- Hosts válidos = 32 - 2 = 30
+
+| Tipo               | Dirección    |
+| ------------------ | ------------ |
+| Dirección de red   | 192.168.1.0  |
+| Primer host válido | 192.168.1.1  |
+| Último host válido | 192.168.1.30 |
+| Broadcast          | 192.168.1.31 |
+
+
+### 2. Tienes la red 192.168.1.0/24. Si necesitas 4 subredes iguales, ¿qué máscara usarías y cuántos hosts tendría cada una?
+
+**¿Qué significa /24?** : 
+Un prefijo **/24** indica:
+- 24 bits para red
+- 32 - 24 = **8 bits para hosts**
+
+Direcciones totales: 2⁸ = 256 direcciones
+
+Rango original: 192.168.1.0 – 192.168.1.255
+
+**¿Cuántos bits necesito para 4 subredes?**
+
+- Queremos 4 subredes.
+- Buscamos un número n tal que:
+- 2ⁿ = 4
+Eso ocurre con: n = 2 👉 Necesitamos tomar **2 bits** del campo de hosts.
+
+**Nueva máscara** 
+
+- Si antes era:  /24
+- Y tomamos 2 bits más: /24 + 2 = /26
+
+✅ Nueva máscara: **/26**  y en formato decimal: 255.255.255.192
+
+**¿Cuántos hosts por subred?**
+
+Ahora quedan: 32 - 26 = 6 bits para hosts
+Direcciones totales por subred: 2⁶ = 64 direcciones
+Hosts válidos: 64 - 2 = 62 hosts (Se restan la dirección de red y broadcast)
+
+**Subredes resultantes**
+
+- En /26 los saltos son de 64 direcciones.
+
+Las 4 subredes son:
+1. 192.168.1.0/26     → 0 – 63  
+2. 192.168.1.64/26    → 64 – 127  
+3. 192.168.1.128/26   → 128 – 191  
+4. 192.168.1.192/26   → 192 – 255  
+
+ **Respuesta final**
+
+- Máscara: **/26 (255.255.255.192)**
+- Hosts por subred: **62**
+- Total subredes creadas: **4**
+
+
+---
+
+## Automatización 
+
+### 1. Tenemos que desplegar y mantener actualizado un agente en 500 servidores Linux productivos. El proceso debe ser automatizado, seguro, auditable y con mínimo riesgo. ¿Cómo lo diseñarías de extremo a extremo?
+
+
+- Infraestructura como código
+- Versionado en Git
+- Entornos separados (dev/pre/prod)
+- Despliegue progresivo (canary)
+- Control de fallos
+- Validación automática
+- Gestión segura de secretos
+- Idempotencia
+- Monitoreo post-deploy
+- Plan de rollback
+
+
+- Objetivo: que el playbook sea idempotente, seguro, auditable y operable.
+
+Role oracledb_exporter con:
+- instalación binaria (descarga + checksum) o paquete interno
+- usuario/grupo dedicados
+- directorios /opt/oracledb_exporter, /etc/oracledb_exporter, /var/lib/oracledb_exporter
+- config + credenciales (Vault)
+- unit file systemd
+- healthcheck
+- Inventario por entornos (dev/pre/prod) y por site
+- Variables en group_vars y host_vars
+- Secretos: DSN / password con ansible-vault (o integración con Vault corporativo)
+- Rollout: canary + batches con serial, max_fail_percentage, strategy: free si quieres velocidad
+- Objetivo: que el playbook
+
+Observabilidad del despliegue:
+salida a log
+verificación de puerto /metrics
+handlers para restart solo si cambia config/binary
 
 
 ---
