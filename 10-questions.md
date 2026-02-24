@@ -1,6 +1,148 @@
-# # Entrevista Técnica – Responsable Oracle & Linux 
+# Entrevista Técnica – Responsable Oracle & Linux 
 
-## Oracle DataGuar
+## Oracle
+
+### 1. Qué ocurre en un COMMIT en Oracle?
+Un COMMIT en Oracle no escribe directamente en los datafiles.
+Lo que garantiza es la durabilidad de la transacción escribiendo primero el redo en disco.
+
+#### Flujo interno de un COMMIT**
+1. Se genera un commit record.
+2. Se asigna un SCN (System Change Number).
+3. El contenido del Redo Log Buffer (en la SGA) se prepara para escritura.
+4. El proceso LGWR (Log Writer) hace flush hacia los Online Redo Logs.
+5. Cuando el redo está físicamente en disco → Oracle devuelve “Commit complete”.
+
+⚠️ El commit no espera a que los datafiles se escriban.
+
+####  Procesos involucrados
+
+**🔹 Server Process**
+
+- Ejecuta la transacción.
+- Genera redo.
+- Solicita el commit.
+
+**🔹 LGWR (Log Writer)**
+
+- Escribe el Redo Log Buffer en los Online Redo Logs.
+- Es el proceso crítico del commit.
+- Sin escritura exitosa → no hay confirmación.
+
+**🔹 DBWR (Database Writer)**
+
+- Escribe buffers sucios a datafiles.
+- No participa directamente en el commit.
+- Puede escribir tiempo después.
+
+
+---
+
+### 2.  ¿Qué es Oracle Transparent Data Encryption (TDE) y cómo funciona?
+
+### Respuesta esperada:
+
+TDE permite cifrar datos en reposo sin modificar la aplicación.
+
+- Column-level encryption
+- Tablespace encryption
+- Uso de Wallet / Keystore
+- Master Encryption Key
+- Protege contra robo de discos o backups
+
+Debe diferenciar:
+- Cifrado en reposo
+- Cifrado en tránsito (TLS)
+
+Pregunta de seguimiento:
+¿Qué ocurre si se pierde el wallet?
+
+Respuesta correcta:
+No se pueden descifrar los datos cifrados ni abrir la base correctamente.
+
+
+---
+
+##  ¿Cómo harías tuning básico en Oracle?
+
+1. Revisar AWR / ADDM
+2. Identificar top wait events
+3. Analizar SQL más costoso
+4. Revisar planes de ejecución
+5. Verificar estadísticas
+6. Revisar índices
+7. Ajustar memoria solo si aplica
+
+Mala señal si responde solo “aumentar memoria”.
+
+
+---
+## Subnetting
+
+### ¿Cuántos hosts válidos hay en una red /27?
+- 32 - 27 = 5 bits para hosts
+- 2⁵ = 32 direcciones
+- Hosts válidos = 32 - 2 = 30
+
+| Tipo               | Dirección    |
+| ------------------ | ------------ |
+| Dirección de red   | 192.168.1.0  |
+| Primer host válido | 192.168.1.1  |
+| Último host válido | 192.168.1.30 |
+| Broadcast          | 192.168.1.31 |
+
+
+### Tienes la red 192.168.1.0/24. Si necesitas 4 subredes iguales, ¿qué máscara usarías y cuántos hosts tendría cada una?
+
+**¿Qué significa /24?** : 
+Un prefijo **/24** indica:
+- 24 bits para red
+- 32 - 24 = **8 bits para hosts**
+
+Direcciones totales: 2⁸ = 256 direcciones
+
+Rango original: 192.168.1.0 – 192.168.1.255
+
+**¿Cuántos bits necesito para 4 subredes?**
+
+- Queremos 4 subredes.
+- Buscamos un número n tal que:
+- 2ⁿ = 4
+Eso ocurre con: n = 2 👉 Necesitamos tomar **2 bits** del campo de hosts.
+
+**Nueva máscara** 
+
+- Si antes era:  /24
+- Y tomamos 2 bits más: /24 + 2 = /26
+
+✅ Nueva máscara: **/26**  y en formato decimal: 255.255.255.192
+
+**¿Cuántos hosts por subred?**
+
+Ahora quedan: 32 - 26 = 6 bits para hosts
+Direcciones totales por subred: 2⁶ = 64 direcciones
+Hosts válidos: 64 - 2 = 62 hosts (Se restan la dirección de red y broadcast)
+
+**Subredes resultantes**
+
+- En /26 los saltos son de 64 direcciones.
+
+Las 4 subredes son:
+1. 192.168.1.0/26     → 0 – 63  
+2. 192.168.1.64/26    → 64 – 127  
+3. 192.168.1.128/26   → 128 – 191  
+4. 192.168.1.192/26   → 192 – 255  
+
+ **Respuesta final**
+
+- Máscara: **/26 (255.255.255.192)**
+- Hosts por subred: **62**
+- Total subredes creadas: **4**
+
+  
+
+---
+## Oracle DataGuard
 
 ### 1. ¿Desde el punto de vista técnico y de continuidad de servicio qué aporta Oracle Data Guard?
 
@@ -166,7 +308,37 @@ Debe mencionar:
 
 ---
 
-## 7. Servidor Linux lento pero CPU baja
+### Unix
+
+## Diferencias entre Suse y Redhat
+
+**gestor de paquetes**
+
+- **RHEL** → yum / dnf (RPM)
+- **SUSE** → zypper (RPM también)
+
+**Herramientas de administración**
+- **RHEL** → systemctl, nmcli, firewalld
+- **SUSE** → YaST (herramienta gráfica/CLI potente)
+
+**Gestión de parches**
+- **RHEL** → Red Hat Satellite
+- **SUSE** → SUSE Manager
+
+---
+
+## Borras un fichero que esta en uso por un proceso que ocurre realmente
+
+- Se elimina la entrada en el filesystem (inode link).
+- Pero si un proceso tiene el fichero abierto…
+- El kernel mantiene el inode activo.
+
+Cómo detectarlo: ``lsof | grep deleted``
+Cómo liberar el espacio: ``> /proc/<PID>/fd/<FD>``
+
+---
+
+## Servidor Linux lento pero CPU baja
 
 Revisar:
 
@@ -182,9 +354,10 @@ Revisar:
 
 Debe entender que CPU baja ≠ servidor sano.
 
+
 ---
 
-## 8. Parámetros importantes del kernel para Oracle en Linux, donde se configurarn y como se aplican 
+## Parámetros importantes del kernel para Oracle en Linux, donde se configurarn y como se aplican 
 
 - kernel.shmmax
 - kernel.shmall
@@ -202,18 +375,6 @@ Debe entender shared memory y SGA.
 
 ---
 
-## 9. ¿Cómo harías tuning básico en Oracle?
-
-1. Revisar AWR / ADDM
-2. Identificar top wait events
-3. Analizar SQL más costoso
-4. Revisar planes de ejecución
-5. Verificar estadísticas
-6. Revisar índices
-7. Ajustar memoria solo si aplica
-
-Mala señal si responde solo “aumentar memoria”.
-
 ---
 
 ## 10. ¿Cómo planificarías migración 12c → 19c con Data Guard?
@@ -230,27 +391,6 @@ Debe demostrar visión arquitectónica.
 
 ---
 
-## 11.  ¿Qué es Oracle Transparent Data Encryption (TDE) y cómo funciona?
-
-### Respuesta esperada:
-
-TDE permite cifrar datos en reposo sin modificar la aplicación.
-
-- Column-level encryption
-- Tablespace encryption
-- Uso de Wallet / Keystore
-- Master Encryption Key
-- Protege contra robo de discos o backups
-
-Debe diferenciar:
-- Cifrado en reposo
-- Cifrado en tránsito (TLS)
-
-Pregunta de seguimiento:
-¿Qué ocurre si se pierde el wallet?
-
-Respuesta correcta:
-No se pueden descifrar los datos cifrados ni abrir la base correctamente.
 
 ---
 
