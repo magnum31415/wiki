@@ -44,7 +44,9 @@ El failover automático requiere:
 
 ---
 
-## 4. Diferencias entre Physical Standby y Logical Standby
+## 4. Diferencias entre:
+
+### Physical Standby y Logical Standby
 
 - **Physical Standby:**
   - Replica a nivel de bloques
@@ -60,6 +62,47 @@ El failover automático requiere:
   - Más limitaciones de objetos
 
 Debe indicar que Physical es más común en entornos críticos.
+
+
+| Característica | Physical Standby | Logical Standby |
+|---------------|------------------|-----------------|
+| Tipo de replicación | A nivel de bloques (Redo Apply) | A nivel SQL (SQL Apply) |
+| Tipo de copia | Copia binaria exacta del Primary | Estructura lógica equivalente |
+| Aplicación de redo | Media Recovery (MRP) | Conversión redo → sentencias SQL |
+| Rendimiento | Más eficiente y estable | Mayor consumo de CPU |
+| Uso para reporting | Solo lectura (Active Data Guard) | Lectura y objetos adicionales |
+| Cambios estructurales independientes | No permitido | Permitido en ciertos casos |
+| Soporte de tipos de objetos | Completo | Algunas limitaciones |
+| Complejidad de administración | Más simple | Más compleja |
+| Uso típico | Alta disponibilidad y DR crítico | Reporting avanzado o upgrades |
+| Compatibilidad rolling upgrade | Más limitado | Más flexible |
+| Riesgo de inconsistencias | Muy bajo | Mayor si hay objetos no soportados |
+| Recomendado para entornos críticos | Sí | Solo en casos específicos |
+
+
+### Switchover y Failover
+
+- **Switchover**: Es un **cambio de roles planificado y controlado** entre el Primary y el Standby.
+  - El Primary pasa a ser Standby.
+  - El Standby pasa a ser Primary.
+  - No hay pérdida de datos.
+  - Ambos servidores están operativos.
+  - Es una operación reversible.
+
+- **Failover**: Es un **cambio de roles forzado debido a la caída del Primary**.
+  - El Primary no está disponible.
+  - Se promueve el Standby a Primary.
+  - Puede haber pérdida de datos.
+  - No siempre es reversible automáticamente.
+
+
+| Característica | Switchover | Failover |
+|---------------|------------|----------|
+| Planificado | Sí | No |
+| Primary disponible | Sí | No |
+| Pérdida de datos | No | Puede haber |
+| Reversible fácilmente | Sí | No siempre |
+| Uso típico | Mantenimiento | Emergencia |
 
 ---
 
@@ -105,14 +148,16 @@ Debe saber distinguir problema de transporte vs problema de aplicación.
 Opciones:
 
 1. **Incremental backup from SCN con RMAN** : Es un método para re-sincronizar el standby sin reconstruirlo completo, usando un backup incremental desde el SCN donde el standby se quedó. En lugar de enviar miles de archivelogs: Se envían solo los bloques que cambiaron desde un SCN específico.
-  1. STANDBY: Identificar el SCN del standby: ``SELECT CURRENT_SCN FROM V$DATABASE;``
-  2. PRIMARY: rear backup incremental desde ese SCN:  ``RMAN> BACKUP INCREMENTAL FROM SCN <scn_standby> DATABASE;`` Esto genera un backup con solo los bloques modificados desde ese SCN.
-  3. Transferir el backup al standby
-  4. Aplicar el backup en el standby: Montar la base en modo MOUNT y aplicar el incremental con RMAN.
-  5. Reiniciar managed recovery: ``ALTER DATABASE RECOVER MANAGED STANDBY DATABASE USING CURRENT LOGFILE DISCONNECT;``
+  - STANDBY: Identificar el SCN del standby: ``SELECT CURRENT_SCN FROM V$DATABASE;``
+  - PRIMARY: rear backup incremental desde ese SCN:  ``RMAN> BACKUP INCREMENTAL FROM SCN <scn_standby> DATABASE;`` Esto genera un backup con solo los bloques modificados desde ese SCN.
+  - Transferir el backup al standby
+  - Aplicar el backup en el standby: Montar la base en modo MOUNT y aplicar el incremental con RMAN.
+  - Reiniciar managed recovery: ``ALTER DATABASE RECOVER MANAGED STANDBY DATABASE USING CURRENT LOGFILE DISCONNECT;``
    
-3. Flashback Database (si está habilitado)
-4. Rebuild completo del standby
+2. **Flashback Database (si está habilitado)**
+  - **El standby solo estuvo caído**: Estuvo apagado varios días Pero no hizo nada incorrecto y Solo dejó de aplicar redo, **Flashback NO sirve aquí**.
+  - **El standby se desincronizó por divergencia**: (El standby estuvo aislado por red, Se hizo un failover,El antiguo primary siguió generando cambios, Ahora tienes dos líneas de tiempo distintas (divergencia de SCN). Aquí puedes usar Flashback Database para: Retroceder el standby a un SCN anterior a la divergencia. Volverlo al punto común con el primary. Reanudar sincronización.
+3. **Rebuild completo del standby**: Borrar el standby actual y recrearlo desde cero usando un backup del primary.
 
 Debe mencionar:
 - Identificar SCN actual
@@ -122,8 +167,6 @@ Debe mencionar:
 ---
 
 ## 7. Servidor Linux lento pero CPU baja
-
-### Respuesta esperada:
 
 Revisar:
 
@@ -141,9 +184,7 @@ Debe entender que CPU baja ≠ servidor sano.
 
 ---
 
-## 7️⃣ Parámetros importantes del kernel para Oracle en Linux
-
-### Respuesta esperada:
+## 8. Parámetros importantes del kernel para Oracle en Linux, donde se configurarn y como se aplican 
 
 - kernel.shmmax
 - kernel.shmall
@@ -154,13 +195,14 @@ Debe entender que CPU baja ≠ servidor sano.
 - swappiness bajo
 - noatime en filesystem
 
+Estos se configuran en: ``/etc/sysctl.conf o /etc/sysctl.d/99-oracle.conf``
+Se aplican con: ``sysctl -p o sysctl -p /etc/sysctl.d/99-oracle.conf``
+
 Debe entender shared memory y SGA.
 
 ---
 
-## 8️⃣ ¿Cómo harías tuning básico en Oracle?
-
-### Respuesta esperada:
+## 9. ¿Cómo harías tuning básico en Oracle?
 
 1. Revisar AWR / ADDM
 2. Identificar top wait events
@@ -174,40 +216,21 @@ Mala señal si responde solo “aumentar memoria”.
 
 ---
 
-## 9️⃣ ¿Cómo planificarías migración 12c → 19c con Data Guard?
+## 10. ¿Cómo planificarías migración 12c → 19c con Data Guard?
 
-### Respuesta esperada:
-
-- Uso de preupgrade tool
-- Backup completo previo
-- Rolling upgrade usando standby
-- Upgrade primero standby
-- Switchover
-- Minimizar downtime
-- Pruebas previas
+- **Uso de preupgrade tool**
+- **Backup completo previo**
+- **Rolling upgrade usando standby**: es un método de actualización que permite actualizar una base de datos con mínimo o casi cero downtime, aprovechando una configuración de Oracle Data Guard o entornos RAC.
+- **Upgrade primero standby**
+- **Switchover**
+- **Minimizar downtime**
+- **Pruebas previas**
 
 Debe demostrar visión arquitectónica.
 
 ---
 
-## 🔟 Base productiva cae a las 3 AM. ¿Cómo gestionas la respuesta?
-
-### Respuesta esperada:
-
-- Clasificación inmediata
-- Identificación de impacto
-- Activación protocolo de incidentes
-- Comunicación clara
-- Asignación de tareas
-- RCA posterior
-- Documentación
-- Plan de mejora
-
-Evalúa liderazgo y gestión.
-
----
-
-## 1️⃣1️⃣ ¿Qué es Oracle Transparent Data Encryption (TDE) y cómo funciona?
+## 11.  ¿Qué es Oracle Transparent Data Encryption (TDE) y cómo funciona?
 
 ### Respuesta esperada:
 
