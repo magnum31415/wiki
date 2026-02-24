@@ -47,14 +47,14 @@
 
 ### 1. Parámetros importantes del kernel para Oracle en Linux, donde se configurarn y como se aplican 
 
-- kernel.shmmax
-- kernel.shmall
-- kernel.sem
-- fs.file-max
-- ulimit -n
-- Transparent HugePages deshabilitado
-- swappiness bajo
-- noatime en filesystem
+- **kernel.shmmax**: Define el tamaño máximo de memoria compartida (shared memory) que puede usar un solo segmento.
+- **kernel.shmall**: Indica la cantidad total de memoria compartida disponible en el sistema.
+- **kernel.sem**: Configura los límites de semáforos del sistema (cantidad y recursos para sincronización entre procesos).
+- **fs.file-max**: Establece el número máximo total de archivos que el sistema puede tener abiertos simultáneamente.
+- **ulimit -n**: Define el número máximo de archivos abiertos permitidos por proceso.
+- **Transparent HugePages deshabilitado**: Evita latencias e inconsistencias de rendimiento causadas por la gestión automática de páginas de memoria grandes.
+- **vm.swappiness bajo** Reduce la tendencia del sistema a usar swap, priorizando el uso de RAM.
+- **noatime en filesystem** Evita actualizar la fecha de último acceso a archivos, mejorando rendimiento de I/O.
 
 Estos se configuran en: ``/etc/sysctl.conf o /etc/sysctl.d/99-oracle.conf``
 Se aplican con: ``sysctl -p o sysctl -p /etc/sysctl.d/99-oracle.conf``
