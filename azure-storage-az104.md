@@ -1,5 +1,4 @@
-[Azure](https://github.com/magnum31415/wiki/blob/main/azure-azcopy.md)
-# AzCopy
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # 📦 Azure Storage – Resumen ampliado para AZ-104
 
