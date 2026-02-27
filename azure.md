@@ -1,30 +1,41 @@
 
-1. [Azure Client](https://github.com/magnum31415/wiki/blob/main/azure-client.md)
-2. [Azure Concepts](https://github.com/magnum31415/wiki/blob/main/azure-concepts.md)
-3. [Azure SQL Database](https://github.com/magnum31415/wiki/blob/main/azure-sql-database.md)
-4. [Azure Kubernetes](https://github.com/magnum31415/wiki/blob/main/azure-kubernetes.md)
-5. [Azure LoadBalancer](https://github.com/magnum31415/wiki/blob/main/azure-loadbalancer.md)
-6. [Azure Services](https://github.com/magnum31415/wiki/blob/main/azure-services.md)
-7. [Azure Data Migration](https://github.com/magnum31415/wiki/blob/main/azure-data-migration.md)
-8. [Azure EntraID](https://github.com/magnum31415/wiki/blob/main/azure-entra.md)
-9. [Azure Networking](https://github.com/magnum31415/wiki/blob/main/azure-networking.md)
-10. [Azure Cosmosdb](https://github.com/magnum31415/wiki/blob/main/azure-cosmosdb.md)
-11. [Azure Virtual Machines](https://github.com/magnum31415/wiki/blob/main/azure-virtual-machines.md)
-12. [Azure Storage](https://github.com/magnum31415/wiki/blob/main/azure-storage.md)
-13. [Azure Site Recovery](https://github.com/magnum31415/wiki/blob/main/azure-site-recovery.md)
-14. [Azure Mysql](https://github.com/magnum31415/wiki/blob/main/azure-mysql.md)
-15. [Azure Functions](https://github.com/magnum31415/wiki/blob/main/azure-functions.md)
-16. [Azure Policy](https://github.com/magnum31415/wiki/blob/main/azure-policy.md)
-17. [Azure App Services](https://github.com/magnum31415/wiki/blob/main/azure-app-services.md)
-18. [Azure Logic Apps](https://github.com/magnum31415/wiki/blob/main/azure-logic-apps.md)
-19. [Azure Key Vault](https://github.com/magnum31415/wiki/blob/main/azure-key-vault.md)
-20. [Azure Hybrid Benefit](https://github.com/magnum31415/wiki/blob/main/azure-hybrid-benefit.md)
-21. [Azure Recovery Services](https://github.com/magnum31415/wiki/blob/main/azure-reovery-services.md)
-22. [Azure Backup](https://github.com/magnum31415/wiki/blob/main/azure-backup.md)
-23. [Azure Disaster Recovery](https://github.com/magnum31415/wiki/blob/main/azure-disaster-recovery.md)
-24. [Azure CIDR](https://github.com/magnum31415/wiki/blob/main/azure-cidr.md)
-24. [Azure IAM](https://github.com/magnum31415/wiki/blob/main/azure-iam.md)
+<table>
+  <tr>
+    <th>Az-104</th>
+    <th>Az-305</th>
+  </tr>
+  <tr>
+    <td>1.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-az104.md">Azure Storage</a><br></td>
+    <td>
+      1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
+      2. <a href="https://github.com/magnum31415/wiki/blob/main/azure-concepts.md">Azure Concepts</a><br>
+      3. <a href="https://github.com/magnum31415/wiki/blob/main/azure-sql-database.md">Azure SQL Database</a><br>
+      4. <a href="https://github.com/magnum31415/wiki/blob/main/azure-kubernetes.md">Azure Kubernetes</a><br>
+      5. <a href="https://github.com/magnum31415/wiki/blob/main/azure-loadbalancer.md">Azure LoadBalancer</a><br>
+      6. <a href="https://github.com/magnum31415/wiki/blob/main/azure-services.md">Azure Services</a><br>
+      7. <a href="https://github.com/magnum31415/wiki/blob/main/azure-data-migration.md">Azure Data Migration</a><br>
+      8. <a href="https://github.com/magnum31415/wiki/blob/main/azure-entra.md">Azure EntraID</a><br>
+      9. <a href="https://github.com/magnum31415/wiki/blob/main/azure-networking.md">Azure Networking</a><br>
+      10. <a href="https://github.com/magnum31415/wiki/blob/main/azure-cosmosdb.md">Azure Cosmosdb</a><br>
+      11. <a href="https://github.com/magnum31415/wiki/blob/main/azure-virtual-machines.md">Azure Virtual Machines</a><br>
+      12. <a href="https://github.com/magnum31415/wiki/blob/main/azure-storage.md">Azure Storage</a><br>
+      13. <a href="https://github.com/magnum31415/wiki/blob/main/azure-site-recovery.md">Azure Site Recovery</a><br>
+      14. <a href="https://github.com/magnum31415/wiki/blob/main/azure-mysql.md">Azure Mysql</a><br>
+      15. <a href="https://github.com/magnum31415/wiki/blob/main/azure-functions.md">Azure Functions</a><br>
+      16. <a href="https://github.com/magnum31415/wiki/blob/main/azure-policy.md">Azure Policy</a><br>
+      17. <a href="https://github.com/magnum31415/wiki/blob/main/azure-app-services.md">Azure App Services</a><br>
+      18. <a href="https://github.com/magnum31415/wiki/blob/main/azure-logic-apps.md">Azure Logic Apps</a><br>
+      19. <a href="https://github.com/magnum31415/wiki/blob/main/azure-key-vault.md">Azure Key Vault</a><br>
+      20. <a href="https://github.com/magnum31415/wiki/blob/main/azure-hybrid-benefit.md">Azure Hybrid Benefit</a><br>
+      21. <a href="https://github.com/magnum31415/wiki/blob/main/azure-reovery-services.md">Azure Recovery Services</a><br>
+      22. <a href="https://github.com/magnum31415/wiki/blob/main/azure-backup.md">Azure Backup</a><br>
+      23. <a href="https://github.com/magnum31415/wiki/blob/main/azure-disaster-recovery.md">Azure Disaster Recovery</a><br>
+      24. <a href="https://github.com/magnum31415/wiki/blob/main/azure-cidr.md">Azure CIDR</a><br>
+      25. <a href="https://github.com/magnum31415/wiki/blob/main/azure-iam.md">Azure IAM</a>
+    </td>
 
+  </tr>
+</table>
 
 
 # Siglas
