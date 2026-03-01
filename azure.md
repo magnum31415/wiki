@@ -5,13 +5,10 @@
     <th>Az-305</th>
   </tr>
   <tr>
-    <td>1.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-az104.md">Azure Storage</a><br>
+    <td>
+      1.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-az104.md">Azure Storage</a><br>
       2.<a href="https://github.com/magnum31415/wiki/blob/main/azure-loadbalancer-az104.md">Azure LoadBalancer</a><br>
-    
-    
     </td>
-
-    
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
       2. <a href="https://github.com/magnum31415/wiki/blob/main/azure-concepts.md">Azure Concepts</a><br>
