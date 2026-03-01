@@ -1,3 +1,5 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
 # 🔎 Concepto clave: Verificación de dominio en Microsoft Entra ID
 
 Cuando agregas un dominio personalizado a **Microsoft Entra ID**, Azure necesita confirmar que:
