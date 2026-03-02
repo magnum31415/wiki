@@ -25,13 +25,15 @@
 ## 1️⃣ ¿Qué es Azure Storage?
 
 Azure Storage es la plataforma de almacenamiento en la nube de Microsoft. Está diseñada para ser:
-Data in an Azure Storage account is always replicated three times in the primary region.
+
 
 - Masivamente escalable  
 - Altamente disponible  
 - Segura  
 - Durable  
-- Accesible desde cualquier lugar  
+- Accesible desde cualquier lugar
+  
+Data in an Azure Storage account is always replicated three times in the primary region.
 
 Permite almacenar distintos tipos de datos según el escenario.
 
