@@ -260,45 +260,25 @@ Si la pregunta menciona:
 
 # ❓ ¿Por qué Live Migration solo funciona en cuentas Standard y no Premium?
 [⬆ Volver al índice](#-índice--azure-storage-az-104)
-## 📌 1️⃣ Diferencia arquitectónica
 
-Las cuentas **Standard** usan almacenamiento basado en:
+## Diferencia arquitectónica
 
-- Hardware compartido
-- Escalado horizontal
-- Arquitectura distribuida multitenant
-
-Esto permite que Azure pueda **reubicar y redistribuir datos internamente** sin interrumpir el servicio.
-
----
-
-Las cuentas **Premium** usan:
-
-- Hardware dedicado (SSD de alto rendimiento)
-- Arquitectura optimizada para baja latencia
-- Diseño más rígido y especializado
-
-Aquí los datos están vinculados a infraestructura física concreta, lo que impide la redistribución transparente entre zonas.
+| Característica | Standard | Premium |
+|---------------|-----------|-----------|
+| Tipo de hardware | Hardware compartido | Hardware dedicado (SSD alto rendimiento) |
+| Modelo de escalado | Escalado horizontal | Arquitectura optimizada para baja latencia |
+| Arquitectura | Distribuida multitenant | Diseño más rígido y especializado |
+| Flexibilidad de redistribución | Permite reubicar y redistribuir datos internamente sin interrupción | Datos vinculados a infraestructura física concreta |
+| Redistribución entre zonas (ZRS) | Posible mediante Live Migration | No soportado sin recrear la cuenta |
+| Enfoque principal | Flexibilidad y resiliencia | Rendimiento y baja latencia |
+| Casos de uso típicos | Workloads generales, almacenamiento flexible | Discos de VM, workloads de alta IOPS, baja latencia constante |
+| Cambios dinámicos de replicación | Soportados (según escenario) | No diseñado para cambios dinámicos |
+| Migración LRS ↔ ZRS | Posible vía soporte (según requisitos) | No soportado |
+| Reconfiguración interna del layout de datos | Posible | No soportado |
 
 ---
 
-## 📌 2️⃣ Premium está orientado a rendimiento, no a flexibilidad
-
-Premium está pensado para:
-
-- Discos de VM
-- Workloads de alta IOPS
-- Baja latencia constante
-
-No está diseñado para:
-
-- Cambios dinámicos de replicación
-- Migraciones entre modelos LRS ↔ ZRS
-- Reconfiguración interna del layout de datos
-
----
-
-## 📌 3️⃣ ZRS implica distribución entre Availability Zones
+## ZRS implica distribución entre Availability Zones
 
 Para pasar de LRS a ZRS:
 
@@ -310,7 +290,7 @@ En Premium, el modelo de hardware no permite ese cambio sin recrear la cuenta.
 
 ---
 
-## 📌 4️⃣ Limitaciones oficiales
+## Limitaciones oficiales
 
 Live Migration a ZRS/GZRS está soportado únicamente cuando:
 
@@ -325,7 +305,7 @@ Si es Premium, la única opción es:
 
 ---
 
-## 🧠 Resumen conceptual para examen
+## Resumen conceptual para examen
 
 | Característica | Standard | Premium |
 |---------------|----------|----------|
