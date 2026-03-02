@@ -172,6 +172,8 @@ Permite almacenar distintos tipos de datos según el escenario.
 # 🗂 Tipos de Storage Account (según la pregunta AZ-104)
 [⬆ Volver al índice](#-índice--azure-storage-az-104)
 
+![azure_storage_live_migration](./img/azure/azure_storage_live_migration.png)
+
 | Nombre        | Kind                  | Performance | Replication | Access Tier |
 |--------------|-----------------------|-------------|-------------|------------|
 | tdaccount1   | General-purpose v2    | Standard    | LRS         | Cool       |
