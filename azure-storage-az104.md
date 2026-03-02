@@ -53,113 +53,41 @@ Permite almacenar distintos tipos de datos según el escenario.
 
 # 2️⃣ Azure Blob Storage
 [⬆ Volver al índice](#-índice--azure-storage-az-104)
-## 🔹 ¿Qué es?
-
-Servicio de almacenamiento de **objetos** optimizado para grandes cantidades de datos no estructurados.
-
-📌 Datos no estructurados = sin esquema definido  
-Ejemplos:
-- Texto
-- Archivos binarios
-- Imágenes
-- Vídeos
-- Logs
-
----
-
-## 🔹 Casos de uso importantes
-
-- Servir imágenes o documentos a un navegador
-- Almacenamiento distribuido de archivos
-- Streaming de vídeo/audio
-- Guardar logs
-- Backup y Disaster Recovery
-- Archivado
-- Análisis de datos (Azure u on-prem)
-
----
-
-## 🔹 Tipos de blobs (pregunta típica)
 
 
-| Tipo | Uso |
-|------|------|
-| **Block Blob** | Archivos normales (docs, imágenes, backups) |
-| **Append Blob** | Logs |
-| **Page Blob** | Discos de VM |
+
+
+| Categoría | Contenido |
+|------------|------------|
+| **¿Qué es?** | Servicio de almacenamiento de **objetos** optimizado para grandes volúmenes de datos **no estructurados** (sin esquema definido). |
+| **Ejemplos de datos no estructurados** | Texto, archivos binarios, imágenes, vídeos, logs |
+| **Casos de uso principales** | Servir imágenes/documentos a navegador, almacenamiento distribuido, streaming vídeo/audio, logs, backup & DR, archivado, análisis de datos |
+| **Tipos de Blob** | **Block Blob** → Archivos normales (docs, imágenes, backups)<br>**Append Blob** → Logs<br>**Page Blob** → Discos de VM |
 
 ---
 
 # 3️⃣ Azure Files
 
-## 🔹 ¿Qué es?
-
-Servicio de **file shares en la nube** accesible mediante:
-
-- SMB (Server Message Block)
-- REST API
-
-Permite que múltiples VMs compartan archivos con lectura y escritura.
-
----
-
-## 🔹 Diferencia clave respecto a un file server tradicional
-
-Se puede acceder desde cualquier lugar usando:
-``
-https://storageaccount.file.core.windows.net/share/file
-``
-
-Con un **SAS Token (Shared Access Signature)**.
-
----
-
-## 🔹 ¿Qué es un SAS Token?
-
-Permite:
-- Acceso temporal
-- Permisos limitados (read/write/delete)
-- Acceso a recursos privados
-
-📌 Muy importante para el examen.
-
----
-
-## 🔹 Casos de uso comunes
-
-- Migrar aplicaciones on-prem que usan file shares
-- Compartir configuración entre VMs
-- Herramientas comunes para equipos
-- Guardar logs, métricas, crash dumps
+| Categoría | Contenido |
+|------------|------------|
+| **¿Qué es?** | Servicio de **file shares en la nube** accesible vía **SMB** y **REST API**. Permite que múltiples VMs compartan archivos con lectura y escritura. |
+| **Protocolos soportados** | SMB (Server Message Block) <br> REST API |
+| **Diferencia clave vs file server tradicional** | Acceso desde cualquier lugar mediante URL pública del storage + autenticación segura. |
+| **Ejemplo de acceso** | `https://storageaccount.file.core.windows.net/share/file` |
+| **¿Qué es un SAS Token?** | Mecanismo que permite **acceso temporal** con **permisos limitados** (read/write/delete) a recursos privados. |
+| **Casos de uso comunes** | Migración de file servers on-prem, compartir configuración entre VMs, herramientas compartidas de equipo, almacenamiento de logs, métricas y crash dumps |
 
 ---
 
 # 4️⃣ AzCopy
 [⬆ Volver al índice](#-índice--azure-storage-az-104)
-## 🔹 ¿Qué es?
 
-Herramienta de línea de comandos para copiar datos hacia o desde una Storage Account.
-
----
-
-## 🔹 Servicios soportados por AzCopy
-[⬆ Volver al índice](#-índice--azure-storage-az-104)
-✅ Blob  
-✅ File  
-
-❌ No soporta:
-- Table
-- Queue
-
----
-
-## 🔹 Pregunta típica
-[⬆ Volver al índice](#-índice--azure-storage-az-104)
-¿Qué servicios puede copiar AzCopy?
-
-✔ Blob y File  
-✘ Table y Queue  
-
+| Categoría | Contenido |
+|------------|------------|
+| **¿Qué es?** | Herramienta de **línea de comandos** para copiar datos hacia o desde una **Storage Account**. |
+| **Servicios soportados** | ✅ Blob <br> ✅ File |
+| **No soporta** | ❌ Table <br> ❌ Queue |
+| **Pregunta típica de examen** | ¿Qué servicios puede copiar AzCopy? → ✔ Blob y File <br> ✘ Table y Queue |
 ---
 
 # 5️⃣ Azure Queue Storage
@@ -195,46 +123,21 @@ Herramienta de línea de comandos para copiar datos hacia o desde una Storage Ac
 
 # 🎯 Puntos críticos para AZ-104
 [⬆ Volver al índice](#-índice--azure-storage-az-104)
-### 🔥 Blob vs Files
-- Blob = almacenamiento de objetos
-- Files = file share SMB
 
----
-
-### 🔥 AzCopy
-- Solo funciona con Blob y File
-- No funciona con Table ni Queue
-
----
-
-### 🔥 SAS Token
-- Acceso temporal
-- Permisos limitados
-- Muy preguntado en seguridad
+| Concepto | Resumen clave |
+|-----------|---------------|
+| **Blob vs Files** | **Blob** → Almacenamiento de objetos <br> **Files** → File share vía SMB |
+| **AzCopy** | Funciona solo con **Blob y File** <br> No funciona con **Table ni Queue** |
+| **SAS Token** | Proporciona **acceso temporal** con **permisos limitados**. Muy preguntado en escenarios de seguridad. |
 
 ---
 
 ### 🔥 Cuándo usar cada servicio
 
-| Necesidad | Servicio |
-|------------|-----------|
-| Backup | Blob |
-| Logs | Blob (Append) |
-| Compartir archivos entre VMs | Files |
-| Comunicación entre servicios | Queue |
-| Datos estructurados simples | Table |
-
----
-
-# 🧠 Claves de examen
-[⬆ Volver al índice](#-índice--azure-storage-az-104)
-Si la pregunta menciona:
-
-- “object storage” → Blob  
-- “SMB” o “file share” → Azure Files  
-- “NoSQL” → Table  
-- “messaging” → Queue  
-- “command-line copy tool” → AzCopy (solo Blob + File)  
+| Categoría | Contenido |
+|------------|------------|
+| **Cuándo usar cada servicio** | **Backup** → Blob <br> **Logs** → Blob (Append) <br> **Compartir archivos entre VMs** → Files <br> **Comunicación entre servicios** → Queue <br> **Datos estructurados simples** → Table |
+| **Claves de examen (palabra clave → servicio)** | “object storage” → Blob <br> “SMB” / “file share” → Azure Files <br> “NoSQL” → Table <br> “messaging” → Queue <br> “command-line copy tool” → AzCopy (solo Blob + File) |
 
 ---
 
