@@ -54,6 +54,250 @@ Componentes clave:
 ![azure-files](img/azure/azure-files.png)
 
 
+# 📂 Explicación del diagrama – Azure File Sync + Backup
+
+La imagen representa cómo interactúan:
+
+- Clientes (Linux, Windows, Mac, Azure VM)
+- Servidores Windows
+- Azure File Sync
+- Azure File Share
+- Storage Account
+- Recovery Services Vault
+- Snapshots
+
+---
+
+# 🧩 1️⃣ Vista general del diagrama
+
+## Parte superior
+
+### 🔹 Clientes
+- Linux (Azure / On-prem)
+- MacOS
+- Windows (On-prem / Azure VM)
+
+Estos pueden:
+
+👉 Montar directamente el Azure File Share vía SMB  
+👉 O acceder a través de un servidor sincronizado
+
+---
+
+### 🔹 Servidores Windows
+
+- Windows On-Prem
+- Windows Azure VM
+
+Estos usan:
+
+👉 **Azure File Sync Agent**
+
+Y se conectan al:
+
+👉 **Storage Sync Service**
+
+---
+
+### 🔹 Administración
+
+Se gestiona desde:
+
+- Azure Portal
+- PowerShell / CLI
+
+---
+
+# 🧠 2️⃣ Núcleo del sistema
+
+En el centro está:
+
+## 🔐 Storage Account
+Dentro:
+- Azure File Share
+
+Aquí viven realmente los datos en la nube.
+
+---
+
+# 🔄 3️⃣ Flujo funcional de Azure File Sync
+
+El flujo correcto es:
+
+Azure File Share  
+⬇  
+Storage Sync Service  
+⬇  
+Sync Group  
+⬇  
+Cloud Endpoint  
+⬇  
+Server Endpoint  
+⬇  
+Servidor Windows (con agente instalado)
+
+Ahora lo explicamos paso a paso.
+
+---
+
+# 🔹 Paso 1 – Azure File Share
+
+Es el almacenamiento central en Azure.
+
+- Datos viven aquí
+- Es la fuente principal
+- Es altamente disponible
+
+---
+
+# 🔹 Paso 2 – Storage Sync Service
+
+Es el “orquestador”.
+
+- No almacena datos
+- Solo gestiona sincronización
+- Controla relaciones entre endpoints
+
+---
+
+# 🔹 Paso 3 – Sync Group
+
+Define la topología.
+
+Un Sync Group contiene:
+
+- 1 Cloud Endpoint (Azure File Share)
+- 1 o varios Server Endpoints
+
+Todos los endpoints dentro del grupo se mantienen sincronizados.
+
+---
+
+# 🔹 Paso 4 – Cloud Endpoint
+
+Es:
+
+👉 El Azure File Share dentro del Sync Group.
+
+Representa la parte en la nube.
+
+---
+
+# 🔹 Paso 5 – Server Endpoint
+
+Es:
+
+👉 Una carpeta concreta en el servidor Windows.
+
+Ejemplo:D:\Data
+
+Esa carpeta se sincroniza con el Azure File Share.
+
+---
+
+# 🔹 Paso 6 – Servidor Windows con agente
+
+El agente:
+
+- Detecta cambios locales
+- Sincroniza con Azure
+- Puede habilitar "cloud tiering"
+
+Cloud tiering significa:
+
+- Solo los archivos más usados permanecen locales
+- El resto quedan como placeholders
+- Ahorra espacio en disco
+
+---
+
+# 🔐 4️⃣ Parte de Backup (lado izquierdo del diagrama)
+
+Aquí aparece:
+
+## Recovery Services Vault
+
+Se usa para:
+
+- Configurar backup
+- Definir políticas
+- Gestionar retención
+- Controlar snapshots
+
+---
+
+## Flujo de backup
+
+1️⃣ Se configura backup desde el Vault  
+2️⃣ Se generan snapshots del Azure File Share  
+3️⃣ Se gestiona retención según política  
+
+Importante:
+
+El backup se hace sobre el Azure File Share, no sobre el servidor.
+
+---
+
+# 📸 5️⃣ Snapshots (lado derecho)
+
+Los snapshots:
+
+- Se toman según calendario definido
+- Permiten recuperación de archivos
+- Están dentro del Storage Account
+
+Son point-in-time copies.
+
+---
+
+# 🎯 Diferencia clave para examen AZ-104
+
+| Concepto | Qué hace |
+|----------|----------|
+| Azure File Sync | Sincroniza servidores con Azure |
+| Azure Files | Almacenamiento SMB en la nube |
+| Recovery Services Vault | Gestiona backup y retención |
+| Snapshot | Copia puntual del file share |
+
+---
+
+# 🧠 Modelo mental simplificado
+
+Azure File Share = Fuente de verdad  
+Storage Sync Service = Coordinador  
+Sync Group = Topología  
+Server Endpoint = Carpeta local  
+Recovery Vault = Backup  
+
+---
+
+# 🚨 Puntos típicos de examen
+
+1. Azure File Sync no reemplaza el file server → lo extiende.
+2. El Storage Sync Service no almacena datos.
+3. Backup se configura en el Recovery Services Vault.
+4. Snapshots se almacenan en el Storage Account.
+5. Un servidor solo puede registrarse en un Storage Sync Service.
+
+---
+
+# 🏁 Resumen visual lógico
+
+Usuarios  
+⬇  
+Servidor Windows (caché local)  
+⬇  
+Azure File Sync  
+⬇  
+Azure File Share (fuente real)  
+⬇  
+Snapshots / Backup gestionado por Vault  
+
+---
+
+Si quieres, te hago un esquema ultra simplificado solo con lo que cae en el examen AZ-104 para memorizar en 2 minutos.
+
+
 ---
 
 # 🧠 Concepto clave de examen
