@@ -303,20 +303,17 @@ Si es Premium, la única opción es:
 👉 Crear una nueva cuenta con la replicación deseada  
 👉 Migrar los datos manualmente  
 
----
-
 ## Resumen conceptual para examen
 
 | Característica | Standard | Premium |
 |---------------|----------|----------|
 | Arquitectura flexible | ✅ | ❌ |
-| Soporta Live Migration | ✅ | ❌ |
+| Soporta Live Migration (Azure Support) | ✅ | ❌ |
+| Tipo de migración soportada | Live Migration gestionada por Azure Support (sin downtime, según escenario) | Solo migración manual: crear nueva cuenta y copiar datos (AzCopy / Data Movement) |
 | Orientado a rendimiento extremo | ❌ | ✅ |
 | Permite cambio dinámico de replicación | ✅ | ❌ |
 
----
-
-### 🎯 Idea clave
+**🎯 Idea clave**
 
 **Standard = más flexible en replicación**  
 **Premium = más rígido pero más rápido**
