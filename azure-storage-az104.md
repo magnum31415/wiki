@@ -2,6 +2,10 @@
 
 # 📑 Índice – Azure Storage AZ-104
 
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+# 📑 Índice – Azure Storage AZ-104
+
 - [📦 Azure Storage – Resumen ampliado para AZ-104](#-azure-storage--resumen-ampliado-para-az-104)
 - [🧱 Servicios principales de Azure Storage](#-servicios-principales-de-azure-storage)
 - [2️⃣ Azure Blob Storage](#2️⃣-azure-blob-storage)
@@ -11,12 +15,14 @@
 - [6️⃣ Azure Table Storage](#6️⃣-azure-table-storage)
 - [7️⃣ Comparativa rápida](#7️⃣-comparativa-rápida)
 - [🎯 Puntos críticos para AZ-104](#-puntos-críticos-para-az-104)
+- [🔥 Cuándo usar cada servicio](#-cuándo-usar-cada-servicio)
 - [🧠 Claves de examen](#-claves-de-examen)
 - [🔄 Conversiones permitidas entre tipos de redundancia en Azure Storage](#-conversiones-permitidas-entre-tipos-de-redundancia-en-azure-storage)
 - [🗂 Tipos de Storage Account (según la pregunta AZ-104)](#-tipos-de-storage-account-según-la-pregunta-az-104)
 - [🎯 ¿Qué cuenta puede convertirse a ZRS mediante Live Migration?](#-qué-cuenta-puede-convertirse-a-zrs-mediante-live-migration)
+- [🔄 Live Migration from Azure Support](#-live-migration-from-azure-support)
+- [❓ ¿Por qué Live Migration solo funciona en cuentas Standard y no Premium?](#-por-qué-live-migration-solo-funciona-en-cuentas-standard-y-no-premium)
 - [✅ Respuesta correcta](#-respuesta-correcta)
-
 ---
 
 # 📦 Azure Storage – Resumen ampliado para AZ-104
@@ -195,38 +201,144 @@ Permite almacenar distintos tipos de datos según el escenario.
 
 ---
 
-## 📊 Análisis cuenta por cuenta
+# 🔄 Live Migration from Azure Support
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
+## 📌 ¿Qué es?
 
-### ❌ tdaccount2
-- Premium
-- RA-GRS
-- Requiere cambio previo y además Premium no soporta este escenario
-- **No válida**
+Una **Live Migration from Azure Support** es un proceso gestionado por el equipo de soporte de Microsoft que permite cambiar ciertas configuraciones críticas de un recurso (por ejemplo, el tipo de replicación de una Storage Account) **sin downtime y sin pérdida de datos**.
 
-### ✅ tdaccount1
-- General-purpose v2
-- Standard
-- LRS
-- Cumple requisitos para Live Migration a ZRS
-- **Correcta**
-
-### ❌ tdaccount3
-- General-purpose v1
-- Premium
-- GRS
-- GPv1 + Premium no soporta ZRS
-- **No válida**
-
-### ❌ tdaccount4
-- BlobStorage
-- LRS
-- Este tipo no soporta migración directa a ZRS en este escenario
-- **No válida**
+No es una acción que puedas ejecutar directamente desde el Portal, CLI o PowerShell.  
+Debe solicitarse formalmente a Microsoft mediante un **support request**.
 
 ---
 
-# ✅ Respuesta correcta
-[⬆ Volver al índice](#-índice--azure-storage-az-104)
-```text
-tdaccount1
+## 🎯 ¿Cuándo se usa?
 
+Principalmente cuando necesitas cambiar:
+
+- LRS → ZRS
+- LRS → GZRS
+- GRS → GZRS
+- GRS → RA-GZRS
+
+Especialmente cuando el cambio afecta a **cómo se replica el dato en la región primaria**, algo que no se puede hacer automáticamente.
+
+---
+
+## ⚙️ Qué significa “Live”
+
+“Live” implica que:
+
+- ✅ No hay interrupción del servicio
+- ✅ No hay que recrear la Storage Account
+- ✅ No se pierden datos
+- ✅ La aplicación puede seguir funcionando
+
+Azure realiza internamente la redistribución de los datos.
+
+---
+
+## 🚫 Qué NO es
+
+- No es un simple cambio de configuración en el portal.
+- No es eliminar y recrear la cuenta.
+- No es una migración entre regiones.
+- No siempre está disponible (depende del tipo de cuenta y la región).
+
+---
+
+## 🧠 Clave para examen AZ-104
+
+Si la pregunta menciona:
+
+- Cambio de LRS a ZRS
+- Cambio de GRS a GZRS
+- Sin downtime
+- Gestionado por Microsoft
+
+👉 La respuesta suele ser: **Solicitar una Live Migration a través de Azure Support**.
+
+# ❓ ¿Por qué Live Migration solo funciona en cuentas Standard y no Premium?
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
+## 📌 1️⃣ Diferencia arquitectónica
+
+Las cuentas **Standard** usan almacenamiento basado en:
+
+- Hardware compartido
+- Escalado horizontal
+- Arquitectura distribuida multitenant
+
+Esto permite que Azure pueda **reubicar y redistribuir datos internamente** sin interrumpir el servicio.
+
+---
+
+Las cuentas **Premium** usan:
+
+- Hardware dedicado (SSD de alto rendimiento)
+- Arquitectura optimizada para baja latencia
+- Diseño más rígido y especializado
+
+Aquí los datos están vinculados a infraestructura física concreta, lo que impide la redistribución transparente entre zonas.
+
+---
+
+## 📌 2️⃣ Premium está orientado a rendimiento, no a flexibilidad
+
+Premium está pensado para:
+
+- Discos de VM
+- Workloads de alta IOPS
+- Baja latencia constante
+
+No está diseñado para:
+
+- Cambios dinámicos de replicación
+- Migraciones entre modelos LRS ↔ ZRS
+- Reconfiguración interna del layout de datos
+
+---
+
+## 📌 3️⃣ ZRS implica distribución entre Availability Zones
+
+Para pasar de LRS a ZRS:
+
+- Los datos deben replicarse entre **3 Availability Zones**
+- Esto requiere redistribución física
+
+En Standard, Azure puede hacerlo internamente.
+En Premium, el modelo de hardware no permite ese cambio sin recrear la cuenta.
+
+---
+
+## 📌 4️⃣ Limitaciones oficiales
+
+Live Migration a ZRS/GZRS está soportado únicamente cuando:
+
+- La cuenta usa **LRS o GRS**
+- Es de tipo **Standard**
+- La región soporta ZRS
+
+Si es Premium, la única opción es:
+
+👉 Crear una nueva cuenta con la replicación deseada  
+👉 Migrar los datos manualmente  
+
+---
+
+## 🧠 Resumen conceptual para examen
+
+| Característica | Standard | Premium |
+|---------------|----------|----------|
+| Arquitectura flexible | ✅ | ❌ |
+| Soporta Live Migration | ✅ | ❌ |
+| Orientado a rendimiento extremo | ❌ | ✅ |
+| Permite cambio dinámico de replicación | ✅ | ❌ |
+
+---
+
+### 🎯 Idea clave
+
+**Standard = más flexible en replicación**  
+**Premium = más rígido pero más rápido**
+
+Por eso Live Migration solo aplica a Standard.
