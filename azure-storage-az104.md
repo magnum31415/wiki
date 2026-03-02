@@ -1,10 +1,31 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+# 📑 Índice – Azure Storage AZ-104
+
+- [📦 Azure Storage – Resumen ampliado para AZ-104](#-azure-storage--resumen-ampliado-para-az-104)
+- [🧱 Servicios principales de Azure Storage](#-servicios-principales-de-azure-storage)
+- [2️⃣ Azure Blob Storage](#2️⃣-azure-blob-storage)
+- [3️⃣ Azure Files](#3️⃣-azure-files)
+- [4️⃣ AzCopy](#4️⃣-azcopy)
+- [5️⃣ Azure Queue Storage](#5️⃣-azure-queue-storage)
+- [6️⃣ Azure Table Storage](#6️⃣-azure-table-storage)
+- [7️⃣ Comparativa rápida](#7️⃣-comparativa-rápida)
+- [🎯 Puntos críticos para AZ-104](#-puntos-críticos-para-az-104)
+- [🧠 Claves de examen](#-claves-de-examen)
+- [🔄 Conversiones permitidas entre tipos de redundancia en Azure Storage](#-conversiones-permitidas-entre-tipos-de-redundancia-en-azure-storage)
+- [🗂 Tipos de Storage Account (según la pregunta AZ-104)](#-tipos-de-storage-account-según-la-pregunta-az-104)
+- [🎯 ¿Qué cuenta puede convertirse a ZRS mediante Live Migration?](#-qué-cuenta-puede-convertirse-a-zrs-mediante-live-migration)
+- [✅ Respuesta correcta](#-respuesta-correcta)
+
+---
+
 # 📦 Azure Storage – Resumen ampliado para AZ-104
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 
 ## 1️⃣ ¿Qué es Azure Storage?
 
 Azure Storage es la plataforma de almacenamiento en la nube de Microsoft. Está diseñada para ser:
+Data in an Azure Storage account is always replicated three times in the primary region.
 
 - Masivamente escalable  
 - Altamente disponible  
@@ -17,7 +38,7 @@ Permite almacenar distintos tipos de datos según el escenario.
 ---
 
 # 🧱 Servicios principales de Azure Storage
-
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 | Servicio | Tipo de datos | Caso típico en examen |
 |-----------|--------------|-----------------------|
 | **Blob Storage** | Objetos (no estructurados) | Imágenes, backups, logs |
@@ -29,7 +50,7 @@ Permite almacenar distintos tipos de datos según el escenario.
 ---
 
 # 2️⃣ Azure Blob Storage
-
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 ## 🔹 ¿Qué es?
 
 Servicio de almacenamiento de **objetos** optimizado para grandes cantidades de datos no estructurados.
@@ -57,6 +78,7 @@ Ejemplos:
 ---
 
 ## 🔹 Tipos de blobs (pregunta típica)
+
 
 | Tipo | Uso |
 |------|------|
@@ -111,7 +133,7 @@ Permite:
 ---
 
 # 4️⃣ AzCopy
-
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 ## 🔹 ¿Qué es?
 
 Herramienta de línea de comandos para copiar datos hacia o desde una Storage Account.
@@ -119,7 +141,7 @@ Herramienta de línea de comandos para copiar datos hacia o desde una Storage Ac
 ---
 
 ## 🔹 Servicios soportados por AzCopy
-
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 ✅ Blob  
 ✅ File  
 
@@ -130,7 +152,7 @@ Herramienta de línea de comandos para copiar datos hacia o desde una Storage Ac
 ---
 
 ## 🔹 Pregunta típica
-
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 ¿Qué servicios puede copiar AzCopy?
 
 ✔ Blob y File  
@@ -139,7 +161,7 @@ Herramienta de línea de comandos para copiar datos hacia o desde una Storage Ac
 ---
 
 # 5️⃣ Azure Queue Storage
-
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 - Servicio de mensajería
 - Permite desacoplar aplicaciones
 - Comunicación entre componentes
@@ -159,7 +181,7 @@ Herramienta de línea de comandos para copiar datos hacia o desde una Storage Ac
 ---
 
 # 7️⃣ Comparativa rápida
-
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 | Servicio | Tipo | Protocolo | Caso típico |
 |-----------|------|------------|--------------|
 | Blob | Object storage | REST | Imágenes, backup |
@@ -170,7 +192,7 @@ Herramienta de línea de comandos para copiar datos hacia o desde una Storage Ac
 ---
 
 # 🎯 Puntos críticos para AZ-104
-
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 ### 🔥 Blob vs Files
 - Blob = almacenamiento de objetos
 - Files = file share SMB
@@ -203,7 +225,7 @@ Herramienta de línea de comandos para copiar datos hacia o desde una Storage Ac
 ---
 
 # 🧠 Claves de examen
-
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
 Si la pregunta menciona:
 
 - “object storage” → Blob  
@@ -214,4 +236,90 @@ Si la pregunta menciona:
 
 ---
 
+# Conversiones permitidas entre tipos de redundancia en Azure Storage
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
+## 📌 Regla general importante
+
+- ✅ Puedes **aumentar el nivel de resiliencia**
+- ⚠️ Algunas conversiones requieren que la **región soporte ZRS / GZRS**
+- ❌ No puedes cambiar entre **LRS y ZRS directamente** (requiere migración manual)
+- ❌ No puedes convertir de **GRS a ZRS directamente**
+- ❌ No puedes convertir de **GZRS a ZRS**
+- 🔎 La migración en vivo (Live Migration) a ZRS/GZRS solo está soportada inicialmente para cuentas con **LRS o GRS**
+
+---
+
+## 🔄 Tabla de conversiones entre replicaciones
+
+| Desde ↓ | Puede convertirse a → |
+|----------|------------------------|
+| **LRS** | GRS, RA-GRS, ZRS*, GZRS*, RA-GZRS* |
+| **ZRS** | GZRS, RA-GZRS |
+| **GRS** | RA-GRS, GZRS*, RA-GZRS* |
+| **RA-GRS** | GRS, GZRS*, RA-GZRS* |
+| **GZRS** | RA-GZRS |
+| **RA-GZRS** | GZRS |
+
+\* Puede requerir migración manual vía Azure Support y que la región soporte zonas de disponibilidad.
+
+---
+
+# 🗂 Tipos de Storage Account (según la pregunta AZ-104)
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
+
+| Nombre        | Kind                  | Performance | Replication | Access Tier |
+|--------------|-----------------------|-------------|-------------|------------|
+| tdaccount1   | General-purpose v2    | Standard    | LRS         | Cool       |
+| tdaccount2   | General-purpose v2    | Premium     | RA-GRS      | Hot        |
+| tdaccount3   | General-purpose v1    | Premium     | GRS         | None       |
+| tdaccount4   | BlobStorage           | Standard    | LRS         | Hot        |
+
+---
+
+# 🎯 ¿Qué cuenta puede convertirse a ZRS mediante Live Migration?
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
+## 🔎 Reglas clave para Live Migration a ZRS
+
+- ✔ Solo soportado inicialmente para cuentas con **LRS o GRS**
+- ✔ Si es **RA-GRS**, primero debe cambiarse a LRS o GRS
+- ✔ Debe ser **Standard**, no Premium
+- ✔ Debe estar en región que soporte ZRS
+- ✔ Algunas combinaciones de Kind no soportan ZRS
+
+---
+
+## 📊 Análisis cuenta por cuenta
+
+### ❌ tdaccount2
+- Premium
+- RA-GRS
+- Requiere cambio previo y además Premium no soporta este escenario
+- **No válida**
+
+### ✅ tdaccount1
+- General-purpose v2
+- Standard
+- LRS
+- Cumple requisitos para Live Migration a ZRS
+- **Correcta**
+
+### ❌ tdaccount3
+- General-purpose v1
+- Premium
+- GRS
+- GPv1 + Premium no soporta ZRS
+- **No válida**
+
+### ❌ tdaccount4
+- BlobStorage
+- LRS
+- Este tipo no soporta migración directa a ZRS en este escenario
+- **No válida**
+
+---
+
+# ✅ Respuesta correcta
+[⬆ Volver al índice](#-índice--azure-storage-az-104)
+```text
+tdaccount1
 
