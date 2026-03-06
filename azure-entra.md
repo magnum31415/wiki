@@ -220,6 +220,40 @@
 
 Un Microsoft Entra tenant es el contenedor lógico de identidad y seguridad que representa a una organización dentro de Microsoft Cloud.
 
+````
+Azure Tenant
+│
+├── Entra ID (Identity Plane)
+│     ├ Users
+│     ├ Groups
+│     ├ Service Principals
+│     └ Applications
+│
+├── Azure Resource Manager (Control Plane - RBAC)
+│     ├ Management Groups
+│     ├ Subscriptions
+│     ├ Resource Groups
+│     └ Resources
+│
+├── Data Plane (Data Access)
+│     ├ Storage Accounts
+│     │     ├ Blob data
+│     │     ├ File shares
+│     │     └ Queues / Tables
+│     ├ Key Vault
+│     │     ├ Secrets
+│     │     ├ Keys
+│     │     └ Certificates
+│     ├ Azure SQL
+│     └ Cosmos DB
+│
+└── Policy / Governance Layer
+      ├ Azure Policy
+      ├ RBAC
+      ├ Locks
+      └ Blueprints / Landing Zones
+````
+
 Es tu **directorio corporativo en la nube**.
 
 **Microsoft Entra Tenant = Directorio de identidad y seguridad que contiene usuarios, apps y suscripciones de una organización en Azure.**
