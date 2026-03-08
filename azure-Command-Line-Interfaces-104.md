@@ -104,3 +104,18 @@ Azure Cloud Shell can be accessed from:
 
 - Azure Portal: https://shell.azure.com
 - Azure mobile app: Embedded in Azure documentation
+
+## PowerShell 7 
+
+**PowerShell 7 (PowerShell Core) es multiplataforma**, a diferencia del antiguo **Windows PowerShell 5.1**, que solo funciona en Windows.
+
+Se puede instalar en los siguientes sistemas:
+
+| Sistema operativo | Soporte                                                                |
+| ----------------- | ---------------------------------------------------------------------- |
+| **Windows**       | Windows 10, Windows 11, Windows Server 2016, 2019, 2022                |
+| **Linux**         | Ubuntu, Debian, RHEL, CentOS, Rocky Linux, AlmaLinux, Fedora, openSUSE |
+| **macOS**         | macOS (Intel y Apple Silicon)                                          |
+| **Docker**        | Imágenes oficiales de PowerShell                                       |
+| **ARM**           | Windows ARM y Linux ARM                                                |
+
