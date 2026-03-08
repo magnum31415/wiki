@@ -1,6 +1,51 @@
 # Command Line Interfaces
 
 
+## Options to Run Automated Commands Against Azure
+
+There are several ways to execute commands or scripts to manage Azure resources.
+
+| Option | Description | Typical Use Cases |
+|---|---|---|
+| **PowerShell 7 from local machine** | Use PowerShell with the **Az module** installed on your computer to manage Azure resources. | Automation scripts, infrastructure management, integration with Windows environments. |
+| **Azure CLI from local machine** | Use the **Azure CLI (`az`)** installed on your computer to execute commands against Azure. | Cross-platform scripting, DevOps pipelines, automation tasks. |
+| **Azure Cloud Shell (portal.azure.com)** | Browser-based shell provided by Microsoft with **Azure CLI and Azure PowerShell preinstalled**. | Quick administration, testing commands, troubleshooting without installing tools locally. |
+
+---
+
+## Comparison
+
+| Feature | PowerShell 7 | Azure CLI | Azure Cloud Shell |
+|---|---|---|---|
+| Installation required | Yes | Yes | No |
+| Runs locally | Yes | Yes | No |
+| Cross-platform | Yes | Yes | Yes |
+| Supports scripting | Yes | Yes | Yes |
+| Pre-authenticated session | No | No | Yes |
+| Best for | PowerShell automation | Cross-platform scripts | Quick operations |
+
+---
+
+## Typical Automation Workflow
+
+Examples of automation scenarios:
+
+- Scheduled scripts from a server
+- DevOps pipelines
+- Infrastructure provisioning
+- Resource management
+
+Example with Azure CLI:
+
+```bash
+az vm start --name vm01 --resource-group rg-prod
+```
+
+
+---
+
+## Azure CLI vs PowerShell
+
 | Categoría                         | Ejemplo          |
 | --------------------------------- | ---------------- |
 | **Command Line Interfaces (CLI)** | Azure CLI        |
@@ -104,6 +149,7 @@ Azure Cloud Shell can be accessed from:
 
 - Azure Portal: https://shell.azure.com
 - Azure mobile app: Embedded in Azure documentation
+---
 
 ## PowerShell 7 
 
@@ -119,3 +165,41 @@ Se puede instalar en los siguientes sistemas:
 | **Docker**        | Imágenes oficiales de PowerShell                                       |
 | **ARM**           | Windows ARM y Linux ARM                                                |
 
+---
+
+## Azure CLI
+
+**Azure CLI** is a cross-platform command-line tool used to manage Azure resources.
+
+It can be installed on multiple operating systems and environments.
+
+---
+
+## Supported Operating Systems
+
+| Platform | Supported Systems |
+|---|---|
+| **Windows** | Windows 10, Windows 11, Windows Server 2016, 2019, 2022 |
+| **Linux** | Ubuntu, Debian, RHEL, CentOS, Rocky Linux, AlmaLinux, Fedora, openSUSE |
+| **macOS** | macOS (Intel and Apple Silicon) |
+
+---
+
+## Other Environments Where Azure CLI Is Available
+
+| Environment | Description |
+|---|---|
+| **Azure Cloud Shell** | Browser-based shell with Azure CLI preinstalled |
+| **Docker** | Official Microsoft container images with Azure CLI |
+| **GitHub Actions** | Preinstalled in many CI/CD runners |
+| **Azure DevOps Pipelines** | Available in Microsoft-hosted build agents |
+| **WSL (Windows Subsystem for Linux)** | Can be installed inside Linux distributions running on Windows |
+
+---
+
+## Example Installation Methods
+
+### Windows (winget)
+
+```bash
+winget install Microsoft.AzureCLI
