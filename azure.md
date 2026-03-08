@@ -6,11 +6,12 @@
   </tr>
   <tr>
     <td>
-      1.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-az104.md">Azure Storage</a><br>
-      2.<a href="https://github.com/magnum31415/wiki/blob/main/azure-loadbalancer-az104.md">Azure LoadBalancer</a><br>
-      3.<a href="https://github.com/magnum31415/wiki/blob/main/azure-dns-az104.md">Azure DNS</a><br>
-      4.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vpn-az104.md">Azure VPN</a><br>
-      5.<a href="https://github.com/magnum31415/wiki/blob/main/azure-filesync-az104.md">Azure File Sync</a><br>
+      1.<a href="https://github.com/magnum31415/wiki/blob/main/azure-Command-Line-Interfaces-104.md">Command Line Interfaces</a><br>
+      2.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-az104.md">Azure Storage</a><br>
+      3.<a href="https://github.com/magnum31415/wiki/blob/main/azure-loadbalancer-az104.md">Azure LoadBalancer</a><br>
+      4.<a href="https://github.com/magnum31415/wiki/blob/main/azure-dns-az104.md">Azure DNS</a><br>
+      5.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vpn-az104.md">Azure VPN</a><br>
+      6.<a href="https://github.com/magnum31415/wiki/blob/main/azure-filesync-az104.md">Azure File Sync</a><br>
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
