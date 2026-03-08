@@ -9,6 +9,8 @@
 
 - Azure CLI está **inspirado en la estructura de** ``git y kubectl``
 - Azure PowerShell sigue el estándar **Verb-Noun de PowerShell** ``(Get/New/Set/Remove)``.
+  - Un **cmdlet* (se pronuncia command-let) es un comando nativo de PowerShell diseñado para realizar una tarea específica dentro del entorno de PowerShell.
+  - Un **cmdlet** es una pequeña función especializada escrita en .NET que se ejecuta dentro de PowerShell para administrar sistemas o servicios.  
 
 
 | Azure CLI | PowerShell | Description |
@@ -45,3 +47,60 @@
 | `Get-Command *vm*`               | `az find vm`   | Busca comandos relacionados   |
 | `Get-Command -Module Az.Compute` | `az vm`        | Lista comandos de un servicio |
 | `Get-Help Get-AzVM`              | `az vm --help` | Muestra ayuda de un comando   |
+
+
+## Azure Cloud Shell
+
+**Azure Cloud Shell** is a **browser-based interactive shell** provided by Microsoft to manage Azure resources without installing any tools locally.
+
+It runs inside the Azure Portal and provides a ready-to-use environment with Azure management tools already installed.
+
+### Key Characteristics
+
+| Feature | Description |
+|---|---|
+| Browser based | Runs directly from the Azure Portal or shell.azure.com |
+| No installation required | Azure CLI and PowerShell are preinstalled |
+| Authenticated automatically | Uses the Azure account currently logged in |
+| Persistent storage | Uses an Azure Storage account to persist files |
+| Linux environment | Runs in a container hosted by Microsoft |
+
+
+### Available Shells
+
+Azure Cloud Shell supports two command environments:
+
+| Shell | Description |
+|---|---|
+| **Bash** | Uses **Azure CLI (`az`)** commands |
+| **PowerShell** | Uses **Azure PowerShell (`Az` modules)** |
+
+### Relationship with Azure CLI
+
+Azure Cloud Shell **is not Azure CLI itself**.
+
+Instead, it is an **execution environment** where Azure CLI is already installed.
+
+| Component | What it is |
+|---|---|
+| **Azure CLI** | Command-line tool (`az`) used to manage Azure |
+| **Azure PowerShell** | PowerShell modules (`Az`) used to manage Azure |
+| **Azure Cloud Shell** | Online shell environment that provides both tools |
+
+## Example Usage in Cloud Shell
+
+### Using Azure CLI
+
+```bash
+az vm list
+```
+```powershell
+Get-AzVM
+```
+
+### Where It Can Be Used
+
+Azure Cloud Shell can be accessed from:
+
+- Azure Portal: https://shell.azure.com
+- Azure mobile app: Embedded in Azure documentation
