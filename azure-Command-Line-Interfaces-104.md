@@ -182,6 +182,8 @@ Se puede instalar en los siguientes sistemas:
 
 ### Mini Manual: Instalación de PowerShell 7 y módulo Az
 
+[Install Azure Poweshell - Microsoft](https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell?view=azps-15.4.0&viewFallbackFrom=azps-2.5.0)
+
 Este mini manual explica cómo instalar **PowerShell 7** y el **módulo Az** para gestionar Azure desde línea de comandos.
 
 #### 1. Instalar PowerShell 7
