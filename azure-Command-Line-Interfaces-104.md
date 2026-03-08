@@ -1,5 +1,19 @@
 # Command Line Interfaces
 
+## Index
+
+- [Command Line Interfaces](#command-line-interfaces)
+  - [Options to Run Automated Commands Against Azure](#options-to-run-automated-commands-against-azure)
+  - [Comparison](#comparison)
+  - [Typical Automation Workflow](#typical-automation-workflow)
+  - [Azure CLI vs PowerShell](#azure-cli-vs-powershell)
+  - [Azure Cloud Shell](#azure-cloud-shell)
+  - [Example Usage in Cloud Shell](#example-usage-in-cloud-shell)
+  - [PowerShell 7](#powershell-7)
+  - [Azure CLI](#azure-cli)
+  - [Supported Operating Systems](#supported-operating-systems)
+  - [Other Environments Where Azure CLI Is Available](#other-environments-where-azure-cli-is-available)
+  - [Example Installation Methods](#example-installation-methods)
 
 ## Options to Run Automated Commands Against Azure
 
@@ -165,7 +179,122 @@ Se puede instalar en los siguientes sistemas:
 | **Docker**        | Imágenes oficiales de PowerShell                                       |
 | **ARM**           | Windows ARM y Linux ARM                                                |
 
----
+
+### Mini Manual: Instalación de PowerShell 7 y módulo Az
+
+Este mini manual explica cómo instalar **PowerShell 7** y el **módulo Az** para gestionar Azure desde línea de comandos.
+
+#### 1. Instalar PowerShell 7
+
+PowerShell 7 es la versión moderna y multiplataforma de PowerShell basada en .NET.
+
+#### Windows (recomendado con winget)
+
+```bash
+winget install Microsoft.PowerShell
+```
+Ejecutar PowerShell 7:
+```bash
+pwsh
+```
+#### Ubuntu / Debian
+
+```bash
+sudo apt update
+sudo apt install -y powershell
+```
+Ejecutar:
+```bash
+pwsh
+```
+
+#### RHEL / Rocky / AlmaLinux
+
+```bash
+sudo dnf install powershell
+```
+#### macOS
+
+Usando Homebrew:
+
+```bash
+brew install --cask powershell
+```
+
+#### 2. Instalar el módulo Azure PowerShell (Az)
+
+El módulo **Az** contiene los cmdlets necesarios para administrar Azure.
+
+Instalación desde **PowerShell Gallery**:
+
+```powershell
+Install-Module -Name Az -Repository PSGallery -Scope CurrentUser
+```
+
+Si PowerShell pregunta por instalar **NuGet**, responder **Yes**.
+
+
+#### 3. Verificar la instalación
+
+Comprobar que el módulo está instalado:
+
+```powershell
+Get-Module -ListAvailable Az
+```
+
+Listar los comandos disponibles:
+
+```powershell
+Get-Command -Module Az
+```
+
+#### 4. Autenticarse en Azure
+
+Conectarse a la cuenta de Azure:
+
+```powershell
+Connect-AzAccount
+```
+
+Una vez autenticado ya se pueden ejecutar comandos contra Azure.
+
+Ejemplo:
+
+```powershell
+Get-AzVM
+```
+
+#### 5. Actualizar el módulo Az
+
+Para actualizar a la última versión:
+
+```powershell
+Update-Module Az
+```
+
+#### 6. Comandos básicos de Azure PowerShell
+
+| Comando | Descripción |
+|---|---|
+| `Connect-AzAccount` | Autenticarse en Azure |
+| `Get-AzSubscription` | Listar subscripciones |
+| `Set-AzContext` | Cambiar subscripción activa |
+| `Get-AzResourceGroup` | Listar resource groups |
+| `New-AzResourceGroup` | Crear un resource group |
+| `Get-AzVM` | Listar máquinas virtuales |
+
+
+#### Resumen
+
+Para administrar Azure con PowerShell necesitas:
+
+1. **PowerShell 7 (`pwsh`)**
+2. **Módulo Az**
+3. **Autenticación con `Connect-AzAccount`**
+
+Con esto ya puedes crear scripts para automatizar la gestión de recursos en Azure.
+
+
 
 ## Azure CLI
 
