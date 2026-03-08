@@ -7,6 +7,10 @@
 | **Automation / Scripting Shell**  | Azure PowerShell |
 
 
+- Azure CLI está **inspirado en la estructura de** ``git y kubectl``
+- Azure PowerShell sigue el estándar **Verb-Noun de PowerShell** ``(Get/New/Set/Remove)``.
+
+
 | Azure CLI | PowerShell | Description |
 |-----------|------------|-------------|
 | **Pattern:** `az <service> <verb>` | **Pattern:** `<Verb>-Az<Service>` | General command pattern used by each tool. Azure CLI groups commands by service then action; PowerShell uses verb-noun cmdlets. |
@@ -32,3 +36,12 @@
 | `az role assignment list` | `Get-AzRoleAssignment` | Lists RBAC role assignments. |
 | `az policy assignment create ...` | `New-AzPolicyAssignment ...` | Assigns an Azure Policy to a scope (subscription, resource group, etc.). |
 | `az policy assignment list` | `Get-AzPolicyAssignment` | Lists Azure Policy assignments. |
+
+
+
+| PowerShell                       | Azure CLI      | Qué hace                      |
+| -------------------------------- | -------------- | ----------------------------- |
+| `Get-Command`                    | `az`           | Lista comandos disponibles    |
+| `Get-Command *vm*`               | `az find vm`   | Busca comandos relacionados   |
+| `Get-Command -Module Az.Compute` | `az vm`        | Lista comandos de un servicio |
+| `Get-Help Get-AzVM`              | `az vm --help` | Muestra ayuda de un comando   |
