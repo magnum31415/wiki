@@ -20,6 +20,10 @@
   - [Ejemplo práctico](#ejemplo-práctico)
   - [Modelo más común: Identidad híbrida](#modelo-más-común-identidad-híbrida)
 
+- [Microsoft Entra ID Plans and Pricing](#microsoft-entra-id-plans-and-pricing)
+  - [Feature Comparison](#feature-comparison)
+  - [Typical Use Cases](#typical-use-cases)
+
 # Microsoft Active Directory (On-Premises) vs Microsoft Entra ID
 
 ## Overview
@@ -221,3 +225,37 @@ Utiliza:
 
 La mayoría de empresas utilizan **ambos sistemas conectados**.
 
+# Microsoft Entra ID Plans and Pricing
+
+| Plan | Price (approx.) | Target Use | Key Features |
+|---|---|---|---|
+| **Free** | Free | Basic identity management for Azure and Microsoft services | User and group management, Single Sign-On (SSO) for Azure and some SaaS apps, Basic security reports, Self-service password change |
+| **Microsoft Entra ID P1** | ~ $6 user/month | Enterprise identity management | Conditional Access, Dynamic groups, Self-service password reset (SSPR) for cloud and on-prem users, Hybrid identity with Entra Connect, Advanced group management |
+| **Microsoft Entra ID P2** | ~ $9 user/month | Advanced security and identity protection | All P1 features plus Identity Protection, Risk-based Conditional Access, Privileged Identity Management (PIM), Access reviews |
+| **Microsoft Entra Suite** | ~ $12 user/month (varies) | Unified identity, access and security | Includes Entra ID P2 plus Identity Governance, Verified ID, Internet Access and Private Access (Zero Trust access solutions) |
+
+---
+
+## Feature Comparison
+
+| Feature | Free | P1 | P2 |
+|---|---|---|---|
+| User & Group Management | Yes | Yes | Yes |
+| Single Sign-On (SSO) | Yes | Yes | Yes |
+| Self-Service Password Reset | Basic | Advanced | Advanced |
+| Conditional Access | No | Yes | Yes |
+| Dynamic Groups | No | Yes | Yes |
+| Hybrid Identity | Limited | Yes | Yes |
+| Identity Protection | No | No | Yes |
+| Privileged Identity Management (PIM) | No | No | Yes |
+| Access Reviews | No | No | Yes |
+
+---
+
+## Typical Use Cases
+
+| Plan | Typical Scenario |
+|---|---|
+| **Free** | Small environments, basic Azure identity management |
+| **P1** | Enterprises using Microsoft 365, hybrid identity, Conditional Access policies |
+| **P2** | Organizations requiring advanced security, Zero Trust and privileged access management |
