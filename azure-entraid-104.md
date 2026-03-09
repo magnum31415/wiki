@@ -152,11 +152,16 @@ Tienen **arquitecturas, protocolos y objetivos diferentes**.
 
 ## Diferencia fundamental
 
+## Diferencia fundamental
+
 | Aspecto | Active Directory (AD DS) | Microsoft Entra ID |
 |---|---|---|
 | Tipo | Directorio **on-premises** | Directorio **cloud** |
 | Ubicación | Servidores Windows dentro de la red corporativa | Servicio gestionado por Microsoft en Azure |
-| Autenticación | Kerberos, NTLM, LDAP | OAuth2, OpenID Connect, SAML |
+| Arquitectura | **Jerárquica basada en dominios** (forest, domains, OUs, domain controllers) | **Arquitectura cloud multi-tenant** basada en **tenants e identidades** |
+| Protocolos | **LDAP, Kerberos, NTLM, DNS** | **OAuth2, OpenID Connect, SAML, SCIM** |
+| Autenticación | Autenticación **basada en dominio** (Kerberos tickets) | Autenticación **basada en tokens** |
+| Objetivo | Gestionar **identidades, dispositivos y recursos dentro de la red corporativa** | Gestionar **identidades y acceso a aplicaciones cloud y SaaS** |
 | Diseño | Pensado para **redes internas (LAN)** | Pensado para **internet y aplicaciones cloud** |
 | Infraestructura | Requiere **Domain Controllers** | No requiere servidores |
 
