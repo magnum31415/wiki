@@ -70,3 +70,5 @@
 | **Tenant**                  | Instancia dedicada de Microsoft Entra ID que representa a una organización en la nube | Espacio aislado donde se gestionan identidades, usuarios, dominios y acceso a servicios como Azure o Microsoft 365. |
 | **Subscription**            | Contenedor de facturación y gestión de recursos en Azure      | Unidad que agrupa recursos de Azure y define cómo se facturan los servicios utilizados.                           |
 |**Break Glass accounts**|are **emergency administrator accounts** used to access a system when normal authentication methods fail.| They are designed to be used **only in critical situations** where administrators cannot access the environment through normal accounts.|
+| **Claim** | Información sobre una identidad incluida en un token de autenticación | OAuth / OpenID Connect / Entra ID|
+| **Access Key (Storage)** | Una access key es una **clave secreta compartida** que da acceso completo a la cuenta de storage | Autenticación basada en claves |
