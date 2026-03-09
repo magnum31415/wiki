@@ -13,6 +13,7 @@
       5.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vpn-az104.md">Azure VPN</a><br>
       6.<a href="https://github.com/magnum31415/wiki/blob/main/azure-filesync-az104.md">Azure File Sync</a><br>
       7.<a href="https://github.com/magnum31415/wiki/blob/main/azure-entraid-104.md">Azure EntraId</a><br>
+      8.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-104.md">Azure Storage</a><br>
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
