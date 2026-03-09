@@ -58,7 +58,20 @@
   - [Jerarquía final completa de Azure](#jerarquía-final-completa-de-azure)
   - [Regla importante](#regla-importante)
   - [Error típico cuando se empieza con Azure](#error-típico-cuando-se-empieza-con-azure)
-  
+
+- [El problema actual](#1️⃣-el-problema-actual)
+- [Buen patrón recomendado por Microsoft](#2️⃣-buen-patrón-recomendado-por-microsoft)
+- [Cómo arreglar las subscriptions actuales](#3️⃣-cómo-arreglar-las-subscriptions-actuales)
+  - [Paso 1 — crear grupo de administradores](#paso-1--crear-grupo-de-administradores)
+  - [Paso 2 — asignar el grupo como Owner](#paso-2--asignar-el-grupo-como-owner)
+  - [Paso 3 — eliminar al usuario antiguo](#paso-3--eliminar-al-usuario-antiguo)
+- [Cómo deberían crearse las subscriptions nuevas](#4️⃣-cómo-deberían-crearse-las-subscriptions-nuevas)
+  - [Modelo 1 — Enterprise Agreement / MCA](#modelo-1--enterprise-agreement--mca-el-más-común)
+  - [Modelo 2 — Platform subscription creation](#modelo-2--platform-subscription-creation)
+  - [Modelo 3 — Azure Landing Zone pattern](#modelo-3--azure-landing-zone-pattern)
+- [Buenas prácticas clave](#5️⃣-buenas-prácticas-clave)
+- [Algo importante que deberías revisar ahora](#6️⃣-algo-importante-que-deberías-revisar-ahora)
+- [Arquitectura final recomendada](#7️⃣-arquitectura-final-recomendada)
 ---
 
 # Microsoft Active Directory (On-Premises) vs Microsoft Entra ID
@@ -793,3 +806,58 @@ Tenant
 → Workloads
 ```
 
+---
+
+# patrón recomendado por Microsoft
+
+Las subscriptions no deberían pertenecer a personas, sino a grupos o cuentas de plataforma.
+
+Arquitectura recomendada:
+````
+Tenant
+│
+├── Entra ID Group
+│      AZ-Platform-Subscription-Owners
+│
+└── Subscription
+       Owner → AZ-Subscription-Owners
+````
+
+# Cómo arreglar las subscriptions actuales
+## Paso 1 — crear grupo de administradores
+
+En Microsoft Entra ID → Groups
+
+- Crear algo como: ``AZ-Platform-Subscription-Owners``
+- Tipo: ``Security Group``
+
+Añadir:
+
+- cloud architects
+- platform team
+- admins reales
+
+## Paso 2 — asignar el grupo como Owner
+
+En cada subscription:
+
+````
+Subscriptions
+→ Access Control (IAM)
+→ Add role assignment
+````
+
+Asignar:
+
+````
+Role: Owner
+Member: AZ-Platform-Subscription-Owners
+````
+
+## Paso 3 — eliminar al usuario antiguo
+
+Una vez el grupo tenga permisos:
+````
+Remove role assignment
+frank.sinatra@nyRZV.onmicrosoft.com
+``
