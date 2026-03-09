@@ -154,6 +154,7 @@ Tienen **arquitecturas, protocolos y objetivos diferentes**.
 
 ## Diferencia fundamental
 
+
 | Aspecto | Active Directory (AD DS) | Microsoft Entra ID |
 |---|---|---|
 | Tipo | Directorio **on-premises** | Directorio **cloud** |
@@ -164,6 +165,7 @@ Tienen **arquitecturas, protocolos y objetivos diferentes**.
 | Objetivo | Gestionar **identidades, dispositivos y recursos dentro de la red corporativa** | Gestionar **identidades y acceso a aplicaciones cloud y SaaS** |
 | Diseño | Pensado para **redes internas (LAN)** | Pensado para **internet y aplicaciones cloud** |
 | Infraestructura | Requiere **Domain Controllers** | No requiere servidores |
+| Qué tienen en común | Ambos son **servicios de identidad y directorio** que gestionan **usuarios, grupos y autenticación** | Ambos permiten **gestionar identidades, controlar accesos y aplicar políticas de seguridad** |
 
 ---
 
