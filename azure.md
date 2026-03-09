@@ -46,7 +46,7 @@
 </table>
 
 
-# Siglas
+# Siglas / Conceptos
 
 | Sigla / Concepto            | Definición completa                                           | Qué significa en una frase                                                                                         |
 | --------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -67,3 +67,5 @@
 | **Workload**                | Conjunto de recursos que soportan una aplicación o servicio   | Agrupación lógica de recursos (VMs, DB, red, storage) que trabajan juntos para ofrecer una funcionalidad.         |
 | **Service Group**           | Agrupación lógica de servicios relacionados                   | Conjunto organizado de servicios que cumplen una función común dentro de una arquitectura o plataforma.           |
 | **Management Group**        | Contenedor jerárquico para gobernanza en Azure                | Nivel superior que permite organizar suscripciones y aplicar políticas y RBAC de forma centralizada.              |
+| **Tenant**                  | Instancia dedicada de Microsoft Entra ID que representa a una organización en la nube | Espacio aislado donde se gestionan identidades, usuarios, dominios y acceso a servicios como Azure o Microsoft 365. |
+| **Subscription**            | Contenedor de facturación y gestión de recursos en Azure      | Unidad que agrupa recursos de Azure y define cómo se facturan los servicios utilizados.                           |
