@@ -209,18 +209,18 @@ Tienen **arquitecturas, protocolos y objetivos diferentes**.
 ## No son intercambiables
 [Back to Index](#index)
 
-| Feature | Funcionalidades que solo tiene Active Directory | Funcionalidades que solo tiene Microsoft Entra ID |
+| Feature | Active Directory | Microsoft Entra ID |
 |---|---|---|
-| Domain Join clásico | ✓ | ✗ |
-| Group Policy (GPO) | ✓ | ✗ |
-| LDAP | ✓ | ✗ |
-| Kerberos | ✓ | ✗ |
-| Gestión de servidores Windows | ✓ | ✗ |
-| Conditional Access | ✗ | ✓ |
-| MFA integrado | ✗ | ✓ |
-| Identity Protection | ✗ | ✓ |
-| Gestión de acceso a aplicaciones SaaS | ✗ | ✓ |
-| Integración nativa con Microsoft 365 | ✗ | ✓ |
+| Domain Join clásico | ✅ | ❌ |
+| Group Policy (GPO) | ✅ | ❌ |
+| LDAP | ✅ | ❌ |
+| Kerberos | ✅ | ❌ |
+| Gestión de servidores Windows | ✅ | ❌ |
+| Conditional Access | ❌ | ✅ |
+| MFA integrado | ❌ | ✅ |
+| Identity Protection | ❌ | ✅ |
+| Gestión de acceso a aplicaciones SaaS | ❌ | ✅ |
+| Integración nativa con Microsoft 365 | ❌ | ✅ |
 
 ## Ejemplo práctico
 [Back to Index](#index)
