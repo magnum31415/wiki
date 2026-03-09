@@ -8,7 +8,7 @@
 |---|---|---|---|---|---|---|
 | Microsoft Entra ID (RBAC) | ✔ | ❌ | A user or application authenticates with Entra ID and accesses a blob using a role like **Storage Blob Data Contributor**. | **Claim** | Information about an identity included in an authentication token. | OAuth / OpenID Connect / Microsoft Entra ID |
 | Shared Key (Access Keys) | ❌ | ✔ | An application connects to a storage account using a **connection string with the AccountKey**. | **Access Key (Storage)** | Secret key that provides direct access to the Storage Account. | Key-based authentication |
-| SAS Token | ❌ | ✔ | **Shared Access Signature Token** : A temporary URL is generated to allow download of a specific blob for a limited time. | **Access Key (or delegation key)** | Token generated from a storage key or delegation key to grant temporary access. | Delegated access to storage resources |
+| SAS Token | ❌ | ✔ | **Shared Access Signature Token** : A temporary URL is generated to allow download of a specific blob for a limited time.  [Ejemplo SAS TOKEN](https://mystorage.blob.core.windows.net/container/file.txt?sv=2023-01-01&st=2025-03-08T10:00Z&se=2025-03-08T12:00Z&sr=b&sp=r&sig=abc123...)| **Access Key (or delegation key)** | Token generated from a storage key or delegation key to grant temporary access. | Delegated access to storage resources |
 
 
 ## Permissions in Azure can be assigned at different scopes within the resource hierarchy.
