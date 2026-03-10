@@ -220,6 +220,14 @@
 
 Un Microsoft Entra tenant es el contenedor lógico de identidad y seguridad que representa a una organización dentro de Microsoft Cloud.
 
+**Planes**
+---
+
+- **Identity Plane** – gestión de identidades y autenticación (Entra ID, IAM)
+- **Control Plane** – gestión y administración de recursos (ARM, APIs, portal)
+- **Data Plane** – acceso y operación sobre los datos o workloads
+
+
 ````
 Azure Tenant
 │
