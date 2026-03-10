@@ -262,6 +262,22 @@ Azure Tenant
       └ Blueprints / Landing Zones
 ````
 
+**Ejemplos de Roles típicos de cada uno**
+
+| ControlPlane | IdentityPlane | DataPlane |
+|---|---|---|
+| Owner | Global Administrator | Storage Blob Data Owner |
+| Contributor | Privileged Role Administrator | Storage Blob Data Contributor |
+| Reader | Application Administrator | Storage Blob Data Reader |
+| User Access Administrator | Cloud Application Administrator | Storage Queue Data Contributor |
+| Network Contributor | Directory Readers | Storage Queue Data Reader |
+| Virtual Machine Contributor | Security Administrator | Storage Table Data Contributor |
+| Storage Account Contributor | Security Reader | Storage Table Data Reader |
+| Key Vault Contributor | Global Reader | Key Vault Secrets User |
+| Monitoring Contributor | User Administrator | Key Vault Secrets Officer |
+| Backup Contributor | Groups Administrator | Key Vault Administrator |
+
+
 Es tu **directorio corporativo en la nube**.
 
 **Microsoft Entra Tenant = Directorio de identidad y seguridad que contiene usuarios, apps y suscripciones de una organización en Azure.**
