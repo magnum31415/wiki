@@ -22,6 +22,194 @@ Spoke VNet ---- HUB ---- Spoke VNet
            Spoke VNet (Data)
 ````
 
+### 1. Concepto clave
+
+**Hub and Spoke es una arquitectura de red**, no de suscripciones.
+
+Esto significa que **vive en las Virtual Networks (VNets)**.
+
+Las **subscriptions solo sirven como contenedores administrativos** donde se crean esas VNets.
+
+Por tanto:
+
+```
+Subscription
+   └── Resource Group
+        └── Virtual Network (VNet)
+             └── Subnets
+```
+
+El **Hub and Spoke ocurre cuando varias VNets están conectadas entre sí mediante VNet Peering**.
+
+---
+
+### 2. Cómo se relaciona con las subscriptions en una Landing Zone
+
+En arquitecturas empresariales (CAF / Azure Landing Zones) normalmente se separa así:
+
+```
+Tenant
+│
+├── Platform
+│     └── Connectivity Subscription
+│           └── HUB VNet
+│
+└── LandingZones
+      ├── Subscription App1
+      │      └── Spoke VNet
+      │
+      ├── Subscription Data
+      │      └── Spoke VNet
+      │
+      └── Subscription AI
+             └── Spoke VNet
+```
+
+### Idea clave
+
+- **Hub VNet → suele vivir en una subscription llamada Connectivity**
+- **Spoke VNets → viven en las subscriptions de las aplicaciones**
+
+Esto permite:
+
+- separar responsabilidades
+- aplicar RBAC distinto
+- aislar costes
+- mejorar seguridad
+---
+
+### 3. Ejemplo real de Hub-Spoke con subscriptions
+
+```
+Subscription: connectivity-prod
+    └── vnet-hub
+           ├── AzureFirewallSubnet
+           ├── GatewaySubnet
+           └── BastionSubnet
+
+Subscription: ai-platform-prod
+    └── vnet-ai-spoke
+
+Subscription: erp-prod
+    └── vnet-erp-spoke
+
+Subscription: data-platform
+    └── vnet-data-spoke
+```
+
+Todas las spokes están conectadas al hub mediante **VNet Peering**.
+
+--
+
+### 5. Cómo comprobarlo en Azure
+
+#### Paso 1 — Ver las VNets
+
+Primero identifica las VNets que existen.
+
+```bash
+az network vnet list -o table
+```
+
+Esto te mostrará algo como:
+
+```
+Name              ResourceGroup        Location
+------------------------------------------------
+vnet-hub          rg-network           westeurope
+vnet-ai-prod      rg-ai                westeurope
+vnet-data         rg-data              westeurope
+vnet-erp          rg-erp               westeurope
+```
+
+---
+
+#### Paso 2 — Ver en qué subscription está cada VNet
+
+```bash
+az network vnet list \
+  --query "[].{Name:name,Subscription:subscriptionId,ResourceGroup:resourceGroup}" \
+  -o table
+```
+
+---
+
+#### Paso 3 — Ver los peerings
+
+Aquí es donde realmente se detecta el hub-and-spoke.
+
+```bash
+az network vnet peering list \
+  --resource-group RG-NETWORK \
+  --vnet-name vnet-hub \
+  -o table
+```
+
+Si ves algo así:
+
+```
+Name                 RemoteVNet
+-----------------------------------------
+hub-to-ai            vnet-ai-prod
+hub-to-data          vnet-data
+hub-to-erp           vnet-erp
+```
+
+entonces tienes arquitectura **hub-and-spoke**.
+
+---
+
+### 6. Cómo verlo rápidamente en el Portal
+
+Ir a:
+
+```
+Azure Portal
+→ Virtual Networks
+→ seleccionar una VNet
+→ Peerings
+```
+
+Si ves algo como:
+
+```
+vnet-ai
+   |
+   |
+vnet-data — vnet-hub — vnet-erp
+   |
+   |
+vnet-dev
+```
+
+entonces existe **Hub-and-Spoke**.
+
+---
+
+### 7. Resumen
+
+| Concepto | Dónde vive |
+|---|---|
+| Subscription | Contenedor administrativo |
+| Resource Group | Agrupa recursos |
+| VNet | Red virtual |
+| Hub-and-Spoke | Relación entre VNets |
+
+---
+
+## Regla mental útil
+
+```
+Subscriptions organizan recursos
+Hub-and-Spoke organiza redes
+```
+---
+### 4. Dónde tienes que mirar realmente
+
+No se mira en **subscriptions**.
+
+Se mira en **Virtual Networks y Peerings**.
+
 ---
 
 # Hub (red central)
