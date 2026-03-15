@@ -6,7 +6,7 @@
   - [2. Azure Resource Mover](#2-azure-resource-mover)
   - [3. Comparación rápida](#3-comparación-rápida)
   - [4. Regla simple](#4-regla-simple)
-
+- [Azure Resource Mobility Matrix (Resource Group, Subscription, Region)](#azure-resource-mobility-matrix-resource-group-subscription-region)
   
 # Moving Resources in Azure: Native Move vs Azure Resource Mover
 
@@ -52,8 +52,8 @@ Azure simplemente **actualiza el Resource ID** del recurso.
 
 Ejemplo:
 
-Antes ``/subscriptions/sub1/resourceGroups/rg-old/providers/Microsoft.Compute/virtualMachines/vm01``
-Después ``/subscriptions/sub1/resourceGroups/rg-new/providers/Microsoft.Compute/virtualMachines/vm01``
+- **Antes** ``/subscriptions/sub1/resourceGroups/rg-old/providers/Microsoft.Compute/virtualMachines/vm01``
+- **Después** ``/subscriptions/sub1/resourceGroups/rg-new/providers/Microsoft.Compute/virtualMachines/vm01``
 
 El recurso **sigue siendo exactamente el mismo objeto en Azure**.
 
@@ -111,18 +111,11 @@ El recurso **se vuelve a crear en la nueva región**.
 
 Ejemplo:
 
-VM original
 
-``
-Region: West Europe
-VM: prod-vm01
-``
-
-VM destino
-``
-Region: North Europe
-VM: prod-vm01
-``
+| Estado | Región | VM |
+|---|---|---|
+| VM original | West Europe | prod-vm01 |
+| VM destino | North Europe | prod-vm01 |
 
 
 El recurso destino **no es el mismo objeto**, sino uno **nuevo basado en el original**.
@@ -184,7 +177,10 @@ Se usa cuando se necesita:
 | Caso 3 | Mover VM a otra región | West Europe → North Europe | Azure Resource Mover |
 
 
+# Azure Resource Mobility Matrix (Resource Group, Subscription, Region)
 
+La tabla muestra **qué recursos de Azure pueden moverse entre Resource Groups, Subscriptions y Regions** y qué método permite hacerlo.  
+También indica **si el movimiento se puede realizar con el método nativo de Azure (ARM Move) o requiere herramientas como Azure Resource Mover**.
 
 [MSFT - allowed move resources](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/move-support-resources)
 
@@ -197,10 +193,10 @@ Se usa cuando se necesita:
 | Virtual Network (VNet) | ✅ | ✅ | ❌ | ✅ |
 | Subnet | ❌ | ❌ | ❌ | ❌ |
 | Network Security Group (NSG) | ✅ | ✅ | ❌ | ✅ |
-| Public IP | ✅ | ✅ | ❌ | ✅ |
-| Load Balancer | ✅ | ✅ | ❌ | ❌ |
-| Application Gateway | ✅ | ✅ | ❌ | ❌ |
-| Azure Firewall | ✅ | ✅ | ❌ | ❌ |
+| Public IP | ⚠️ (depends on SKU / association) | ⚠️ (depends on SKU / association) | ❌ | ⚠️ (depends on SKU) |
+| Load Balancer | ⚠️ (Standard SKU only) | ⚠️ (Standard SKU only) | ❌ | ❌ |
+| Application Gateway | ⚠️ (depends on SKU / configuration) | ⚠️ (depends on SKU / configuration) | ❌ | ❌ |
+| Azure Firewall | ⚠️ (limited scenarios) | ⚠️ (limited scenarios) | ❌ | ❌ |
 | VPN Gateway | ❌ | ❌ | ❌ | ❌ |
 | ExpressRoute Gateway | ❌ | ❌ | ❌ | ❌ |
 | Storage Account | ✅ | ✅ | ❌ | ❌ |
@@ -217,12 +213,11 @@ Se usa cuando se necesita:
 | Backup Vault | ❌ | ❌ | ❌ | ❌ |
 | Azure Kubernetes Service (AKS) | ❌ | ❌ | ❌ | ❌ |
 | Managed Identity | ✅ | ✅ | ❌ | ❌ |
-| Private Endpoint | ✅ | ✅ | ❌ | ❌ |
+| Private Endpoint | ⚠️ (depends on dependencies) | ⚠️ (depends on dependencies) | ❌ | ❌ |
 | Route Table | ✅ | ✅ | ❌ | ❌ |
-| Bastion Host | ✅ | ✅ | ❌ | ❌ |
+| Bastion Host | ⚠️ (depends on configuration) | ⚠️ (depends on configuration) | ❌ | ❌ |
 | Service Bus Namespace | ✅ | ✅ | ❌ | ❌ |
 | Event Hub Namespace | ✅ | ✅ | ❌ | ❌ |
-| Redis Cache | ✅ | ✅ | ❌ | ❌ |
+| Redis Cache | ⚠️ (depends on SKU) | ⚠️ (depends on SKU) | ❌ | ❌ |
 | Data Factory | ✅ | ✅ | ❌ | ❌ |
 | Synapse Workspace | ✅ | ✅ | ❌ | ❌ |
-
