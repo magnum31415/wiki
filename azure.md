@@ -17,6 +17,7 @@
       9.<a href="https://github.com/magnum31415/wiki/blob/main/azure-hub-and-spoke-104.md">Azure Hub & Spoke</a><br>
       10.<a href="https://github.com/magnum31415/wiki/blob/main/azure-policy-104.md">Azure Policy</a><br>
       11.<a href="https://github.com/magnum31415/wiki/blob/main/azure-move-res-104.md">Azure Move Resources</a><br>
+      12.<a href="https://github.com/magnum31415/wiki/blob/main/azure-resoruce-graph-104.md">Azure Resoruce Graph</a><br>
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
