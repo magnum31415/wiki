@@ -35,7 +35,7 @@ In this case CER are NOT generated with the same KEY
 
 # Create a SAN Cert
 
-`````bash
+````bash
 ## Generate SAN CSR
 openssl req -new -nodes \
   -out groupit.csr \
