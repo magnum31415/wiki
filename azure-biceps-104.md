@@ -4,6 +4,9 @@
 Bicep es un lenguaje declarativo para desplegar recursos en Azure (sobre ARM).  
 Permite definir infraestructura como código de forma más simple y legible.
 
+⚠️ Limitación importante
+- La creación de **Subscription** NO se puede hacer con Bicep.
+
 ## 2. Estructura recomendada de proyecto
 
 ````text
