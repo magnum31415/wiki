@@ -27,6 +27,12 @@
     - [mode](#mode)
   - [Comparativa con Terraform](#comparativa-con-terraform)
 
+- [Equivalente a `terraform destroy` en Bicep](#equivalente-a-terraform-destroy-en-bicep)
+  - [Opción recomendada (equivalente real)](#opción-recomendada-equivalente-real)
+  - [Alternativa: modo `Complete`](#alternativa-modo-complete)
+  - [Alternativa manual](#alternativa-manual)
+  - [Comparativa](#comparativa)
+  - [Conclusión](#conclusión)
   
 #  Bicep – Guía rápida de uso en un proyecto
 
@@ -283,4 +289,63 @@ az deployment group create \
 | Ejecución | Azure nativo     | Cliente externo  |
 
 
+# Equivalente a `terraform destroy` en Bicep
+
+No existe un equivalente directo 1:1 a `terraform destroy` en Bicep.
+
+**Conclusión**
+- Bicep no tiene destroy
+- La forma más correcta es borrar el Resource Group
+- Complete puede ayudar, pero es peligroso si no controlas el scope
+
+---
+
+## 🧨 Opción recomendada (equivalente real)
+
+### Borrar el Resource Group completo
+
+```bash
+az group delete --name rg-test --yes --no-wait
+```
+Equivale a: ``terraform destroy ``
+
+Características:
+
+- ✔️ Borra todos los recursos del Resource Group
+- ✔️ Comportamiento predecible
+- ✔️ Limpio
+- ❌ Solo válido si usas patrón 1 RG = 1 workload
+-
+### ⚙️ Alternativa: modo Complete
+````bash
+az deployment group create \
+  --resource-group rg-test \
+  --template-file main.bicep \
+  --mode Complete
+````
+
+**Comportamiento:**
+- Elimina recursos que NO están en el template
+- Mantiene los que sí están definidos
+
+**Limitaciones:**
+- ❌ No es un destroy real
+- ❌ Necesitas modificar el template
+- ❌ Solo aplica al scope del deployment
+
+**Riesgos:**
+- ⚠️ Puede borrar recursos no controlados por tu Bicep
+- ⚠️ Puede afectar a otros equipos
+
+### 🧱 Alternativa manual ``az resource delete ...``
+
+Uso: Eliminación puntual de recursos
+
+Limitación: ❌ No escalable
+
+| Acción         | Terraform         | Bicep equivalente  |
+| -------------- | ----------------- | ------------------ |
+| Borrar todo    | terraform destroy | az group delete ✅  |
+| Borrar parcial | Quitar del código | --mode Complete ⚠️ |
+| State          | Sí                | No                 |
 
