@@ -40,14 +40,32 @@
 Bicep es un lenguaje declarativo para desplegar recursos en Azure (sobre ARM).  
 Permite definir infraestructura como código de forma más simple y legible.
 
-⚠️ Limitación importante
+## Limitaciones de Bicep / ARM
 
-- La creación de **Subscription** NO se puede hacer con Bicep.
+- Bicep solo gestiona el **control plane (ARM)**
+- Todo lo relacionado con **identidades** debe resolverse fuera (CLI, portal, pipeline)
+- RBAC requiere siempre **IDs (GUIDs), nunca nombres**
 
-⚠️ Nota RBAC importante
 
-Los roles necesitan ID, no nombre. Ejemplo real (usar en producción): 
-``Key Vault Secrets Officer → b86a8fe4-44ce-4948-aee5-eccb2c155cd7``
+| Limitación                                      | ¿Se puede hacer con Bicep? | Motivo                                                                 |
+|------------------------------------------------|----------------------------|------------------------------------------------------------------------|
+| Crear Subscription                              | ❌ No                      | No forma parte de Azure Resource Manager (scope superior)             |
+| Crear usuarios (Entra ID)                       | ❌ No                      | Pertenece al identity plane (Microsoft Entra ID)                      |
+| Crear grupos (Entra ID)                         | ❌ No                      | Fuera de ARM, gestionado por Microsoft Graph                          |
+| Resolver nombre de grupo → Object ID            | ❌ No                      | Bicep no puede consultar APIs externas ni Entra ID                    |
+| Usar nombres de roles RBAC                      | ❌ No                      | ARM requiere GUIDs de roles (`roleDefinitionId`)                      |
+| Ejecutar comandos (CLI, scripts externos)       | ❌ No                      | Lenguaje declarativo, no imperativo                                   |
+| Consultar datos dinámicos externos              | ❌ No                      | No hay acceso a fuentes externas en tiempo de despliegue              |
+
+### 🧠 Modelo de Azure
+
+| Plano          | Qué gestiona              | Ejemplos                     |
+|----------------|---------------------------|------------------------------|
+| Control plane  | Azure Resource Manager    | VMs, Key Vault, RG, redes    |
+| Identity plane | Microsoft Entra ID        | Users, Groups, Service Principals |
+
+
+
 
 ## 2. Estructura recomendada de proyecto
 
