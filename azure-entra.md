@@ -223,10 +223,19 @@ Un Microsoft Entra tenant es el contenedor lógico de identidad y seguridad que 
 **Planes**
 ---
 
-- **Identity Plane** – gestión de identidades y autenticación (Entra ID, IAM)
-- **Control Plane** – gestión y administración de recursos (ARM, APIs, portal)
+- **Identity Plane [EntraID]** – gestión de identidades y autenticación (Entra ID, IAM)
+- **Control Plane [RBAC]** – gestión y administración de recursos (ARM, APIs, portal)
 - **Data Plane** – acceso y operación sobre los datos o workloads (KV secrets, storage, etc.)
-- **"Billing / Cost Plane"**  - (separado)  Microsoft no lo llama formalmente “Billing Plane” se comporta como un plano independiente
+- **"Cost Plane" [Billing]**  - (separado)  Microsoft no lo llama formalmente “Billing Plane” se comporta como un plano independiente
+
+
+
+| Sistema                         | Descripción                                                                 | Dónde se ve                         | Ejemplos                                                                 |
+|---------------------------------|-----------------------------------------------------------------------------|-------------------------------------|--------------------------------------------------------------------------|
+| **Entra ID (Identity)**         | Identity Plane [EntraID] – gestión de identidades y autenticación (Entra ID, IAM) | Entra → Roles                       | Global Admin, Billing Administrator                                      |
+| **RBAC (Control plane)**        | Control Plane [RBAC] – gestión y administración de recursos (ARM, APIs, portal) | IAM en resources                    | Owner, Contributor                                                       |
+| **Data Plane**                  | Data Plane – acceso y operación sobre los datos o workloads (KV secrets, storage, etc.) | Dentro del servicio (no en IAM)     | Key Vault (get/list secrets), Storage (Blob Data Reader), SQL (login DB) |
+| **Billing (Cost Management)**   | "Cost Plane" [Billing] – (separado) Microsoft no lo llama formalmente “Billing Plane”, se comporta como un plano independiente | Cost Management + Billing           | Billing Reader, Contributor                                              |
 
 ````
 Identity Plane → Who you are
