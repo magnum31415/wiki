@@ -225,8 +225,15 @@ Un Microsoft Entra tenant es el contenedor lógico de identidad y seguridad que 
 
 - **Identity Plane** – gestión de identidades y autenticación (Entra ID, IAM)
 - **Control Plane** – gestión y administración de recursos (ARM, APIs, portal)
-- **Data Plane** – acceso y operación sobre los datos o workloads
+- **Data Plane** – acceso y operación sobre los datos o workloads (KV secrets, storage, etc.)
+- **"Billing / Cost Plane"**  - (separado)  Microsoft no lo llama formalmente “Billing Plane” se comporta como un plano independiente
 
+````
+Identity Plane → Who you are
+Control Plane → What you can manage
+Data Plane → What data you can access
+Billing Plane → What you consume and pay
+````
 
 ````
 Azure Tenant
