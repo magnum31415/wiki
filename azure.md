@@ -45,7 +45,7 @@
       22. <a href="https://github.com/magnum31415/wiki/blob/main/azure-backup.md">Azure Backup</a><br>
       23. <a href="https://github.com/magnum31415/wiki/blob/main/azure-disaster-recovery.md">Azure Disaster Recovery</a><br>
       24. <a href="https://github.com/magnum31415/wiki/blob/main/azure-cidr.md">Azure CIDR</a><br>
-      25. <a href="https://github.com/magnum31415/wiki/blob/main/azure-iam.md">Azure IAM</a>
+      25. <a href="https://github.com/magnum31415/wiki/blob/main/azure-iam.md">Azure IAM</a><br>
       26. <a href="https://github.com/magnum31415/wiki/blob/main/azure-roles.md">Azure Roles</a>
     </td>
 
