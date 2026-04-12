@@ -3,6 +3,7 @@
   <tr>
     <th>Az-104</th>
     <th>Az-305</th>
+    <th>Az-400</th>
   </tr>
   <tr>
     <td>
@@ -48,7 +49,9 @@
       25. <a href="https://github.com/magnum31415/wiki/blob/main/azure-iam.md">Azure IAM</a><br>
       26. <a href="https://github.com/magnum31415/wiki/blob/main/azure-roles.md">Azure Roles</a>
     </td>
-
+    </td>
+      1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-400.md">AZ-400: Designing and Implementing Microsoft DevOps Solutions</a>
+    <td>
   </tr>
 </table>
 
