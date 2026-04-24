@@ -2,6 +2,220 @@
 
 # Azure DevOps Terraform Pipeline Documentation
 
+
+````yml
+# =========================================
+# PIPELINE TRIGGER
+# =========================================
+# The pipeline is triggered automatically on every push to the main branch
+trigger:
+- main
+
+# =========================================
+# AGENT POOL
+# =========================================
+# Uses a Microsoft-hosted Ubuntu agent to run the pipeline
+pool:
+  vmImage: ubuntu-latest
+
+# =========================================
+# GLOBAL VARIABLES
+# =========================================
+# These variables define:
+# - Terraform backend configuration (Azure Storage)
+# - Terraform CLI version
+# - AzureRM provider version
+variables:
+  TF_STORAGE_ACCOUNT: 'sttfstatealzlabweu01'   # Storage account used to store Terraform state
+  TF_CONTAINER: 'tfstate'                     # Blob container for the state file
+  TF_KEY: 'mgmt-groups.tfstate'              # Name of the Terraform state file
+  TF_RESOURCE_GROUP: 'rg-tfstate-weu-01'     # Resource group where the storage account exists
+  TF_VERSION: '1.6.0'                        # Terraform CLI version
+  TF_PROVIDER_VERSION: '4.70.0'              # AzureRM provider version
+
+stages:
+
+# =========================
+# PLAN STAGE
+# =========================
+# This stage generates the Terraform execution plan but does NOT apply it
+- stage: Plan
+  jobs:
+  - job: plan
+    steps:
+
+    # Checkout repository containing Terraform code
+    - checkout: self
+
+    # Install Terraform CLI (required to run Terraform commands)
+    - task: TerraformInstaller@1
+      inputs:
+        terraformVersion: '$(TF_VERSION)'
+
+    # Main execution block using Azure CLI
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'sc-azure-terraform'  # Service connection used for authentication
+        scriptType: bash
+        scriptLocation: inlineScript
+        addSpnToEnvironment: true                # Exposes SPN details as environment variables
+        inlineScript: |
+          set -e   # Exit immediately if any command fails
+
+          echo "===== AUTH ====="
+          # Configure Terraform authentication using OIDC (no secrets required)
+          export ARM_CLIENT_ID="$servicePrincipalId"
+          export ARM_TENANT_ID="$tenantId"
+          export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          export ARM_OIDC_TOKEN="$idToken"
+          export ARM_USE_OIDC=true
+          export ARM_USE_AZUREAD=true
+          unset ARM_CLIENT_SECRET   # Ensure no secret-based auth is used
+
+          echo "===== FIX PROVIDER ====="
+          # Manual installation of AzureRM provider (used when avoiding direct downloads)
+          # This is optional in standard environments (Terraform can download providers automatically)
+          PLUGIN_PATH="$HOME/.terraform.d/plugins"
+
+          mkdir -p $PLUGIN_PATH/registry.terraform.io/hashicorp/azurerm/$(TF_PROVIDER_VERSION)/linux_amd64
+
+          curl -sL -o azurerm.zip \
+          https://releases.hashicorp.com/terraform-provider-azurerm/$(TF_PROVIDER_VERSION)/terraform-provider-azurerm_$(TF_PROVIDER_VERSION)_linux_amd64.zip
+
+          unzip -o azurerm.zip -d $PLUGIN_PATH/registry.terraform.io/hashicorp/azurerm/$(TF_PROVIDER_VERSION)/linux_amd64
+
+          # Configure Terraform to use the local provider mirror instead of downloading it
+          cat > ~/.terraformrc <<EOF
+          provider_installation {
+            filesystem_mirror {
+              path    = "$PLUGIN_PATH"
+              include = ["registry.terraform.io/hashicorp/azurerm"]
+            }
+            direct {
+              exclude = ["registry.terraform.io/hashicorp/azurerm"]
+            }
+          }
+          EOF
+
+          echo "===== INIT ====="
+          # Initialize Terraform and configure backend
+          # -reconfigure forces Terraform to ignore previous backend config and reload it
+          terraform init -reconfigure \
+            -backend-config="resource_group_name=$(TF_RESOURCE_GROUP)" \
+            -backend-config="storage_account_name=$(TF_STORAGE_ACCOUNT)" \
+            -backend-config="container_name=$(TF_CONTAINER)" \
+            -backend-config="key=$(TF_KEY)" \
+            -backend-config="use_azuread_auth=true"
+
+          echo "===== PLAN ====="
+          # Generate Terraform execution plan and store it in a file
+          # This ensures the same plan is used later in the Apply stage
+          mkdir -p tfplan_dir
+          terraform plan -var-file="terraform.tfvars" -out=tfplan_dir/tfplan
+
+          echo "===== DEBUG PLAN ====="
+          # Verify that the plan file was created successfully
+          ls -la tfplan_dir
+
+    # Publish the Terraform plan as an artifact to be used in the Apply stage
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'tfplan_dir'   # Folder containing the plan file
+        artifact: 'tfplan'         # Artifact name
+
+
+# =========================
+# APPLY STAGE
+# =========================
+# This stage applies the previously generated Terraform plan
+- stage: Apply
+  dependsOn: Plan   # Ensures Apply only runs after Plan completes
+  jobs:
+  - deployment: apply
+    environment: prod   # Enables environment-based approvals if configured
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          # Checkout repository again (needed for Terraform configuration files)
+          - checkout: self
+
+          # Download the Terraform plan artifact from the Plan stage
+          # Stored in a subfolder to avoid permission conflicts
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: 'tfplan'
+              path: '$(Pipeline.Workspace)/artifacts'
+
+          # Install Terraform CLI again (ensures same version as Plan stage)
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: '$(TF_VERSION)'
+
+          # Execute Terraform Apply
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'sc-azure-terraform'
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              inlineScript: |
+                set -e
+
+                echo "===== DEBUG DOWNLOAD ====="
+                # Verify that the artifact was downloaded correctly
+                ls -R $(Pipeline.Workspace)
+
+                echo "===== AUTH ====="
+                # Reconfigure authentication (same as Plan stage)
+                export ARM_CLIENT_ID="$servicePrincipalId"
+                export ARM_TENANT_ID="$tenantId"
+                export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+                export ARM_OIDC_TOKEN="$idToken"
+                export ARM_USE_OIDC=true
+                export ARM_USE_AZUREAD=true
+                unset ARM_CLIENT_SECRET
+
+                echo "===== FIX PROVIDER ====="
+                # Same provider installation logic to ensure consistency with Plan stage
+                PLUGIN_PATH="$HOME/.terraform.d/plugins"
+
+                mkdir -p $PLUGIN_PATH/registry.terraform.io/hashicorp/azurerm/$(TF_PROVIDER_VERSION)/linux_amd64
+
+                curl -sL -o azurerm.zip \
+                https://releases.hashicorp.com/terraform-provider-azurerm/$(TF_PROVIDER_VERSION)/terraform-provider-azurerm_$(TF_PROVIDER_VERSION)_linux_amd64.zip
+
+                unzip -o azurerm.zip -d $PLUGIN_PATH/registry.terraform.io/hashicorp/azurerm/$(TF_PROVIDER_VERSION)/linux_amd64
+
+                cat > ~/.terraformrc <<EOF
+                provider_installation {
+                  filesystem_mirror {
+                    path    = "$PLUGIN_PATH"
+                    include = ["registry.terraform.io/hashicorp/azurerm"]
+                  }
+                  direct {
+                    exclude = ["registry.terraform.io/hashicorp/azurerm"]
+                  }
+                }
+                EOF
+
+                echo "===== INIT ====="
+                # Re-initialize Terraform to connect to the same backend
+                terraform init -reconfigure \
+                  -backend-config="resource_group_name=$(TF_RESOURCE_GROUP)" \
+                  -backend-config="storage_account_name=$(TF_STORAGE_ACCOUNT)" \
+                  -backend-config="container_name=$(TF_CONTAINER)" \
+                  -backend-config="key=$(TF_KEY)" \
+                  -backend-config="use_azuread_auth=true"
+
+                echo "===== APPLY ====="
+                # Apply the EXACT plan generated in the Plan stage
+                # This guarantees deterministic deployments
+                terraform apply "$(Pipeline.Workspace)/artifacts/tfplan"
+
+````
+
 ## Overview
 
 This pipeline is designed to deploy Azure infrastructure using Terraform in a controlled and enterprise-ready way.
@@ -69,7 +283,13 @@ Downloads the Terraform code from the repository into the pipeline agent.
 ```yaml
 - task: TerraformInstaller@1
 ```
-Installs the required Terraform version to ensure consistency across environments.
+This task installs the **Terraform CLI binary**, which is required to run:
+
+- `terraform init`
+- `terraform plan`
+- `terraform apply`
+
+👉 This is **NOT related to providers**. It only installs the Terraform executable.
 
 ---
 
@@ -109,8 +329,69 @@ Purpose:
 - Stores it locally in a plugin cache
 - Avoids provider download issues or network restrictions
 
+Terraform normally downloads providers automatically during:
+
+```bash
+terraform init
+```
+
+However, in this pipeline we are **overriding the default behavior** by:
+
+- Downloading the provider manually
+- Storing it in a local plugin cache
+- Forcing Terraform to use a **filesystem mirror**
+
+```hcl
+provider_installation {
+  filesystem_mirror {
+    path = "$PLUGIN_PATH"
+  }
+}
+```
+### ⚠️ Important Clarification
+
+- **Terraform CLI ≠ Terraform Provider**
+- CLI is installed via `TerraformInstaller`
+- Provider is the plugin (`azurerm`) downloaded manually
+
+
+---
 ---
 
+### ❗ Why this is done
+
+This approach is useful in:
+
+- Restricted environments (no internet access)
+- Enterprise environments with strict compliance
+- Scenarios where provider versions must be tightly controlled
+
+---
+
+### ❗ When this is NOT needed
+
+In most standard environments, this whole block can be removed and replaced with:
+
+```bash
+terraform init
+```
+
+👉 Terraform will automatically:
+- Download providers
+- Cache them
+- Manage versions
+
+---
+
+### ⚠️ Recommendation
+
+If you are in a **normal environment with internet access**, this manual provider installation:
+
+- Adds complexity
+- Is not required
+- Can be safely removed
+
+---
 ### ⚙️ Terraform Init
 
 ```bash
