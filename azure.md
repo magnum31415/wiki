@@ -51,6 +51,8 @@
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-400.md">AZ-400: Designing and Implementing Microsoft DevOps Solutions</a>
+      2. <a href="https://github.com/magnum31415/wiki/blob/main/azure-terraform.md">Azure Terraform</a>
+      
     </td>
   </tr>
 </table>
