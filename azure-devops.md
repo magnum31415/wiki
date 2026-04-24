@@ -2,7 +2,7 @@
 
 # Azure DevOps Terraform Pipeline Documentation
 
-
+## Sample Azure Pipeline definition (YAML)
 ````yml
 # =========================================
 # PIPELINE TRIGGER
