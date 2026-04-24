@@ -1,5 +1,243 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+# 📑 Table of Contents
+
+- [🔐 Azure DevOps Service Connection (OIDC Authentication)](#-azure-devops-service-connection-oidc-authentication)
+  - [Overview](#overview)
+  - [🧠 Authentication Flow](#-authentication-flow)
+  - [🛠️ Steps to Create the Service Connection](#️-steps-to-create-the-service-connection)
+    - [1. Create Service Connection in Azure DevOps](#1-create-service-connection-in-azure-devops)
+    - [2. Choose Authentication Method](#2-choose-authentication-method)
+    - [3. Configure Basic Details](#3-configure-basic-details)
+    - [4. Create Service Principal (automatic or manual)](#4-create-service-principal-automatic-or-manual)
+    - [5. Configure Federated Credentials](#5-configure-federated-credentials)
+    - [6. Assign Required Permissions (RBAC)](#6-assign-required-permissions-rbac)
+    - [7. Validate Connection](#7-validate-connection)
+  - [🔐 How It Is Used in the Pipeline](#-how-it-is-used-in-the-pipeline)
+  - [🔄 Terraform Authentication Configuration](#-terraform-authentication-configuration)
+  - [🧠 Key Benefits](#-key-benefits)
+  - [⚠️ Important Notes](#️-important-notes)
+  - [🎯 Summary](#-summary)
+
+- [Azure DevOps Terraform Pipeline Documentation](#azure-devops-terraform-pipeline-documentation)
+  - [Sample Azure Pipeline definition (YAML)](#sample-azure-pipeline-definition-yaml)
+  - [Overview](#overview-1)
+  - [Global Configuration](#global-configuration)
+    - [Trigger](#trigger)
+    - [Agent Pool](#agent-pool)
+    - [Variables](#variables)
+
+- [🧱 Stage 1 — PLAN](#-stage-1--plan)
+  - [Step 1 — Checkout Repository](#step-1--checkout-repository)
+  - [Step 2 — Install Terraform](#step-2--install-terraform)
+  - [Step 3 — Azure CLI Task (Core Logic)](#step-3--azure-cli-task-core-logic)
+    - [🔐 Authentication (OIDC)](#-authentication-oidc)
+    - [📦 Provider Fix (Offline Installation)](#-provider-fix-offline-installation)
+    - [❗ Why this is done](#-why-this-is-done)
+    - [❗ When this is NOT needed](#-when-this-is-not-needed)
+    - [⚠️ Recommendation](#️-recommendation)
+    - [⚙️ Terraform Init](#️-terraform-init)
+    - [📊 Terraform Plan](#-terraform-plan)
+    - [🔍 Debug](#-debug)
+  - [Step 4 — Publish Artifact](#step-4--publish-artifact)
+
+- [🚀 Stage 2 — APPLY](#-stage-2--apply)
+  - [Step 1 — Checkout Repository](#step-1--checkout-repository-1)
+  - [Step 2 — Download Artifact](#step-2--download-artifact)
+  - [Step 3 — Install Terraform](#step-3--install-terraform)
+  - [Step 4 — Azure CLI Task (Execution)](#step-4--azure-cli-task-execution)
+    - [🔍 Debug Download](#-debug-download)
+    - [🔐 Authentication (Same as Plan)](#-authentication-same-as-plan)
+    - [📦 Provider Fix](#-provider-fix)
+    - [⚙️ Terraform Init](#️-terraform-init-1)
+    - [🚀 Terraform Apply](#-terraform-apply)
+
+- [🧠 Key Design Decisions](#-key-design-decisions)
+  - [1. Plan → Apply Separation](#1-plan--apply-separation)
+  - [2. Artifact-Based Deployment](#2-artifact-based-deployment)
+  - [3. OIDC Authentication](#3-oidc-authentication)
+  - [4. Custom Provider Installation](#4-custom-provider-installation)
+  - [5. Workspace Isolation](#5-workspace-isolation)
+
+- [⚠️ Important Notes](#️-important-notes-1)
+- [🎯 Summary](#-summary-1)
+
+# 🔐 Azure DevOps Service Connection (OIDC Authentication)
+
+## Overview
+
+This pipeline uses an **Azure DevOps Service Connection** configured with **Workload Identity Federation (OIDC)** to authenticate against Azure.
+
+This approach:
+
+- Eliminates the need for client secrets
+- Improves security posture
+- Aligns with modern cloud authentication practices
+
+---
+
+## 🧠 Authentication Flow
+
+```text
+Azure DevOps Pipeline
+        ↓
+OIDC Token (short-lived)
+        ↓
+Azure AD (Entra ID)
+        ↓
+Service Principal
+        ↓
+Azure Resources
+```
+
+---
+
+## 🛠️ Steps to Create the Service Connection
+
+### 1. Create Service Connection in Azure DevOps
+
+Navigate to:
+
+```
+Project Settings → Service Connections → New Service Connection
+```
+
+Select:
+
+```
+Azure Resource Manager
+```
+
+---
+
+### 2. Choose Authentication Method
+
+Select:
+
+```
+Workload Identity Federation (recommended)
+```
+
+---
+
+### 3. Configure Basic Details
+
+Provide:
+
+- **Subscription**
+- **Resource Group scope** (or Subscription level)
+- **Service Connection Name** → e.g. `sc-azure-terraform`
+
+---
+
+### 4. Create Service Principal (automatic or manual)
+
+Azure DevOps will:
+
+- Create an **App Registration (Service Principal)** in Azure AD
+- Configure federation trust
+
+---
+
+### 5. Configure Federated Credentials
+
+A **federated credential** is created in Azure AD with:
+
+- Issuer → Azure DevOps
+- Subject → Pipeline identity
+- Audience → Azure
+
+This allows Azure DevOps to exchange an OIDC token for an Azure access token.
+
+---
+
+### 6. Assign Required Permissions (RBAC)
+
+Assign roles to the Service Principal depending on the scope:
+
+Examples:
+
+- **Contributor** → for general deployments
+- **Owner** → if managing RBAC or MGs
+- **User Access Administrator** → if assigning roles
+- **Storage Blob Data Contributor** → for Terraform state access
+
+---
+
+### 7. Validate Connection
+
+In Azure DevOps:
+
+```
+Service Connection → Verify
+```
+
+Ensure:
+
+- Authentication succeeds
+- Subscription is accessible
+
+---
+
+## 🔐 How It Is Used in the Pipeline
+
+```yaml
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'sc-azure-terraform'
+    addSpnToEnvironment: true
+```
+
+This exposes the following environment variables:
+
+```bash
+$servicePrincipalId
+$tenantId
+$idToken
+```
+
+---
+
+## 🔄 Terraform Authentication Configuration
+
+```bash
+export ARM_CLIENT_ID="$servicePrincipalId"
+export ARM_TENANT_ID="$tenantId"
+export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+export ARM_OIDC_TOKEN="$idToken"
+export ARM_USE_OIDC=true
+export ARM_USE_AZUREAD=true
+unset ARM_CLIENT_SECRET
+```
+
+---
+
+## 🧠 Key Benefits
+
+- No secrets stored in pipelines
+- Short-lived tokens (reduced attack surface)
+- Native integration with Azure AD
+- Supports enterprise security policies
+
+---
+
+## ⚠️ Important Notes
+
+- Requires Azure AD (Entra ID)
+- Requires proper RBAC assignment
+- Not compatible with older authentication models (client secret / certificate)
+
+---
+
+## 🎯 Summary
+
+The Service Connection:
+
+- Uses **OIDC federation**
+- Authenticates securely without secrets
+- Enables Terraform to interact with Azure in a **secure and scalable way**
+
+---
 # Azure DevOps Terraform Pipeline Documentation
 
 ## Sample Azure Pipeline definition (YAML)
