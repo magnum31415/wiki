@@ -423,3 +423,22 @@ These queries allow you to:
 - Support **Landing Zone design decisions**
 
 ---
+
+
+# LogAnalytics workspace
+
+## Frontdoor 
+````
+AzureDiagnostics
+| where Category startswith "FrontDoor"
+| limit 20
+````
+
+````
+AzureDiagnostics
+| where Category == "FrontDoorAccessLog"
+| where TimeGenerated >= datetime(2026-05-09T18:00:00Z)
+| where TimeGenerated <= datetime(2026-05-11T06:00:00Z)
+| where clientCountry_s == "Germany"
+| take 20
+````
