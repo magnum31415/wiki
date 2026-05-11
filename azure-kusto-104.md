@@ -1,4 +1,4 @@
-<img width="939" height="296" alt="image" src="https://github.com/user-attachments/assets/3609b191-2270-4b08-a8b6-c46ff3dbdf7d" />[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # Kusto (KQL) Basics for Azure Resource Graph
 
