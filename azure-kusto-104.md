@@ -1,4 +1,4 @@
-[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+<img width="939" height="296" alt="image" src="https://github.com/user-attachments/assets/3609b191-2270-4b08-a8b6-c46ff3dbdf7d" />[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # Kusto (KQL) Basics for Azure Resource Graph
 
@@ -442,3 +442,25 @@ AzureDiagnostics
 | where clientCountry_s == "Germany"
 | take 20
 ````
+
+### listar países distintos en el rango temporal
+````
+AzureDiagnostics
+| where Category == "FrontDoorAccessLog"
+| where TimeGenerated between (datetime(2026-05-09T18:00:00Z) .. datetime(2026-05-11T06:00:00Z))
+| where isnotempty(clientCountry_s)
+| distinct clientCountry_s
+| order by clientCountry_s asc
+````
+
+### País + número de coincidencias (requests)
+
+````
+AzureDiagnostics
+| where Category == "FrontDoorAccessLog"
+| where TimeGenerated between (datetime(2026-05-09T18:00:00Z) .. datetime(2026-05-11T06:00:00Z))
+| where isnotempty(clientCountry_s)
+| summarize Coincidencias = count() by clientCountry_s
+| order by Coincidencias desc
+````
+
