@@ -23,7 +23,8 @@
       14.<a href="https://github.com/magnum31415/wiki/blob/main/azure-biceps-104.md">Azure Biceps</a><br>
       15.<a href="https://github.com/magnum31415/wiki/blob/main/azure-kusto-104.md">Azure Kusto </a><br>
       16.<a href="https://github.com/magnum31415/wiki/blob/main/Azure-AppService-az104.md">Azure AppService</a><br>
-      17.<a href="https://github.com/magnum31415/wiki/blob/main/Azure-RBAC-Conditions-az104.md">Azure RBAC Conditions</a><br>      
+      17.<a href="https://github.com/magnum31415/wiki/blob/main/Azure-RBAC-Conditions-az104.md">Azure RBAC Conditions</a><br> 
+      18.<a href="https://github.com/magnum31415/wiki/blob/main/azure-rbac-az104.md">Azure RBAC</a><br> 
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
