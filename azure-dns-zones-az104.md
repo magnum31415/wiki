@@ -1,3 +1,5 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
 # Azure DNS Zones y Auto-Registration (AZ-104)
 
 ## Conceptos clave
