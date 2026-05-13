@@ -11,18 +11,19 @@
       2.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-az104.md">Azure Storage</a><br>
       3.<a href="https://github.com/magnum31415/wiki/blob/main/azure-loadbalancer-az104.md">Azure LoadBalancer</a><br>
       4.<a href="https://github.com/magnum31415/wiki/blob/main/azure-dns-az104.md">Azure DNS</a><br>
-      5.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vpn-az104.md">Azure VPN</a><br>
-      6.<a href="https://github.com/magnum31415/wiki/blob/main/azure-filesync-az104.md">Azure File Sync</a><br>
-      7.<a href="https://github.com/magnum31415/wiki/blob/main/azure-entraid-104.md">Azure EntraId</a><br>
-      8.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-104.md">Azure Storage</a><br>
-      9.<a href="https://github.com/magnum31415/wiki/blob/main/azure-hub-and-spoke-104.md">Azure Hub & Spoke</a><br>
-      10.<a href="https://github.com/magnum31415/wiki/blob/main/azure-policy-104.md">Azure Policy</a><br>
-      11.<a href="https://github.com/magnum31415/wiki/blob/main/azure-move-res-104.md">Azure Move Resources</a><br>
-      12.<a href="https://github.com/magnum31415/wiki/blob/main/azure-resoruce-graph-104.md">Azure Resoruce Graph</a><br>
-      13.<a href="https://github.com/magnum31415/wiki/blob/main/azure-biceps-104.md">Azure Biceps</a><br>
-      14.<a href="https://github.com/magnum31415/wiki/blob/main/azure-kusto-104.md">Azure Kusto </a><br>
-      15.<a href="https://github.com/magnum31415/wiki/blob/main/Azure-AppService-az104.md">Azure AppService</a><br>
-      16.<a href="https://github.com/magnum31415/wiki/blob/main/Azure-RBAC-Conditions-az104.md">Azure RBAC Conditions</a><br>      
+      5.<a href="https://github.com/magnum31415/wiki/blob/main/azure-dns-zones-az104.md">Azure DNS Zones</a><br>
+      6.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vpn-az104.md">Azure VPN</a><br>
+      7.<a href="https://github.com/magnum31415/wiki/blob/main/azure-filesync-az104.md">Azure File Sync</a><br>
+      8.<a href="https://github.com/magnum31415/wiki/blob/main/azure-entraid-104.md">Azure EntraId</a><br>
+      9.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-104.md">Azure Storage</a><br>
+      10.<a href="https://github.com/magnum31415/wiki/blob/main/azure-hub-and-spoke-104.md">Azure Hub & Spoke</a><br>
+      11.<a href="https://github.com/magnum31415/wiki/blob/main/azure-policy-104.md">Azure Policy</a><br>
+      12.<a href="https://github.com/magnum31415/wiki/blob/main/azure-move-res-104.md">Azure Move Resources</a><br>
+      13.<a href="https://github.com/magnum31415/wiki/blob/main/azure-resoruce-graph-104.md">Azure Resoruce Graph</a><br>
+      14.<a href="https://github.com/magnum31415/wiki/blob/main/azure-biceps-104.md">Azure Biceps</a><br>
+      15.<a href="https://github.com/magnum31415/wiki/blob/main/azure-kusto-104.md">Azure Kusto </a><br>
+      16.<a href="https://github.com/magnum31415/wiki/blob/main/Azure-AppService-az104.md">Azure AppService</a><br>
+      17.<a href="https://github.com/magnum31415/wiki/blob/main/Azure-RBAC-Conditions-az104.md">Azure RBAC Conditions</a><br>      
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
