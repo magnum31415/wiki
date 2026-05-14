@@ -16,6 +16,8 @@
 - [Microsoft Entra ID - Security Groups (AZ-104)](#microsoft-entra-id---security-groups-az-104)
 - [Microsoft Fabric](#microsoft-fabric)
 - [Microsoft Fabric Licensing y Group-Based Licensing](#microsoft-fabric-licensing-y-group-based-licensing)
+- [Self-Service Password Reset (SSPR) en Microsoft Entra ID](#self-service-password-reset-sspr-en-microsoft-entra-id)
+
 
 ---
 
@@ -1862,4 +1864,252 @@ Licenses can always be assigned directly to users.
 
 ```text
 Group-based licensing requires Entra ID P1 or P2.
+```
+---
+# Self-Service Password Reset (SSPR) en Microsoft Entra ID
+
+## Escenario
+
+Existen las siguientes identidades:
+
+| Identidad | Tipo |
+|---|---|
+| UserA | Usuario |
+| SecGroup01 | Security Group |
+| M365Group01 | Microsoft 365 Group |
+
+---
+
+## Pregunta
+
+¿Para qué identidades puede habilitarse SSPR?
+
+---
+
+## Respuesta correcta
+
+✅
+
+```text
+SecGroup01 and M365Group01 only
+```
+
+---
+
+# Qué es SSPR
+
+SSPR significa:
+
+```text
+Self-Service Password Reset
+```
+
+Permite que los usuarios:
+
+- cambien su password
+- recuperen acceso
+- reseteen contraseña
+
+sin intervención del administrador.
+
+---
+
+# Cómo se habilita SSPR
+
+En Microsoft Entra ID:
+
+```text
+Microsoft Entra ID
+    ↓
+Password reset
+    ↓
+Properties
+```
+
+---
+
+# Opciones disponibles
+
+| Configuración | Soportado |
+|---|---|
+| All users | ✅ |
+| Selected groups | ✅ |
+| Usuario individual | ❌ |
+
+---
+
+# Concepto clave examen
+
+SSPR:
+
+❌ NO se asigna directamente a usuarios individuales  
+✅ se asigna a grupos o a todos los usuarios  
+
+---
+
+# Por qué UserA NO es correcto
+
+Aunque UserA es un usuario válido:
+
+❌ SSPR no puede habilitarse directamente sobre un usuario individual.
+
+---
+
+# Por qué SecGroup01 SÍ es correcto
+
+Porque SSPR puede habilitarse sobre:
+
+```text
+Security Groups
+```
+
+---
+
+# Por qué M365Group01 SÍ es correcto
+
+Porque SSPR también soporta:
+
+```text
+Microsoft 365 Groups
+```
+
+---
+
+# Cómo funciona realmente
+
+Ejemplo:
+
+```text
+Security Group
+    ↓
+SSPR enabled
+    ↓
+Todos los usuarios del grupo
+```
+
+---
+
+# Ejemplo práctico
+
+## Grupo
+
+```text
+IT-Users
+```
+
+---
+
+## Configuración
+
+```text
+Enable SSPR for selected groups
+```
+
+---
+
+## Resultado
+
+Todos los miembros de:
+
+```text
+IT-Users
+```
+
+pueden usar SSPR.
+
+---
+
+# Importante
+
+El grupo NO resetea passwords.
+
+Los usuarios dentro del grupo son los que reciben la capacidad SSPR.
+
+---
+
+# Diferencia importante
+
+| Objeto | Puede recibir SSPR directamente |
+|---|---|
+| Usuario individual | ❌ |
+| Security Group | ✅ |
+| Microsoft 365 Group | ✅ |
+
+---
+
+# Trampa típica examen
+
+Muchos candidatos piensan:
+
+```text
+SSPR se habilita usuario por usuario
+```
+
+❌ Incorrecto.
+
+Microsoft lo diseña para:
+
+✅ grupos  
+✅ todos los usuarios  
+
+---
+
+# Otra trampa típica
+
+Muchos creen:
+
+```text
+solo Security Groups sirven
+```
+
+❌ Incorrecto.
+
+También funcionan:
+
+✅ Microsoft 365 Groups
+
+---
+
+# Qué quiere evaluar Microsoft
+
+| Concepto | Importancia |
+|---|---|
+| SSPR | Muy alta |
+| Group-based configuration | Muy alta |
+| Security Groups | Alta |
+| M365 Groups | Alta |
+
+---
+
+# Tabla resumen examen
+
+| Configuración SSPR | Soportado |
+|---|---|
+| Usuario individual | ❌ |
+| Security Group | ✅ |
+| Microsoft 365 Group | ✅ |
+| Todos los usuarios | ✅ |
+
+---
+
+# Regla rápida examen
+
+```text
+SSPR is enabled for groups or all users, not for individual users.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Self-Service Password Reset can be enabled for selected groups.
+```
+
+```text
+Microsoft 365 Groups can be used for SSPR scope.
+```
+
+```text
+SSPR is not assigned directly to individual users.
 ```
