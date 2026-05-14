@@ -597,6 +597,9 @@ NO usa Azure Backup vault.
 | Azure SQL Database | Built-in backups | No vault |
 | App Service | Built-in backups | No vault |
 
+
+![azure-vault-types](./img/azure/azure-vault-types.png)
+
 ---
 
 # Trampa típica AZ-104
