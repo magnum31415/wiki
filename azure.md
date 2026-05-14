@@ -31,6 +31,7 @@
       22.<a href="https://github.com/magnum31415/wiki/blob/main/azure-Vms-az104.md">Azure VMs</a><br>    
       23.<a href="https://github.com/magnum31415/wiki/blob/main/azure-cli-az104.md">Azure CLI</a><br>  
       24.<a href="https://github.com/magnum31415/wiki/blob/main/azure-backup-az104.md">Azure Backup</a><br>  
+      25.<a href="https://github.com/magnum31415/wiki/blob/main/azure-nva-az104.md">Azure NVA</a><br>        
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
