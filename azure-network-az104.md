@@ -28,6 +28,17 @@
 - [Frases clave AZ-104](#frases-clave-az-104)
 
 ---
+## Conceptos
+
+| Concepto | Descripción |
+|---|---|
+| Route Table | Conjunto de reglas de routing que define por dónde debe viajar el tráfico en Azure |
+| Route | Regla individual dentro de una Route Table que define destino y siguiente salto |
+| Next Hop | Siguiente dispositivo/recurso al que Azure enviará el tráfico |
+| Virtual Appliance | Máquina virtual especializada en networking/security (firewall, router, NVA) |
+| NVA (Network Virtual Appliance) | Firewall/router virtual desplegado como VM en Azure |
+| UDR (User Defined Route) | Ruta personalizada creada manualmente por el usuario |
+
 
 ## Escenario
 
