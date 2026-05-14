@@ -87,27 +87,28 @@ Snapshots are independent Azure resources and require separate RBAC permissions.
 # Diferencia: Storage Account Encryption Scope Contributor vs Storage Account Key Operator Service Role (AZ-104)
 
 
-| Característica | Storage Account Encryption Scope Contributor | Storage Account Key Operator Service Role | Storage Account Contributor |
-|---|---|---|---|
-| Objetivo principal | Administrar Encryption Scopes | Administrar Access Keys | Administrar Storage Account |
-| Tipo de gestión | Cifrado | Credenciales acceso | Administración general storage |
-| Listar Storage Account Keys | ❌ | ✅ | ✅ |
-| Regenerar Storage Account Keys | ❌ | ✅ | ✅ |
-| Crear Encryption Scopes | ✅ | ❌ | ✅ |
-| Modificar Encryption Scopes | ✅ | ❌ | ✅ |
-| Eliminar Encryption Scopes | ✅ | ❌ | ✅ |
-| Administrar Customer Managed Keys (CMK) asociados | ✅ Parcialmente | ❌ | ✅ Parcialmente |
-| Crear Storage Accounts | ❌ | ❌ | ✅ |
-| Eliminar Storage Accounts | ❌ | ❌ | ✅ |
-| Configurar networking Storage Account | ❌ | ❌ | ✅ |
-| Configurar replication (LRS/GRS/ZRS) | ❌ | ❌ | ✅ |
-| Administrar containers/blob services | ❌ | ❌ | ✅ Parcialmente |
-| Acceso blobs/data | ❌ | ❌ | ❌ |
-| Administración completa Storage Account | ❌ | ❌ | ✅ |
-| Management Plane | ✅ | ✅ | ✅ |
-| Data Plane | ❌ | ❌ | ❌ |
-| Gestionar RBAC | ❌ | ❌ | ❌ |
-| Crear role assignments | ❌ | ❌ | ❌ |
+| Característica | Storage Account Encryption Scope Contributor | Storage Account Key Operator Service Role | Storage Account Contributor | Reader and Data Access |
+|---|---|---|---|---|
+| Objetivo principal | Administrar Encryption Scopes | Administrar Access Keys | Administrar Storage Account | Lectura recursos + acceso data |
+| Tipo de gestión | Cifrado | Credenciales acceso | Administración general storage | Lectura + acceso datos |
+| Listar Storage Account Keys | ❌ | ✅ | ✅ | ✅ |
+| Regenerar Storage Account Keys | ❌ | ✅ | ✅ | ❌ |
+| Crear Encryption Scopes | ✅ | ❌ | ✅ | ❌ |
+| Modificar Encryption Scopes | ✅ | ❌ | ✅ | ❌ |
+| Eliminar Encryption Scopes | ✅ | ❌ | ✅ | ❌ |
+| Administrar Customer Managed Keys (CMK) asociados | ✅ Parcialmente | ❌ | ✅ Parcialmente | ❌ |
+| Crear Storage Accounts | ❌ | ❌ | ✅ | ❌ |
+| Eliminar Storage Accounts | ❌ | ❌ | ✅ | ❌ |
+| Configurar networking Storage Account | ❌ | ❌ | ✅ | ❌ |
+| Configurar replication (LRS/GRS/ZRS) | ❌ | ❌ | ✅ | ❌ |
+| Administrar containers/blob services | ❌ | ❌ | ✅ Parcialmente | ❌ |
+| Acceso blobs/data | ❌ | ❌ | ❌ | ✅ |
+| Administración completa Storage Account | ❌ | ❌ | ✅ | ❌ |
+| Leer configuración Storage Account | ❌ | ❌ | ✅ | ✅ |
+| Management Plane | ✅ | ✅ | ✅ | ✅ Lectura |
+| Data Plane | ❌ | ❌ | ❌ | ✅ |
+| Gestionar RBAC | ❌ | ❌ | ❌ | ❌ |
+| Crear role assignments | ❌ | ❌ | ❌ | ❌ |
 
 ---
 
