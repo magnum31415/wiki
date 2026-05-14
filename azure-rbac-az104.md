@@ -269,3 +269,181 @@ Encryption scopes control data encryption, not access permissions.
 Storage Account Key Operator Service Role manages storage account keys.
 ```
 
+# RBAC - Rol Contributor (AZ-104)
+
+| Acción / Permiso | Contributor |
+|---|---|
+| Crear recursos Azure | ✅ |
+| Modificar recursos Azure | ✅ |
+| Eliminar recursos Azure | ✅ |
+| Crear máquinas virtuales | ✅ |
+| Redimensionar máquinas virtuales | ✅ |
+| Reiniciar VMs | ✅ |
+| Iniciar / detener VMs | ✅ |
+| Crear discos | ✅ |
+| Modificar discos | ✅ |
+| Crear redes virtuales | ✅ |
+| Crear Storage Accounts | ✅ |
+| Crear Resource Groups | ✅ |
+| Administrar App Services | ✅ |
+| Administrar bases de datos | ✅ |
+| Administrar Networking | ✅ |
+| Administrar NSG | ✅ |
+| Administrar Load Balancers | ✅ |
+| Administrar Key Vault (management plane) | ✅ |
+| Leer recursos | ✅ |
+| Aplicar tags | ✅ |
+| Desplegar ARM/Bicep/Terraform | ✅ |
+| Administrar recursos dentro del scope asignado | ✅ |
+
+---
+
+## Qué NO permite
+
+| Acción / Permiso | Contributor |
+|---|---|
+| Gestionar RBAC | ❌ |
+| Crear role assignments | ❌ |
+| Asignar roles IAM | ❌ |
+| Elevar privilegios | ❌ |
+| Acceso automático al Data Plane | ❌ |
+| Leer secretos Key Vault | ❌ |
+| Leer blobs Storage | ❌ |
+| Acceso RDP/SSH automático | ❌ |
+
+---
+
+## Concepto importante
+
+Contributor:
+
+```text
+puede administrar recursos
+```
+
+pero NO:
+
+```text
+administrar permisos
+```
+
+---
+
+## Diferencia importante
+
+| Rol | Puede administrar recursos | Puede asignar roles |
+|---|---|---|
+| Reader | ❌ | ❌ |
+| Contributor | ✅ | ❌ |
+| Owner | ✅ | ✅ |
+
+---
+
+## Ejemplo de la pregunta
+
+User1 tiene:
+
+```text
+Contributor → Corp-MG2
+```
+
+Corp-MG2 contiene:
+
+```text
+SubC
+ ↓
+RG-Compute
+ ↓
+ProdVM01
+```
+
+Por herencia RBAC:
+
+✅ User1 puede administrar ProdVM01.
+
+---
+
+## Por qué puede resize la VM
+
+Redimensionar una VM es una operación de:
+
+```text
+Microsoft.Compute/virtualMachines/write
+```
+
+y Contributor permite operaciones:
+
+```text
+write
+```
+
+sobre recursos del scope.
+
+---
+
+## Scope inheritance importante
+
+RBAC hereda permisos:
+
+```text
+Management Group
+ ↓
+Subscription
+ ↓
+Resource Group
+ ↓
+Resource
+```
+
+---
+
+## En este caso
+
+| Scope asignado | Recursos afectados |
+|---|---|
+| Corp-MG2 | Todo dentro de MG2 |
+| SubC | Toda la subscription |
+| RG-Compute | Todos los recursos RG |
+| ProdVM01 | Solo esa VM |
+
+---
+
+## Trampa típica AZ-104
+
+Muchos candidatos creen:
+
+```text
+Contributor = acceso total
+```
+
+❌ Incorrecto.
+
+NO puede:
+
+- asignar roles
+- modificar IAM
+- gestionar RBAC
+
+---
+
+## Regla rápida examen
+
+```text
+Contributor can manage resources but cannot manage access.
+```
+
+---
+
+## Frases clave AZ-104
+
+```text
+Contributor allows full resource management.
+```
+
+```text
+Contributor does not allow RBAC role assignments.
+```
+
+```text
+RBAC permissions are inherited from parent scopes.
+```
