@@ -49,6 +49,13 @@
 - [Tabla resumen examen](#tabla-resumen-examen)
 - [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
 - [Frases clave examen](#frases-clave-examen)
+- [Quién debe tener AcrPull](#quién-debe-tener-acrpull)
+  - [Concepto clave](#concepto-clave-1)
+  - [Qué NO debe recibir AcrPull](#qué-no-debe-recibir-acrpull)
+  - [Qué identidad sí necesita AcrPull](#qué-identidad-sí-necesita-acrpull)
+  - [ACR Tasks](#acr-tasks)
+  - [Trampa típica examen](#trampa-típica-examen)
+  - [Regla importante](#regla-importante)
 
 
 # Azure Container Registry (ACR)
@@ -418,4 +425,152 @@ A private endpoint does not grant image pull permissions.
 
 ```text
 Dedicated data endpoints improve networking isolation, not authorization.
+```
+# Quién debe tener AcrPull
+
+## Concepto clave
+
+El rol:
+
+```text
+AcrPull
+```
+
+debe asignarse a:
+
+```text
+la identidad que realmente hace el pull de la imagen
+```
+
+NO a cualquier recurso relacionado con ACR.
+
+---
+
+# Qué NO debe recibir AcrPull
+
+Ejemplo incorrecto:
+
+```text
+AcrPull → ACR-Tasks-Network
+```
+
+❌ Incorrecto
+
+Porque:
+
+```text
+ACR-Tasks-Network NO descarga la imagen para ACI.
+```
+
+---
+
+# Qué identidad sí necesita AcrPull
+
+En Azure Container Instances normalmente el pull lo hace:
+
+- Managed Identity del ACI
+- Service Principal configurado
+- Credenciales del registry
+
+---
+
+# Configuración correcta típica
+
+```text
+ACI
+ ↓
+Managed Identity
+ ↓
+AcrPull
+ ↓
+ACR
+```
+
+---
+
+# ACR Tasks
+
+## Qué es
+
+Servicio de automatización/build dentro de Azure Container Registry.
+
+---
+
+## Uso típico
+
+- Build imágenes
+- Automatización CI/CD
+- Tareas automáticas ACR
+
+---
+
+## Importante
+
+ACR Tasks:
+
+❌ NO ejecuta Azure Container Instances  
+❌ NO hace el pull para ACI  
+
+---
+
+# Trampa típica examen
+
+Microsoft intenta que pienses:
+
+```text
+Cualquier identidad relacionada con ACR sirve
+```
+
+❌ Incorrecto
+
+RBAC debe asignarse:
+
+```text
+al principal que ejecuta la acción
+```
+
+---
+
+# Ejemplo importante
+
+## Acción
+
+```text
+Pull image
+```
+
+## Principal correcto
+
+✅ Azure Container Instance identity
+
+## Principal incorrecto
+
+❌ ACR-Tasks-Network
+
+---
+
+# Regla importante
+
+```text
+The identity performing the image pull must have the AcrPull role.
+```
+
+---
+
+# Tabla resumen
+
+| Recurso | Función | Necesita AcrPull |
+|---|---|---|
+| ACI | Ejecuta contenedor | ✅ |
+| AKS kubelet identity | Pull imágenes | ✅ |
+| Container Apps | Pull imágenes | ✅ |
+| ACR Tasks | Build automation | ❌ normalmente |
+| ACR-Tasks-Network | Networking interno ACR Tasks | ❌ |
+
+---
+
+# Frase clave examen
+
+```text
+Assign AcrPull to the identity that pulls the container image.
 ```
