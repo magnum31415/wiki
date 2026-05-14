@@ -2329,10 +2329,13 @@ atributos normales usuario
 
 # Diferencia importante
 
-| Tipo | Uso |
-|---|---|
-| User attributes | Información usuario |
-| Custom Security Attributes | Clasificación seguridad |
+| Tipo | Uso | Ejemplo |
+|---|---|---|
+| User attributes | Información básica del usuario | Department = IT, JobTitle = Manager |
+| Custom Security Attributes | Clasificación seguridad o lógica personalizada | DataSensitivity = Confidential |
+| Custom Security Attributes | Políticas Zero Trust / acceso | ClearanceLevel = High |
+| Custom Security Attributes | Segmentación geográfica | RegionAccess = EU-Only |
+| Custom Security Attributes | Automatización seguridad | DeviceTrustLevel = Approved |
 
 ---
 
