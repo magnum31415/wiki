@@ -447,3 +447,18 @@ Contributor does not allow RBAC role assignments.
 ```text
 RBAC permissions are inherited from parent scopes.
 ```
+
+# Rol para crear una subnet en VNet1
+
+| Usuario | Rol asignado | ¿Puede crear una subnet en VNet1? | Motivo |
+|---|---|---|---|
+| User1 | Owner | ✅ Sí | Tiene permisos completos sobre los recursos, incluida la gestión de redes y subnets. |
+| User2 | Security Admin | ❌ No | Es un rol de Microsoft Entra/security; no permite administrar recursos de red Azure como VNets o subnets. |
+| User3 | Network Contributor | ✅ Sí | Puede administrar recursos de red, incluyendo virtual networks y subnets. |
+
+
+| Acción | Permiso/Rol necesario |
+|---|---|
+| Crear una subnet dentro de una VNet | Owner |
+| Crear una subnet dentro de una VNet | Contributor |
+| Crear una subnet dentro de una VNet | Network Contributor |
