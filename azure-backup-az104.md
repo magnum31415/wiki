@@ -15,6 +15,7 @@
 - [Qué quiere evaluar Microsoft](#qué-quiere-evaluar-microsoft)
 - [Resumen para memorizar](#resumen-para-memorizar)
 - [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
+- [Backup para Blob Storage](#backup-para-blob-storage)
 
 # Azure Backup - Teoría importante AZ-104
 
@@ -716,4 +717,148 @@ Managed disks can be backed up independently of the VM.
 
 ```text
 Azure SQL Database uses built-in backups.
+```
+
+
+# Azure Backup para Blob Storage (AZ-104)
+
+## Qué debes saber para el examen
+
+Azure Blob Storage NO utiliza el mismo modelo de backup que Azure Virtual Machines.
+
+Microsoft suele evaluar:
+
+- tipos de backup
+- vault utilizado
+- frecuencias soportadas
+- diferencias entre Blob Backup y VM Backup
+
+---
+
+# Backup para Blob Storage
+
+## Qué se utiliza normalmente
+
+Para blobs Azure utiliza:
+
+```text
+Operational Backup for Blobs
+```
+
+---
+
+## Qué protege
+
+| Protección | Soportado |
+|---|---|
+| Borrado accidental | ✅ |
+| Sobrescritura | ✅ |
+| Corrupción lógica | ✅ |
+
+---
+
+# Vault utilizado
+
+Blob Backup normalmente utiliza:
+
+```text
+Backup vault
+```
+
+---
+
+# Frecuencias soportadas
+
+## Blob Backup
+
+Las políticas de backup normalmente soportan:
+
+| Frecuencia |
+|---|
+| Daily |
+| Weekly |
+
+---
+
+## Importante
+
+Blob Backup NO soporta normalmente:
+
+| Frecuencia | Soportado |
+|---|---|
+| Hourly | ❌ |
+| Every 4 hours | ❌ |
+| Every 6 hours | ❌ |
+| Every 12 hours | ❌ |
+
+---
+
+# Diferencia importante con VM Backup
+
+| Servicio | Frecuencia típica |
+|---|---|
+| Azure VM Backup | Varias veces al día |
+| Blob Backup | Daily / Weekly |
+| Azure Files Backup | Multiple/day |
+| SQL Database | Continuo / PITR |
+
+---
+
+# Concepto importante examen
+
+Microsoft quiere comprobar si sabes distinguir:
+
+| Concepto | Importancia |
+|---|---|
+| VM Backup | Muy alta |
+| Blob Backup | Alta |
+| Backup vault | Alta |
+| Frecuencia soportada | Muy alta |
+
+---
+
+# Trampa típica AZ-104
+
+Muchos candidatos piensan:
+
+```text
+todos los backups Azure soportan hourly backups
+```
+
+❌ Incorrecto.
+
+Blob Backup normalmente funciona:
+
+```text
+Daily / Weekly
+```
+
+---
+
+# Operational Backup for Blobs
+
+## Qué utiliza internamente
+
+- soft delete
+- versioning
+- point-in-time restore
+
+---
+
+# Regla rápida AZ-104
+
+```text
+Blob backup policies typically support daily or weekly schedules.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Azure Blob backup does not support hourly backup schedules.
+```
+
+```text
+Operational Backup for Blobs commonly uses daily backup frequency.
 ```
