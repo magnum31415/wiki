@@ -7,86 +7,13 @@
 
 - [Azure Container Registry (ACR) y Azure Container Instances (ACI) - Resumen AZ-104](#azure-container-registry-acr-y-azure-container-instances-aci---resumen-az-104)
 - [Azure Container Registry (ACR)](#azure-container-registry-acr)
-  - [Qué es](#qué-es)
-  - [Uso típico](#uso-típico)
-  - [Estructura básica](#estructura-básica)
 - [Azure Container Instances (ACI)](#azure-container-instances-aci)
-  - [Qué es](#qué-es-1)
-  - [Uso típico](#uso-típico-1)
 - [Cómo funciona ACI con ACR](#cómo-funciona-aci-con-acr)
-- [Requisitos para usar imágenes privadas](#requisitos-para-usar-imágenes-privadas)
-- [Roles importantes ACR](#roles-importantes-acr)
-- [AcrPull](#acrpull)
-  - [Permite](#permite)
-  - [NO permite](#no-permite)
-- [Managed Identity](#managed-identity)
-- [Configuración recomendada](#configuración-recomendada)
-- [Private Endpoint](#private-endpoint)
-  - [Qué es](#qué-es-2)
-  - [Qué hace](#qué-hace)
-  - [Qué NO hace](#qué-no-hace)
-- [Concepto clave](#concepto-clave)
-  - [Networking ≠ Authorization](#networking--authorization)
-- [Error típico AZ-104](#error-típico-az-104)
-  - [Problema](#problema)
-  - [Solución habitual](#solución-habitual)
-- [Dedicated Data Endpoint](#dedicated-data-endpoint)
-  - [Qué es](#qué-es-3)
-  - [Sin dedicated endpoint](#sin-dedicated-endpoint)
-  - [Con dedicated endpoint](#con-dedicated-endpoint)
-  - [Qué mejora realmente](#qué-mejora-realmente)
-  - [Qué NO hace](#qué-no-hace-1)
-- [Lo que normalmente falta](#lo-que-normalmente-falta)
-- [Diferencia importante](#diferencia-importante)
-- [Data Plane vs Management Plane](#data-plane-vs-management-plane)
-  - [Data Plane](#data-plane)
-  - [Management Plane](#management-plane)
-- [Trampas típicas AZ-104](#trampas-típicas-az-104)
-  - [Trampa 1](#trampa-1)
-  - [Trampa 2](#trampa-2)
-  - [Trampa 3](#trampa-3)
-  - [Trampa 4](#trampa-4)
-- [Tabla resumen examen](#tabla-resumen-examen)
-- [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
-- [Frases clave examen](#frases-clave-examen)
-- [Quién debe tener AcrPull](#quién-debe-tener-acrpull)
-  - [Concepto clave](#concepto-clave-1)
-  - [Qué NO debe recibir AcrPull](#qué-no-debe-recibir-acrpull)
-  - [Qué identidad sí necesita AcrPull](#qué-identidad-sí-necesita-acrpull)
-  - [ACR Tasks](#acr-tasks)
-  - [Trampa típica examen](#trampa-típica-examen)
-  - [Regla importante](#regla-importante)
+- [ACR Tasks](#acr-tasks)
 - [Qué es Admin User](#qué-es-admin-user)
-- [Qué ocurre al habilitarlo](#qué-ocurre-al-habilitarlo)
-- [Dónde se ve](#dónde-se-ve)
-- [Para qué sirve](#para-qué-sirve)
-- [Uso típico](#uso-típico)
-- [Ejemplo Docker Login](#ejemplo-docker-login)
-- [Ejemplo completo](#ejemplo-completo)
-- [Qué permite](#qué-permite)
-- [Dónde puede usarse](#dónde-puede-usarse)
-- [Flujo típico](#flujo-típico)
-- [Diferencia con Managed Identity](#diferencia-con-managed-identity)
-  - [Admin User](#admin-user)
-  - [Managed Identity](#managed-identity)
-- [Comparativa importante](#comparativa-importante)
-- [Ventajas de Admin User](#ventajas-de-admin-user)
-- [Desventajas](#desventajas)
-- [Best Practice Azure](#best-practice-azure)
-- [Cuándo suele usarse](#cuándo-suele-usarse)
-  - [Recomendado para](#recomendado-para)
-  - [No recomendado para](#no-recomendado-para)
-- [Relación con AcrPull](#relación-con-acrpull)
-  - [Admin User](#admin-user-1)
-  - [Managed Identity](#managed-identity-1)
-- [Comparativa completa](#comparativa-completa)
-- [Trampas típicas AZ-104](#trampas-típicas-az-104)
-  - [Trampa 1](#trampa-1)
-  - [Trampa 2](#trampa-2)
-  - [Trampa 3](#trampa-3)
-- [Casos típicos examen](#casos-típicos-examen)
-- [Regla rápida examen](#regla-rápida-examen)
-- [Frases clave AZ-104](#frases-clave-az-104)
+- [Container Group - CPU Requests vs CPU Limits](#container-group---cpu-requests-vs-cpu-limits)
+
+---
 
 # Azure Container Registry (ACR)
 
@@ -164,7 +91,7 @@ Run container
 
 ---
 
-# Requisitos para usar imágenes privadas
+## Requisitos para usar imágenes privadas
 
 | Requisito | Obligatorio |
 |---|---|
@@ -174,7 +101,7 @@ Run container
 
 ---
 
-# Roles importantes ACR
+## Roles importantes ACR
 
 | Rol | Función |
 |---|---|
@@ -184,13 +111,13 @@ Run container
 
 ---
 
-# AcrPull
+## AcrPull
 
-## Permite
+### Permite
 
 ✅ Descargar imágenes
 
-## NO permite
+### NO permite
 
 ❌ Push  
 ❌ Delete  
@@ -198,7 +125,7 @@ Run container
 
 ---
 
-# Managed Identity
+## Managed Identity
 
 ACI puede usar:
 
@@ -209,7 +136,7 @@ ACI puede usar:
 
 ---
 
-# Configuración recomendada
+## Configuración recomendada
 
 ```text
 ACI
@@ -223,15 +150,15 @@ ACR
 
 ---
 
-# Private Endpoint
+## Private Endpoint
 
-## Qué es
+### Qué es
 
 Permite acceso privado mediante IP privada dentro de una VNet.
 
 ---
 
-## Qué hace
+### Qué hace
 
 ✅ Conectividad privada  
 ✅ Network isolation  
@@ -239,7 +166,7 @@ Permite acceso privado mediante IP privada dentro de una VNet.
 
 ---
 
-## Qué NO hace
+### Qué NO hace
 
 ❌ Dar permisos RBAC  
 ❌ Autorizar pull imágenes  
@@ -247,9 +174,9 @@ Permite acceso privado mediante IP privada dentro de una VNet.
 
 ---
 
-# Concepto clave
+## Concepto clave
 
-## Networking ≠ Authorization
+### Networking ≠ Authorization
 
 | Concepto | Función |
 |---|---|
@@ -258,15 +185,15 @@ Permite acceso privado mediante IP privada dentro de una VNet.
 
 ---
 
-# Error típico AZ-104
+## Error típico AZ-104
 
-## Problema
+### Problema
 
 ```text
 ACI cannot pull image from ACR
 ```
 
-## Solución habitual
+### Solución habitual
 
 Asignar:
 
@@ -278,9 +205,9 @@ a la Managed Identity del ACI.
 
 ---
 
-# Dedicated Data Endpoint
+## Dedicated Data Endpoint
 
-## Qué es
+### Qué es
 
 Separa tráfico de:
 
@@ -291,7 +218,7 @@ Separa tráfico de:
 
 ---
 
-# Sin dedicated endpoint
+## Sin dedicated endpoint
 
 ```text
 registry.azurecr.io
@@ -299,7 +226,7 @@ registry.azurecr.io
 
 ---
 
-# Con dedicated endpoint
+## Con dedicated endpoint
 
 | Endpoint | Uso |
 |---|---|
@@ -308,7 +235,7 @@ registry.azurecr.io
 
 ---
 
-# Qué mejora realmente
+## Qué mejora realmente
 
 ✅ Seguridad  
 ✅ Network isolation  
@@ -317,7 +244,7 @@ registry.azurecr.io
 
 ---
 
-# Qué NO hace
+## Qué NO hace
 
 ❌ NO da permisos  
 ❌ NO asigna AcrPull  
@@ -326,7 +253,7 @@ registry.azurecr.io
 
 ---
 
-# Lo que normalmente falta
+## Lo que normalmente falta
 
 | Problema | Solución |
 |---|---|
@@ -338,7 +265,7 @@ registry.azurecr.io
 
 ---
 
-# Diferencia importante
+## Diferencia importante
 
 | Feature | Función |
 |---|---|
@@ -348,9 +275,9 @@ registry.azurecr.io
 
 ---
 
-# Data Plane vs Management Plane
+## Data Plane vs Management Plane
 
-## Data Plane
+### Data Plane
 
 Operaciones sobre imágenes:
 
@@ -361,7 +288,7 @@ Operaciones sobre imágenes:
 
 ---
 
-## Management Plane
+### Management Plane
 
 Administrar recurso Azure:
 
@@ -371,9 +298,9 @@ Administrar recurso Azure:
 
 ---
 
-# Trampas típicas AZ-104
+## Trampas típicas AZ-104
 
-## Trampa 1
+### Trampa 1
 
 Pensar que Private Endpoint da permisos.
 
@@ -381,7 +308,7 @@ Pensar que Private Endpoint da permisos.
 
 ---
 
-## Trampa 2
+### Trampa 2
 
 Pensar que networking basta.
 
@@ -394,7 +321,7 @@ También necesitas:
 
 ---
 
-## Trampa 3
+### Trampa 3
 
 Confundir AcrPull y AcrPush.
 
@@ -405,7 +332,7 @@ Confundir AcrPull y AcrPush.
 
 ---
 
-## Trampa 4
+### Trampa 4
 
 Pensar que Dedicated Data Endpoint resuelve autenticación.
 
@@ -415,7 +342,7 @@ Solo mejora networking.
 
 ---
 
-# Tabla resumen examen
+## Tabla resumen examen
 
 | Necesidad | Solución |
 |---|---|
@@ -427,7 +354,7 @@ Solo mejora networking.
 
 ---
 
-# Reglas rápidas AZ-104
+## Reglas rápidas AZ-104
 
 ```text
 Private Endpoint = networking
@@ -443,7 +370,7 @@ Dedicated Data Endpoint = data plane isolation
 
 ---
 
-# Frases clave examen
+## Frases clave examen
 
 ```text
 ACI requires permission to pull images from ACR.
@@ -456,9 +383,9 @@ A private endpoint does not grant image pull permissions.
 ```text
 Dedicated data endpoints improve networking isolation, not authorization.
 ```
-# Quién debe tener AcrPull
+## Quién debe tener AcrPull
 
-## Concepto clave
+### Concepto clave
 
 El rol:
 
@@ -476,7 +403,7 @@ NO a cualquier recurso relacionado con ACR.
 
 ---
 
-# Qué NO debe recibir AcrPull
+## Qué NO debe recibir AcrPull
 
 Ejemplo incorrecto:
 
@@ -494,7 +421,7 @@ ACR-Tasks-Network NO descarga la imagen para ACI.
 
 ---
 
-# Qué identidad sí necesita AcrPull
+## Qué identidad sí necesita AcrPull
 
 En Azure Container Instances normalmente el pull lo hace:
 
@@ -504,7 +431,7 @@ En Azure Container Instances normalmente el pull lo hace:
 
 ---
 
-# Configuración correcta típica
+## Configuración correcta típica
 
 ```text
 ACI
@@ -543,7 +470,7 @@ ACR Tasks:
 
 ---
 
-# Trampa típica examen
+## Trampa típica examen
 
 Microsoft intenta que pienses:
 
@@ -561,7 +488,7 @@ al principal que ejecuta la acción
 
 ---
 
-# Ejemplo importante
+## Ejemplo importante
 
 ## Acción
 
@@ -569,17 +496,17 @@ al principal que ejecuta la acción
 Pull image
 ```
 
-## Principal correcto
+### Principal correcto
 
 ✅ Azure Container Instance identity
 
-## Principal incorrecto
+### Principal incorrecto
 
 ❌ ACR-Tasks-Network
 
 ---
 
-# Regla importante
+## Regla importante
 
 ```text
 The identity performing the image pull must have the AcrPull role.
@@ -587,7 +514,7 @@ The identity performing the image pull must have the AcrPull role.
 
 ---
 
-# Tabla resumen
+## Tabla resumen
 
 | Recurso | Función | Necesita AcrPull |
 |---|---|---|
@@ -599,11 +526,12 @@ The identity performing the image pull must have the AcrPull role.
 
 ---
 
-# Frase clave examen
+## Frase clave examen
 
 ```text
 Assign AcrPull to the identity that pulls the container image.
 ```
+---
 
 # Qué es Admin User
 
@@ -616,7 +544,7 @@ similar a un login clásico Docker Registry.
 
 ---
 
-# Qué ocurre al habilitarlo
+## Qué ocurre al habilitarlo
 
 Cuando activas:
 
@@ -634,7 +562,7 @@ Azure genera automáticamente:
 
 ---
 
-# Dónde se ve
+## Dónde se ve
 
 En Azure Portal:
 
@@ -648,13 +576,13 @@ Access Keys
 
 ---
 
-# Para qué sirve
+## Para qué sirve
 
 Permite autenticarse contra ACR usando credenciales tradicionales.
 
 ---
 
-# Uso típico
+## Uso típico
 
 - Docker login manual
 - Azure Container Instances (ACI)
@@ -665,7 +593,7 @@ Permite autenticarse contra ACR usando credenciales tradicionales.
 
 ---
 
-# Ejemplo Docker Login
+## Ejemplo Docker Login
 
 ```bash
 docker login corpregistry.azurecr.io
@@ -680,7 +608,7 @@ Password
 
 ---
 
-# Ejemplo completo
+## Ejemplo completo
 
 ```bash
 docker login corpregistry.azurecr.io \
@@ -690,7 +618,7 @@ docker login corpregistry.azurecr.io \
 
 ---
 
-# Qué permite
+## Qué permite
 
 Con las credenciales Admin User puedes:
 
@@ -700,7 +628,7 @@ Con las credenciales Admin User puedes:
 
 ---
 
-# Dónde puede usarse
+## Dónde puede usarse
 
 | Servicio | Uso típico |
 |---|---|
@@ -712,7 +640,7 @@ Con las credenciales Admin User puedes:
 
 ---
 
-# Flujo típico
+## Flujo típico
 
 ```text
 ACI / Docker / AKS
@@ -726,7 +654,7 @@ Pull image
 
 ---
 
-# Diferencia con Managed Identity
+## Diferencia con Managed Identity
 
 | Método                  | Networking | Auth | Recomendado      |
 | ----------------------- | ---------- | ---- | ---------------- |
@@ -736,7 +664,7 @@ Pull image
 | Admin User              | ❌          | ✅    | ⚠️ Menos seguro  |
 
 
-## Admin User
+### Admin User
 
 Usa:
 
@@ -746,7 +674,7 @@ username/password
 
 ---
 
-## Managed Identity
+### Managed Identity
 
 Usa:
 
@@ -756,7 +684,7 @@ Azure RBAC + Entra ID
 
 ---
 
-# Comparativa importante
+## Comparativa importante
 
 | Método | Tipo autenticación |
 |---|---|
@@ -766,7 +694,7 @@ Azure RBAC + Entra ID
 
 ---
 
-# Ventajas de Admin User
+## Ventajas de Admin User
 
 | Ventaja | Explicación |
 |---|---|
@@ -777,7 +705,7 @@ Azure RBAC + Entra ID
 
 ---
 
-# Desventajas
+## Desventajas
 
 | Problema | Explicación |
 |---|---|
@@ -789,7 +717,7 @@ Azure RBAC + Entra ID
 
 ---
 
-# Best Practice Azure
+## Best Practice Azure
 
 Microsoft normalmente recomienda:
 
@@ -802,9 +730,9 @@ antes que:
 
 ---
 
-# Cuándo suele usarse
+## Cuándo suele usarse
 
-## Recomendado para
+### Recomendado para
 
 - Laboratorios
 - Testing
@@ -814,7 +742,7 @@ antes que:
 
 ---
 
-## No recomendado para
+### No recomendado para
 
 - Producción crítica
 - Entornos enterprise
@@ -823,9 +751,9 @@ antes que:
 
 ---
 
-# Relación con AcrPull
+## Relación con AcrPull
 
-## Admin User
+### Admin User
 
 NO necesita:
 
@@ -837,7 +765,7 @@ porque usa autenticación clásica.
 
 ---
 
-## Managed Identity
+### Managed Identity
 
 SÍ necesita:
 
@@ -847,7 +775,7 @@ AcrPull
 
 ---
 
-# Comparativa completa
+## Comparativa completa
 
 | Método | Necesita AcrPull | Usa password |
 |---|---|---|
@@ -857,9 +785,9 @@ AcrPull
 
 ---
 
-# Trampas típicas AZ-104
+## Trampas típicas AZ-104
 
-# Trampa 1
+### Trampa 1
 
 Pensar que Admin User solo sirve para administración.
 
@@ -871,7 +799,7 @@ También sirve para:
 
 ---
 
-# Trampa 2
+### Trampa 2
 
 Pensar que Admin User usa RBAC.
 
@@ -885,7 +813,7 @@ username/password
 
 ---
 
-# Trampa 3
+### Trampa 3
 
 Pensar que si no es best practice no funciona.
 
@@ -895,7 +823,7 @@ Funciona perfectamente.
 
 ---
 
-# Casos típicos examen
+## Casos típicos examen
 
 | Escenario | Solución válida |
 |---|---|
@@ -906,7 +834,7 @@ Funciona perfectamente.
 
 ---
 
-# Regla rápida examen
+## Regla rápida examen
 
 ```text
 Admin User provides username/password authentication for ACR.
@@ -914,7 +842,7 @@ Admin User provides username/password authentication for ACR.
 
 ---
 
-# Frases clave AZ-104
+## Frases clave AZ-104
 
 ```text
 Enabling Admin User generates credentials for Docker authentication.
@@ -926,5 +854,172 @@ Admin User can be used by ACI to pull container images.
 
 ```text
 Managed Identity is more secure than Admin User.
+```
+
+---
+
+# Container Group - CPU Requests vs CPU Limits
+
+## Qué es un Container Group
+
+En Azure Container Instances (ACI), un Container Group permite ejecutar varios contenedores juntos compartiendo:
+
+- Red
+- Storage
+- Recursos CPU/memoria
+
+---
+
+# CPU Request
+
+## Qué es
+
+Cantidad de CPU garantizada para el contenedor.
+
+---
+
+# Ejemplo
+
+| Contenedor | CPU request |
+|---|---|
+| cont1 | 2 CPUs |
+| cont2 | 3 CPUs |
+
+---
+
+# Significado
+
+```text
+cont1 necesita 2 CPUs garantizadas
+cont2 necesita 3 CPUs garantizadas
+```
+
+---
+
+## CPU Limit
+
+### Qué es
+
+Cantidad máxima de CPU que el contenedor puede consumir.
+
+---
+
+### Ejemplo
+
+| Contenedor | CPU request | CPU limit |
+|---|---|---|
+| cont2 | 3 | 6 |
+
+---
+
+### Significado
+
+```text
+cont2 necesita 3 CPUs
+pero podría intentar consumir hasta 6 CPUs
+```
+
+---
+
+### Problema de los limits altos
+
+Si un contenedor puede consumir más CPU de la necesaria:
+
+❌ Puede afectar a otros contenedores del mismo group.
+
+---
+
+### Qué ocurre si no defines limit
+
+En Azure Container Instances:
+
+```text
+si no existe CPU limit
+→ limit = request
+```
+
+---
+
+### Resultado
+
+| Contenedor | Request | Limit eliminado | Máximo real |
+|---|---|---|---|
+| cont1 | 2 | Sí | 2 CPUs |
+| cont2 | 3 | Sí | 3 CPUs |
+
+---
+
+### Ventaja
+
+Así:
+
+✅ cont2 obtiene las 3 CPUs que necesita  
+✅ no puede excederlas  
+✅ no afecta a cont1  
+
+### Regla importante AZ-104
+
+```text
+CPU limit must be greater than or equal to CPU request.
+```
+
+---
+
+### Regla importante ACI
+
+```text
+If no limit is specified, the limit equals the request.
+```
+
+---
+
+### Diferencia importante
+
+| Concepto | Significado |
+|---|---|
+| CPU request | CPU garantizada |
+| CPU limit | CPU máxima permitida |
+
+---
+
+### Trampa típica AZ-104
+
+Muchos candidatos piensan:
+
+```text
+más limit = mejor rendimiento
+```
+
+❌ Incorrecto.
+
+Puede provocar:
+
+- Resource contention
+- Impacto otros contenedores
+
+---
+
+### Tabla resumen examen
+
+| Configuración | Resultado |
+|---|---|
+| request = 3, limit = 6 | Puede consumir hasta 6 |
+| request = 3, sin limit | Máximo = 3 |
+| limit < request | ❌ Inválido |
+
+---
+
+### Frases clave AZ-104
+
+```text
+CPU request defines guaranteed CPU resources.
+```
+
+```text
+CPU limit defines maximum CPU usage.
+```
+
+```text
+If no limit is specified, the limit equals the request.
 ```
 
