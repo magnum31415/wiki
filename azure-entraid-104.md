@@ -14,7 +14,8 @@
 - [Cómo arreglar las subscriptions actuales](#cómo-arreglar-las-subscriptions-actuales)
 - [Microsoft Entra ID - Group Naming Policy](#microsoft-entra-id---group-naming-policy)
 - [Microsoft Entra ID - Security Groups (AZ-104)](#microsoft-entra-id---security-groups-az-104)
-
+- [Microsoft Fabric](#microsoft-fabric)
+- 
 ---
 
 # Microsoft Active Directory (On-Premises) vs Microsoft Entra ID
@@ -1410,4 +1411,208 @@ Security groups simplify permission management.
 
 ```text
 Dynamic groups can automatically include users based on attributes.
+```
+---
+# Microsoft Fabric
+
+## Qué significa “You purchase a Microsoft Fabric license”
+
+Significa que una organización compra una licencia o capacidad de Microsoft Fabric para poder utilizar sus servicios y funcionalidades.
+
+---
+
+## Qué es Microsoft Fabric
+
+Microsoft Fabric es una plataforma SaaS de análisis de datos unificada que integra:
+
+- Data Engineering
+- Data Factory
+- Data Warehouse
+- Data Science
+- Real-Time Analytics
+- Power BI
+
+todo dentro de una misma plataforma.
+
+---
+
+## Idea principal
+
+Microsoft intenta unificar:
+
+```text
+Data Lake
+ETL
+Analytics
+BI
+AI
+Streaming
+```
+
+en un único servicio cloud.
+
+---
+
+## Arquitectura conceptual
+
+```text
+Microsoft Fabric
+    ↓
+OneLake
+    ↓
+Workloads
+        ├─ Power BI
+        ├─ Data Factory
+        ├─ Data Engineering
+        ├─ Data Warehouse
+        └─ Data Science
+```
+
+---
+
+## OneLake
+
+### Qué es
+
+Es el data lake central de Fabric.
+
+Microsoft lo presenta como:
+
+```text
+OneDrive for data
+```
+
+---
+
+## Qué incluye Microsoft Fabric
+
+| Servicio | Función |
+|---|---|
+| Power BI | Reporting y dashboards |
+| Data Factory | ETL / pipelines |
+| Data Engineering | Spark / notebooks |
+| Data Warehouse | SQL analytics |
+| Data Science | Machine Learning |
+| Real-Time Analytics | Streaming y logs |
+
+---
+
+## Qué significa “license”
+
+En Fabric normalmente “license” puede referirse a:
+
+| Tipo | Explicación |
+|---|---|
+| User License | Licencia usuario |
+| Capacity License | Capacidad compute dedicada |
+
+---
+
+## Tipos típicos
+
+| Tipo | Uso |
+|---|---|
+| Free | Funcionalidad limitada |
+| Pro | Power BI Pro |
+| Premium Per User (PPU) | Funciones premium usuario |
+| Fabric Capacity (F SKU) | Compute compartido Fabric |
+
+---
+
+## Importante
+
+Fabric usa capacidades llamadas:
+
+```text
+F SKUs
+```
+
+Ejemplo:
+
+| SKU | Tamaño |
+|---|---|
+| F2 | Pequeño |
+| F64 | Grande |
+
+---
+
+## Qué habilita la licencia
+
+Dependiendo del tipo:
+
+✅ Crear workspaces  
+✅ Ejecutar pipelines  
+✅ Crear warehouses  
+✅ Ejecutar notebooks Spark  
+✅ Compartir Power BI  
+✅ Usar OneLake  
+
+---
+
+## Relación con Power BI
+
+Fabric está muy integrado con Power BI.
+
+De hecho:
+
+```text
+Power BI es parte de Microsoft Fabric
+```
+
+---
+
+## SaaS
+
+Fabric es un servicio:
+
+```text
+SaaS fully managed
+```
+
+No administras:
+
+- servidores
+- clusters
+- infraestructura
+
+Microsoft administra todo.
+
+---
+
+## Trampa típica
+
+Muchos creen:
+
+```text
+Fabric = solo Power BI
+```
+
+❌ Incorrecto.
+
+Power BI es solo una parte.
+
+---
+
+## Qué quiere evaluar Microsoft
+
+Cuando una pregunta dice:
+
+```text
+You purchase a Microsoft Fabric license
+```
+
+normalmente quiere evaluar:
+
+- capacidades habilitadas
+- licenciamiento
+- integración Power BI/Fabric
+- gobernanza datos
+- capacidades Premium
+
+---
+
+## Frase rápida
+
+```text
+Microsoft Fabric is Microsoft's unified SaaS analytics platform.
 ```
