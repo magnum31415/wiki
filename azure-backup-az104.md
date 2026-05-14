@@ -223,6 +223,8 @@ Managed Disk Backup → Backup vault
 ```text
 Azure VM
     ↓
+Azure VM Backup
+    ↓
 Recovery Services vault
 ```
 
