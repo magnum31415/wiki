@@ -15,7 +15,8 @@
 - [Microsoft Entra ID - Group Naming Policy](#microsoft-entra-id---group-naming-policy)
 - [Microsoft Entra ID - Security Groups (AZ-104)](#microsoft-entra-id---security-groups-az-104)
 - [Microsoft Fabric](#microsoft-fabric)
-- 
+- [Microsoft Fabric Licensing y Group-Based Licensing](#microsoft-fabric-licensing-y-group-based-licensing)
+
 ---
 
 # Microsoft Active Directory (On-Premises) vs Microsoft Entra ID
@@ -1615,4 +1616,250 @@ normalmente quiere evaluar:
 
 ```text
 Microsoft Fabric is Microsoft's unified SaaS analytics platform.
+```
+---
+# Microsoft Fabric Licensing y Group-Based Licensing
+
+## Escenario
+
+El tenant tiene:
+
+| Elemento | Valor |
+|---|---|
+| Tenant | Default Directory |
+| Tipo licencia Entra ID | Free |
+| Dominio | onmicrosoft.com |
+
+---
+
+## Identidades existentes
+
+| Identidad | Tipo |
+|---|---|
+| UserA | Usuario |
+| SecGroup01 | Security Group |
+| M365Group01 | Microsoft 365 Group |
+
+---
+
+## Acción realizada
+
+```text
+You purchase a Microsoft Fabric license
+```
+
+---
+
+## Pregunta
+
+¿Qué identidades pueden recibir la licencia?
+
+---
+
+## Respuesta correcta
+
+✅ Solo:
+
+```text
+UserA
+```
+
+---
+
+## Concepto clave
+
+En Microsoft Entra ID Free:
+
+❌ NO existe Group-Based Licensing
+
+---
+
+## Qué es Group-Based Licensing
+
+Permite asignar licencias automáticamente a grupos.
+
+Ejemplo:
+
+```text
+Security Group
+    ↓
+Microsoft Fabric License
+    ↓
+Todos los usuarios heredan la licencia
+```
+
+---
+
+## Importante
+
+Esta funcionalidad requiere:
+
+| Licencia Entra ID | Soportado |
+|---|---|
+| Free | ❌ |
+| P1 | ✅ |
+| P2 | ✅ |
+
+---
+
+## Qué ocurre en Entra ID Free
+
+Solo puedes asignar licencias:
+
+✅ directamente a usuarios
+
+---
+
+## Qué NO puedes hacer
+
+❌ Asignar licencias a Security Groups  
+❌ Asignar licencias a Microsoft 365 Groups  
+❌ Group-based licensing  
+
+---
+
+## Por qué UserA sí funciona
+
+Porque:
+
+```text
+las licencias pueden asignarse directamente a usuarios individuales
+```
+
+---
+
+## Por qué SecGroup01 NO funciona
+
+Aunque sea un:
+
+```text
+Security Group
+```
+
+Entra ID Free:
+
+❌ no soporta group-based licensing
+
+---
+
+## Por qué M365Group01 NO funciona
+
+Aunque sea un:
+
+```text
+Microsoft 365 Group
+```
+
+sigue siendo:
+
+```text
+group licensing
+```
+
+y requiere:
+
+✅ Entra ID P1 o P2
+
+---
+
+## Trampa típica examen
+
+Muchos candidatos piensan:
+
+```text
+si existe el grupo → puedo asignar licencias
+```
+
+❌ Incorrecto.
+
+La clave NO es el grupo.
+
+La clave es:
+
+```text
+el tipo de licencia Entra ID
+```
+
+---
+
+## Diferencia importante
+
+| Feature | Entra ID Free | Entra ID P1/P2 |
+|---|---|---|
+| Licencias usuario manual | ✅ | ✅ |
+| Group-based licensing | ❌ | ✅ |
+| Licencias a Security Groups | ❌ | ✅ |
+| Licencias a M365 Groups | ❌ | ✅ |
+
+---
+
+## Flujo permitido en Free
+
+```text
+Admin
+    ↓
+Assign license
+    ↓
+UserA
+```
+
+---
+
+## Flujo NO permitido en Free
+
+```text
+Admin
+    ↓
+Assign license
+    ↓
+Security Group
+    ↓
+Users
+```
+
+❌ No soportado.
+
+---
+
+## Qué quiere evaluar Microsoft
+
+| Concepto | Importancia |
+|---|---|
+| Entra ID licensing | Alta |
+| Group-based licensing | Muy alta |
+| Free vs P1/P2 | Muy alta |
+| Security Groups | Alta |
+
+---
+
+## Regla rápida examen
+
+```text
+Group-based licensing requires Microsoft Entra ID P1 or P2.
+```
+
+---
+
+## Tabla resumen examen
+
+| Identidad | Puede recibir licencia en Entra Free |
+|---|---|
+| Usuario | ✅ |
+| Security Group | ❌ |
+| Microsoft 365 Group | ❌ |
+
+---
+
+## Frases clave AZ-104
+
+```text
+Microsoft Entra ID Free does not support group-based licensing.
+```
+
+```text
+Licenses can always be assigned directly to users.
+```
+
+```text
+Group-based licensing requires Entra ID P1 or P2.
 ```
