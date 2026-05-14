@@ -17,7 +17,7 @@
 - [Microsoft Fabric](#microsoft-fabric)
 - [Microsoft Fabric Licensing y Group-Based Licensing](#microsoft-fabric-licensing-y-group-based-licensing)
 - [Self-Service Password Reset (SSPR) en Microsoft Entra ID](#self-service-password-reset-sspr-en-microsoft-entra-id)
-
+- [Microsoft Entra Custom Security Attributes (AZ-104)](#microsoft-entra-custom-security-attributes-az-104)
 
 ---
 
@@ -2112,4 +2112,267 @@ Microsoft 365 Groups can be used for SSPR scope.
 
 ```text
 SSPR is not assigned directly to individual users.
+```
+
+
+---
+
+# Microsoft Entra Custom Security Attributes (AZ-104)
+
+## Índice
+
+- [Microsoft Entra Custom Security Attributes (AZ-104)](#microsoft-entra-custom-security-attributes-az-104)
+- [Qué son los Custom Security Attributes](#qué-son-los-custom-security-attributes)
+- [Para qué sirven](#para-qué-sirven)
+- [Qué objetos soportan](#qué-objetos-soportan)
+- [Qué objetos NO soportan](#qué-objetos-no-soportan)
+- [Por qué la respuesta es False](#por-qué-la-respuesta-es-false)
+- [Roles necesarios](#roles-necesarios)
+- [Importante sobre Global Administrator](#importante-sobre-global-administrator)
+- [Tipos de roles relacionados](#tipos-de-roles-relacionados)
+- [Ejemplo conceptual](#ejemplo-conceptual)
+- [Casos típicos de uso](#casos-típicos-de-uso)
+- [Trampas típicas AZ-104](#trampas-típicas-az-104)
+- [Tabla resumen examen](#tabla-resumen-examen)
+- [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
+- [Frases clave AZ-104](#frases-clave-az-104)
+
+---
+
+# Qué son los Custom Security Attributes
+
+Son atributos personalizados de Microsoft Entra ID.
+
+Permiten añadir metadata de seguridad a identidades.
+
+---
+
+# Para qué sirven
+
+Permiten:
+
+- clasificación identidades
+- políticas acceso
+- automatización
+- Zero Trust
+- RBAC avanzado
+- Conditional Access avanzado
+
+---
+
+# Ejemplos
+
+| Atributo | Valor |
+|---|---|
+| Department | Finance |
+| ClearanceLevel | High |
+| DataSensitivity | Confidential |
+
+---
+
+# Qué objetos soportan
+
+Los Custom Security Attributes pueden asignarse a:
+
+| Objeto | Soportado |
+|---|---|
+| Users | ✅ |
+| Service Principals | ✅ |
+| Managed Identities | ✅ |
+
+---
+
+# Qué objetos NO soportan
+
+| Objeto | Soportado |
+|---|---|
+| Groups | ❌ |
+| Devices | ❌ |
+| Subscriptions | ❌ |
+
+---
+
+# Por qué la respuesta es False
+
+La pregunta dice:
+
+```text
+Admin1 can assign Attribute1 to Group1
+```
+
+❌ Incorrecto.
+
+Porque:
+
+```text
+Custom Security Attributes NO pueden asignarse a grupos
+```
+
+---
+
+# Importante
+
+Aunque Admin1 fuera:
+
+```text
+Global Administrator
+```
+
+seguiría siendo:
+
+❌ imposible  
+
+porque el problema NO es el permiso.
+
+El problema es:
+
+```text
+el tipo de objeto soportado
+```
+
+---
+
+# Roles necesarios
+
+Microsoft Entra utiliza roles específicos para Custom Security Attributes.
+
+---
+
+# Importante sobre Global Administrator
+
+Global Administrator:
+
+❌ NO recibe automáticamente permisos completos sobre Custom Security Attributes.
+
+---
+
+# Tipos de roles relacionados
+
+| Rol | Función |
+|---|---|
+| Attribute Definition Administrator | Crear atributos |
+| Attribute Assignment Administrator | Asignar atributos |
+| Attribute Assignment Reader | Leer atributos |
+
+---
+
+# Ejemplo conceptual
+
+```text
+User
+   ↓
+Custom Security Attribute
+   ↓
+Classification / Policies
+```
+
+---
+
+# Casos típicos de uso
+
+| Caso | Ejemplo |
+|---|---|
+| Clasificación usuarios | Confidential |
+| Automatización acceso | Region=EU |
+| Conditional Access | SecurityLevel=High |
+| Zero Trust | Risk categories |
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Pensar que:
+
+```text
+Groups soportan Custom Security Attributes
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 2
+
+Pensar que:
+
+```text
+Global Administrator puede hacer cualquier cosa
+```
+
+❌ Incorrecto.
+
+Muchos servicios Entra usan:
+
+```text
+roles especializados
+```
+
+---
+
+## Trampa 3
+
+Confundir:
+
+```text
+Custom Security Attributes
+```
+
+con:
+
+```text
+atributos normales usuario
+```
+
+---
+
+# Diferencia importante
+
+| Tipo | Uso |
+|---|---|
+| User attributes | Información usuario |
+| Custom Security Attributes | Clasificación seguridad |
+
+---
+
+# Tabla resumen examen
+
+| Objeto | Soporta Custom Security Attributes |
+|---|---|
+| User | ✅ |
+| Service Principal | ✅ |
+| Managed Identity | ✅ |
+| Group | ❌ |
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Custom Security Attributes cannot be assigned to groups.
+```
+
+```text
+Global Administrator does not automatically manage custom security attributes.
+```
+
+```text
+Specialized Entra roles are required for custom security attributes.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Custom Security Attributes support users, service principals, and managed identities.
+```
+
+```text
+Groups are not supported assignment targets.
+```
+
+```text
+Attribute Assignment Administrator can assign custom security attributes.
 ```
