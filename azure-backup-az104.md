@@ -16,6 +16,7 @@
 - [Resumen para memorizar](#resumen-para-memorizar)
 - [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
 - [Backup para Blob Storage](#backup-para-blob-storage)
+- [Azure Files Backup (AZ-104)](#azure-files-backup-az-104)
 
 # Azure Backup - Teoría importante AZ-104
 
@@ -861,4 +862,176 @@ Azure Blob backup does not support hourly backup schedules.
 
 ```text
 Operational Backup for Blobs commonly uses daily backup frequency.
+```
+
+# Azure Files Backup (AZ-104)
+
+## Qué debes saber para el examen
+
+Azure Files Backup utiliza un modelo diferente al de:
+
+- Azure Blob Backup
+- Azure VM Backup
+
+Microsoft suele evaluar:
+
+- frecuencia máxima soportada
+- diferencias entre Azure Files y Blob Storage
+- tipo de vault utilizado
+- snapshots múltiples diarios
+
+---
+
+# Azure Files Backup
+
+## Qué protege
+
+Protege:
+
+```text
+Azure File Shares
+```
+
+---
+
+## Vault utilizado
+
+Azure Files Backup normalmente utiliza:
+
+```text
+Recovery Services vault
+```
+
+---
+
+# Frecuencia de backup soportada
+
+Azure Files permite:
+
+✅ múltiples backups al día
+
+---
+
+## Máximo soportado
+
+Azure Backup permite:
+
+```text
+hasta 6 backups por día
+```
+
+---
+
+## Resultado
+
+La frecuencia máxima posible es:
+
+```text
+cada 4 horas
+```
+
+porque:
+
+```text
+24h / 6 backups = 4 horas
+```
+
+---
+
+# Frecuencias típicas
+
+| Frecuencia | Soportado |
+|---|---|
+| Every hour | ❌ |
+| Every 4 hours | ✅ |
+| Every 6 hours | ✅ |
+| Every 12 hours | ✅ |
+| Daily | ✅ |
+
+---
+
+# Diferencia importante examen
+
+| Servicio | Frecuencia máxima típica |
+|---|---|
+| Azure VM Backup | Varias veces/día |
+| Azure Files Backup | Cada 4 horas |
+| Blob Backup | Daily / Weekly |
+| SQL Database | Continuo / PITR |
+
+---
+
+# Concepto importante examen
+
+Microsoft quiere comprobar si sabes distinguir:
+
+| Servicio | Tecnología backup |
+|---|---|
+| Azure Files | Snapshots múltiples diarios |
+| Blob Storage | Daily / Weekly |
+| VM Backup | Recovery points |
+
+---
+
+# Trampa típica AZ-104
+
+Muchos candidatos creen:
+
+```text
+Azure Files y Blob Storage usan las mismas frecuencias
+```
+
+❌ Incorrecto.
+
+---
+
+# Diferencia clave
+
+| Servicio | Máxima frecuencia |
+|---|---|
+| Azure Files | 6 veces/día |
+| Blob Storage | 1 vez/día normalmente |
+
+---
+
+# Cómo funciona Azure Files Backup
+
+Azure Backup usa:
+
+```text
+Snapshots del file share
+```
+
+---
+
+# Concepto importante
+
+Azure Files Backup está optimizado para:
+
+- file shares
+- recuperación rápida
+- snapshots frecuentes
+
+---
+
+# Regla rápida AZ-104
+
+```text
+Azure File Shares can be backed up up to six times per day.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Azure Files Backup supports multiple daily snapshots.
+```
+
+```text
+The maximum backup frequency for Azure File Shares is every 4 hours.
+```
+
+```text
+Azure Blob Backup does not support the same frequency as Azure Files Backup.
 ```
