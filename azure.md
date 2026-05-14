@@ -33,6 +33,7 @@
       24.<a href="https://github.com/magnum31415/wiki/blob/main/azure-backup-az104.md">Azure Backup</a><br>  
       25.<a href="https://github.com/magnum31415/wiki/blob/main/azure-nva-az104.md">Azure NVA</a><br>
       26.<a href="https://github.com/magnum31415/wiki/blob/main/azure-identity-az104.md">Azure Identity</a><br>
+      27.<a href="https://github.com/magnum31415/wiki/blob/main/azure-keyvault-az104.md">Azure KeyVault</a><br>      
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
