@@ -1,11 +1,8 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 # EntraID 
 
-## Index
-
 # Índice
 
-- [EntraID](#entraid)
 - [Microsoft Active Directory (On-Premises) vs Microsoft Entra ID](#microsoft-active-directory-on-premises-vs-microsoft-entra-id)
 - [Active Directory vs Microsoft Entra ID](#active-directory-vs-microsoft-entra-id)
 - [Microsoft Entra ID Plans and Pricing](#microsoft-entra-id-plans-and-pricing)
