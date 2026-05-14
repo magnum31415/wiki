@@ -83,6 +83,8 @@ Existe sobre:
 | Move to another subscription | Mueve recursos Azure entre subscriptions | ❌ normalmente | ❌ | ✅ | ❌ | Reorganización tenant/subscriptions | ✅ | ✅ normalmente |
 | Move to another Resource Group | Mueve la VM a otro RG dentro de la subscription | ❌ normalmente | ❌ | ✅ | ❌ | Reorganización recursos | ❌ | ✅ |
 
+![azure-vm-redeploy-reapply](./img/azure/redeploy-reapply.jpg)
+
 ---
 
 ## Diferencia importante
