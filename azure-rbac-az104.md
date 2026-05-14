@@ -87,36 +87,25 @@ Snapshots are independent Azure resources and require separate RBAC permissions.
 # Diferencia: Storage Account Encryption Scope Contributor vs Storage Account Key Operator Service Role (AZ-104)
 
 
-| Acción / Permiso | Virtual Machine Contributor | Disk Snapshot Contributor | Storage Account Contributor |
+| Característica | Storage Account Encryption Scope Contributor | Storage Account Key Operator Service Role | Storage Account Contributor |
 |---|---|---|---|
-| Crear máquinas virtuales | ✅ | ❌ | ❌ |
-| Eliminar máquinas virtuales | ✅ | ❌ | ❌ |
-| Iniciar / detener VM | ✅ | ❌ | ❌ |
-| Reiniciar VM | ✅ | ❌ | ❌ |
-| Redimensionar VM | ✅ | ❌ | ❌ |
-| Administrar configuración VM | ✅ | ❌ | ❌ |
-| Attach / Detach disks | ✅ | ❌ | ❌ |
-| Leer configuración de discos asociados | ✅ | ❌ | ❌ |
-| Crear managed disks | ✅ Parcialmente (en contexto VM) | ❌ | ❌ |
-| Eliminar managed disks | ✅ Parcialmente (en contexto VM) | ❌ | ❌ |
-| Administrar NICs relacionadas con la VM | ✅ | ❌ | ❌ |
-| Crear snapshots | ❌ | ✅ | ❌ |
-| Eliminar snapshots | ❌ | ✅ | ❌ |
-| Leer snapshots | ❌ | ✅ | ❌ |
-| Restaurar snapshots | ❌ | ✅ | ❌ |
-| Exportar snapshots | ❌ | ✅ | ❌ |
-| Administrar recursos `Microsoft.Compute/snapshots` | ❌ | ✅ | ❌ |
-| Administrar recursos `Microsoft.Compute/virtualMachines` | ✅ | ❌ | ❌ |
-| Listar Storage Account Keys | ❌ | ❌ | ✅ |
-| Regenerar Storage Account Keys | ❌ | ❌ | ✅ |
+| Objetivo principal | Administrar Encryption Scopes | Administrar Access Keys | Administrar Storage Account |
+| Tipo de gestión | Cifrado | Credenciales acceso | Administración general storage |
+| Listar Storage Account Keys | ❌ | ✅ | ✅ |
+| Regenerar Storage Account Keys | ❌ | ✅ | ✅ |
+| Crear Encryption Scopes | ✅ | ❌ | ✅ |
+| Modificar Encryption Scopes | ✅ | ❌ | ✅ |
+| Eliminar Encryption Scopes | ✅ | ❌ | ✅ |
+| Administrar Customer Managed Keys (CMK) asociados | ✅ Parcialmente | ❌ | ✅ Parcialmente |
 | Crear Storage Accounts | ❌ | ❌ | ✅ |
 | Eliminar Storage Accounts | ❌ | ❌ | ✅ |
 | Configurar networking Storage Account | ❌ | ❌ | ✅ |
 | Configurar replication (LRS/GRS/ZRS) | ❌ | ❌ | ✅ |
-| Configurar firewall Storage Account | ❌ | ❌ | ✅ |
 | Administrar containers/blob services | ❌ | ❌ | ✅ Parcialmente |
 | Acceso blobs/data | ❌ | ❌ | ❌ |
-| Login RDP/SSH | ❌ | ❌ | ❌ |
+| Administración completa Storage Account | ❌ | ❌ | ✅ |
+| Management Plane | ✅ | ✅ | ✅ |
+| Data Plane | ❌ | ❌ | ❌ |
 | Gestionar RBAC | ❌ | ❌ | ❌ |
 | Crear role assignments | ❌ | ❌ | ❌ |
 
