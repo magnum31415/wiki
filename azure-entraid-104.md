@@ -1138,3 +1138,276 @@ Department can be used as a dynamic prefix or suffix.
 String values are static, attributes are dynamic.
 ```
 
+---
+
+# Microsoft Entra ID - Security Groups (AZ-104)
+
+## Qué es un Security Group
+
+Un:
+
+```text
+Security Group
+```
+
+es un grupo utilizado para:
+
+- agrupar usuarios o dispositivos
+- asignar permisos RBAC
+- aplicar políticas de seguridad
+- simplificar la administración de accesos
+
+---
+
+## Idea principal
+
+En lugar de asignar permisos usuario por usuario:
+
+❌ Incorrecto
+
+```text
+User1 → Contributor
+User2 → Contributor
+User3 → Contributor
+```
+
+se hace:
+
+✅ Correcto
+
+```text
+Security Group
+    ↓
+Contributor
+```
+
+y dentro del grupo:
+
+```text
+User1
+User2
+User3
+```
+
+Todos heredan permisos automáticamente.
+
+---
+
+## Ejemplo visual
+
+```text
+Security Group: AZ-VM-Admins
+        ↓
+Role: Virtual Machine Contributor
+        ↓
+Subscription
+```
+
+Usuarios dentro del grupo:
+
+```text
+Alice
+Bob
+Charlie
+```
+
+---
+
+## Para qué sirve
+
+| Uso | Ejemplo |
+|---|---|
+| RBAC | Contributor sobre subscription |
+| Conditional Access | MFA obligatorio |
+| Intune | Políticas dispositivos |
+| Microsoft 365 | Permisos aplicaciones |
+| Azure Policies | Scope dinámico |
+
+---
+
+## Tipos de grupos en Entra ID
+
+| Tipo grupo | Uso principal |
+|---|---|
+| Security Group | Seguridad y permisos |
+| Microsoft 365 Group | Colaboración |
+| Distribution List | Correo |
+| Mail-enabled Security Group | Seguridad + email |
+
+---
+
+## Security Group
+
+### Características
+
+| Feature | Soportado |
+|---|---|
+| RBAC | ✅ |
+| Conditional Access | ✅ |
+| Usuarios | ✅ |
+| Devices | ✅ |
+| Dynamic Membership | ✅ |
+| Email/Teams | ❌ normalmente |
+
+---
+
+## Microsoft 365 Group
+
+Pensado principalmente para colaboración.
+
+Incluye:
+
+- Teams
+- SharePoint
+- Outlook
+- Planner
+
+---
+
+## Diferencia importante
+
+| Grupo | Objetivo |
+|---|---|
+| Security Group | Seguridad y permisos |
+| Microsoft 365 Group | Colaboración |
+
+---
+
+## Dynamic Groups
+
+Un Security Group puede ser:
+
+| Tipo | Explicación |
+|---|---|
+| Assigned | Miembros manuales |
+| Dynamic User | Usuarios automáticos |
+| Dynamic Device | Dispositivos automáticos |
+
+---
+
+## Ejemplo Dynamic Group
+
+```text
+Department = IT
+```
+
+Usuarios IT entran automáticamente.
+
+---
+
+## Uso MUY importante en Azure
+
+Microsoft recomienda:
+
+✅ asignar RBAC a grupos  
+❌ NO asignar RBAC a usuarios individuales  
+
+---
+
+## Buen patrón Azure
+
+```text
+Security Group
+    ↓
+RBAC Role
+    ↓
+Subscription / RG / Resource
+```
+
+---
+
+## Ejemplos típicos empresa
+
+```text
+AZ-Subscription-Owners
+AZ-Network-Contributors
+AZ-VM-Admins
+AZ-Readers
+```
+
+---
+
+## Relación con RBAC
+
+Los grupos se usan muchísimo para:
+
+| Rol RBAC | Ejemplo grupo |
+|---|---|
+| Owner | AZ-Subscription-Owners |
+| Contributor | AZ-App-Contributors |
+| Reader | AZ-Readers |
+
+---
+
+## Ventajas
+
+| Ventaja | Explicación |
+|---|---|
+| Escalable | Fácil añadir usuarios |
+| Menos errores | RBAC centralizado |
+| Mejor auditoría | Permisos agrupados |
+| Fácil automatización | Terraform/Bicep |
+
+---
+
+## Trampa típica AZ-104
+
+Muchos candidatos creen:
+
+```text
+Security Group = grupo de correo
+```
+
+❌ Incorrecto.
+
+Su objetivo principal es:
+
+```text
+seguridad y control de acceso
+```
+
+---
+
+## Regla rápida examen
+
+```text
+RBAC should normally be assigned to groups, not individual users.
+```
+
+---
+
+## Qué quiere evaluar Microsoft
+
+| Concepto | Importancia |
+|---|---|
+| Security Groups | Muy alta |
+| RBAC mediante grupos | Muy alta |
+| Dynamic Groups | Alta |
+| Group-based access | Muy alta |
+
+---
+
+## Tabla resumen examen
+
+| Necesidad | Solución |
+|---|---|
+| Gestionar permisos Azure | Security Group |
+| Teams / colaboración | Microsoft 365 Group |
+| Asignar RBAC | Security Group |
+| Dynamic membership | Dynamic Group |
+
+---
+
+## Frases clave AZ-104
+
+```text
+Security groups are commonly used to assign RBAC permissions.
+```
+
+```text
+Security groups simplify permission management.
+```
+
+```text
+Dynamic groups can automatically include users based on attributes.
+```
