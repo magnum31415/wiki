@@ -117,15 +117,15 @@ Servicio serverless para ejecutar contenedores sin administrar VMs.
 
 ACI necesita:
 
-1. Llegar al ACR
+1. Llegar al ACR "Azure Container Registry"
 2. Tener permisos para hacer pull
 
 Flujo típico:
 
 ```text
-ACI
+ACI "Azure Container Instances"
  ↓
-ACR
+ACR "Azure Container Registry"
  ↓
 Pull image
  ↓
