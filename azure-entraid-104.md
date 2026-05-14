@@ -12,7 +12,7 @@
 - [Orden Real para Crear un Entorno Azure desde Cero - Basado en Microsoft Cloud Adoption Framework](#orden-real-para-crear-un-entorno-azure-desde-cero---basado-en-microsoft-cloud-adoption-framework)
 - [patrón recomendado por Microsoft](#patrón-recomendado-por-microsoft)
 - [Cómo arreglar las subscriptions actuales](#cómo-arreglar-las-subscriptions-actuales)
-- [Microsoft Entra ID - Group Naming Policy (AZ-104)](#microsoft-entra-id---group-naming-policy-az-104)
+- [Microsoft Entra ID - Group Naming Policy](#microsoft-entra-id---group-naming-policy)
 
 
 ---
@@ -803,9 +803,9 @@ Una vez el grupo tenga permisos:
 ````
 Remove role assignment
 frank.sinatra@nyRZV.onmicrosoft.com
-``
+````
 
-# Microsoft Entra ID - Group Naming Policy (AZ-104)
+# Microsoft Entra ID - Group Naming Policy
 
 ## Qué es una Group Naming Policy
 
