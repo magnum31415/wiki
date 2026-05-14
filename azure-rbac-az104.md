@@ -4,6 +4,9 @@
 
 - [Comparativa RBAC: Virtual Machine Contributor vs Disk Snapshot Contributor](#comparativa-rbac-virtual-machine-contributor-vs-disk-snapshot-contributor)
 - [Diferencia: Storage Account Encryption Scope Contributor vs Storage Account Key Operator Service Role (AZ-104)](#diferencia-storage-account-encryption-scope-contributor-vs-storage-account-key-operator-service-role-az-104)
+- [RBAC - Rol Contributor (AZ-104)](#rbac---rol-contributor-az-104)
+- [Rol para crear una subnet en VNet1](#rol-para-crear-una-subnet-en-vnet1)
+- [Rol Attribute Definition/Assignment Administrator](#rol-attribute-definitionassignment-administrator)
 
 
 # Comparativa RBAC: Virtual Machine Contributor vs Disk Snapshot Contributor
@@ -462,3 +465,52 @@ RBAC permissions are inherited from parent scopes.
 | Crear una subnet dentro de una VNet | Owner |
 | Crear una subnet dentro de una VNet | Contributor |
 | Crear una subnet dentro de una VNet | Network Contributor |
+
+
+# Rol Attribute Definition/Assignment Administrator
+
+| Rol | Qué puede hacer | Ejemplo |
+|---|---|---|
+| Global Administrator | Administración completa del tenant Microsoft Entra ID | Crear usuarios, resetear passwords, administrar licencias, configurar Conditional Access |
+| Attribute Definition Administrator | Crear y administrar Custom Security Attributes | Crear atributo `ClearanceLevel` o `DataSensitivity` |
+| Attribute Assignment Administrator | Asignar valores de Custom Security Attributes a identidades soportadas | Asignar `ClearanceLevel=High` a UserA |
+
+---
+
+## Diferencia importante
+
+| Rol | Gestiona definición | Gestiona asignación |
+|---|---|---|
+| Global Administrator | Parcialmente/No automáticamente | Parcialmente/No automáticamente |
+| Attribute Definition Administrator | ✅ | ❌ |
+| Attribute Assignment Administrator | ❌ | ✅ |
+
+---
+
+# #Concepto clave AZ-104
+
+| Acción | Rol correcto |
+|---|---|
+| Crear atributo personalizado | Attribute Definition Administrator |
+| Asignar atributo a un usuario | Attribute Assignment Administrator |
+| Administración global tenant | Global Administrator |
+
+---
+
+## Importante
+
+```text
+Global Administrator NO recibe automáticamente permisos completos sobre Custom Security Attributes.
+```
+
+Microsoft utiliza:
+
+```text
+roles especializados
+```
+
+para separar:
+
+- definición atributos
+- asignación atributos
+- administración general
