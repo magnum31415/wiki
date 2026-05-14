@@ -3,75 +3,21 @@
 
 ## Index
 
+# Índice
+
+- [EntraID](#entraid)
 - [Microsoft Active Directory (On-Premises) vs Microsoft Entra ID](#microsoft-active-directory-on-premises-vs-microsoft-entra-id)
-  - [Overview](#overview)
-  - [Architecture](#architecture)
-  - [Identity Management](#identity-management)
-  - [Device Management](#device-management)
-  - [Authentication and Security](#authentication-and-security)
-  - [Integration](#integration)
-  - [Typical Use Cases](#typical-use-cases)
-  - [Hybrid Identity (Common Scenario)](#hybrid-identity-common-scenario)
-  - [Summary](#summary)
-
 - [Active Directory vs Microsoft Entra ID](#active-directory-vs-microsoft-entra-id)
-  - [¿Son lo mismo?](#son-lo-mismo)
-  - [Diferencia fundamental](#diferencia-fundamental)
-  - [No son intercambiables](#no-son-intercambiables)
-  - [Ejemplo práctico](#ejemplo-práctico)
-  - [Modelo más común: Identidad híbrida](#modelo-más-común-identidad-híbrida)
-
 - [Microsoft Entra ID Plans and Pricing](#microsoft-entra-id-plans-and-pricing)
-  - [Feature Comparison](#feature-comparison)
-  - [Typical Use Cases](#typical-use-cases)
-
 - [Azure Account Types and Tenant Creation](#azure-account-types-and-tenant-creation)
-  - [1. Azure Free Account](#1-azure-free-account)
-  - [2. Pay-As-You-Go Account](#2-pay-as-you-go-account)
-  - [Resumen](#resumen)
-
 - [Crear una Infraestructura Azure desde Cero (Empresa)](#crear-una-infraestructura-azure-desde-cero-empresa)
-  - [Orden recomendado](#orden-recomendado)
-  - [1. Crear el Microsoft Entra ID Tenant](#1-crear-el-microsoft-entra-id-tenant)
-  - [2. Añadir el dominio corporativo](#2-añadir-el-dominio-corporativo)
-  - [3. Crear las suscripciones](#3-crear-las-suscripciones)
-  - [4. Crear la jerarquía de Management Groups](#4-crear-la-jerarquía-de-management-groups)
-  - [5. Configurar RBAC](#5-configurar-rbac)
-  - [6. Aplicar Azure Policies](#6-aplicar-azure-policies)
-  - [7. Diseñar la red](#7-diseñar-la-red)
-  - [8. Crear Resource Groups](#8-crear-resource-groups)
-  - [9. Desplegar recursos](#9-desplegar-recursos)
-
 - [¿Para crear el tenant tengo que crear primero la suscripción?](#para-crear-el-tenant-tengo-que-crear-primero-la-suscripción)
-
 - [Orden Real para Crear un Entorno Azure desde Cero - Basado en Microsoft Cloud Adoption Framework](#orden-real-para-crear-un-entorno-azure-desde-cero---basado-en-microsoft-cloud-adoption-framework)
-  - [1. Crear el Microsoft Entra ID Tenant](#1-crear-el-microsoft-entra-id-tenant-1)
-  - [2. Asegurar la identidad](#2-asegurar-la-identidad)
-  - [3. Crear las primeras Suscripciones](#3-crear-las-primeras-suscripciones)
-  - [4. Crear la jerarquía de Management Groups](#4-crear-la-jerarquía-de-management-groups-1)
-  - [5. Crear las suscripciones de plataforma](#5-crear-las-suscripciones-de-plataforma)
-  - [6. Diseñar la red base](#6-diseñar-la-red-base)
-  - [7. Aplicar Gobernanza](#7-aplicar-gobernanza)
-  - [8. Configurar Observabilidad](#8-configurar-observabilidad)
-  - [9. Crear las Landing Zones de Aplicación](#9-crear-las-landing-zones-de-aplicación)
-  - [10. Desplegar Workloads](#10-desplegar-workloads)
-  - [Jerarquía final completa de Azure](#jerarquía-final-completa-de-azure)
-  - [Regla importante](#regla-importante)
-  - [Error típico cuando se empieza con Azure](#error-típico-cuando-se-empieza-con-azure)
+- [patrón recomendado por Microsoft](#patrón-recomendado-por-microsoft)
+- [Cómo arreglar las subscriptions actuales](#cómo-arreglar-las-subscriptions-actuales)
+- [Microsoft Entra ID - Group Naming Policy (AZ-104)](#microsoft-entra-id---group-naming-policy-az-104)
 
-- [El problema actual](#1️⃣-el-problema-actual)
-- [Buen patrón recomendado por Microsoft](#2️⃣-buen-patrón-recomendado-por-microsoft)
-- [Cómo arreglar las subscriptions actuales](#3️⃣-cómo-arreglar-las-subscriptions-actuales)
-  - [Paso 1 — crear grupo de administradores](#paso-1--crear-grupo-de-administradores)
-  - [Paso 2 — asignar el grupo como Owner](#paso-2--asignar-el-grupo-como-owner)
-  - [Paso 3 — eliminar al usuario antiguo](#paso-3--eliminar-al-usuario-antiguo)
-- [Cómo deberían crearse las subscriptions nuevas](#4️⃣-cómo-deberían-crearse-las-subscriptions-nuevas)
-  - [Modelo 1 — Enterprise Agreement / MCA](#modelo-1--enterprise-agreement--mca-el-más-común)
-  - [Modelo 2 — Platform subscription creation](#modelo-2--platform-subscription-creation)
-  - [Modelo 3 — Azure Landing Zone pattern](#modelo-3--azure-landing-zone-pattern)
-- [Buenas prácticas clave](#5️⃣-buenas-prácticas-clave)
-- [Algo importante que deberías revisar ahora](#6️⃣-algo-importante-que-deberías-revisar-ahora)
-- [Arquitectura final recomendada](#7️⃣-arquitectura-final-recomendada)
+
 ---
 
 # Microsoft Active Directory (On-Premises) vs Microsoft Entra ID
