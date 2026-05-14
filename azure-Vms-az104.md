@@ -71,6 +71,100 @@ Existe sobre:
 
 ---
 
+# Tabla resumen
+
+| Acción | Qué hace | Reinicia VM | Cambia host físico | Mantiene discos | Puede perder temporary disk | Uso típico | ¿Permite mover VM a otra subscription? | ¿Permite mover VM a otro Resource Group? |
+|---|---|---|---|---|---|---|---|---|
+| Redeploy | Mueve la VM a otro host Azure | ✅ | ✅ | ✅ | ✅ | Problemas host físico, scheduled maintenance | ❌ | ❌ |
+| Restart | Reinicia sistema operativo/VM | ✅ | ❌ | ✅ | ❌ normalmente | Reinicio normal | ❌ | ❌ |
+| Reapply | Reaplica configuración VM al host actual | A veces | ❌ | ✅ | ❌ | Problemas configuración/extensiones | ❌ | ❌ |
+| One-time Update | Aplica mantenimiento manualmente | Puede | ❌ | ✅ | ❌ normalmente | Adelantar maintenance updates | ❌ | ❌ |
+| Enable (Updates blade) | Habilita Update Management / patch orchestration | ❌ normalmente | ❌ | ✅ | ❌ | Gestión automática updates | ❌ | ❌ |
+| Move to another subscription | Mueve recursos Azure entre subscriptions | ❌ normalmente | ❌ | ✅ | ❌ | Reorganización tenant/subscriptions | ✅ | ✅ normalmente |
+| Move to another Resource Group | Mueve la VM a otro RG dentro de la subscription | ❌ normalmente | ❌ | ✅ | ❌ | Reorganización recursos | ❌ | ✅ |
+
+---
+
+## Diferencia importante
+
+| Acción | Cambia host Azure | Configura updates | Cambia Resource Group | Cambia Subscription |
+|---|---|---|---|---|
+| Redeploy | ✅ | ❌ | ❌ | ❌ |
+| One-time Update | ❌ | ✅ | ❌ | ❌ |
+| Enable (Updates blade) | ❌ | ✅ | ❌ | ❌ |
+| Move Resource Group | ❌ | ❌ | ✅ | ❌ |
+| Move Subscription | ❌ | ❌ | ✅ normalmente | ✅ |
+
+---
+
+# Qué hace "Enable" en Updates blade
+
+Al pulsar:
+
+```text
+Enable
+```
+
+Azure normalmente:
+
+- Habilita Update Management
+- Configura patch orchestration
+- Permite gestión updates
+
+Pero:
+
+❌ NO mueve la VM  
+❌ NO cambia host físico  
+❌ NO hace redeploy  
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Enable in the Updates blade configures update management, not VM relocation.
+```
+
+```text
+Only Redeploy moves the VM to another Azure host.
+```
+
+
+## Diferencia clave AZ-104
+
+| Acción | Palabra clave examen |
+|---|---|
+| Redeploy | Move VM to another host |
+| Restart | Reboot VM |
+| Reapply | Reapply configuration |
+| One-time Update | Apply maintenance |
+
+
+
+
+
+
+---
+
+# Diferencia clave AZ-104
+
+| Acción | Palabra clave examen |
+|---|---|
+| Redeploy | Move VM to another host |
+| Restart | Reboot VM |
+| Reapply | Reapply configuration |
+| One-time Update | Apply maintenance |
+
+---
+
+# Regla rápida examen
+
+```text
+Only Redeploy guarantees moving the VM to another Azure host.
+```
+
+---
+
 ## Redeploy VM
 
 ### Qué hace
