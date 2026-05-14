@@ -20,7 +20,7 @@
 - [Tabla resumen examen](#tabla-resumen-examen)
 - [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
 - [Frases clave AZ-104](#frases-clave-az-104)
-
+- [Azure Disk Encryption (ADE) - Compatibilidad y requisitos AZ-104](#azure-disk-encryption-ade---compatibilidad-y-requisitos-az-104)
 ---
 
 # Qué es Azure Disk Encryption (ADE)
@@ -297,4 +297,330 @@ A Key Encryption Key (KEK) protects the disk encryption key.
 
 ```text
 RSA keys are supported for Azure Disk Encryption.
+```
+
+
+---
+# Azure Disk Encryption (ADE) - Compatibilidad y requisitos AZ-104
+
+## Índice
+
+- [Azure Disk Encryption (ADE) - Compatibilidad y requisitos AZ-104](#azure-disk-encryption-ade---compatibilidad-y-requisitos-az-104)
+- [Qué es Azure Disk Encryption](#qué-es-azure-disk-encryption)
+- [Qué protege ADE](#qué-protege-ade)
+- [Sistemas operativos soportados](#sistemas-operativos-soportados)
+- [Tipos de discos soportados](#tipos-de-discos-soportados)
+- [Qué NO soporta ADE](#qué-no-soporta-ade)
+- [Por qué VM2 y VM3 son correctas](#por-qué-vm2-y-vm3-son-correctas)
+- [Por qué VM1 es incorrecta](#por-qué-vm1-es-incorrecta)
+- [Por qué VM4 es incorrecta](#por-qué-vm4-es-incorrecta)
+- [Por qué VM5 es incorrecta](#por-qué-vm5-es-incorrecta)
+- [Conceptos importantes examen](#conceptos-importantes-examen)
+- [Diferencia importante](#diferencia-importante)
+- [Tabla resumen examen](#tabla-resumen-examen)
+- [Trampas típicas AZ-104](#trampas-típicas-az-104)
+- [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
+- [Frases clave AZ-104](#frases-clave-az-104)
+
+---
+
+# Qué es Azure Disk Encryption
+
+Azure Disk Encryption (ADE) permite cifrar:
+
+- OS Disks
+- Data Disks
+
+de máquinas virtuales Azure.
+
+---
+
+# Qué protege ADE
+
+ADE cifra:
+
+| Elemento | Soportado |
+|---|---|
+| OS Disk | ✅ |
+| Data Disks | ✅ |
+
+---
+
+# Sistemas operativos soportados
+
+| Sistema operativo | Soportado |
+|---|---|
+| Windows Server | ✅ |
+| Linux compatibles (RHEL, Ubuntu, etc.) | ✅ |
+
+---
+
+# Tipos de discos soportados
+
+| Tipo disco | Soportado |
+|---|---|
+| Standard HDD | ✅ |
+| Standard SSD | ✅ |
+| Premium SSD | ✅ |
+
+---
+
+# Qué NO soporta ADE
+
+| Feature | Soportado |
+|---|---|
+| Ephemeral OS Disk | ❌ |
+| Write Accelerator | ❌ |
+| Dynamic Volumes | ❌ |
+
+---
+
+# Por qué VM2 y VM3 son correctas
+
+## VM2
+
+Usa:
+
+- Windows Server 2022
+- Basic volume
+
+↓
+
+✅ Compatible con ADE
+
+---
+
+## VM3
+
+Usa:
+
+- Red Hat Enterprise Linux
+- Standard SSD
+
+↓
+
+✅ Compatible con ADE
+
+---
+
+# Por qué VM1 es incorrecta
+
+VM1 utiliza:
+
+```text
+Ephemeral OS Disk
+```
+
+---
+
+## Importante
+
+ADE NO soporta:
+
+```text
+Ephemeral OS Disks
+```
+
+porque estos discos:
+
+- son temporales
+- están ligados al host físico
+- no tienen persistencia tradicional
+
+---
+
+# Por qué VM4 es incorrecta
+
+VM4 utiliza:
+
+```text
+Write Accelerator
+```
+
+---
+
+## Qué es Write Accelerator
+
+Feature de alto rendimiento para discos Premium.
+
+---
+
+## Importante
+
+ADE NO soporta:
+
+```text
+Write Accelerator
+```
+
+---
+
+# Por qué VM5 es incorrecta
+
+VM5 utiliza:
+
+```text
+Dynamic Volume
+```
+
+---
+
+# Diferencia importante
+
+| Tipo volumen | Soportado ADE |
+|---|---|
+| Basic Volume | ✅ |
+| Dynamic Volume | ❌ |
+
+---
+
+# Qué es un Basic Volume
+
+Volumen estándar tradicional Windows.
+
+---
+
+# Qué es un Dynamic Volume
+
+Volumen avanzado Windows con features como:
+
+- spanning
+- striping
+- mirroring software
+
+---
+
+# Importante examen
+
+ADE soporta:
+
+✅ Basic volumes  
+❌ Dynamic volumes  
+
+---
+
+# Conceptos importantes examen
+
+Microsoft suele evaluar:
+
+| Concepto | Importancia |
+|---|---|
+| ADE compatibility | Muy alta |
+| Ephemeral OS Disk | Alta |
+| Write Accelerator | Alta |
+| Dynamic Volume | Alta |
+| Linux compatibility | Alta |
+
+---
+
+# Diferencia importante
+
+| Feature | Compatible ADE |
+|---|---|
+| Standard SSD | ✅ |
+| Premium SSD | ✅ |
+| Ephemeral OS Disk | ❌ |
+| Write Accelerator | ❌ |
+| Dynamic Volumes | ❌ |
+
+---
+
+# Tabla resumen examen
+
+| VM característica | Compatible con ADE |
+|---|---|
+| Windows + Basic Volume | ✅ |
+| Linux + Standard SSD | ✅ |
+| Ephemeral OS Disk | ❌ |
+| Write Accelerator | ❌ |
+| Dynamic Volume | ❌ |
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Pensar que:
+
+```text
+todos los discos Azure soportan ADE
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 2
+
+Confundir:
+
+```text
+Basic Volume
+```
+
+con:
+
+```text
+Dynamic Volume
+```
+
+---
+
+## Trampa 3
+
+Pensar que:
+
+```text
+Write Accelerator mejora ADE
+```
+
+❌ Incorrecto.
+
+No es compatible.
+
+---
+
+## Trampa 4
+
+Pensar que Linux no soporta ADE.
+
+❌ Incorrecto.
+
+Muchos Linux sí están soportados.
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Azure Disk Encryption supports Windows and supported Linux distributions.
+```
+
+```text
+Ephemeral OS disks are not supported by ADE.
+```
+
+```text
+Dynamic volumes are not supported by ADE.
+```
+
+```text
+Write Accelerator is incompatible with ADE.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Azure Disk Encryption supports basic volumes.
+```
+
+```text
+Ephemeral OS disks cannot be encrypted using ADE.
+```
+
+```text
+Write Accelerator disks are not compatible with Azure Disk Encryption.
 ```
