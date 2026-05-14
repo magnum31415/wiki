@@ -13,7 +13,7 @@
 - [patrón recomendado por Microsoft](#patrón-recomendado-por-microsoft)
 - [Cómo arreglar las subscriptions actuales](#cómo-arreglar-las-subscriptions-actuales)
 - [Microsoft Entra ID - Group Naming Policy](#microsoft-entra-id---group-naming-policy)
-
+- [Microsoft Entra ID - Security Groups (AZ-104)](#microsoft-entra-id---security-groups-az-104)
 
 ---
 
