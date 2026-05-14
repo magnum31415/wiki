@@ -1,4 +1,11 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+# Índice
+
+- [Comparativa RBAC: Virtual Machine Contributor vs Disk Snapshot Contributor](#comparativa-rbac-virtual-machine-contributor-vs-disk-snapshot-contributor)
+- [Diferencia: Storage Account Encryption Scope Contributor vs Storage Account Key Operator Service Role (AZ-104)](#diferencia-storage-account-encryption-scope-contributor-vs-storage-account-key-operator-service-role-az-104)
+
+
 # Comparativa RBAC: Virtual Machine Contributor vs Disk Snapshot Contributor
 
 | Acción / Permiso | Virtual Machine Contributor | Disk Snapshot Contributor |
@@ -27,7 +34,7 @@
 
 ---
 
-# Recursos Azure afectados
+## Recursos Azure afectados
 
 | Rol | Recursos principales |
 |---|---|
@@ -36,7 +43,7 @@
 
 ---
 
-# Diferencia clave para AZ-104
+## Diferencia clave para AZ-104
 
 | Concepto | Explicación |
 |---|---|
@@ -46,7 +53,7 @@
 
 ---
 
-# Trampa típica de examen
+## Trampa típica de examen
 
 Muchos candidatos creen:
 
@@ -60,7 +67,7 @@ Los snapshots requieren permisos específicos.
 
 ---
 
-# Regla rápida para memorizar
+## Regla rápida para memorizar
 
 | Necesidad | Rol mínimo recomendado |
 |---|---|
@@ -71,8 +78,186 @@ Los snapshots requieren permisos específicos.
 
 ---
 
-# Frase clave AZ-104
+## Frase clave AZ-104
 
 ```text
 Snapshots are independent Azure resources and require separate RBAC permissions.
 ```
+
+# Diferencia: Storage Account Encryption Scope Contributor vs Storage Account Key Operator Service Role (AZ-104)
+
+| Característica | Storage Account Encryption Scope Contributor | Storage Account Key Operator Service Role |
+|---|---|---|
+| Objetivo principal | Administrar Encryption Scopes | Administrar Access Keys |
+| Tipo de gestión | Cifrado | Credenciales acceso |
+| Listar Storage Account Keys | ❌ | ✅ |
+| Regenerar Storage Account Keys | ❌ | ✅ |
+| Crear Encryption Scopes | ✅ | ❌ |
+| Modificar Encryption Scopes | ✅ | ❌ |
+| Eliminar Encryption Scopes | ✅ | ❌ |
+| Administrar Customer Managed Keys (CMK) asociados | ✅ Parcialmente | ❌ |
+| Acceso blobs/data | ❌ | ❌ |
+| Administración completa Storage Account | ❌ | ❌ |
+| Management Plane | ✅ | ✅ |
+| Data Plane | ❌ | ❌ |
+
+---
+
+## Concepto clave
+
+### Storage Account Encryption Scope Contributor
+
+Administra:
+
+```text
+cómo se cifran los datos
+```
+
+NO:
+
+```text
+quién accede al Storage Account
+```
+
+---
+
+### Storage Account Key Operator Service Role
+
+Administra:
+
+```text
+las claves de acceso del Storage Account
+```
+
+NO:
+
+```text
+el cifrado de los datos
+```
+
+---
+
+## Qué son Access Keys
+
+Son las claves:
+
+```text
+key1
+key2
+```
+
+del Storage Account.
+
+Permiten:
+
+- Connection Strings
+- Autenticación total
+- SAS generation
+- Acceso completo al storage
+
+---
+
+## Qué son Encryption Scopes
+
+Permiten definir:
+
+- Distintas claves de cifrado
+- Diferentes políticas de cifrado
+- Customer Managed Keys (CMK)
+
+para blobs específicos.
+
+---
+
+## Diferencia importante
+
+| Concepto | Relacionado con |
+|---|---|
+| Access Keys | Autenticación |
+| Encryption Scopes | Cifrado |
+
+---
+
+## Trampa típica AZ-104
+
+Muchos candidatos piensan:
+
+```text
+Encryption = keys de acceso
+```
+
+❌ Incorrecto.
+
+---
+
+## Ejemplo visual
+
+### Access Keys
+
+```text
+Usuario/App
+ ↓
+key1 / key2
+ ↓
+Acceso Storage Account
+```
+
+---
+
+### Encryption Scope
+
+```text
+Blob
+ ↓
+Encryption Scope
+ ↓
+CMK / Encryption policy
+```
+
+---
+
+## Cuándo usar cada rol
+
+### Storage Account Key Operator Service Role
+
+Cuando el usuario necesita:
+
+✅ Ver keys  
+✅ Rotar keys  
+✅ Regenerar keys  
+
+---
+
+### Storage Account Encryption Scope Contributor
+
+Cuando el usuario necesita:
+
+✅ Administrar cifrado blobs  
+✅ Configurar encryption scopes  
+✅ Gestionar políticas cifrado  
+
+---
+
+## Regla rápida examen
+
+| Necesidad | Rol correcto |
+|---|---|
+| Listar/regenerar keys | Storage Account Key Operator Service Role |
+| Administrar cifrado blobs | Storage Account Encryption Scope Contributor |
+
+---
+
+## Frases clave AZ-104
+
+```text
+Access keys are authentication credentials.
+```
+
+```text
+Encryption scopes control data encryption, not access permissions.
+```
+
+```text
+Storage Account Key Operator Service Role manages storage account keys.
+```
+
