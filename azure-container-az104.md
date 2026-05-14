@@ -1,40 +1,87 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
-# Azure Container Registry (ACR) y Azure Container Instances (ACI) - Teoría AZ-104
+# Azure Container Registry (ACR) y Azure Container Instances (ACI) - Resumen AZ-104
+
+
+# Índice
+
+- [Azure Container Registry (ACR) y Azure Container Instances (ACI) - Resumen AZ-104](#azure-container-registry-acr-y-azure-container-instances-aci---resumen-az-104)
+- [Azure Container Registry (ACR)](#azure-container-registry-acr)
+  - [Qué es](#qué-es)
+  - [Uso típico](#uso-típico)
+  - [Estructura básica](#estructura-básica)
+- [Azure Container Instances (ACI)](#azure-container-instances-aci)
+  - [Qué es](#qué-es-1)
+  - [Uso típico](#uso-típico-1)
+- [Cómo funciona ACI con ACR](#cómo-funciona-aci-con-acr)
+- [Requisitos para usar imágenes privadas](#requisitos-para-usar-imágenes-privadas)
+- [Roles importantes ACR](#roles-importantes-acr)
+- [AcrPull](#acrpull)
+  - [Permite](#permite)
+  - [NO permite](#no-permite)
+- [Managed Identity](#managed-identity)
+- [Configuración recomendada](#configuración-recomendada)
+- [Private Endpoint](#private-endpoint)
+  - [Qué es](#qué-es-2)
+  - [Qué hace](#qué-hace)
+  - [Qué NO hace](#qué-no-hace)
+- [Concepto clave](#concepto-clave)
+  - [Networking ≠ Authorization](#networking--authorization)
+- [Error típico AZ-104](#error-típico-az-104)
+  - [Problema](#problema)
+  - [Solución habitual](#solución-habitual)
+- [Dedicated Data Endpoint](#dedicated-data-endpoint)
+  - [Qué es](#qué-es-3)
+  - [Sin dedicated endpoint](#sin-dedicated-endpoint)
+  - [Con dedicated endpoint](#con-dedicated-endpoint)
+  - [Qué mejora realmente](#qué-mejora-realmente)
+  - [Qué NO hace](#qué-no-hace-1)
+- [Lo que normalmente falta](#lo-que-normalmente-falta)
+- [Diferencia importante](#diferencia-importante)
+- [Data Plane vs Management Plane](#data-plane-vs-management-plane)
+  - [Data Plane](#data-plane)
+  - [Management Plane](#management-plane)
+- [Trampas típicas AZ-104](#trampas-típicas-az-104)
+  - [Trampa 1](#trampa-1)
+  - [Trampa 2](#trampa-2)
+  - [Trampa 3](#trampa-3)
+  - [Trampa 4](#trampa-4)
+- [Tabla resumen examen](#tabla-resumen-examen)
+- [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
+- [Frases clave examen](#frases-clave-examen)
+
 
 # Azure Container Registry (ACR)
 
-# Qué es
+## Qué es
 
-Azure Container Registry (ACR) es un registro privado de imágenes Docker y OCI administrado por Azure.
+Registro privado de imágenes Docker/OCI administrado por Azure.
 
 ---
 
-# Uso típico
+## Uso típico
 
-- Almacenar imágenes Docker
-- Integración CI/CD
-- Kubernetes (AKS)
+- Imágenes Docker
+- AKS
 - Azure Container Apps
 - Azure Container Instances (ACI)
+- CI/CD
 
 ---
 
-# Arquitectura básica
+## Estructura básica
 
 ```text
-Azure Container Registry
-    ↓
+ACR
+ ↓
 Repository
-    ↓
+ ↓
 Image
-    ↓
+ ↓
 Tag
 ```
 
----
-
-# Ejemplo
+Ejemplo:
 
 ```text
 corpregistry.azurecr.io/webappimage:v1
@@ -44,32 +91,34 @@ corpregistry.azurecr.io/webappimage:v1
 
 # Azure Container Instances (ACI)
 
-# Qué es
+## Qué es
 
-Servicio serverless para ejecutar contenedores rápidamente sin administrar VMs.
+Servicio serverless para ejecutar contenedores sin administrar VMs.
 
 ---
 
-# Uso típico
+## Uso típico
 
 - Testing
-- Jobs rápidos
 - Automatización
-- Contenedores simples
+- Jobs rápidos
 - Procesos batch
 
 ---
 
 # Cómo funciona ACI con ACR
 
-ACI necesita descargar imágenes desde ACR.
+ACI necesita:
+
+1. Llegar al ACR
+2. Tener permisos para hacer pull
 
 Flujo típico:
 
 ```text
 ACI
  ↓
-Azure Container Registry
+ACR
  ↓
 Pull image
  ↓
@@ -80,61 +129,57 @@ Run container
 
 # Requisitos para usar imágenes privadas
 
-ACI necesita:
-
 | Requisito | Obligatorio |
 |---|---|
-| Acceso de red al ACR | ✅ |
-| Permisos para pull | ✅ |
+| Acceso red al ACR | ✅ |
+| Permisos pull | ✅ |
 | Imagen válida | ✅ |
 
 ---
 
-# Roles importantes en ACR
+# Roles importantes ACR
 
-| Rol | Permiso |
+| Rol | Función |
 |---|---|
 | AcrPull | Descargar imágenes |
 | AcrPush | Subir imágenes |
-| Owner | Administración completa |
+| Owner | Administración total |
 
 ---
 
 # AcrPull
 
-# Qué permite
+## Permite
 
-✅ Pull de imágenes
+✅ Descargar imágenes
 
----
-
-# Qué NO permite
+## NO permite
 
 ❌ Push  
 ❌ Delete  
-❌ Administrar registry  
+❌ Administrar ACR  
 
 ---
 
 # Managed Identity
 
-ACI puede autenticarse usando:
+ACI puede usar:
 
 | Tipo | Soportado |
 |---|---|
-| System-assigned Managed Identity | ✅ |
-| User-assigned Managed Identity | ✅ |
+| System-assigned MI | ✅ |
+| User-assigned MI | ✅ |
 
 ---
 
-# Flujo recomendado
+# Configuración recomendada
 
 ```text
 ACI
  ↓
 Managed Identity
  ↓
-Role: AcrPull
+AcrPull
  ↓
 ACR
 ```
@@ -143,67 +188,48 @@ ACR
 
 # Private Endpoint
 
-# Qué es
+## Qué es
 
-Permite acceder a un recurso Azure usando IP privada dentro de una VNet.
-
----
-
-# Características
-
-| Feature | Soportado |
-|---|---|
-| Acceso privado | ✅ |
-| Evita Internet pública | ✅ |
-| Usa Private Link | ✅ |
+Permite acceso privado mediante IP privada dentro de una VNet.
 
 ---
 
-# Qué hace realmente
+## Qué hace
 
-Un Private Endpoint:
-
-✅ Mejora networking  
-✅ Aísla tráfico  
-✅ Usa IP privada  
+✅ Conectividad privada  
+✅ Network isolation  
+✅ Private Link  
 
 ---
 
-# Qué NO hace
+## Qué NO hace
 
-| Acción | Soportado |
-|---|---|
-| Dar permisos RBAC | ❌ |
-| Autorizar pull imágenes | ❌ |
-| Resolver autenticación | ❌ |
-| Crear identidades | ❌ |
+❌ Dar permisos RBAC  
+❌ Autorizar pull imágenes  
+❌ Resolver autenticación  
 
 ---
 
-# Diferencia importante
+# Concepto clave
 
-# Networking ≠ Authorization
-
-Muchos errores en AZ-104 vienen de confundir:
+## Networking ≠ Authorization
 
 | Concepto | Función |
 |---|---|
 | Private Endpoint | Conectividad |
-| AcrPull | Autorización |
+| AcrPull | Permisos |
 
 ---
 
-# Error típico en despliegue ACI
+# Error típico AZ-104
 
-## Problema habitual
+## Problema
 
 ```text
 ACI cannot pull image from ACR
 ```
 
----
-
-# Solución habitual
+## Solución habitual
 
 Asignar:
 
@@ -215,48 +241,102 @@ a la Managed Identity del ACI.
 
 ---
 
-# Ejemplo correcto
+# Dedicated Data Endpoint
+
+## Qué es
+
+Separa tráfico de:
+
+| Tipo tráfico | Función |
+|---|---|
+| Management plane | Administrar ACR |
+| Data plane | Pull/Push imágenes |
+
+---
+
+# Sin dedicated endpoint
 
 ```text
-ACI
- ↓
-Managed Identity
- ↓
-AcrPull role
- ↓
-ACR
+registry.azurecr.io
 ```
 
 ---
 
-# Qué suele preguntar el examen
+# Con dedicated endpoint
 
-AZ-104 suele evaluar:
-
-| Concepto | Muy importante |
+| Endpoint | Uso |
 |---|---|
-| AcrPull | ✅ |
-| Managed Identity | ✅ |
-| Private Endpoint | ✅ |
-| RBAC vs Networking | ✅ |
-| ACR authentication | ✅ |
+| registry.azurecr.io | Management |
+| registry.region.data.azurecr.io | Data plane |
 
 ---
 
-# Comparativa importante
+# Qué mejora realmente
 
-| Feature | Private Endpoint | AcrPull |
-|---|---|---|
-| Conectividad privada | ✅ | ❌ |
-| Seguridad red | ✅ | ❌ |
-| Permiso pull imágenes | ❌ | ✅ |
-| Autenticación ACR | ❌ | ✅ |
+✅ Seguridad  
+✅ Network isolation  
+✅ Firewall granular  
+✅ Routing/networking  
+
+---
+
+# Qué NO hace
+
+❌ NO da permisos  
+❌ NO asigna AcrPull  
+❌ NO corrige autenticación  
+❌ NO arregla tags incorrectos  
+
+---
+
+# Lo que normalmente falta
+
+| Problema | Solución |
+|---|---|
+| Falta permisos pull | AcrPull |
+| Sin Managed Identity | Crear MI |
+| Password incorrecto | Corregir credenciales |
+| Imagen/tag incorrecto | Corregir image/tag |
+| Firewall | Configurar networking |
+
+---
+
+# Diferencia importante
+
+| Feature | Función |
+|---|---|
+| Private Endpoint | Acceso privado |
+| Dedicated Data Endpoint | Separar data plane |
+| AcrPull | Permisos pull |
+
+---
+
+# Data Plane vs Management Plane
+
+## Data Plane
+
+Operaciones sobre imágenes:
+
+- Pull
+- Push
+- Layers
+- Manifests
+
+---
+
+## Management Plane
+
+Administrar recurso Azure:
+
+- Crear ACR
+- Configurar SKU
+- Configurar networking
 
 ---
 
 # Trampas típicas AZ-104
 
-# Trampa 1
+## Trampa 1
 
 Pensar que Private Endpoint da permisos.
 
@@ -264,67 +344,78 @@ Pensar que Private Endpoint da permisos.
 
 ---
 
-# Trampa 2
+## Trampa 2
 
-Pensar que tener acceso de red basta.
+Pensar que networking basta.
 
 ❌ Incorrecto
 
 También necesitas:
 
-✅ RBAC  
 ✅ AcrPull  
+✅ RBAC  
 
 ---
 
-# Trampa 3
+## Trampa 3
 
-Olvidar Managed Identity.
-
-❌ Muy común.
-
----
-
-# Trampa 4
-
-Confundir AcrPull con AcrPush.
+Confundir AcrPull y AcrPush.
 
 | Rol | Función |
 |---|---|
-| AcrPull | Descargar imágenes |
-| AcrPush | Subir imágenes |
+| AcrPull | Descargar |
+| AcrPush | Subir |
 
 ---
 
-# Tabla resumen importante
+## Trampa 4
+
+Pensar que Dedicated Data Endpoint resuelve autenticación.
+
+❌ Incorrecto
+
+Solo mejora networking.
+
+---
+
+# Tabla resumen examen
 
 | Necesidad | Solución |
 |---|---|
-| Descargar imágenes desde ACR | AcrPull |
+| Descargar imágenes ACR | AcrPull |
 | Ejecutar contenedor | ACI |
 | Registry privado | ACR |
 | Acceso privado ACR | Private Endpoint |
+| Separar tráfico data plane | Dedicated Data Endpoint |
 
 ---
 
-# Regla rápida examen
+# Reglas rápidas AZ-104
 
 ```text
-Private Endpoint provides connectivity, not authorization.
+Private Endpoint = networking
+```
+
+```text
+AcrPull = authorization
+```
+
+```text
+Dedicated Data Endpoint = data plane isolation
 ```
 
 ---
 
-# Frases clave AZ-104
+# Frases clave examen
 
 ```text
 ACI requires permission to pull images from ACR.
 ```
 
 ```text
-The AcrPull role is commonly required for Azure Container Instances.
+A private endpoint does not grant image pull permissions.
 ```
 
 ```text
-A private endpoint does not grant permissions to pull container images.
+Dedicated data endpoints improve networking isolation, not authorization.
 ```
