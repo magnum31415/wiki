@@ -861,3 +861,337 @@ Una vez el grupo tenga permisos:
 Remove role assignment
 frank.sinatra@nyRZV.onmicrosoft.com
 ``
+
+# Microsoft Entra ID - Group Naming Policy (AZ-104)
+
+## Qué es una Group Naming Policy
+
+Una Group Naming Policy permite controlar automáticamente el nombre de los grupos Microsoft 365 creados en Microsoft Entra ID.
+
+---
+
+## Objetivos típicos
+
+Permite:
+
+- Agregar prefijos
+- Agregar sufijos
+- Usar atributos dinámicos
+- Bloquear palabras prohibidas
+- Estandarizar nombres
+
+---
+
+## Ejemplo típico
+
+Formato requerido:
+
+```text
+<Department><GroupName>
+```
+
+Resultado:
+
+```text
+IT-FinanceTeam
+HR-Recruitment
+Sales-Europe
+```
+
+---
+
+## Dónde se configura
+
+En:
+
+```text
+Microsoft Entra Admin Center
+    ↓
+Groups
+    ↓
+Naming policy
+```
+
+---
+
+## Componentes importantes
+
+| Elemento | Función |
+|---|---|
+| Prefix | Añadir texto/atributo al inicio |
+| Suffix | Añadir texto/atributo al final |
+| String | Texto fijo |
+| Attribute | Valor dinámico del usuario |
+
+---
+
+## Prefix vs Suffix
+
+| Tipo | Ejemplo |
+|---|---|
+| Prefix | IT-TeamA |
+| Suffix | TeamA-IT |
+
+---
+
+## String vs Attribute
+
+### String
+
+Texto fijo/manual.
+
+Ejemplo:
+
+```text
+CORP-TeamA
+```
+
+Siempre igual.
+
+---
+
+### Attribute
+
+Usa un atributo del usuario de Entra ID.
+
+Ejemplo:
+
+```text
+IT-TeamA
+HR-TeamA
+Finance-TeamA
+```
+
+Depende del atributo del creador del grupo.
+
+---
+
+## Atributos soportados típicos
+
+| Atributo | Ejemplo |
+|---|---|
+| Department | IT |
+| Company | Contoso |
+| Office | Barcelona |
+| Country | Spain |
+
+---
+
+## Escenario típico examen
+
+Requisito:
+
+```text
+<Department><GroupName>
+```
+
+---
+
+## Configuración correcta
+
+### Paso 1
+
+Crear:
+
+```text
+Group Naming Policy
+```
+
+---
+
+### Paso 2
+
+Seleccionar:
+
+```text
+Add prefix → Attribute
+```
+
+---
+
+### Paso 3
+
+Elegir atributo:
+
+```text
+Department
+```
+
+---
+
+## Resultado
+
+Si el usuario pertenece a:
+
+```text
+Department = IT
+```
+
+y crea:
+
+```text
+ProjectTeam
+```
+
+el resultado será:
+
+```text
+IT-ProjectTeam
+```
+
+---
+
+## Diferencia importante
+
+| Configuración | Resultado |
+|---|---|
+| Prefix + String | Texto fijo |
+| Prefix + Attribute | Valor dinámico |
+| Suffix + Attribute | Valor dinámico al final |
+
+---
+
+## Ejemplos
+
+### Prefix + String
+
+```text
+CORP-TeamA
+```
+
+---
+
+### Prefix + Attribute
+
+```text
+IT-TeamA
+```
+
+---
+
+### Suffix + Attribute
+
+```text
+TeamA-IT
+```
+
+---
+
+## Palabras bloqueadas
+
+Las naming policies también permiten bloquear palabras como:
+
+- CEO
+- Admin
+- Root
+
+---
+
+## Ejemplo
+
+```text
+CEO-Team
+```
+
+❌ Bloqueado.
+
+---
+
+## Qué NO hace
+
+❌ No cambia grupos existentes  
+❌ No modifica automáticamente grupos antiguos  
+❌ No aplica a todos los tipos grupos Azure  
+
+---
+
+## Tipos de grupos afectados
+
+Principalmente:
+
+✅ Microsoft 365 Groups  
+✅ Teams (porque usan M365 Groups)
+
+---
+
+## Trampa típica AZ-104
+
+Muchos candidatos confunden:
+
+```text
+Attribute
+```
+
+con:
+
+```text
+String
+```
+
+---
+
+## Regla importante
+
+```text
+Attribute = valor dinámico del usuario
+```
+
+```text
+String = texto fijo
+```
+
+---
+
+## Diferencia importante examen
+
+| Necesidad | Configuración |
+|---|---|
+| Prefijo fijo | Prefix + String |
+| Prefijo dinámico | Prefix + Attribute |
+| Sufijo dinámico | Suffix + Attribute |
+
+---
+
+## Qué quiere evaluar Microsoft
+
+| Concepto | Importancia |
+|---|---|
+| Naming Policies | Alta |
+| Prefix vs Suffix | Alta |
+| String vs Attribute | Muy alta |
+| Department attribute | Alta |
+
+---
+
+## Tabla resumen examen
+
+| Requisito | Configuración correcta |
+|---|---|
+| IT-TeamA | Prefix + Attribute(Department) |
+| CORP-TeamA | Prefix + String |
+| TeamA-IT | Suffix + Attribute(Department) |
+
+---
+
+## Regla rápida examen
+
+```text
+Use Attribute when the value must come dynamically from Entra ID.
+```
+
+---
+
+## Frases clave AZ-104
+
+```text
+Group naming policies can use Entra ID user attributes.
+```
+
+```text
+Department can be used as a dynamic prefix or suffix.
+```
+
+```text
+String values are static, attributes are dynamic.
+```
+
