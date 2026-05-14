@@ -56,7 +56,37 @@
   - [ACR Tasks](#acr-tasks)
   - [Trampa típica examen](#trampa-típica-examen)
   - [Regla importante](#regla-importante)
-
+- [Qué es Admin User](#qué-es-admin-user)
+- [Qué ocurre al habilitarlo](#qué-ocurre-al-habilitarlo)
+- [Dónde se ve](#dónde-se-ve)
+- [Para qué sirve](#para-qué-sirve)
+- [Uso típico](#uso-típico)
+- [Ejemplo Docker Login](#ejemplo-docker-login)
+- [Ejemplo completo](#ejemplo-completo)
+- [Qué permite](#qué-permite)
+- [Dónde puede usarse](#dónde-puede-usarse)
+- [Flujo típico](#flujo-típico)
+- [Diferencia con Managed Identity](#diferencia-con-managed-identity)
+  - [Admin User](#admin-user)
+  - [Managed Identity](#managed-identity)
+- [Comparativa importante](#comparativa-importante)
+- [Ventajas de Admin User](#ventajas-de-admin-user)
+- [Desventajas](#desventajas)
+- [Best Practice Azure](#best-practice-azure)
+- [Cuándo suele usarse](#cuándo-suele-usarse)
+  - [Recomendado para](#recomendado-para)
+  - [No recomendado para](#no-recomendado-para)
+- [Relación con AcrPull](#relación-con-acrpull)
+  - [Admin User](#admin-user-1)
+  - [Managed Identity](#managed-identity-1)
+- [Comparativa completa](#comparativa-completa)
+- [Trampas típicas AZ-104](#trampas-típicas-az-104)
+  - [Trampa 1](#trampa-1)
+  - [Trampa 2](#trampa-2)
+  - [Trampa 3](#trampa-3)
+- [Casos típicos examen](#casos-típicos-examen)
+- [Regla rápida examen](#regla-rápida-examen)
+- [Frases clave AZ-104](#frases-clave-az-104)
 
 # Azure Container Registry (ACR)
 
@@ -574,3 +604,327 @@ The identity performing the image pull must have the AcrPull role.
 ```text
 Assign AcrPull to the identity that pulls the container image.
 ```
+
+# Qué es Admin User
+
+`Admin User` es una funcionalidad de Azure Container Registry (ACR) que habilita autenticación mediante:
+
+- Username
+- Password
+
+similar a un login clásico Docker Registry.
+
+---
+
+# Qué ocurre al habilitarlo
+
+Cuando activas:
+
+```text
+Admin User = Enabled
+```
+
+Azure genera automáticamente:
+
+| Credencial | Disponible |
+|---|---|
+| Username | ✅ |
+| Password1 | ✅ |
+| Password2 | ✅ |
+
+---
+
+# Dónde se ve
+
+En Azure Portal:
+
+```text
+Azure Container Registry
+    ↓
+Settings
+    ↓
+Access Keys
+```
+
+---
+
+# Para qué sirve
+
+Permite autenticarse contra ACR usando credenciales tradicionales.
+
+---
+
+# Uso típico
+
+- Docker login manual
+- Azure Container Instances (ACI)
+- Scripts
+- Testing rápido
+- Integraciones legacy
+- Herramientas externas
+
+---
+
+# Ejemplo Docker Login
+
+```bash
+docker login corpregistry.azurecr.io
+```
+
+Azure pedirá:
+
+```text
+Username
+Password
+```
+
+---
+
+# Ejemplo completo
+
+```bash
+docker login corpregistry.azurecr.io \
+  --username corpregistry \
+  --password XXXXX
+```
+
+---
+
+# Qué permite
+
+Con las credenciales Admin User puedes:
+
+✅ Pull imágenes  
+✅ Push imágenes  
+✅ Autenticación Docker clásica  
+
+---
+
+# Dónde puede usarse
+
+| Servicio | Uso típico |
+|---|---|
+| Docker CLI | `docker login` |
+| Azure Container Instances | Pull imágenes |
+| Kubernetes | imagePullSecrets |
+| CI/CD pipelines | Pull/Push |
+| Scripts automatizados | Login ACR |
+
+---
+
+# Flujo típico
+
+```text
+ACI / Docker / AKS
+ ↓
+Username + Password
+ ↓
+ACR
+ ↓
+Pull image
+```
+
+---
+
+# Diferencia con Managed Identity
+
+| Método                  | Networking | Auth | Recomendado      |
+| ----------------------- | ---------- | ---- | ---------------- |
+| Private Endpoint        | ✅          | ❌    | Sí               |
+| Dedicated Data Endpoint | ✅          | ❌    | Sí               |
+| AcrPull + MI            | ❌          | ✅    | ✅ Mejor práctica |
+| Admin User              | ❌          | ✅    | ⚠️ Menos seguro  |
+
+
+## Admin User
+
+Usa:
+
+```text
+username/password
+```
+
+---
+
+## Managed Identity
+
+Usa:
+
+```text
+Azure RBAC + Entra ID
+```
+
+---
+
+# Comparativa importante
+
+| Método | Tipo autenticación |
+|---|---|
+| Admin User | Username/Password |
+| Managed Identity | RBAC + Identity |
+| Service Principal | App registration |
+
+---
+
+# Ventajas de Admin User
+
+| Ventaja | Explicación |
+|---|---|
+| Fácil configuración | Muy simple |
+| Compatible Docker estándar | Sí |
+| Compatible herramientas externas | Sí |
+| Rápido para testing | Sí |
+
+---
+
+# Desventajas
+
+| Problema | Explicación |
+|---|---|
+| Passwords estáticos | Sí |
+| Shared credentials | Sí |
+| Menos seguro | Sí |
+| No RBAC granular | Sí |
+| Difícil rotación | Sí |
+
+---
+
+# Best Practice Azure
+
+Microsoft normalmente recomienda:
+
+✅ Managed Identity  
+✅ Service Principal  
+
+antes que:
+
+⚠️ Admin User
+
+---
+
+# Cuándo suele usarse
+
+## Recomendado para
+
+- Laboratorios
+- Testing
+- Pruebas rápidas
+- Herramientas legacy
+- Casos simples
+
+---
+
+## No recomendado para
+
+- Producción crítica
+- Entornos enterprise
+- Zero Trust
+- Seguridad avanzada
+
+---
+
+# Relación con AcrPull
+
+## Admin User
+
+NO necesita:
+
+```text
+AcrPull
+```
+
+porque usa autenticación clásica.
+
+---
+
+## Managed Identity
+
+SÍ necesita:
+
+```text
+AcrPull
+```
+
+---
+
+# Comparativa completa
+
+| Método | Necesita AcrPull | Usa password |
+|---|---|---|
+| Admin User | ❌ | ✅ |
+| Managed Identity | ✅ | ❌ |
+| Service Principal | Puede usar RBAC | ✅ |
+
+---
+
+# Trampas típicas AZ-104
+
+# Trampa 1
+
+Pensar que Admin User solo sirve para administración.
+
+❌ Incorrecto
+
+También sirve para:
+
+✅ Pull/Push imágenes
+
+---
+
+# Trampa 2
+
+Pensar que Admin User usa RBAC.
+
+❌ Incorrecto
+
+Usa:
+
+```text
+username/password
+```
+
+---
+
+# Trampa 3
+
+Pensar que si no es best practice no funciona.
+
+❌ Incorrecto
+
+Funciona perfectamente.
+
+---
+
+# Casos típicos examen
+
+| Escenario | Solución válida |
+|---|---|
+| ACI no puede hacer pull | Enable Admin User |
+| Docker login manual | Admin User |
+| AKS legacy pull secret | Admin User |
+| Testing rápido | Admin User |
+
+---
+
+# Regla rápida examen
+
+```text
+Admin User provides username/password authentication for ACR.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Enabling Admin User generates credentials for Docker authentication.
+```
+
+```text
+Admin User can be used by ACI to pull container images.
+```
+
+```text
+Managed Identity is more secure than Admin User.
+```
+
