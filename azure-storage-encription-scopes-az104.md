@@ -4,6 +4,73 @@
 
 ---
 
+# Importante: Azure Storage cifra datos por defecto
+
+En Azure, todo el contenido almacenado en una Storage Account se cifra automáticamente por defecto usando:
+
+```text
+Storage Service Encryption (SSE)
+```
+
+↓
+
+No es necesario activar manualmente el cifrado.
+
+---
+
+# Qué recursos se cifran automáticamente
+
+| Servicio | Cifrado por defecto |
+|---|---|
+| Blob Storage | ✅ |
+| Azure Files | ✅ |
+| Queues | ✅ |
+| Tables | ✅ |
+
+---
+
+# Qué claves usa por defecto
+
+Por defecto Azure utiliza:
+
+```text
+Microsoft-managed keys (MMK)
+```
+
+aunque también puede utilizar:
+
+```text
+Customer-managed keys (CMK)
+```
+
+desde Azure Key Vault.
+
+---
+
+# Concepto importante examen
+
+```text
+Encryption Scope NO activa el cifrado.
+```
+
+↓
+
+El cifrado ya está habilitado por defecto mediante:
+
+```text
+Storage Service Encryption (SSE)
+```
+
+Encryption Scope proporciona:
+
+```text
+granularidad adicional
+```
+
+sobre Blob Storage.
+
+---
+
 # Azure Storage Encryption
 
 Azure Storage cifra automáticamente los datos almacenados usando:
