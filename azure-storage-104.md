@@ -22,7 +22,7 @@
 - [Trampas típicas examen](#trampas-típicas-examen)
 - [Tabla resumen examen](#tabla-resumen-examen)
 - [Frases clave AZ-104](#frases-clave-az-104)
-
+- [Stored Access Policies (Azure Storage)](#stored-access-policies-azure-storage)
 ---
 
 ## Modelos de autenticación en Azure Storage
@@ -484,4 +484,227 @@ Geo-redundant storage replicates data to another region.
 
 ```text
 Cool tier reduces costs for infrequently accessed data.
+```
+---
+
+# Stored Access Policies (Azure Storage)
+
+## Qué son las Stored Access Policies
+
+Una:
+
+```text
+Stored Access Policy
+```
+
+es una política almacenada dentro de Azure Storage que define:
+
+- permisos
+- expiración
+- restricciones acceso
+
+para SAS Tokens.
+
+---
+
+## Para qué sirven
+
+Permiten:
+
+✅ Centralizar permisos SAS  
+✅ Reutilizar configuraciones acceso  
+✅ Revocar SAS indirectamente  
+✅ Modificar expiración/permisos sin regenerar SAS  
+
+---
+
+## Relación con SAS Tokens
+
+Un SAS Token puede:
+
+| Tipo | Descripción |
+|---|---|
+| Ad-hoc SAS | Lleva permisos embebidos directamente |
+| SAS con Stored Access Policy | Referencia una policy almacenada |
+
+---
+
+## Flujo conceptual
+
+```text
+Stored Access Policy
+        ↓
+Define permisos/expiración
+        ↓
+SAS Token referencia policy
+        ↓
+Cliente usa SAS
+```
+
+---
+
+## Ventaja importante
+
+Si el SAS usa una Stored Access Policy:
+
+```text
+puedes revocar el acceso modificando o eliminando la policy
+```
+
+sin regenerar todos los SAS Tokens.
+
+---
+
+## Recursos soportados y límites
+
+| Recurso | Soporta Stored Access Policies | Máximo policies | Ejemplo |
+|---|---|---|---|
+| Blob Container | ✅ | 5 | `images-container` |
+| File Share | ✅ | 5 | `share-finance` |
+| Queue | ✅ | 5 | `orders-queue` |
+| Table | ✅ | 5 | `employees-table` |
+
+---
+
+## Ejemplo Blob Container
+
+### Policy
+
+| Campo | Valor |
+|---|---|
+| Nombre | `policy-read` |
+| Permisos | Read |
+| Expira | 7 días |
+
+---
+
+### SAS asociado
+
+```text
+https://mystorage.blob.core.windows.net/images/photo.jpg?...&si=policy-read
+```
+
+---
+
+## Ejemplo File Share
+
+### Caso típico
+
+Compartir temporalmente:
+
+```text
+\\storage.file.core.windows.net\share-finance
+```
+
+con permisos controlados.
+
+---
+
+## Ejemplo Queue
+
+### Caso típico
+
+Aplicación externa puede:
+
+✅ leer mensajes  
+❌ borrar mensajes  
+
+durante un tiempo limitado.
+
+---
+
+## Ejemplo Table
+
+### Caso típico
+
+Aplicación partner puede:
+
+✅ consultar entidades  
+❌ modificar datos  
+
+usando SAS controlado.
+
+---
+
+## Límite importante examen
+
+Azure Storage soporta:
+
+```text
+máximo 5 Stored Access Policies por recurso
+```
+
+---
+
+## Importante
+
+El límite es:
+
+```text
+por container/share/queue/table individual
+```
+
+NO por Storage Account.
+
+---
+
+## Diferencia importante
+
+| Concepto | Qué es |
+|---|---|
+| SAS Token | Token acceso temporal |
+| Stored Access Policy | Política reutilizable para SAS |
+
+---
+
+## Trampa típica AZ-104
+
+Muchos candidatos creen:
+
+```text
+puedes crear policies ilimitadas
+```
+
+❌ Incorrecto.
+
+---
+
+## Otra trampa típica
+
+Pensar que:
+
+```text
+Stored Access Policies solo existen para blobs
+```
+
+❌ Incorrecto.
+
+También existen para:
+
+- File Shares
+- Queues
+- Tables
+
+---
+
+## Regla rápida AZ-104
+
+```text
+Azure Storage supports up to five stored access policies per resource.
+```
+
+---
+
+## Frases clave AZ-104
+
+```text
+Stored access policies are used with SAS tokens.
+```
+
+```text
+Stored access policies centralize SAS permissions and expiration settings.
+```
+
+```text
+Blob containers, file shares, queues, and tables support up to five stored access policies each.
 ```
