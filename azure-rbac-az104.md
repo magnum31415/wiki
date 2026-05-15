@@ -535,12 +535,57 @@ para separar:
 
 ---
 
+
+
 # Concepto clave
 
 En Azure RBAC, un rol personalizado puede definir permisos en dos planos diferentes:
 
 - Management plane
 - Data plane
+
+
+| Permiso RBAC | Tipo | Va en | Qué hace realmente | Por qué |
+|---|---|---|---|---|
+| `Microsoft.Compute/virtualMachines/start/action` | Management Plane | `actions` | Arranca una VM Azure | Administra el recurso Azure |
+| `Microsoft.Compute/virtualMachines/restart/action` | Management Plane | `actions` | Reinicia una VM | Administración infraestructura |
+| `Microsoft.Compute/virtualMachines/deallocate/action` | Management Plane | `actions` | Detiene/libera VM | Administración recurso Compute |
+| `Microsoft.Compute/virtualMachines/delete` | Management Plane | `actions` | Borra una VM | Gestión del recurso |
+| `Microsoft.Compute/virtualMachines/login/action` | Data Plane | `dataActions` | Permite login RBAC en VM | Uso/acceso operativo al recurso |
+| `Microsoft.Compute/virtualMachines/loginAsAdmin/action` | Data Plane | `dataActions` | Permite login administrador RBAC | Acceso operativo privilegiado |
+
+---
+
+# Regla mental correcta
+
+| Pregunta | Resultado |
+|---|---|
+| ¿Estoy administrando el recurso Azure? | `actions` |
+| ¿Estoy usando/accediendo al recurso? | `dataActions` |
+
+---
+
+# Ejemplo práctico
+
+## actions
+
+```text
+Start VM
+Stop VM
+Resize VM
+Delete VM
+```
+## dataActions
+
+````text
+RDP login
+SSH login
+Access blob data
+Read Key Vault secret
+````
+
+
+
 
 ---
 
