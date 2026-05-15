@@ -493,13 +493,13 @@ Cool tier reduces costs for infrequently accessed data.
 
 # Tabla resumen de Policies
 
-| Tipo de Policy | Objetivo | Recursos compatibles | Máximo |
-|---|---|---|---|
-| Stored Access Policy | Controlar permisos SAS | Blob Containers, File Shares, Queues, Tables | Máx. 5 policies por recurso |
-| Immutable Blob Storage Policy | Protección WORM contra modificación y borrado | Blob Containers, Blob Versions | 1 policy de inmutabilidad por scope |
-| Time-Based Retention Policy | Bloquear blobs durante un tiempo definido | Blob Containers, Blob Versions | 1 policy activa por scope |
-| Legal Hold Policy | Bloquear blobs indefinidamente | Blob Containers, Blob Versions | 1 legal hold policy por scope (con múltiples tags posibles) |
-| Lifecycle Management Policy | Automatizar movimiento/borrado de datos | Storage Account / Blob Storage | 1 lifecycle management policy por Storage Account |
+| Tipo de Policy | Categoría | Objetivo | Recursos compatibles | Máximo |
+|---|---|---|---|---|
+| Stored Access Policy | Access Control Policy | Controlar permisos SAS | Blob Containers, File Shares, Queues, Tables | Máx. 5 policies por recurso |
+| Immutable Blob Storage Policy | WORM / Immutable Policy | Protección WORM contra modificación y borrado | Blob Containers, Blob Versions | 1 policy de inmutabilidad por scope |
+| Time-Based Retention Policy | Immutable Blob Storage Policy | Bloquear blobs durante un tiempo definido | Blob Containers, Blob Versions | 1 policy activa por scope |
+| Legal Hold Policy | Immutable Blob Storage Policy | Bloquear blobs indefinidamente | Blob Containers, Blob Versions | 1 legal hold policy por scope (con múltiples tags posibles) |
+| Lifecycle Management Policy | Lifecycle / Data Management Policy | Automatizar movimiento/borrado de datos | Storage Account / Blob Storage | 1 lifecycle management policy por Storage Account |
 
 ---
 
