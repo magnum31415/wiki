@@ -39,6 +39,30 @@ Azure Monitor puede recopilar:
 
 # Componentes principales
 
+```mermaid
+graph TD
+
+    A[Azure Resources / VMs / Servers]
+
+    A --> B[Azure Monitor Agent - AMA]
+
+    B --> C[Data Collection Rules - DCR]
+
+    C --> D1[Log Analytics Workspace]
+    C --> D2[Azure Monitor Metrics]
+    C --> D3[Storage Account]
+    C --> D4[Event Hub]
+
+    C --> E1[Windows Event Logs]
+    C --> E2[Syslog]
+    C --> E3[Performance Counters]
+    C --> E4[Custom Logs]
+
+    E1 --> F[XPath Filters]
+
+    D1 --> G[KQL Queries]
+```
+
 ## 1. Azure Monitor Agent (AMA)
 
 Agente moderno de Azure Monitor.
