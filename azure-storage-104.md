@@ -23,6 +23,7 @@
 - [Tabla resumen examen](#tabla-resumen-examen)
 - [Frases clave AZ-104](#frases-clave-az-104)
 - [Stored Access Policies (Azure Storage)](#stored-access-policies-azure-storage)
+- [Immutable Blob Storage Policies](#immutable-blob-storage-policies)
 ---
 
 ## Modelos de autenticación en Azure Storage
@@ -707,4 +708,301 @@ Stored access policies centralize SAS permissions and expiration settings.
 
 ```text
 Blob containers, file shares, queues, and tables support up to five stored access policies each.
+```
+---
+
+# Immutable Blob Storage Policies 
+
+
+- [Immutable Blob Storage Policies (AZ-104)](#immutable-blob-storage-policies-az-104)
+- [Qué es Immutable Blob Storage](#qué-es-immutable-blob-storage)
+- [Qué significa immutable](#qué-significa-immutable)
+- [Para qué sirve](#para-qué-sirve)
+- [Tipos principales de políticas](#tipos-principales-de-políticas)
+- [Time-Based Retention Policy](#time-based-retention-policy)
+- [Legal Hold Policy](#legal-hold-policy)
+- [Qué protege realmente](#qué-protege-realmente)
+- [WORM Storage](#worm-storage)
+- [Dónde se configura](#dónde-se-configura)
+- [Importante sobre modificación y borrado](#importante-sobre-modificación-y-borrado)
+- [Estados de una policy](#estados-de-una-policy)
+- [Diferencia importante examen](#diferencia-importante-examen)
+- [Casos típicos de uso](#casos-típicos-de-uso)
+- [Trampas típicas AZ-104](#trampas-típicas-az-104)
+- [Tabla resumen examen](#tabla-resumen-examen)
+- [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
+- [Frases clave AZ-104](#frases-clave-az-104)
+
+---
+
+# Qué es Immutable Blob Storage
+
+Azure Immutable Blob Storage permite almacenar datos en modo:
+
+```text
+WORM
+```
+
+---
+
+# Qué significa immutable
+
+```text
+Immutable
+```
+
+significa:
+
+❌ no puede modificarse  
+❌ no puede borrarse  
+
+durante un período definido.
+
+---
+
+# WORM Storage
+
+WORM significa:
+
+```text
+Write Once Read Many
+```
+
+↓
+
+Los datos:
+
+✅ pueden escribirse una vez  
+✅ pueden leerse muchas veces  
+❌ no pueden modificarse  
+
+---
+
+# Para qué sirve
+
+Se usa para:
+
+- cumplimiento legal
+- auditoría
+- regulación financiera
+- protección ransomware
+- evidencias digitales
+- logs inmutables
+
+---
+
+# Tipos principales de políticas
+
+| Política | Función |
+|---|---|
+| Time-Based Retention Policy | Bloqueo durante tiempo definido |
+| Legal Hold | Bloqueo indefinido legal |
+
+---
+
+# Time-Based Retention Policy
+
+## Qué hace
+
+Impide:
+
+- borrar blobs
+- modificar blobs
+
+durante un tiempo específico.
+
+---
+
+## Ejemplo
+
+```text
+Retention = 7 years
+```
+
+↓
+
+Durante 7 años:
+
+❌ no borrar  
+❌ no modificar  
+
+---
+
+# Legal Hold Policy
+
+## Qué hace
+
+Bloquea blobs:
+
+```text
+hasta eliminar explícitamente el legal hold
+```
+
+---
+
+## Uso típico
+
+- litigios
+- investigaciones
+- auditorías legales
+
+---
+
+# Qué protege realmente
+
+Immutable Blob Storage protege:
+
+| Acción | Permitido |
+|---|---|
+| Leer blob | ✅ |
+| Crear blob | ✅ |
+| Modificar blob | ❌ |
+| Eliminar blob | ❌ |
+
+---
+
+# Dónde se configura
+
+Normalmente sobre:
+
+| Nivel | Soportado |
+|---|---|
+| Blob Container | ✅ |
+| Version level | ✅ |
+
+---
+
+# Importante sobre modificación y borrado
+
+Durante la retención:
+
+```text
+ni siquiera administradores pueden borrar/modificar blobs protegidos
+```
+
+---
+
+# Estados de una policy
+
+| Estado | Significado |
+|---|---|
+| Unlocked | Configurable |
+| Locked | Inmutable definitiva |
+
+---
+
+# Importante examen
+
+Una vez:
+
+```text
+Locked
+```
+
+↓
+
+la política:
+
+❌ no puede reducirse  
+❌ no puede eliminarse fácilmente  
+
+---
+
+# Diferencia importante examen
+
+| Feature | Objetivo |
+|---|---|
+| Soft Delete | Recuperación accidental |
+| Versioning | Historial versiones |
+| Immutable Policy | Bloqueo WORM |
+
+---
+
+# Casos típicos de uso
+
+| Escenario | Uso |
+|---|---|
+| Logs regulatorios | Immutable |
+| Evidencias auditoría | Immutable |
+| Protección ransomware | Immutable |
+| Backup normal | Soft Delete |
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Pensar que:
+
+```text
+Soft Delete = Immutable
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 2
+
+Pensar que administradores pueden borrar blobs protegidos.
+
+❌ Incorrecto.
+
+---
+
+## Trampa 3
+
+Confundir:
+
+```text
+Versioning
+```
+
+con:
+
+```text
+WORM retention
+```
+
+---
+
+# Tabla resumen examen
+
+| Feature | Permite modificar | Permite borrar |
+|---|---|---|
+| Soft Delete | ✅ | Recuperable |
+| Versioning | ✅ | ✅ |
+| Immutable Policy | ❌ | ❌ |
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Immutable Blob Storage provides WORM protection.
+```
+
+```text
+Time-based retention policies prevent deletion and modification.
+```
+
+```text
+Legal holds preserve blobs indefinitely.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Immutable storage protects blobs from modification and deletion.
+```
+
+```text
+WORM means Write Once Read Many.
+```
+
+```text
+Immutable policies are commonly used for compliance and regulatory requirements.
 ```
