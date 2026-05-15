@@ -23,6 +23,7 @@
 - [Tabla resumen examen](#tabla-resumen-examen)
 - [Frases clave AZ-104](#frases-clave-az-104)
 - [Azure Storage Policies](#azure-storage-policies)
+- [Azure Storage - Hierarchical Namespace vs Azure Files](#azure-storage---hierarchical-namespace-vs-azure-files)
 ---
 
 ## Modelos de autenticación en Azure Storage
@@ -887,3 +888,235 @@ Legal Holds preserve blobs indefinitely.
 Lifecycle Management Policies automate blob tiering and deletion.
 ```
 
+---
+
+# Azure Storage - Hierarchical Namespace vs Azure Files
+
+---
+
+# Concepto clave del examen
+
+La pregunta evalúa la diferencia entre:
+
+- Azure Blob Storage
+- Azure Data Lake Storage Gen2
+- Azure Files
+
+y especialmente:
+
+```text
+cómo organizan contenido
+```
+
+---
+
+# 1. Azure Blob Storage normal
+
+Azure Blob Storage tradicional utiliza un:
+
+```text
+flat namespace
+```
+
+↓
+
+Esto significa:
+
+❌ no existen directorios reales  
+❌ las carpetas son simuladas  
+
+---
+
+## Ejemplo
+
+```text
+folder1/file.txt
+```
+
+realmente es:
+
+```text
+un único nombre de blob
+```
+
+NO un directorio real.
+
+---
+
+# Importante examen
+
+Blob Storage normal:
+
+✅ almacena blobs  
+❌ NO tiene jerarquía real de directorios  
+
+---
+
+# 2. Hierarchical Namespace (HNS)
+
+Cuando habilitas:
+
+```text
+Hierarchical Namespace
+```
+
+↓
+
+Azure Blob Storage se convierte en:
+
+```text
+Azure Data Lake Storage Gen2
+```
+
+---
+
+# Qué aporta HNS
+
+Con HNS:
+
+✅ directorios reales  
+✅ subdirectorios reales  
+✅ operaciones filesystem-like  
+✅ mejor organización contenido  
+
+---
+
+# Ejemplo
+
+Ahora sí existe:
+
+```text
+/folder1/folder2/file.txt
+```
+
+como estructura jerárquica real.
+
+---
+
+# Importante examen
+
+Para:
+
+```text
+organizar contenido en directorios reales
+```
+
+Blob Storage necesita:
+
+```text
+Hierarchical Namespace enabled
+```
+
+---
+
+# 3. Azure Files
+
+Azure Files funciona distinto.
+
+Azure Files ya es:
+
+```text
+un sistema de ficheros compartido
+```
+
+---
+
+# Qué soporta Azure Files
+
+Azure Files soporta:
+
+✅ directorios  
+✅ subdirectorios  
+✅ estructura jerárquica  
+
+SIN necesidad de:
+
+```text
+Hierarchical Namespace
+```
+
+---
+
+# Importante examen
+
+Azure Files:
+
+❌ NO necesita HNS  
+✅ soporta carpetas por diseño  
+
+---
+
+# Trampa típica AZ-104
+
+Pensar que:
+
+```text
+todos los servicios Azure Storage necesitan HNS
+para usar directorios
+```
+
+❌ Incorrecto.
+
+---
+
+# Diferencia clave examen
+
+| Servicio | Directorios reales | Requiere HNS |
+|---|---|---|
+| Blob Storage normal | ❌ | — |
+| Blob Storage + HNS | ✅ | ✅ |
+| Azure Files | ✅ | ❌ |
+
+---
+
+# Regla rápida examen
+
+```text
+Blob Storage needs Hierarchical Namespace for real directory organization.
+```
+
+```text
+Azure Files supports directories natively.
+```
+
+---
+
+# Ejemplo típico examen
+
+## Escenario
+
+La empresa necesita:
+
+```text
+organize content using directories
+```
+
+---
+
+## Respuesta correcta
+
+| Recurso | Resultado |
+|---|---|
+| Blob container SIN HNS | ❌ |
+| Blob container CON HNS | ✅ |
+| Azure File Share | ✅ |
+
+---
+
+# Frases clave AZ-104
+
+```text
+Hierarchical Namespace enables filesystem semantics in Blob Storage.
+```
+
+```text
+Azure Data Lake Storage Gen2 requires Hierarchical Namespace.
+```
+
+```text
+Azure Files supports directories without requiring Hierarchical Namespace.
+```
+
+```text
+Blob Storage without HNS uses a flat namespace.
+```
