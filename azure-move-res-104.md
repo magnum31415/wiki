@@ -7,6 +7,7 @@
   - [3. Comparación rápida](#3-comparación-rápida)
   - [4. Regla simple](#4-regla-simple)
 - [Azure Resource Mobility Matrix (Resource Group, Subscription, Region)](#azure-resource-mobility-matrix-resource-group-subscription-region)
+- [Azure Resource Move - Resource Group, Region y Azure Policy (AZ-104)](#azure-resource-move---resource-group-region-y-azure-policy-az-104)
   
 # Moving Resources in Azure: Native Move vs Azure Resource Mover
 
@@ -221,3 +222,401 @@ También indica **si el movimiento se puede realizar con el método nativo de Az
 | Redis Cache | ⚠️ (depends on SKU) | ⚠️ (depends on SKU) | ❌ | ❌ |
 | Data Factory | ✅ | ✅ | ❌ | ❌ |
 | Synapse Workspace | ✅ | ✅ | ❌ | ❌ |
+
+
+---
+
+# Azure Resource Move - Resource Group, Region y Azure Policy (AZ-104)
+
+---
+
+# Concepto clave
+
+Mover un recurso Azure entre:
+
+```text
+Resource Groups
+```
+
+NO cambia:
+
+```text
+la región física del recurso
+```
+
+PERO sí cambia:
+
+```text
+las políticas y RBAC heredados
+```
+
+del nuevo scope.
+
+---
+
+# Qué ocurre al mover un recurso
+
+Cuando mueves un recurso a otro:
+
+| Elemento | Cambia |
+|---|---|
+| Resource Group | ✅ |
+| Azure Policies aplicadas | ✅ |
+| RBAC heredado | ✅ |
+| Región física (location) | ❌ |
+| Datacenter Azure | ❌ |
+
+---
+
+# La clave de la pregunta
+
+## Situación inicial
+
+```text
+CustomerWeb01
+```
+
+↓
+
+Está en:
+
+```text
+ResGrp1
+```
+
+↓
+
+Región:
+
+```text
+West Europe
+```
+
+↓
+
+Policy aplicada:
+
+```text
+Pol1
+```
+
+---
+
+# Después del move
+
+```text
+CustomerWeb01
+```
+
+↓
+
+Se mueve a:
+
+```text
+ResGrp2
+```
+
+---
+
+# Qué NO cambia
+
+La región:
+
+```text
+West Europe
+```
+
+permanece igual.
+
+---
+
+# Por qué
+
+Mover un recurso entre Resource Groups:
+
+```text
+NO redeploya el recurso
+```
+
+NO:
+- recrea recursos
+- migra región
+- cambia datacenter
+
+Simplemente cambia:
+
+```text
+su scope administrativo
+```
+
+---
+
+# Importante examen
+
+Para cambiar de región Azure normalmente necesitas:
+
+- redeployment
+- migration
+- replication
+- recreate resource
+
+NO un simple:
+
+```text
+Move Resource
+```
+
+---
+
+# Qué SÍ cambia
+
+Ahora el recurso pertenece a:
+
+```text
+ResGrp2
+```
+
+↓
+
+Por tanto:
+
+```text
+hereda las policies de ResGrp2
+```
+
+↓
+
+Se aplica:
+
+```text
+Pol2
+```
+
+---
+
+# Regla mental correcta
+
+## Región
+
+La región depende del:
+
+```text
+resource location
+```
+
+NO del Resource Group.
+
+---
+
+## Policies
+
+Las Azure Policies dependen del:
+
+```text
+scope actual
+```
+
+↓
+
+Management Group
+Subscription
+Resource Group
+Resource
+
+---
+
+# Resultado correcto
+
+| Elemento | Resultado |
+|---|---|
+| Región | West Europe |
+| Policy aplicada | Pol2 |
+
+---
+
+# Por qué las otras respuestas son incorrectas
+
+---
+
+# ❌ "App Service plan moves to North Europe"
+
+Incorrecto porque:
+
+```text
+mover Resource Group ≠ mover región
+```
+
+---
+
+# ❌ "Pol1 applies"
+
+Incorrecto porque:
+
+```text
+las policies se heredan del nuevo Resource Group
+```
+
+↓
+
+Ahora aplica:
+
+```text
+Pol2
+```
+
+---
+
+# Concepto importante Azure Policy
+
+Azure Policy se evalúa según:
+
+```text
+scope actual del recurso
+```
+
+---
+
+# Ejemplo típico
+
+## Antes
+
+```text
+ResGrp1
+ └── Policy: Deny Public IP
+```
+
+↓
+
+VM dentro de ResGrp1:
+
+```text
+NO puede crear Public IP
+```
+
+---
+
+## Después move a ResGrp2
+
+```text
+ResGrp2
+ └── Policy: Allow Public IP
+```
+
+↓
+
+Ahora:
+
+```text
+sí puede crear Public IP
+```
+
+---
+
+# Diferencia importante examen
+
+| Concepto | Depende de |
+|---|---|
+| Región recurso | Resource location |
+| Azure Policy | Scope actual |
+| RBAC | Scope actual |
+| Tags | Pueden mantenerse |
+| Datacenter físico | Región original |
+
+---
+
+# Arquitectura conceptual
+
+## Antes
+
+```text
+ResGrp1
+ └── Pol1
+      └── CustomerWeb01 (West Europe)
+```
+
+---
+
+## Después
+
+```text
+ResGrp2
+ └── Pol2
+      └── CustomerWeb01 (West Europe)
+```
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Pensar que:
+
+```text
+Resource Group determina región
+```
+
+❌ Incorrecto.
+
+---
+
+# Trampa 2
+
+Pensar que mover RG mueve físicamente recursos.
+
+❌ Incorrecto.
+
+---
+
+# Trampa 3
+
+Pensar que policies antiguas permanecen.
+
+❌ Incorrecto.
+
+↓
+
+Se aplican las del nuevo scope.
+
+---
+
+# Tabla resumen examen
+
+| Operación | Cambia región | Cambia Policy |
+|---|---|---|
+| Move Resource Group | ❌ | ✅ |
+| Redeploy Resource | ✅ posible | ✅ |
+| Move Subscription | ❌ | ✅ |
+| Change Management Group | ❌ | ✅ |
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Moving a resource between resource groups does not change its region.
+```
+
+```text
+Azure Policies are inherited from the current scope.
+```
+
+```text
+A moved resource inherits policies from the destination resource group.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Resource location is independent from the resource group.
+```
+
+```text
+Azure Policy is scope-based.
+```
+
+```text
+Moving a resource changes its administrative scope, not its physical location.
+```
