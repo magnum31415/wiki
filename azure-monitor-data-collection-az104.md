@@ -43,24 +43,29 @@ Azure Monitor puede recopilar:
 graph TD
 
     A[Azure Resources / VMs / Servers]
-
-    A --> B[Azure Monitor Agent - AMA]
+        --> B[Azure Monitor Agent - AMA]
 
     B --> C[Data Collection Rules - DCR]
 
-    C --> D1[Log Analytics Workspace]
-    C --> D2[Azure Monitor Metrics]
-    C --> D3[Storage Account]
-    C --> D4[Event Hub]
+    %% DATA TYPES
+    C --> D[Collected Data Types]
 
-    C --> E1[Windows Event Logs]
-    C --> E2[Syslog]
-    C --> E3[Performance Counters]
-    C --> E4[Custom Logs]
+    D --> D1[Windows Event Logs]
+    D --> D2[Syslog]
+    D --> D3[Performance Counters]
+    D --> D4[Custom Logs]
 
-    E1 --> F[XPath Filters]
+    D1 --> X[XPath Filters]
 
-    D1 --> G[KQL Queries]
+    %% DESTINATIONS
+    C --> E[Destinations]
+
+    E --> E1[Log Analytics Workspace]
+    E --> E2[Azure Monitor Metrics]
+    E --> E3[Storage Account]
+    E --> E4[Event Hub]
+
+    E1 --> K[KQL Queries]
 ```
 
 ## 1. Azure Monitor Agent (AMA)
