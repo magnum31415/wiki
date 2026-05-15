@@ -517,7 +517,21 @@ para separar:
 
 
 ---
+
+
 # Azure Custom Roles - Actions vs DataActions
+
+---
+## azure Custom Roles
+
+| Campo | Para qué sirve | Tipo de permiso | Ejemplo | Explicación |
+|---|---|---|---|---|
+| `actions` | Permisos del management plane | Administración recursos Azure | `"Microsoft.Compute/virtualMachines/start/action"` | Permite arrancar VMs |
+| `notActions` | Excluir permisos dentro de actions | Exclusión management plane | `"Microsoft.Compute/virtualMachines/delete"` | Permite administrar VMs excepto borrarlas |
+| `dataActions` | Permisos del data plane | Acceso a datos/uso recurso | `"Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read"` | Leer blobs |
+| `notDataActions` | Excluir permisos dentro de dataActions | Exclusión data plane | `"Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete"` | Leer blobs pero no borrarlos |
+| `assignableScopes` | Define dónde puede asignarse el rol | Scope RBAC | `"/subscriptions/xxxx"` | El rol puede asignarse en esa subscripción |
+| `roleType` | Tipo de rol | Metadato | `"CustomRole"` | Indica que el rol es personalizado |
 
 ---
 
@@ -530,133 +544,233 @@ En Azure RBAC, un rol personalizado puede definir permisos en dos planos diferen
 
 ---
 
-# 1. Actions
+# 1. actions
 
-`actions` define permisos de administración sobre recursos Azure.
+## Qué controla
 
-Sirve para operaciones como:
+Permisos sobre:
 
-- crear recursos
-- leer configuración
-- modificar recursos
-- eliminar recursos
-- desplegar ARM templates
+```text
+Management Plane
+```
+
+↓
+
+Administración de recursos Azure.
 
 ---
 
-# Ejemplos de Actions
+## Ejemplos típicos
+
+| Acción | Ejemplo |
+|---|---|
+| Crear VM | `Microsoft.Compute/virtualMachines/write` |
+| Borrar VM | `Microsoft.Compute/virtualMachines/delete` |
+| Leer recursos | `*/read` |
+
+---
+
+## Ejemplo real
 
 ```json
-"Microsoft.Compute/virtualMachines/*"
+"actions": [
+  "Microsoft.Compute/virtualMachines/*"
+]
 ```
 
-Permite administrar máquinas virtuales como recurso Azure.
+↓
 
-Ejemplos:
-
-- crear VM
-- modificar VM
-- arrancar/parar VM
-- cambiar configuración
+Permite administrar VMs.
 
 ---
 
-# 2. DataActions
+# 2. notActions
 
-`dataActions` define permisos sobre el plano de datos u operaciones internas del recurso.
+## Qué controla
 
-Sirve para acceder o interactuar con el contenido/funcionalidad del recurso.
-
----
-
-# Ejemplo importante VM Login
-
-Para permitir inicio de sesión en una VM mediante Azure RBAC se usan permisos como:
+Permite excluir permisos definidos en:
 
 ```text
-Microsoft.Compute/virtualMachines/login/action
-```
-
-o:
-
-```text
-Microsoft.Compute/virtualMachines/loginAsAdmin/action
-```
-
-Estos permisos van en:
-
-```text
-dataActions
+actions
 ```
 
 ---
 
-# Diferencia clave
+## Ejemplo
 
-| Sección | Qué controla | Ejemplo |
-|---|---|---|
-| actions | Administración del recurso | Crear/modificar una VM |
-| dataActions | Acceso operativo/datos del recurso | Iniciar sesión en una VM |
-| notActions | Excluir permisos de actions | Permitir todo excepto borrar |
-| notDataActions | Excluir permisos de dataActions | Permitir dataActions excepto una acción concreta |
+```json
+"actions": [
+  "Microsoft.Compute/virtualMachines/*"
+],
+"notActions": [
+  "Microsoft.Compute/virtualMachines/delete"
+]
+```
+
+↓
+
+Puede administrar VMs:
+
+✅ crear  
+✅ modificar  
+❌ borrar  
 
 ---
 
-# Por qué la respuesta es DataActions
+# 3. dataActions
 
-La pregunta pide:
+## Qué controla
 
-```text
-users can sign in to virtual machines
-```
-
-Eso no es simplemente administrar el recurso VM.
-
-Es una acción operativa sobre la VM.
-
-Por eso el permiso debe añadirse en:
+Permisos sobre:
 
 ```text
-dataActions
+Data Plane
 ```
+
+↓
+
+Acceso al contenido o uso operativo del recurso.
 
 ---
 
-# Regla rápida examen
+## Ejemplos típicos
 
-```text
-If the permission is about managing Azure resources, use actions.
-```
-
-```text
-If the permission is about accessing data or signing in/using the resource, use dataActions.
-```
-
----
-
-# Ejemplo mental
-
-| Necesidad | Sección |
+| Recurso | DataAction |
 |---|---|
-| Crear una VM | actions |
-| Borrar una VM | actions |
-| Leer propiedades de una VM | actions |
-| Iniciar sesión en una VM | dataActions |
-| Leer secretos de Key Vault | dataActions |
-| Leer blobs | dataActions |
+| Blob Storage | Leer blobs |
+| Key Vault | Leer secretos |
+| VM Login | Iniciar sesión |
 
 ---
 
-# Frases clave AZ-104
+## Ejemplo VM Login
+
+```json
+"dataActions": [
+  "Microsoft.Compute/virtualMachines/login/action"
+]
+```
+
+↓
+
+Permite login RBAC en VM.
+
+---
+
+# 4. notDataActions
+
+## Qué controla
+
+Excluye permisos definidos en:
 
 ```text
-Actions are for management plane permissions.
+dataActions
+```
+
+---
+
+## Ejemplo
+
+```json
+"dataActions": [
+  "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/*"
+],
+"notDataActions": [
+  "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete"
+]
+```
+
+↓
+
+Puede trabajar con blobs:
+
+✅ leer  
+✅ escribir  
+❌ borrar  
+
+---
+
+# 5. assignableScopes
+
+## Qué controla
+
+Define:
+
+```text
+dónde puede asignarse el rol
+```
+
+---
+
+## Ejemplo
+
+```json
+"assignableScopes": [
+  "/subscriptions/xxxx"
+]
+```
+
+↓
+
+El rol puede asignarse:
+
+✅ en esa subscripción  
+✅ debajo de ella (RG/resources)  
+
+---
+
+# Importante examen
+
+El rol NO puede asignarse fuera de esos scopes.
+
+---
+
+# 6. roleType
+
+## Qué controla
+
+Indica el tipo de rol.
+
+---
+
+## Valores típicos
+
+| Valor | Significado |
+|---|---|
+| BuiltInRole | Rol integrado Azure |
+| CustomRole | Rol personalizado |
+
+---
+
+## Ejemplo
+
+```json
+"roleType": "CustomRole"
+```
+
+---
+
+# Diferencia importante examen
+
+| Campo | Management Plane | Data Plane |
+|---|---|---|
+| actions | ✅ | ❌ |
+| notActions | ✅ | ❌ |
+| dataActions | ❌ | ✅ |
+| notDataActions | ❌ | ✅ |
+
+---
+
+# Regla rápida AZ-104
+
+```text
+Actions manage Azure resources.
 ```
 
 ```text
-DataActions are for data plane permissions.
+DataActions access the resource data itself.
 ```
 
 ```text
-VM login permissions must be added to dataActions.
+AssignableScopes defines where the role can be assigned.
 ```
