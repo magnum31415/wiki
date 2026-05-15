@@ -1,5 +1,14 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+# Índice
+
+
+- [🔎 Concepto clave: Verificación de dominio en Microsoft Entra ID](#-concepto-clave-verificación-de-dominio-en-microsoft-entra-id)
+- [Azure DNS Roles importantes para AZ-104](#azure-dns-roles-importantes-para-az-104)
+
+  ---
+  
+
 # 🔎 Concepto clave: Verificación de dominio en Microsoft Entra ID
 
 Cuando agregas un dominio personalizado a **Microsoft Entra ID**, Azure necesita confirmar que:
@@ -54,4 +63,284 @@ Si el registro existe y coincide con el valor esperado, el dominio queda verific
 
 ---
 
-Si quieres, puedo prepararte una segunda tabla solo con los que suelen caer en exámenes de Azure (más simplificada para memorizar rápido).
+# Azure DNS Roles importantes para AZ-104
+
+| Rol RBAC | Servicio | Qué puede hacer | Qué NO puede hacer | Uso típico examen |
+|---|---|---|---|---|
+| DNS Zone Contributor | Public DNS Zones | Administrar zonas DNS públicas y registros DNS | No administrar RBAC | Gestionar dominios públicos |
+| Private DNS Zone Contributor | Private DNS Zones | Administrar zonas DNS privadas y Virtual Network Links | No unir VNets | Linking Private DNS ↔ VNet |
+| Network Contributor | Recursos de red | Administrar VNets, NICs, NSGs y join VNets | No administrar DNS Zones | Requerido para DNS VNet Links |
+| Contributor | General Azure | Administrar casi todos los recursos | No administrar RBAC | Excesivo para least privilege |
+| Reader | General Azure | Ver configuración | No modificar | Auditoría / visualización |
+| Owner | General Azure | Control total + RBAC | — | Administración completa |
+
+---
+
+# 1. DNS Zone Contributor
+
+## Qué administra
+
+Zonas DNS públicas:
+
+```text
+example.com
+```
+
+---
+
+## Qué puede hacer
+
+✅ crear registros A  
+✅ crear registros CNAME  
+✅ modificar registros MX/TXT  
+✅ administrar zonas DNS públicas  
+
+---
+
+## Qué NO puede hacer
+
+❌ administrar RBAC  
+❌ permisos IAM  
+
+---
+
+# Importante examen
+
+```text
+DNS Zone Contributor
+```
+
+↓
+
+solo para:
+
+```text
+Public DNS Zones
+```
+
+---
+
+# 2. Private DNS Zone Contributor
+
+## Qué administra
+
+Private DNS Zones:
+
+```text
+privatelink.database.windows.net
+```
+
+---
+
+## Qué puede hacer
+
+✅ administrar zonas privadas  
+✅ crear Virtual Network Links  
+✅ administrar registros privados  
+
+---
+
+## Qué NO puede hacer
+
+❌ unir VNets  
+❌ permisos sobre Virtual Networks  
+
+---
+
+# Importante examen
+
+Para:
+
+```text
+Private DNS Zone Link
+```
+
+normalmente necesitas además:
+
+```text
+Network Contributor
+```
+
+---
+
+# 3. Network Contributor
+
+## Qué administra
+
+Recursos de red Azure:
+
+- VNets
+- NICs
+- NSGs
+- Load Balancers
+- Route Tables
+
+---
+
+# Permiso clave examen
+
+```text
+Microsoft.Network/virtualNetworks/join/action
+```
+
+---
+
+# Importante examen
+
+Este permiso es necesario para:
+
+```text
+linking VNets
+```
+
+incluyendo:
+
+- Private DNS Zone Links
+- Private Endpoints
+
+---
+
+# 4. Contributor
+
+## Qué puede hacer
+
+✅ administrar casi todos los recursos Azure  
+
+---
+
+# Problema examen
+
+```text
+Contributor
+```
+
+frecuentemente:
+
+❌ NO es la mejor respuesta  
+
+porque viola:
+
+```text
+Least Privilege Principle
+```
+
+---
+
+# 5. Reader
+
+## Qué puede hacer
+
+✅ visualizar configuración  
+✅ leer recursos  
+
+---
+
+## Qué NO puede hacer
+
+❌ modificar DNS  
+❌ crear registros  
+
+---
+
+# 6. Owner
+
+## Qué puede hacer
+
+✅ control total  
+✅ administrar RBAC  
+✅ asignar roles  
+
+---
+
+# Importante examen
+
+Solo:
+
+```text
+Owner
+```
+
+o:
+
+```text
+User Access Administrator
+```
+
+pueden asignar roles RBAC.
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Pensar que:
+
+```text
+Private DNS Zone Contributor
+```
+
+puede unir VNets.
+
+❌ Incorrecto.
+
+---
+
+## Trampa 2
+
+Pensar que:
+
+```text
+Network Contributor
+```
+
+puede administrar DNS Zones.
+
+❌ Incorrecto.
+
+---
+
+## Trampa 3
+
+Elegir:
+
+```text
+Contributor
+```
+
+cuando el examen pide:
+
+```text
+least privilege
+```
+
+---
+
+# Diferencia importante examen
+
+| Rol | Public DNS | Private DNS | VNet Join |
+|---|---|---|---|
+| DNS Zone Contributor | ✅ | ❌ | ❌ |
+| Private DNS Zone Contributor | ❌ | ✅ | ❌ |
+| Network Contributor | ❌ | ❌ | ✅ |
+| Contributor | ✅ | ✅ | ✅ |
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+DNS Zone Contributor manages public DNS zones.
+```
+
+```text
+Private DNS Zone Contributor manages private DNS zones.
+```
+
+```text
+Network Contributor provides virtualNetworks/join/action.
+```
+
+```text
+Private DNS Zone linking requires permissions on both the DNS zone and the VNet.
+```
