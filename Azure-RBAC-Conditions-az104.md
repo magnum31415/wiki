@@ -137,6 +137,67 @@ En Azure Storage, las condiciones RBAC permiten restringir el acceso a:
 - Tags
 - Atributos del recurso
 
+
+# Azure Resources compatibles con RBAC Conditions (ABAC) (AZ-104)
+
+| Servicio/Recurso | Soporta RBAC | Soporta RBAC Conditions (ABAC) | Ejemplos típicos de condiciones |
+|---|---|---|---|
+| Blob Storage Containers | ✅ | ✅ | Container name, blob path, tags, operaciones |
+| Blob Versions | ✅ | ✅ | Acceso granular blobs/versiones |
+| Azure Data Lake Gen2 (HNS) | ✅ | ✅ | Paths/directorios ACL-style |
+| Queue Storage | ✅ | ✅ | Queue name, operaciones queue |
+| Algunos escenarios Key Vault Data Plane | ✅ | Parcial | Secret/key access scenarios |
+
+# Importante examen
+
+Muchos recursos Azure soportan RBAC:
+
+- VMs
+- VNets
+- NSGs
+- Disks
+- App Services
+
+PERO:
+
+```text
+NO soportan RBAC Conditions (ABAC)
+```
+
+### Ejemplo importante
+❌ Esto NO está soportado:
+````
+User1 puede arrancar VMs
+SOLO si:
+VM.Tag == Production
+````
+porque Azure Virtual Machines:
+
+````
+NO soportan RBAC Conditions
+````
+
+
+
+
+
+---
+
+# Importante examen
+
+Muchos recursos Azure soportan RBAC:
+
+- VMs
+- VNets
+- NSGs
+- Disks
+- App Services
+
+PERO:
+
+```text
+NO soportan RBAC Conditions (ABAC)
+
 ---
 
 # Conceptos fundamentales
