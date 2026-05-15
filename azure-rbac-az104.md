@@ -526,12 +526,12 @@ para separar:
 
 | Campo | Para qué sirve | Tipo de permiso | Ejemplo | Explicación |
 |---|---|---|---|---|
-| `actions` | Permisos del management plane | Administración recursos Azure | `"Microsoft.Compute/virtualMachines/start/action"` | Permite arrancar VMs |
-| `notActions` | Excluir permisos dentro de actions | Exclusión management plane | `"Microsoft.Compute/virtualMachines/delete"` | Permite administrar VMs excepto borrarlas |
-| `dataActions` | Permisos del data plane | Acceso a datos/uso recurso | `"Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read"` | Leer blobs |
-| `notDataActions` | Excluir permisos dentro de dataActions | Exclusión data plane | `"Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete"` | Leer blobs pero no borrarlos |
-| `assignableScopes` | Define dónde puede asignarse el rol | Scope RBAC | `"/subscriptions/xxxx"` | El rol puede asignarse en esa subscripción |
-| `roleType` | Tipo de rol | Metadato | `"CustomRole"` | Indica que el rol es personalizado |
+| `actions` | Permisos del management plane | Administración recursos Azure | "Microsoft.Compute/virtualMachines/start/action" | Permite arrancar VMs |
+| `notActions` | Excluir permisos dentro de actions | Exclusión management plane | "Microsoft.Compute/virtualMachines/delete" | Permite administrar VMs excepto borrarlas |
+| `dataActions` | Permisos del data plane | Acceso a datos/uso recurso | "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read" | Leer blobs |
+| `notDataActions` | Excluir permisos dentro de dataActions | Exclusión data plane | "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete" | Leer blobs pero no borrarlos |
+| `assignableScopes` | Define dónde puede asignarse el rol | Scope RBAC | "/subscriptions/xxxx" | El rol puede asignarse en esa subscripción |
+| `roleType` | Tipo de rol | Metadato | "CustomRole" | Indica que el rol es personalizado |
 
 ---
 
