@@ -2,6 +2,7 @@
 
 # Azure Monitor Data Collection (AZ-104)
 
+# Índice
 
 - [Azure Monitor DCR Queries - XPath vs KQL vs WQL vs T-SQL](#azure-monitor-dcr-queries---xpath-vs-kql-vs-wql-vs-t-sql-az-104)
 - [Azure Monitor Data Collection](#azure-monitor-data-collection)
