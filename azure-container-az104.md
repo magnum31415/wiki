@@ -1,6 +1,6 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
-# Azure Container Registry (ACR) y Azure Container Instances (ACI) - Resumen AZ-104
+# Azure Container 
 
 
 # Índice
@@ -12,7 +12,8 @@
 - [ACR Tasks](#acr-tasks)
 - [Qué es Admin User](#qué-es-admin-user)
 - [Container Group - CPU Requests vs CPU Limits](#container-group---cpu-requests-vs-cpu-limits)
-
+- [Azure Container Services - Windows vs Linux Containers](#azure-container-services---windows-vs-linux-containers)
+  
 ---
 
 # Azure Container Registry (ACR)
@@ -1023,3 +1024,141 @@ CPU limit defines maximum CPU usage.
 If no limit is specified, the limit equals the request.
 ```
 
+---
+
+# Azure Container Services - Windows vs Linux Containers
+
+---
+
+# Concepto clave
+
+En Azure:
+
+```text
+NO todos los servicios de contenedores soportan Windows containers
+```
+
+Algunos servicios soportan:
+
+- Linux containers únicamente
+- Linux + Windows containers
+
+---
+
+# Windows Containers vs Linux Containers
+
+| Tipo de contenedor | Base |
+|---|---|
+| Linux Container | Linux OS |
+| Windows Container | Windows Server OS |
+
+---
+
+# Importante examen
+
+Cuando una imagen está basada en:
+
+```text
+Windows Server
+```
+
+↓
+
+solo puede desplegarse en servicios compatibles con:
+
+```text
+Windows containers
+```
+
+---
+
+# Azure App Service
+
+## Qué es
+
+Servicio PaaS para aplicaciones web y APIs.
+
+---
+
+# Compatibilidad
+
+| Tipo | Compatible |
+|---|---|
+| Linux Containers | ✅ |
+| Windows Containers | ✅ |
+
+---
+
+# Azure Container Instances (ACI)
+
+## Qué es
+
+Servicio serverless para ejecutar contenedores sin administrar infraestructura.
+
+---
+
+# Compatibilidad
+
+| Tipo | Compatible |
+|---|---|
+| Linux Containers | ✅ |
+| Windows Containers | ✅ |
+
+---
+
+# Azure Container Apps (ACA)
+
+## Qué es
+
+Plataforma moderna serverless basada en Kubernetes.
+
+---
+
+# Compatibilidad
+
+| Tipo | Compatible |
+|---|---|
+| Linux Containers | ✅ |
+| Windows Containers | ❌ |
+
+---
+
+# Tabla resumen examen
+
+| Servicio Azure | Linux Containers | Windows Containers | Comentario |
+|---|---|---|---|
+| Azure App Service | ✅ | ✅ | Web Apps y APIs |
+| Azure Container Instances (ACI) | ✅ | ✅ | Contenedores serverless |
+| Azure Container Apps (ACA) | ✅ | ❌ | Solo Linux |
+| AKS (Azure Kubernetes Service) | ✅ | ✅ | Kubernetes administrado |
+
+---
+
+# Diferencia importante examen
+
+| Servicio | Solo Linux | Linux + Windows |
+|---|---|---|
+| Azure Container Apps | ✅ | ❌ |
+| App Service | ❌ | ✅ |
+| Azure Container Instances | ❌ | ✅ |
+| AKS | ❌ | ✅ |
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Azure Container Apps supports Linux containers only.
+```
+
+```text
+Azure App Service supports Linux and Windows containers.
+```
+
+```text
+Azure Container Instances supports Linux and Windows containers.
+```
+
+```text
+Windows-based container images require services that support Windows containers.
+```
