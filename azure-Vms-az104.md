@@ -1,6 +1,11 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 
+# Índice
+
+- [Azure VM Redeploy y Scheduled Maintenance (AZ-104)](#azure-vm-redeploy-y-scheduled-maintenance-az-104)
+- [Azure Desired State Configuration (DSC)](#azure-desired-state-configuration-dsc---az-104)
+ 
 # Azure VM Redeploy y Scheduled Maintenance (AZ-104)
 
 ## Scheduled Maintenance
@@ -429,4 +434,410 @@ One-time update applies maintenance but does not relocate the VM.
 
 ```text
 Temporary disks may be lost during redeploy.
+```
+
+---
+
+# Azure Desired State Configuration (DSC) - AZ-104
+
+---
+
+# Qué es Desired State Configuration (DSC)
+
+Desired State Configuration (DSC) es una plataforma de administración de configuración basada en PowerShell que permite definir:
+
+```text
+cómo debe estar configurado un servidor o VM
+```
+
+y garantizar que permanezca en ese estado.
+
+---
+
+# Objetivo principal
+
+DSC sirve para:
+
+- automatizar configuraciones
+- mantener consistencia
+- evitar configuration drift
+- aplicar configuraciones declarativas
+
+---
+
+# Concepto clave
+
+Con DSC defines:
+
+```text
+estado deseado
+```
+
+NO comandos paso a paso.
+
+---
+
+# Ejemplo simple
+
+```text
+"IIS debe estar instalado"
+```
+
+↓
+
+DSC verifica continuamente:
+
+- si IIS está instalado → OK
+- si alguien lo elimina → lo reinstala
+
+---
+
+# Qué significa "Desired State"
+
+```text
+Desired State
+```
+
+=
+
+```text
+estado esperado/configuración objetivo
+```
+
+---
+
+# Qué es Configuration Drift
+
+```text
+Configuration Drift
+```
+
+ocurre cuando un servidor cambia respecto a la configuración esperada.
+
+Ejemplo:
+
+- alguien desinstala IIS
+- cambia un registry key
+- modifica servicios
+
+↓
+
+DSC puede detectar y corregir estos cambios.
+
+---
+
+# Arquitectura DSC
+
+```text
+Configuration
+      ↓
+Local Configuration Manager (LCM)
+      ↓
+Target Node (VM/Server)
+```
+
+---
+
+# Componentes principales
+
+| Componente | Función |
+|---|---|
+| Configuration | Define estado deseado |
+| Resource | Elemento configurable |
+| LCM (Local Configuration Manager) | Motor DSC en el nodo |
+| Node | VM o servidor objetivo |
+
+---
+
+# Qué es una Configuration
+
+Una:
+
+```text
+Configuration
+```
+
+es un script PowerShell declarativo.
+
+---
+
+# Ejemplo DSC
+
+```powershell
+Configuration WebServer {
+    Node "Server1" {
+        WindowsFeature IIS {
+            Name = "Web-Server"
+            Ensure = "Present"
+        }
+    }
+}
+```
+
+---
+
+# Qué hace este ejemplo
+
+Garantiza que:
+
+```text
+IIS esté instalado
+```
+
+en:
+
+```text
+Server1
+```
+
+---
+
+# Qué es un Resource
+
+Los:
+
+```text
+DSC Resources
+```
+
+son módulos reutilizables que gestionan configuraciones.
+
+---
+
+# Ejemplos de Resources
+
+| Resource | Función |
+|---|---|
+| WindowsFeature | Instalar roles/features |
+| File | Gestionar archivos |
+| Service | Gestionar servicios |
+| Registry | Gestionar registry |
+| User | Gestionar usuarios |
+
+---
+
+# Local Configuration Manager (LCM)
+
+## Qué es
+
+Motor DSC que ejecuta configuraciones en cada nodo.
+
+---
+
+# Funciones del LCM
+
+- aplicar configuraciones
+- detectar drift
+- corregir drift
+- descargar configuraciones
+
+---
+
+# Modos importantes
+
+| Modo | Función |
+|---|---|
+| ApplyOnly | Aplica una vez |
+| ApplyAndMonitor | Detecta drift |
+| ApplyAndAutoCorrect | Corrige drift automáticamente |
+
+---
+
+# Pull vs Push Mode
+
+## Push Mode
+
+Administrador envía configuración manualmente.
+
+```text
+Admin → VM
+```
+
+---
+
+## Pull Mode
+
+La VM descarga configuraciones desde un servidor DSC.
+
+```text
+VM → Pull Server
+```
+
+---
+
+# Azure Automation State Configuration
+
+Azure integró DSC en:
+
+```text
+Azure Automation State Configuration
+```
+
+---
+
+# Qué permite
+
+- administrar DSC desde Azure
+- aplicar configuraciones centralizadas
+- compliance reporting
+- inventory
+
+---
+
+# Casos típicos de uso
+
+| Escenario | Uso |
+|---|---|
+| Instalar IIS automáticamente | DSC |
+| Mantener servicios activos | DSC |
+| Garantizar configuración seguridad | DSC |
+| Corregir configuration drift | DSC |
+
+---
+
+# DSC vs Scripts tradicionales
+
+| Scripts | DSC |
+|---|---|
+| Imperativo | Declarativo |
+| Ejecuta pasos | Define estado final |
+| No corrige drift | Corrige drift |
+| Menos consistente | Más consistente |
+
+---
+
+# Importante examen
+
+DSC es:
+
+```text
+Declarative Configuration Management
+```
+
+---
+
+# Diferencia importante examen
+
+| Tecnología | Objetivo |
+|---|---|
+| DSC | Estado configuración |
+| ARM/Bicep/Terraform | Provisioning infraestructura |
+| Azure Policy | Compliance/Governance |
+
+---
+
+# Relación con Azure Policy
+
+Azure Policy puede:
+
+```text
+DeployIfNotExists
+```
+
+↓
+
+desplegar extensiones DSC automáticamente.
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Pensar que DSC despliega infraestructura Azure.
+
+❌ Incorrecto.
+
+↓
+
+DSC configura sistemas operativos.
+
+---
+
+## Trampa 2
+
+Confundir:
+
+```text
+DSC
+```
+
+con:
+
+```text
+Azure Policy
+```
+
+---
+
+## Trampa 3
+
+Pensar que DSC es imperativo.
+
+❌ Incorrecto.
+
+↓
+
+DSC es declarativo.
+
+---
+
+# Tabla resumen examen
+
+| Feature | DSC |
+|---|---|
+| Declarativo | ✅ |
+| Configuration drift correction | ✅ |
+| PowerShell-based | ✅ |
+| Gestión configuración SO | ✅ |
+| Provisioning Azure Resources | ❌ |
+
+---
+
+# Arquitectura conceptual
+
+```text
+Desired Configuration
+        ↓
+DSC Configuration
+        ↓
+Local Configuration Manager (LCM)
+        ↓
+Target VM / Server
+```
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+DSC ensures systems remain in a desired configuration state.
+```
+
+```text
+DSC is declarative.
+```
+
+```text
+LCM applies and monitors DSC configurations.
+```
+
+```text
+DSC helps prevent configuration drift.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Desired State Configuration is a declarative configuration platform.
+```
+
+```text
+DSC can automatically correct configuration drift.
+```
+
+```text
+Azure Automation State Configuration integrates DSC into Azure.
 ```
