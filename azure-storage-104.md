@@ -24,6 +24,7 @@
 - [Frases clave AZ-104](#frases-clave-az-104)
 - [Azure Storage Policies](#azure-storage-policies)
 - [Azure Storage - Hierarchical Namespace vs Azure Files](#azure-storage---hierarchical-namespace-vs-azure-files)
+- [Azure Storage Routing Preference (AZ-104)](#azure-storage-routing-preference-az-104)
 ---
 
 ## Modelos de autenticación en Azure Storage
@@ -1119,4 +1120,319 @@ Azure Files supports directories without requiring Hierarchical Namespace.
 
 ```text
 Blob Storage without HNS uses a flat namespace.
+```
+---
+
+# Azure Storage Routing Preference (AZ-104)
+
+---
+
+# Qué es Azure Storage Routing Preference
+
+Azure Storage Routing Preference permite controlar:
+
+```text
+cómo el tráfico de usuarios llega a una Storage Account
+```
+
+---
+
+# Objetivo principal
+
+Permite elegir si el tráfico:
+
+- usa la red global privada de Microsoft
+- o viaja más por Internet pública
+
+---
+
+# Opciones principales
+
+| Routing Preference | Descripción |
+|---|---|
+| Microsoft network routing | Usa la red backbone global de Microsoft |
+| Internet routing | Usa más Internet pública |
+
+---
+
+# Concepto clave examen
+
+Si quieres:
+
+```text
+minimizar latencia
+optimizar rendimiento
+usar el POP más cercano
+```
+
+↓
+
+debes usar:
+
+```text
+Microsoft network routing
+```
+
+---
+
+# Qué es un POP
+
+POP significa:
+
+```text
+Point Of Presence
+```
+
+---
+
+# Qué hace un POP
+
+Es un punto de entrada a la red global de Microsoft.
+
+---
+
+# Flujo con Microsoft Network Routing
+
+```text
+Usuario
+   ↓
+POP Microsoft más cercano
+   ↓
+Backbone global Microsoft
+   ↓
+Storage Account
+```
+
+---
+
+# Ventajas de Microsoft Network Routing
+
+| Ventaja | Explicación |
+|---|---|
+| Menor latencia | Menos recorrido por Internet pública |
+| Mejor rendimiento | Backbone Microsoft optimizado |
+| Mayor estabilidad | Red privada Microsoft |
+| Entrada POP cercano | Mejor experiencia usuario |
+
+---
+
+# Qué significa "Microsoft edge network"
+
+También llamado:
+
+```text
+Microsoft edge network
+```
+
+↓
+
+El tráfico entra rápidamente en la red privada de Microsoft usando el POP más cercano.
+
+---
+
+# Backbone de Microsoft
+
+Microsoft tiene una red global privada enorme entre datacenters Azure.
+
+Cuando usas:
+
+```text
+Microsoft network routing
+```
+
+↓
+
+el tráfico utiliza esa red interna lo antes posible.
+
+---
+
+# Internet Routing
+
+## Qué hace
+
+El tráfico usa más recorrido sobre:
+
+```text
+Internet pública
+```
+
+antes de entrar en la red Microsoft.
+
+---
+
+# Ventajas
+
+Puede reducir costes de egress en algunos escenarios.
+
+---
+
+# Desventajas
+
+| Problema | Explicación |
+|---|---|
+| Mayor latencia | Más recorrido Internet |
+| Menor predictibilidad | Dependencia ISP |
+| Menor optimización | Menos backbone Microsoft |
+
+---
+
+# Comparativa examen
+
+| Característica | Microsoft Network Routing | Internet Routing |
+|---|---|---|
+| Usa backbone Microsoft | ✅ | Parcial |
+| Usa POP más cercano | ✅ | ❌ |
+| Menor latencia | ✅ | ❌ |
+| Mejor rendimiento | ✅ | ❌ |
+| Más Internet pública | ❌ | ✅ |
+| Optimizado para usuarios globales | ✅ | ❌ |
+
+---
+
+# Caso típico examen
+
+## Requisito
+
+```text
+Ensure inbound user traffic uses the Microsoft POP closest to the user.
+```
+
+↓
+
+Respuesta correcta:
+
+```text
+Microsoft network routing
+```
+
+---
+
+# Configuración conceptual
+
+```text
+Storage Account
+    ↓
+Routing Preference
+    ↓
+Microsoft Network Routing
+```
+
+---
+
+# Importante examen
+
+Routing Preference afecta:
+
+```text
+cómo entra el tráfico a Azure
+```
+
+NO:
+- cifrado
+- replicación
+- firewall
+- private endpoints
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Pensar que:
+
+```text
+Internet routing = más rápido
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 2
+
+Confundir:
+
+```text
+Routing Preference
+```
+
+con:
+
+```text
+Traffic Manager / Front Door
+```
+
+---
+
+## Trampa 3
+
+Pensar que esto afecta tráfico interno Azure.
+
+❌ Principalmente afecta tráfico usuario → Storage.
+
+---
+
+# Arquitectura conceptual
+
+## Microsoft Network Routing
+
+```text
+User
+ ↓
+Nearest Microsoft POP
+ ↓
+Microsoft Backbone
+ ↓
+Azure Storage
+```
+
+---
+
+## Internet Routing
+
+```text
+User
+ ↓
+Internet pública
+ ↓
+Azure region
+ ↓
+Azure Storage
+```
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Microsoft network routing uses the Microsoft global backbone network.
+```
+
+```text
+Microsoft routing minimizes latency and improves performance.
+```
+
+```text
+Internet routing uses more public Internet paths.
+```
+
+```text
+POP means Point Of Presence.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Microsoft network routing routes traffic through the Microsoft global network.
+```
+
+```text
+The closest Microsoft POP is used to optimize inbound traffic.
+```
+
+```text
+Microsoft network routing improves performance and reduces latency.
 ```
