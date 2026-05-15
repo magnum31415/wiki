@@ -22,8 +22,7 @@
 - [Trampas típicas examen](#trampas-típicas-examen)
 - [Tabla resumen examen](#tabla-resumen-examen)
 - [Frases clave AZ-104](#frases-clave-az-104)
-- [Stored Access Policies (Azure Storage)](#stored-access-policies-azure-storage)
-- [Immutable Blob Storage Policies](#immutable-blob-storage-policies)
+- [Azure Storage Policies](#azure-storage-policies)
 ---
 
 ## Modelos de autenticación en Azure Storage
@@ -488,9 +487,25 @@ Cool tier reduces costs for infrequently accessed data.
 ```
 ---
 
-# Stored Access Policies (Azure Storage)
+# Azure Storage Policies 
 
-## Qué son las Stored Access Policies
+---
+
+# Tabla resumen de Policies
+
+| Tipo de Policy | Objetivo | Recursos compatibles | Máximo |
+|---|---|---|---|
+| Stored Access Policy | Controlar permisos SAS | Blob Containers, File Shares, Queues, Tables | Máx. 5 policies por recurso |
+| Immutable Blob Storage Policy | Protección WORM contra modificación y borrado | Blob Containers, Blob Versions | 1 policy de inmutabilidad por scope |
+| Time-Based Retention Policy | Bloquear blobs durante un tiempo definido | Blob Containers, Blob Versions | 1 policy activa por scope |
+| Legal Hold Policy | Bloquear blobs indefinidamente | Blob Containers, Blob Versions | 1 legal hold policy por scope (con múltiples tags posibles) |
+| Lifecycle Management Policy | Automatizar movimiento/borrado de datos | Storage Account / Blob Storage | 1 lifecycle management policy por Storage Account |
+
+---
+
+# 1. Stored Access Policy
+
+## Qué es
 
 Una:
 
@@ -498,271 +513,85 @@ Una:
 Stored Access Policy
 ```
 
-es una política almacenada dentro de Azure Storage que define:
+permite definir permisos SAS reutilizables sobre recursos Azure Storage.
+
+En vez de poner permisos directamente dentro del SAS token,
+el SAS referencia una policy almacenada.
+
+---
+
+## Recursos compatibles
+
+| Recurso | Compatible |
+|---|---|
+| Blob Containers | ✅ |
+| File Shares | ✅ |
+| Queues | ✅ |
+| Tables | ✅ |
+
+---
+
+## Máximo
+
+```text
+Maximum 5 stored access policies per resource
+```
+
+Aplica a:
+- container
+- queue
+- table
+- file share
+
+---
+
+## Qué controla
+
+Puede controlar:
 
 - permisos
 - expiración
-- restricciones acceso
-
-para SAS Tokens.
-
----
-
-## Para qué sirven
-
-Permiten:
-
-✅ Centralizar permisos SAS  
-✅ Reutilizar configuraciones acceso  
-✅ Revocar SAS indirectamente  
-✅ Modificar expiración/permisos sin regenerar SAS  
-
----
-
-## Relación con SAS Tokens
-
-Un SAS Token puede:
-
-| Tipo | Descripción |
-|---|---|
-| Ad-hoc SAS | Lleva permisos embebidos directamente |
-| SAS con Stored Access Policy | Referencia una policy almacenada |
-
----
-
-## Flujo conceptual
-
-```text
-Stored Access Policy
-        ↓
-Define permisos/expiración
-        ↓
-SAS Token referencia policy
-        ↓
-Cliente usa SAS
-```
+- start time
 
 ---
 
 ## Ventaja importante
 
-Si el SAS usa una Stored Access Policy:
+Permite:
 
-```text
-puedes revocar el acceso modificando o eliminando la policy
-```
-
-sin regenerar todos los SAS Tokens.
+✅ revocar SAS fácilmente  
+✅ modificar expiración sin regenerar SAS  
+✅ centralizar permisos  
 
 ---
 
-## Recursos soportados y límites
+## Importante examen
 
-| Recurso | Soporta Stored Access Policies | Máximo policies | Ejemplo |
-|---|---|---|---|
-| Blob Container | ✅ | 5 | `images-container` |
-| File Share | ✅ | 5 | `share-finance` |
-| Queue | ✅ | 5 | `orders-queue` |
-| Table | ✅ | 5 | `employees-table` |
+Stored Access Policies:
 
----
+❌ NO protegen contra borrado  
+❌ NO son WORM  
+❌ NO son Immutable Policies  
 
-## Ejemplo Blob Container
-
-### Policy
-
-| Campo | Valor |
-|---|---|
-| Nombre | `policy-read` |
-| Permisos | Read |
-| Expira | 7 días |
+Solo controlan acceso SAS.
 
 ---
 
-### SAS asociado
+# 2. Immutable Blob Storage Policy
 
-```text
-https://mystorage.blob.core.windows.net/images/photo.jpg?...&si=policy-read
-```
+## Qué es
 
----
-
-## Ejemplo File Share
-
-### Caso típico
-
-Compartir temporalmente:
-
-```text
-\\storage.file.core.windows.net\share-finance
-```
-
-con permisos controlados.
-
----
-
-## Ejemplo Queue
-
-### Caso típico
-
-Aplicación externa puede:
-
-✅ leer mensajes  
-❌ borrar mensajes  
-
-durante un tiempo limitado.
-
----
-
-## Ejemplo Table
-
-### Caso típico
-
-Aplicación partner puede:
-
-✅ consultar entidades  
-❌ modificar datos  
-
-usando SAS controlado.
-
----
-
-## Límite importante examen
-
-Azure Storage soporta:
-
-```text
-máximo 5 Stored Access Policies por recurso
-```
-
----
-
-## Importante
-
-El límite es:
-
-```text
-por container/share/queue/table individual
-```
-
-NO por Storage Account.
-
----
-
-## Diferencia importante
-
-| Concepto | Qué es |
-|---|---|
-| SAS Token | Token acceso temporal |
-| Stored Access Policy | Política reutilizable para SAS |
-
----
-
-## Trampa típica AZ-104
-
-Muchos candidatos creen:
-
-```text
-puedes crear policies ilimitadas
-```
-
-❌ Incorrecto.
-
----
-
-## Otra trampa típica
-
-Pensar que:
-
-```text
-Stored Access Policies solo existen para blobs
-```
-
-❌ Incorrecto.
-
-También existen para:
-
-- File Shares
-- Queues
-- Tables
-
----
-
-## Regla rápida AZ-104
-
-```text
-Azure Storage supports up to five stored access policies per resource.
-```
-
----
-
-## Frases clave AZ-104
-
-```text
-Stored access policies are used with SAS tokens.
-```
-
-```text
-Stored access policies centralize SAS permissions and expiration settings.
-```
-
-```text
-Blob containers, file shares, queues, and tables support up to five stored access policies each.
-```
----
-
-# Immutable Blob Storage Policies 
-
-
-- [Immutable Blob Storage Policies (AZ-104)](#immutable-blob-storage-policies-az-104)
-- [Qué es Immutable Blob Storage](#qué-es-immutable-blob-storage)
-- [Qué significa immutable](#qué-significa-immutable)
-- [Para qué sirve](#para-qué-sirve)
-- [Tipos principales de políticas](#tipos-principales-de-políticas)
-- [Time-Based Retention Policy](#time-based-retention-policy)
-- [Legal Hold Policy](#legal-hold-policy)
-- [Qué protege realmente](#qué-protege-realmente)
-- [WORM Storage](#worm-storage)
-- [Dónde se configura](#dónde-se-configura)
-- [Importante sobre modificación y borrado](#importante-sobre-modificación-y-borrado)
-- [Estados de una policy](#estados-de-una-policy)
-- [Diferencia importante examen](#diferencia-importante-examen)
-- [Casos típicos de uso](#casos-típicos-de-uso)
-- [Trampas típicas AZ-104](#trampas-típicas-az-104)
-- [Tabla resumen examen](#tabla-resumen-examen)
-- [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
-- [Frases clave AZ-104](#frases-clave-az-104)
-
----
-
-# Qué es Immutable Blob Storage
-
-Azure Immutable Blob Storage permite almacenar datos en modo:
+Protección:
 
 ```text
 WORM
 ```
 
----
-
-# Qué significa immutable
-
-```text
-Immutable
-```
-
-significa:
-
-❌ no puede modificarse  
-❌ no puede borrarse  
-
-durante un período definido.
+sobre blobs.
 
 ---
 
-# WORM Storage
-
-WORM significa:
+## WORM significa
 
 ```text
 Write Once Read Many
@@ -772,44 +601,59 @@ Write Once Read Many
 
 Los datos:
 
-✅ pueden escribirse una vez  
-✅ pueden leerse muchas veces  
+✅ pueden escribirse  
+✅ pueden leerse  
 ❌ no pueden modificarse  
+❌ no pueden borrarse  
 
 ---
 
-# Para qué sirve
+## Recursos compatibles
 
-Se usa para:
-
-- cumplimiento legal
-- auditoría
-- regulación financiera
-- protección ransomware
-- evidencias digitales
-- logs inmutables
-
----
-
-# Tipos principales de políticas
-
-| Política | Función |
+| Recurso | Compatible |
 |---|---|
-| Time-Based Retention Policy | Bloqueo durante tiempo definido |
-| Legal Hold | Bloqueo indefinido legal |
+| Blob Containers | ✅ |
+| Blob Versions | ✅ |
+| Tables | ❌ |
+| Queues | ❌ |
+| File Shares | ❌ |
 
 ---
 
-# Time-Based Retention Policy
+## Máximo
 
-## Qué hace
+```text
+1 immutable policy per scope
+```
+
+---
+
+## Qué protege
 
 Impide:
 
-- borrar blobs
-- modificar blobs
+❌ modificar blobs  
+❌ borrar blobs  
 
-durante un tiempo específico.
+incluso para administradores.
+
+---
+
+## Importante examen
+
+Immutable Policies:
+- solo existen en Blob Storage
+- NO existen para Tables o Queues
+
+---
+
+# 3. Time-Based Retention Policy
+
+## Qué es
+
+Tipo de Immutable Policy.
+
+Bloquea blobs durante un tiempo definido.
 
 ---
 
@@ -828,70 +672,33 @@ Durante 7 años:
 
 ---
 
-# Legal Hold Policy
+## Recursos compatibles
 
-## Qué hace
+| Recurso | Compatible |
+|---|---|
+| Blob Containers | ✅ |
+| Blob Versions | ✅ |
 
-Bloquea blobs:
+---
+
+## Máximo
 
 ```text
-hasta eliminar explícitamente el legal hold
+1 active retention policy per scope
 ```
 
 ---
 
-## Uso típico
-
-- litigios
-- investigaciones
-- auditorías legales
-
----
-
-# Qué protege realmente
-
-Immutable Blob Storage protege:
-
-| Acción | Permitido |
-|---|---|
-| Leer blob | ✅ |
-| Crear blob | ✅ |
-| Modificar blob | ❌ |
-| Eliminar blob | ❌ |
-
----
-
-# Dónde se configura
-
-Normalmente sobre:
-
-| Nivel | Soportado |
-|---|---|
-| Blob Container | ✅ |
-| Version level | ✅ |
-
----
-
-# Importante sobre modificación y borrado
-
-Durante la retención:
-
-```text
-ni siquiera administradores pueden borrar/modificar blobs protegidos
-```
-
----
-
-# Estados de una policy
+## Estados importantes
 
 | Estado | Significado |
 |---|---|
-| Unlocked | Configurable |
+| Unlocked | Editable |
 | Locked | Inmutable definitiva |
 
 ---
 
-# Importante examen
+## Importante examen
 
 Una vez:
 
@@ -901,108 +708,153 @@ Locked
 
 ↓
 
-la política:
-
-❌ no puede reducirse  
+❌ no puede reducirse fácilmente  
 ❌ no puede eliminarse fácilmente  
 
 ---
 
-# Diferencia importante examen
+# 4. Legal Hold Policy
 
-| Feature | Objetivo |
+## Qué es
+
+Tipo de Immutable Policy.
+
+Bloquea blobs indefinidamente.
+
+---
+
+## Cómo funciona
+
+Los blobs quedan protegidos:
+
+```text
+hasta eliminar manualmente el legal hold
+```
+
+---
+
+## Uso típico
+
+- litigios
+- auditorías
+- investigaciones
+
+---
+
+## Recursos compatibles
+
+| Recurso | Compatible |
 |---|---|
-| Soft Delete | Recuperación accidental |
-| Versioning | Historial versiones |
-| Immutable Policy | Bloqueo WORM |
+| Blob Containers | ✅ |
+| Blob Versions | ✅ |
 
 ---
 
-# Casos típicos de uso
+## Máximo
 
-| Escenario | Uso |
+```text
+1 legal hold policy per scope
+```
+
+pero:
+
+✅ puede contener múltiples tags  
+
+---
+
+## Diferencia clave examen
+
+| Feature | Duración |
 |---|---|
-| Logs regulatorios | Immutable |
-| Evidencias auditoría | Immutable |
-| Protección ransomware | Immutable |
-| Backup normal | Soft Delete |
+| Time-Based Retention | Tiempo definido |
+| Legal Hold | Indefinido |
 
 ---
 
-# Trampas típicas AZ-104
+# 5. Lifecycle Management Policy
 
-## Trampa 1
+## Qué es
 
-Pensar que:
-
-```text
-Soft Delete = Immutable
-```
-
-❌ Incorrecto.
+Policy automática para mover o borrar blobs.
 
 ---
 
-## Trampa 2
+## Qué permite
 
-Pensar que administradores pueden borrar blobs protegidos.
+Automatizar:
 
-❌ Incorrecto.
+- mover Hot → Cool
+- mover Cool → Archive
+- borrar blobs antiguos
+- borrar snapshots/versiones
 
 ---
 
-## Trampa 3
+## Recursos compatibles
 
-Confundir:
+| Recurso | Compatible |
+|---|---|
+| Storage Account | ✅ |
+
+---
+
+## Máximo
 
 ```text
-Versioning
-```
-
-con:
-
-```text
-WORM retention
+1 lifecycle management policy per Storage Account
 ```
 
 ---
 
-# Tabla resumen examen
+## Importante
 
-| Feature | Permite modificar | Permite borrar |
-|---|---|---|
-| Soft Delete | ✅ | Recuperable |
-| Versioning | ✅ | ✅ |
-| Immutable Policy | ❌ | ❌ |
+Dentro de esa única policy:
+
+✅ múltiples reglas permitidas  
 
 ---
 
-# Reglas rápidas AZ-104
+## Ejemplo típico
 
 ```text
-Immutable Blob Storage provides WORM protection.
+Move blobs to Cool after 30 days
+Move blobs to Archive after 90 days
+Delete after 365 days
 ```
 
-```text
-Time-based retention policies prevent deletion and modification.
-```
+---
 
-```text
-Legal holds preserve blobs indefinitely.
-```
+# Comparativa rápida examen
+
+| Policy | Protege borrado | Controla acceso | Automatiza lifecycle |
+|---|---|---|---|
+| Stored Access Policy | ❌ | ✅ | ❌ |
+| Immutable Policy | ✅ | ❌ | ❌ |
+| Time-Based Retention | ✅ | ❌ | ❌ |
+| Legal Hold | ✅ | ❌ | ❌ |
+| Lifecycle Management | ❌ | ❌ | ✅ |
 
 ---
 
 # Frases clave AZ-104
 
 ```text
-Immutable storage protects blobs from modification and deletion.
+Stored Access Policies control SAS permissions.
 ```
 
 ```text
-WORM means Write Once Read Many.
+Immutable Blob Storage provides WORM protection.
 ```
 
 ```text
-Immutable policies are commonly used for compliance and regulatory requirements.
+Time-Based Retention prevents modification and deletion during retention.
 ```
+
+```text
+Legal Holds preserve blobs indefinitely.
+```
+
+```text
+Lifecycle Management Policies automate blob tiering and deletion.
+```
+
