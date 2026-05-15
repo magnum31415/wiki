@@ -442,6 +442,10 @@ Temporary disks may be lost during redeploy.
 
 ---
 
+# Azure Desired State Configuration (DSC) - AZ-104
+
+---
+
 # Qué es Desired State Configuration (DSC)
 
 Desired State Configuration (DSC) es una plataforma de administración de configuración basada en PowerShell que permite definir:
@@ -451,6 +455,44 @@ cómo debe estar configurado un servidor o VM
 ```
 
 y garantizar que permanezca en ese estado.
+
+---
+
+# Soporte Windows vs Linux
+
+Aunque DSC nació para Windows y PowerShell, también soporta Linux.
+
+---
+
+# Compatibilidad DSC
+
+| Característica | Windows | Linux |
+|---|---|---|
+| DSC soportado | ✅ | ✅ |
+| PowerShell DSC nativo | ✅ | Parcial |
+| Azure Automation DSC | ✅ | ✅ |
+| Local Configuration Manager (LCM) | ✅ | ✅ |
+| Recursos DSC disponibles | Muchísimos | Menos |
+| Uso enterprise habitual | Muy alto | Medio/Bajo |
+| Gestión Windows Features | ✅ | ❌ |
+| Gestión paquetes Linux | ❌ | ✅ |
+| Ecosistema/módulos | Muy amplio | Más limitado |
+
+---
+
+# Importante examen
+
+DSC:
+
+```text
+NO es exclusivo de Windows
+```
+
+pero:
+
+```text
+está mucho más asociado al ecosistema Windows
+```
 
 ---
 
@@ -606,13 +648,13 @@ son módulos reutilizables que gestionan configuraciones.
 
 # Ejemplos de Resources
 
-| Resource | Función |
-|---|---|
-| WindowsFeature | Instalar roles/features |
-| File | Gestionar archivos |
-| Service | Gestionar servicios |
-| Registry | Gestionar registry |
-| User | Gestionar usuarios |
+| Resource | Función | Windows | Linux |
+|---|---|---|---|
+| WindowsFeature | Instalar roles/features | ✅ | ❌ |
+| File | Gestionar archivos | ✅ | ✅ |
+| Service | Gestionar servicios | ✅ | ✅ |
+| Registry | Gestionar registry | ✅ | ❌ |
+| User | Gestionar usuarios | ✅ | ✅ |
 
 ---
 
