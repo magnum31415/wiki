@@ -7,7 +7,7 @@
 - [RBAC - Rol Contributor (AZ-104)](#rbac---rol-contributor-az-104)
 - [Rol para crear una subnet en VNet1](#rol-para-crear-una-subnet-en-vnet1)
 - [Rol Attribute Definition/Assignment Administrator](#rol-attribute-definitionassignment-administrator)
-
+- [Azure Custom Roles - Actions vs DataActions](#azure-custom-roles---actions-vs-dataactions)
 
 # Comparativa RBAC: Virtual Machine Contributor vs Disk Snapshot Contributor
 
@@ -514,3 +514,149 @@ para separar:
 - definición atributos
 - asignación atributos
 - administración general
+
+
+---
+# Azure Custom Roles - Actions vs DataActions
+
+---
+
+# Concepto clave
+
+En Azure RBAC, un rol personalizado puede definir permisos en dos planos diferentes:
+
+- Management plane
+- Data plane
+
+---
+
+# 1. Actions
+
+`actions` define permisos de administración sobre recursos Azure.
+
+Sirve para operaciones como:
+
+- crear recursos
+- leer configuración
+- modificar recursos
+- eliminar recursos
+- desplegar ARM templates
+
+---
+
+# Ejemplos de Actions
+
+```json
+"Microsoft.Compute/virtualMachines/*"
+```
+
+Permite administrar máquinas virtuales como recurso Azure.
+
+Ejemplos:
+
+- crear VM
+- modificar VM
+- arrancar/parar VM
+- cambiar configuración
+
+---
+
+# 2. DataActions
+
+`dataActions` define permisos sobre el plano de datos u operaciones internas del recurso.
+
+Sirve para acceder o interactuar con el contenido/funcionalidad del recurso.
+
+---
+
+# Ejemplo importante VM Login
+
+Para permitir inicio de sesión en una VM mediante Azure RBAC se usan permisos como:
+
+```text
+Microsoft.Compute/virtualMachines/login/action
+```
+
+o:
+
+```text
+Microsoft.Compute/virtualMachines/loginAsAdmin/action
+```
+
+Estos permisos van en:
+
+```text
+dataActions
+```
+
+---
+
+# Diferencia clave
+
+| Sección | Qué controla | Ejemplo |
+|---|---|---|
+| actions | Administración del recurso | Crear/modificar una VM |
+| dataActions | Acceso operativo/datos del recurso | Iniciar sesión en una VM |
+| notActions | Excluir permisos de actions | Permitir todo excepto borrar |
+| notDataActions | Excluir permisos de dataActions | Permitir dataActions excepto una acción concreta |
+
+---
+
+# Por qué la respuesta es DataActions
+
+La pregunta pide:
+
+```text
+users can sign in to virtual machines
+```
+
+Eso no es simplemente administrar el recurso VM.
+
+Es una acción operativa sobre la VM.
+
+Por eso el permiso debe añadirse en:
+
+```text
+dataActions
+```
+
+---
+
+# Regla rápida examen
+
+```text
+If the permission is about managing Azure resources, use actions.
+```
+
+```text
+If the permission is about accessing data or signing in/using the resource, use dataActions.
+```
+
+---
+
+# Ejemplo mental
+
+| Necesidad | Sección |
+|---|---|
+| Crear una VM | actions |
+| Borrar una VM | actions |
+| Leer propiedades de una VM | actions |
+| Iniciar sesión en una VM | dataActions |
+| Leer secretos de Key Vault | dataActions |
+| Leer blobs | dataActions |
+
+---
+
+# Frases clave AZ-104
+
+```text
+Actions are for management plane permissions.
+```
+
+```text
+DataActions are for data plane permissions.
+```
+
+```text
+VM login permissions must be added to dataActions.
+```
