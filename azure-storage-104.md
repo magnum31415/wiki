@@ -501,6 +501,35 @@ Cool tier reduces costs for infrequently accessed data.
 | Legal Hold Policy | Immutable Blob Storage Policy | Bloquear blobs indefinidamente | Blob Containers, Blob Versions | 1 legal hold policy por scope (con múltiples tags posibles) |
 | Lifecycle Management Policy | Lifecycle / Data Management Policy | Automatizar movimiento/borrado de datos | Storage Account / Blob Storage | 1 lifecycle management policy por Storage Account |
 
+
+```mermaid
+graph TD
+
+    A[Azure Storage Policies]
+
+    A --> B[Access Control Policies]
+    A --> C[Immutable Blob Storage Policies]
+    A --> D[Lifecycle Management Policies]
+
+    B --> B1[Stored Access Policy]
+    B1 --> B2[Blob Containers]
+    B1 --> B3[File Shares]
+    B1 --> B4[Queues]
+    B1 --> B5[Tables]
+
+    C --> C1[Time-Based Retention Policy]
+    C --> C2[Legal Hold Policy]
+
+    C1 --> C3[Blob Containers]
+    C1 --> C4[Blob Versions]
+
+    C2 --> C5[Blob Containers]
+    C2 --> C6[Blob Versions]
+
+    D --> D1[Lifecycle Management Policy]
+    D1 --> D2[Storage Account / Blob Storage]
+```
+
 ---
 
 # 1. Stored Access Policy
