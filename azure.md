@@ -39,6 +39,7 @@
       30.<a href="https://github.com/magnum31415/wiki/blob/main/azure-certificates-az104.md">Azure Certificates</a><br>
       31.<a href="https://github.com/magnum31415/wiki/blob/main/azure-monitor-data-collection-az104.md">Azure Monitor Data Collection</a><br>   
       32.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-encription-scopes-az104.md">Azure Storage Encryption Scopes</a><br>  
+      33.<a href="https://github.com/magnum31415/wiki/blob/main/azure-ITSM-connector-az104.md">Azure ITSM Connector</a><br>  
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
