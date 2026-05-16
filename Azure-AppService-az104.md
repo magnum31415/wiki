@@ -1,350 +1,345 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
-- [Azure Service Endpoint Policy - Explicación pregunta AZ-104](#azure-service-endpoint-policy---explicación-pregunta-az-104)
+- [Azure App Service Scaling (AZ-104)](#azure-app-service-scaling-az-104)
 - [Azure App Service – Web Deploy, Microsoft Entra ID y RBAC](#azure-app-service--web-deploy-microsoft-entra-id-y-rbac)
 
-# Azure Service Endpoint Policy - Explicación pregunta AZ-104
+# Azure App Service Scaling (AZ-104)
+
+## Índice
+
+- [Azure App Service Scaling (AZ-104)](#azure-app-service-scaling-az-104)
+- [Qué es un App Service Plan](#qué-es-un-app-service-plan)
+- [Scale Up vs Scale Out](#scale-up-vs-scale-out)
+- [Scale Up (Vertical Scaling)](#scale-up-vertical-scaling)
+- [Scale Out (Horizontal Scaling)](#scale-out-horizontal-scaling)
+- [Qué son las Scale Rules](#qué-son-las-scale-rules)
+- [Rule-based scaling](#rule-based-scaling)
+- [Por qué la respuesta correcta es Rule-based scaling](#por-qué-la-respuesta-correcta-es-rule-based-scaling)
+- [Por qué Automatic scaling es incorrecto](#por-qué-automatic-scaling-es-incorrecto)
+- [Por qué Manual scaling es incorrecto](#por-qué-manual-scaling-es-incorrecto)
+- [Por qué Scale Up es incorrecto en esta pregunta](#por-qué-scale-up-es-incorrecto-en-esta-pregunta)
+- [Métricas típicas usadas para autoscaling](#métricas-típicas-usadas-para-autoscaling)
+- [Pricing tiers importantes](#pricing-tiers-importantes)
+- [Conceptos importantes examen](#conceptos-importantes-examen)
+- [Trampas típicas AZ-104](#trampas-típicas-az-104)
+- [Tabla resumen examen](#tabla-resumen-examen)
+- [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
+- [Frases clave AZ-104](#frases-clave-az-104)
 
 ---
 
-# Concepto clave
+# Qué es un App Service Plan
 
-La pregunta intenta evaluar:
+Un:
 
 ```text
-qué controla realmente un Service Endpoint Policy
+App Service Plan
 ```
 
-y especialmente:
+define:
+
+- compute resources
+- tamaño instancias
+- número instancias
+- pricing tier
+
+para:
+
+- Web Apps
+- API Apps
+- Function Apps
+
+---
+
+# Scale Up vs Scale Out
+
+| Tipo | Qué hace |
+|---|---|
+| Scale Up | Aumenta potencia instancia |
+| Scale Out | Añade más instancias |
+
+---
+
+# Scale Up (Vertical Scaling)
+
+Aumenta:
+
+- CPU
+- RAM
+- potencia VM
+
+---
+
+## Ejemplo
 
 ```text
-qué ocurre cuando una subnet NO tiene Service Endpoint
+S1 → P1
 ```
 
 ---
 
-# Arquitectura del escenario
+## Importante
 
-## VNets
-
-| VNet | Región |
-|---|---|
-| VNet-West | West Europe |
-| VNet-Asia | Southeast Asia |
-| VNet-US | South Central US |
+NO añade más instancias.
 
 ---
 
-# Subnets
+# Scale Out (Horizontal Scaling)
 
-| Subnet | VNet | Service Endpoint |
-|---|---|---|
-| Subnet-A | VNet-West | ❌ None |
-| Subnet-B | VNet-Asia | ✅ Microsoft.Storage |
-| Subnet-C | VNet-US | ✅ Microsoft.Storage |
-| Subnet-D | VNet-US | ❌ None |
-
----
-
-# Storage Accounts
-
-| Storage Account | Región |
-|---|---|
-| storagewest01 | West Europe |
-| storageus01 | South Central US |
-| storageasia01 | Southeast Asia |
-
----
-
-# La policy
+Añade:
 
 ```text
-StoragePolicy01
+más instancias App Service
+```
+
+---
+
+## Ejemplo
+
+```text
+2 instancias → 5 instancias
+```
+
+---
+
+# Qué son las Scale Rules
+
+Permiten escalar automáticamente basándose en:
+
+- CPU
+- memoria
+- requests
+- schedule
+- métricas Azure Monitor
+
+---
+
+# Rule-based scaling
+
+## Qué hace
+
+Escala automáticamente cuando se cumple una condición.
+
+---
+
+## Ejemplo típico
+
+```text
+CPU > 80%
 ```
 
 ↓
 
-Región:
+```text
+añadir 1 instancia
+```
+
+---
+
+# Por qué la respuesta correcta es Rule-based scaling
+
+La pregunta requiere:
 
 ```text
-South Central US
+escalar automáticamente cuando CPU > 80%
 ```
 
 ↓
 
-Permite acceso a:
+eso requiere:
+
+✅ reglas basadas en métricas  
+
+---
+
+# Flujo conceptual
 
 ```text
-TODOS los storage accounts de la subscripción
+CPU > 80%
+    ↓
+Scale rule triggered
+    ↓
+Add instances
 ```
 
 ---
 
-# La frase a evaluar
+# Por qué Automatic scaling es incorrecto
+
+Porque en App Service:
 
 ```text
-"Only storageus01 can be accessed from VNet-US"
+Automatic scaling
+```
+
+NO significa necesariamente:
+
+```text
+reglas basadas en métricas personalizadas
+```
+
+Microsoft busca específicamente:
+
+```text
+Rule-based scaling
 ```
 
 ---
 
-# La respuesta correcta es
+# Por qué Manual scaling es incorrecto
+
+Manual scaling:
+
+❌ requiere intervención manual  
+❌ no responde automáticamente CPU  
+
+---
+
+# Por qué Scale Up es incorrecto en esta pregunta
+
+Opciones como:
 
 ```text
-False
+Premium P1
+```
+
+o:
+
+```text
+Standard S1
+```
+
+son:
+
+```text
+Scale Up
+```
+
+↓
+
+cambian tamaño plan, pero:
+
+❌ no crean instancias automáticas  
+
+---
+
+# Métricas típicas usadas para autoscaling
+
+| Métrica | Uso típico |
+|---|---|
+| CPU Percentage | Muy común |
+| Memory | Apps intensivas |
+| HTTP Queue Length | Tráfico web |
+| Requests | APIs |
+| Schedule | Horarios oficina |
+
+---
+
+# Pricing tiers importantes
+
+| Tier | Soporta autoscale |
+|---|---|
+| Free | ❌ |
+| Shared | ❌ |
+| Basic | ❌ limitado |
+| Standard | ✅ |
+| Premium | ✅ |
+
+---
+
+# Conceptos importantes examen
+
+Microsoft suele evaluar:
+
+| Concepto | Importancia |
+|---|---|
+| Scale Up vs Scale Out | Muy alta |
+| Autoscaling | Muy alta |
+| Rule-based scaling | Alta |
+| CPU thresholds | Alta |
+| App Service tiers | Alta |
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Confundir:
+
+```text
+Scale Up
+```
+
+con:
+
+```text
+Scale Out
 ```
 
 ---
 
-# La gran trampa de la pregunta
+## Trampa 2
 
-Muchos estudiantes piensan:
+Pensar que cambiar tier:
 
 ```text
-la Service Endpoint Policy
-bloquea automáticamente todo lo demás
+añade instancias automáticamente
 ```
 
 ❌ Incorrecto.
 
 ---
 
-# Lo que SÍ hace la policy
+## Trampa 3
 
-La policy solo controla tráfico que usa:
-
-```text
-Service Endpoints
-```
-
----
-
-# Subnet-C
-
-## Tiene:
+Pensar que:
 
 ```text
-Microsoft.Storage Service Endpoint
+Manual scaling
 ```
 
-↓
-
-y además usa:
-
-```text
-StoragePolicy01
-```
-
----
-
-# Entonces Subnet-C puede acceder a
-
-```text
-TODOS los storage accounts permitidos por la policy
-```
-
-↓
-
-La policy permite:
-
-- storagewest01
-- storageus01
-- storageasia01
-
-↓
-
-Por tanto:
-
-```text
-Subnet-C puede acceder a los tres
-```
-
----
-
-# Importante
-
-La policy:
-
-```text
-NO limita por región
-```
-
----
-
-# Otra trampa importante
-
-Muchos piensan:
-
-```text
-Service Endpoint Policy solo permite storage accounts de la misma región
-```
+sirve para autoscaling.
 
 ❌ Incorrecto.
 
 ---
 
-# Entonces…
+## Trampa 4
 
-## Desde Subnet-C
+Olvidar que algunos tiers:
 
-Puede acceder a:
+❌ no soportan autoscale
 
-| Storage Account | Acceso |
+---
+
+# Tabla resumen examen
+
+| Necesidad | Solución |
 |---|---|
-| storagewest01 | ✅ |
-| storageus01 | ✅ |
-| storageasia01 | ✅ |
-
-porque la policy los permite todos.
-
----
-
-# Pero la pregunta todavía tiene otra trampa
-
-## Subnet-D
-
-NO tiene:
-
-```text
-Service Endpoint
-```
-
----
-
-# Entonces…
-
-Subnet-D puede seguir usando:
-
-```text
-Internet pública
-```
-
-para acceder a cualquier storage account público.
-
----
-
-# MUY importante
-
-Service Endpoint Policy:
-
-```text
-NO controla tráfico Internet normal
-```
-
----
-
-# Entonces desde VNet-US
-
-Hay dos caminos:
-
-| Subnet | Tipo acceso |
-|---|---|
-| Subnet-C | Service Endpoint + Policy |
-| Subnet-D | Internet pública |
-
----
-
-# Resultado final
-
-Desde:
-
-```text
-VNet-US
-```
-
-se puede acceder a:
-
-- storagewest01
-- storageus01
-- storageasia01
-
----
-
-# Por qué la afirmación es FALSE
-
-Porque:
-
-```text
-NO solo storageus01 es accesible
-```
-
----
-
-# Concepto crítico examen
-
-Service Endpoint Policies:
-
-✅ controlan tráfico vía Service Endpoint  
-❌ NO bloquean tráfico Internet público  
-
----
-
-# Arquitectura conceptual
-
-## Subnet-C
-
-```text
-Subnet-C
-   ↓
-Service Endpoint
-   ↓
-StoragePolicy01
-   ↓
-Allowed Storage Accounts
-```
-
----
-
-## Subnet-D
-
-```text
-Subnet-D
-   ↓
-Internet pública
-   ↓
-Storage Public Endpoint
-```
-
----
-
-# Otra trampa importante
-
-La región de la policy:
-
-```text
-South Central US
-```
-
-NO significa:
-
-```text
-solo Storage Accounts South Central US
-```
-
----
-
-# La región de la policy depende de
-
-```text
-la VNet/subnet
-```
-
-NO del Storage Account.
+| Más CPU/RAM | Scale Up |
+| Más instancias | Scale Out |
+| Escalar por CPU | Rule-based scaling |
+| Escalar manualmente | Manual scaling |
 
 ---
 
 # Reglas rápidas AZ-104
 
 ```text
-Service Endpoint Policies only affect traffic using Service Endpoints.
+Scale Up increases instance size.
 ```
 
 ```text
-Subnets without Service Endpoints can still access public endpoints over the Internet.
+Scale Out increases the number of instances.
 ```
 
 ```text
-Service Endpoint Policies do not automatically restrict Internet access.
+Rule-based scaling uses metrics such as CPU percentage.
+```
+
+```text
+Autoscaling requires supported App Service tiers.
 ```
 
 ---
@@ -352,17 +347,16 @@ Service Endpoint Policies do not automatically restrict Internet access.
 # Frases clave AZ-104
 
 ```text
-A Service Endpoint Policy controls access to Azure services through Service Endpoints only.
+Rule-based autoscaling can scale App Service instances based on CPU usage.
 ```
 
 ```text
-Traffic that bypasses Service Endpoints is not controlled by the policy.
+Scale out adds additional App Service instances.
 ```
 
 ```text
-Storage accounts in different regions can still be allowed by the same Service Endpoint Policy.
+Scale up changes the pricing tier and compute size.
 ```
-
 ---
 
 # Azure App Service – Web Deploy, Microsoft Entra ID y RBAC
