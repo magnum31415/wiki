@@ -1,8 +1,434 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+- [Azure App Service (AZ-104)](#azure-app-service-az-104)
 - [Azure App Service Scaling (AZ-104)](#azure-app-service-scaling-az-104)
 - [Azure App Service – Web Deploy, Microsoft Entra ID y RBAC](#azure-app-service--web-deploy-microsoft-entra-id-y-rbac)
 
+---
+
+
+# Azure App Service (AZ-104)
+
+## Índice
+
+- [Azure App Service (AZ-104)](#azure-app-service-az-104)
+- [Qué es Azure App Service](#qué-es-azure-app-service)
+- [Qué permite hacer](#qué-permite-hacer)
+- [Qué tipo de servicio es](#qué-tipo-de-servicio-es)
+- [Concepto clave](#concepto-clave)
+- [Arquitectura básica](#arquitectura-básica)
+- [Qué es un App Service Plan](#qué-es-un-app-service-plan)
+- [Relación entre App Service y App Service Plan](#relación-entre-app-service-y-app-service-plan)
+- [Tipos principales de App Service](#tipos-principales-de-app-service)
+- [Características importantes](#características-importantes)
+- [Deployment Slots](#deployment-slots)
+- [Scale Up vs Scale Out](#scale-up-vs-scale-out)
+- [Autoscaling](#autoscaling)
+- [Autenticación y seguridad](#autenticación-y-seguridad)
+- [Networking](#networking)
+- [Integración con Azure](#integración-con-azure)
+- [Pricing Tiers importantes](#pricing-tiers-importantes)
+- [Qué suele preguntar Microsoft en AZ-104](#qué-suele-preguntar-microsoft-en-az-104)
+- [Trampas típicas AZ-104](#trampas-típicas-az-104)
+- [Tabla resumen examen](#tabla-resumen-examen)
+- [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
+- [Frases clave AZ-104](#frases-clave-az-104)
+
+---
+
+# Qué es Azure App Service
+
+Azure App Service es un servicio:
+
+```text
+PaaS (Platform as a Service)
+```
+
+que permite desplegar aplicaciones web sin administrar servidores.
+
+---
+
+# Qué permite hacer
+
+Permite ejecutar:
+
+- Web Apps
+- APIs
+- Backends
+- Aplicaciones web empresariales
+- Aplicaciones .NET, Java, Node.js, Python, PHP, etc.
+
+---
+
+# Qué tipo de servicio es
+
+| Tipo servicio | Azure App Service |
+|---|---|
+| IaaS | ❌ |
+| PaaS | ✅ |
+| Serverless | Parcialmente |
+
+---
+
+# Concepto clave
+
+Microsoft administra:
+
+- sistema operativo
+- parches
+- infraestructura
+- runtime
+- disponibilidad base
+
+Tú administras:
+
+- aplicación
+- configuración
+- código
+- escalado
+
+---
+
+# Arquitectura básica
+
+```text
+Azure App Service
+        ↓
+App Service Plan
+        ↓
+Azure Infrastructure
+```
+
+---
+
+# Qué es un App Service Plan
+
+El:
+
+```text
+App Service Plan
+```
+
+define:
+
+- CPU
+- RAM
+- pricing tier
+- número instancias
+- escalado
+
+---
+
+# Relación entre App Service y App Service Plan
+
+Varias apps pueden compartir:
+
+```text
+el mismo App Service Plan
+```
+
+---
+
+## Ejemplo
+
+```text
+App Service Plan
+│
+├── WebApp1
+├── WebApp2
+└── APIApp1
+```
+
+---
+
+# Tipos principales de App Service
+
+| Tipo | Uso |
+|---|---|
+| Web App | Sitios web |
+| API App | APIs REST |
+| Function App | Funciones serverless |
+| Web App for Containers | Contenedores Docker |
+
+---
+
+# Características importantes
+
+| Feature | Soportado |
+|---|---|
+| Autoscaling | ✅ |
+| Deployment slots | ✅ |
+| HTTPS | ✅ |
+| Managed Identity | ✅ |
+| Authentication integrada | ✅ |
+| Custom domains | ✅ |
+| SSL certificates | ✅ |
+
+---
+
+# Deployment Slots
+
+Permiten tener:
+
+- producción
+- staging
+- testing
+
+---
+
+## Ejemplo
+
+```text
+Production Slot
+Staging Slot
+```
+
+---
+
+## Uso típico
+
+```text
+Swap staging → production
+```
+
+sin downtime.
+
+---
+
+# Scale Up vs Scale Out
+
+| Tipo | Qué hace |
+|---|---|
+| Scale Up | Más CPU/RAM |
+| Scale Out | Más instancias |
+
+---
+
+# Scale Up
+
+Ejemplo:
+
+```text
+S1 → P1
+```
+
+---
+
+# Scale Out
+
+Ejemplo:
+
+```text
+2 → 5 instancias
+```
+
+---
+
+# Autoscaling
+
+App Service puede escalar automáticamente usando:
+
+- CPU
+- memoria
+- requests
+- schedules
+
+---
+
+## Ejemplo típico examen
+
+```text
+CPU > 80%
+```
+
+↓
+
+```text
+añadir instancia
+```
+
+---
+
+# Autenticación y seguridad
+
+App Service soporta:
+
+| Feature | Soportado |
+|---|---|
+| Microsoft Entra ID | ✅ |
+| Managed Identity | ✅ |
+| OAuth/OpenID | ✅ |
+| HTTPS only | ✅ |
+
+---
+
+# Networking
+
+App Service soporta:
+
+| Feature | Soportado |
+|---|---|
+| VNet Integration | ✅ |
+| Private Endpoint | ✅ |
+| Access Restrictions | ✅ |
+
+---
+
+# Integración con Azure
+
+Integraciones típicas:
+
+| Servicio | Uso |
+|---|---|
+| Key Vault | Secretos |
+| Storage Account | Archivos |
+| Application Insights | Monitoring |
+| Azure SQL | Base datos |
+| Container Registry | Contenedores |
+
+---
+
+# Pricing Tiers importantes
+
+| Tier | Características |
+|---|---|
+| Free | Testing |
+| Shared | Bajo coste |
+| Basic | Producción simple |
+| Standard | Autoscaling |
+| Premium | Alto rendimiento |
+| Isolated | ASE/VNet dedicadas |
+
+---
+
+# Qué suele preguntar Microsoft en AZ-104
+
+## Muy frecuente
+
+| Tema | Importancia |
+|---|---|
+| Scale Up vs Scale Out | Muy alta |
+| Autoscaling | Muy alta |
+| App Service Plan | Muy alta |
+| Deployment Slots | Alta |
+| Networking | Alta |
+| Managed Identity | Alta |
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Confundir:
+
+```text
+App Service
+```
+
+con:
+
+```text
+App Service Plan
+```
+
+---
+
+## Trampa 2
+
+Pensar que:
+
+```text
+Scale Up = más instancias
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 3
+
+Pensar que cada Web App tiene su propio compute.
+
+❌ Incorrecto.
+
+Varias apps pueden compartir:
+
+```text
+App Service Plan
+```
+
+---
+
+## Trampa 4
+
+Pensar que:
+
+```text
+Deployment Slots = backup
+```
+
+❌ Incorrecto.
+
+Son para deployment/testing.
+
+---
+
+# Tabla resumen examen
+
+| Concepto | Importante |
+|---|---|
+| App Service | Servicio PaaS web |
+| App Service Plan | Compute/scaling |
+| Scale Up | Más potencia |
+| Scale Out | Más instancias |
+| Deployment Slot | Staging/testing |
+| Autoscale | Basado métricas |
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Azure App Service is a PaaS offering.
+```
+
+```text
+App Service Plans define compute resources and scaling.
+```
+
+```text
+Scale Up increases instance size.
+```
+
+```text
+Scale Out increases the number of instances.
+```
+
+```text
+Multiple apps can share the same App Service Plan.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+Azure App Service is used to host web applications and APIs.
+```
+
+```text
+An App Service runs inside an App Service Plan.
+```
+
+```text
+Autoscaling can be configured using rule-based scaling.
+```
+
+```text
+Deployment slots support zero-downtime deployments.
+```
+---
 # Azure App Service Scaling (AZ-104)
 
 ## Índice
