@@ -1051,23 +1051,76 @@ puede subdividirse en:
 ---
 # Cómo se “desperdician” IPs al trocear una /16
 
-```mermaid
-flowchart TD
 
-    A["10.180.0.0/16<br/>65,536 IPs totales"]
-
-    A --> H["10.180.0.0/23<br/>Hub<br/>512 IPs"]
-
-    A --> GAP1["ESPACIO NO USADO<br/>10.180.2.0 → 10.180.31.255<br/>7,680 IPs"]
-
-    A --> P["10.180.32.0/19<br/>Prod<br/>8,192 IPs"]
-
-    A --> N["10.180.64.0/21<br/>NonProd<br/>2,048 IPs"]
-
-    A --> R["10.180.72.0/21<br/>Reserva Growth<br/>2,048 IPs"]
-
-    A --> GAP2["ESPACIO LIBRE FUTURO<br/>10.180.80.0 → 10.180.255.255<br/>45,056 IPs"]
+```text
+10.180.0.0/16
+65,536 IPs
+Máscara: 255.255.0.0
+Rango: 10.180.0.0 → 10.180.255.255
+│
+├── 10.180.0.0/23
+│   Uso: Hub
+│   Tamaño: 512 IPs
+│   Máscara: 255.255.254.0
+│   Cálculo salto: 256 - 254 = 2
+│   Rango: 10.180.0.0 → 10.180.1.255
+│
+├── ESPACIO LIBRE
+│   Tamaño: 7,680 IPs
+│   Rango: 10.180.2.0 → 10.180.31.255
+│   Motivo: el siguiente /19 válido debe empezar en múltiplo de 32
+│
+├── 10.180.32.0/19
+│   Uso: Producción
+│   Tamaño: 8,192 IPs
+│   Máscara: 255.255.224.0
+│   Cálculo salto: 256 - 224 = 32
+│   Rango: 10.180.32.0 → 10.180.63.255
+│
+├── 10.180.64.0/21
+│   Uso: NonProd
+│   Tamaño: 2,048 IPs
+│   Máscara: 255.255.248.0
+│   Cálculo salto: 256 - 248 = 8
+│   Rango: 10.180.64.0 → 10.180.71.255
+│
+├── 10.180.72.0/21
+│   Uso: Reserva Growth
+│   Tamaño: 2,048 IPs
+│   Máscara: 255.255.248.0
+│   Cálculo salto: 256 - 248 = 8
+│   Rango: 10.180.72.0 → 10.180.79.255
+│
+└── ESPACIO FUTURO
+    Tamaño: 45,056 IPs
+    Rango: 10.180.80.0 → 10.180.255.255
 ```
+
+
+## Explicación: ¿por qué no empieza en 10.180.2.0 el /19?
+
+La siguiente IP libre sería: 10.180.2.0
+¿por qué no empieza ahí el /19?
+
+**Porque un /19 tiene reglas.**
+
+Un /19 usa máscara: ``255.255.224.0`` su salto es ``256 - 224 = 32``
+Las redes /19 SOLO pueden empezar en:
+
+```text
+0
+32
+64
+96
+128
+160
+192
+224
+```
+
+**NO puede empezar en:** ``10.180.2.0/19`` ❌ inválido.
+**Entonces cuál es el siguiente /19 válido:**  Después de: ``10.180.0.0/19`` el siguiente posible es: ``10.180.32.0/19``
+
     
 ---
 
