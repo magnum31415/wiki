@@ -769,7 +769,9 @@ West Europe
 
 contiene:
 
-:contentReference[oaicite:0]{index=0}
+```text
+2^16 = 65536
+```
 
 IPs totales.
 
@@ -853,7 +855,9 @@ porque:
 
 ### Total IPs
 
-:contentReference[oaicite:1]{index=1}
+```text
+2^9 = 512
+```
 
 ---
 
@@ -875,7 +879,9 @@ porque:
 
 ### Total IPs
 
-:contentReference[oaicite:2]{index=2}
+```text
+2^13 = 8192
+```
 
 ---
 
@@ -897,7 +903,9 @@ porque:
 
 ### Total IPs
 
-:contentReference[oaicite:3]{index=3}
+```text
+2^11 = 2048
+```
 
 ---
 
