@@ -1,5 +1,371 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+- [Azure Service Endpoint Policy - Explicación pregunta AZ-104](#azure-service-endpoint-policy---explicación-pregunta-az-104)
+- [Azure App Service – Web Deploy, Microsoft Entra ID y RBAC](#azure-app-service--web-deploy-microsoft-entra-id-y-rbac)
+
+- 
+# Azure Service Endpoint Policy - Explicación pregunta AZ-104
+
+---
+
+# Concepto clave
+
+La pregunta intenta evaluar:
+
+```text
+qué controla realmente un Service Endpoint Policy
+```
+
+y especialmente:
+
+```text
+qué ocurre cuando una subnet NO tiene Service Endpoint
+```
+
+---
+
+# Arquitectura del escenario
+
+## VNets
+
+| VNet | Región |
+|---|---|
+| VNet-West | West Europe |
+| VNet-Asia | Southeast Asia |
+| VNet-US | South Central US |
+
+---
+
+# Subnets
+
+| Subnet | VNet | Service Endpoint |
+|---|---|---|
+| Subnet-A | VNet-West | ❌ None |
+| Subnet-B | VNet-Asia | ✅ Microsoft.Storage |
+| Subnet-C | VNet-US | ✅ Microsoft.Storage |
+| Subnet-D | VNet-US | ❌ None |
+
+---
+
+# Storage Accounts
+
+| Storage Account | Región |
+|---|---|
+| storagewest01 | West Europe |
+| storageus01 | South Central US |
+| storageasia01 | Southeast Asia |
+
+---
+
+# La policy
+
+```text
+StoragePolicy01
+```
+
+↓
+
+Región:
+
+```text
+South Central US
+```
+
+↓
+
+Permite acceso a:
+
+```text
+TODOS los storage accounts de la subscripción
+```
+
+---
+
+# La frase a evaluar
+
+```text
+"Only storageus01 can be accessed from VNet-US"
+```
+
+---
+
+# La respuesta correcta es
+
+```text
+False
+```
+
+---
+
+# La gran trampa de la pregunta
+
+Muchos estudiantes piensan:
+
+```text
+la Service Endpoint Policy
+bloquea automáticamente todo lo demás
+```
+
+❌ Incorrecto.
+
+---
+
+# Lo que SÍ hace la policy
+
+La policy solo controla tráfico que usa:
+
+```text
+Service Endpoints
+```
+
+---
+
+# Subnet-C
+
+## Tiene:
+
+```text
+Microsoft.Storage Service Endpoint
+```
+
+↓
+
+y además usa:
+
+```text
+StoragePolicy01
+```
+
+---
+
+# Entonces Subnet-C puede acceder a
+
+```text
+TODOS los storage accounts permitidos por la policy
+```
+
+↓
+
+La policy permite:
+
+- storagewest01
+- storageus01
+- storageasia01
+
+↓
+
+Por tanto:
+
+```text
+Subnet-C puede acceder a los tres
+```
+
+---
+
+# Importante
+
+La policy:
+
+```text
+NO limita por región
+```
+
+---
+
+# Otra trampa importante
+
+Muchos piensan:
+
+```text
+Service Endpoint Policy solo permite storage accounts de la misma región
+```
+
+❌ Incorrecto.
+
+---
+
+# Entonces…
+
+## Desde Subnet-C
+
+Puede acceder a:
+
+| Storage Account | Acceso |
+|---|---|
+| storagewest01 | ✅ |
+| storageus01 | ✅ |
+| storageasia01 | ✅ |
+
+porque la policy los permite todos.
+
+---
+
+# Pero la pregunta todavía tiene otra trampa
+
+## Subnet-D
+
+NO tiene:
+
+```text
+Service Endpoint
+```
+
+---
+
+# Entonces…
+
+Subnet-D puede seguir usando:
+
+```text
+Internet pública
+```
+
+para acceder a cualquier storage account público.
+
+---
+
+# MUY importante
+
+Service Endpoint Policy:
+
+```text
+NO controla tráfico Internet normal
+```
+
+---
+
+# Entonces desde VNet-US
+
+Hay dos caminos:
+
+| Subnet | Tipo acceso |
+|---|---|
+| Subnet-C | Service Endpoint + Policy |
+| Subnet-D | Internet pública |
+
+---
+
+# Resultado final
+
+Desde:
+
+```text
+VNet-US
+```
+
+se puede acceder a:
+
+- storagewest01
+- storageus01
+- storageasia01
+
+---
+
+# Por qué la afirmación es FALSE
+
+Porque:
+
+```text
+NO solo storageus01 es accesible
+```
+
+---
+
+# Concepto crítico examen
+
+Service Endpoint Policies:
+
+✅ controlan tráfico vía Service Endpoint  
+❌ NO bloquean tráfico Internet público  
+
+---
+
+# Arquitectura conceptual
+
+## Subnet-C
+
+```text
+Subnet-C
+   ↓
+Service Endpoint
+   ↓
+StoragePolicy01
+   ↓
+Allowed Storage Accounts
+```
+
+---
+
+## Subnet-D
+
+```text
+Subnet-D
+   ↓
+Internet pública
+   ↓
+Storage Public Endpoint
+```
+
+---
+
+# Otra trampa importante
+
+La región de la policy:
+
+```text
+South Central US
+```
+
+NO significa:
+
+```text
+solo Storage Accounts South Central US
+```
+
+---
+
+# La región de la policy depende de
+
+```text
+la VNet/subnet
+```
+
+NO del Storage Account.
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Service Endpoint Policies only affect traffic using Service Endpoints.
+```
+
+```text
+Subnets without Service Endpoints can still access public endpoints over the Internet.
+```
+
+```text
+Service Endpoint Policies do not automatically restrict Internet access.
+```
+
+---
+
+# Frases clave AZ-104
+
+```text
+A Service Endpoint Policy controls access to Azure services through Service Endpoints only.
+```
+
+```text
+Traffic that bypasses Service Endpoints is not controlled by the policy.
+```
+
+```text
+Storage accounts in different regions can still be allowed by the same Service Endpoint Policy.
+```
+
+---
+
 # Azure App Service – Web Deploy, Microsoft Entra ID y RBAC
 
 ## Introducción
