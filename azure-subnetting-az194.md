@@ -1047,6 +1047,28 @@ puede subdividirse en:
 | /25 | 128 IPs |
 | /26 | 64 IPs |
 
+
+---
+# Cómo se “desperdician” IPs al trocear una /16
+
+```mermaid
+flowchart TD
+
+    A["10.180.0.0/16<br/>65,536 IPs totales"]
+
+    A --> H["10.180.0.0/23<br/>Hub<br/>512 IPs"]
+
+    A --> GAP1["ESPACIO NO USADO<br/>10.180.2.0 → 10.180.31.255<br/>7,680 IPs"]
+
+    A --> P["10.180.32.0/19<br/>Prod<br/>8,192 IPs"]
+
+    A --> N["10.180.64.0/21<br/>NonProd<br/>2,048 IPs"]
+
+    A --> R["10.180.72.0/21<br/>Reserva Growth<br/>2,048 IPs"]
+
+    A --> GAP2["ESPACIO LIBRE FUTURO<br/>10.180.80.0 → 10.180.255.255<br/>45,056 IPs"]
+```
+    
 ---
 
 # Buenas prácticas Azure
