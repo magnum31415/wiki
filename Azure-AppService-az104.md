@@ -3,7 +3,6 @@
 - [Azure Service Endpoint Policy - Explicación pregunta AZ-104](#azure-service-endpoint-policy---explicación-pregunta-az-104)
 - [Azure App Service – Web Deploy, Microsoft Entra ID y RBAC](#azure-app-service--web-deploy-microsoft-entra-id-y-rbac)
 
-- 
 # Azure Service Endpoint Policy - Explicación pregunta AZ-104
 
 ---
