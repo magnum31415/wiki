@@ -30,6 +30,31 @@
 
 # Qué es un App Service Plan
 
+````mermaid
+flowchart TD
+
+    AZAPP["Azure App Service<br/>(PaaS para Web Apps, APIs, Functions)"]
+
+    ASP["App Service Plan<br/>(CPU, RAM, Scaling, Pricing Tier)"]
+
+    WA1["Web App 1"]
+    WA2["Web App 2"]
+    API1["API App 1"]
+    FUNC1["Function App"]
+
+    AZAPP --> ASP
+
+    ASP --> WA1
+    ASP --> WA2
+    ASP --> API1
+    ASP --> FUNC1
+
+    SCALE["Scale Up / Scale Out"]
+    SCALE --> ASP
+
+````
+
+
 Un:
 
 ```text
