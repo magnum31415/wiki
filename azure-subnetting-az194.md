@@ -741,7 +741,40 @@ The subnet increment is calculated from the subnet mask.
 - [Tabla resumen](#tabla-resumen)
 
 ---
+
+### Subnetting 
 ![Azure-Subnetting-Example](./img/azure/region-subneting.png)
+
+| Entorno | Subnet | Cálculo IPs | Total IPs |
+|---|---|---|---:|
+| PROD | `/24` | `2^8 = 256` | 256 |
+| NonProd | `/26` | `2^6 = 64` | 64 |
+| Total aplicación | `/24 + /26` | `256 + 64` | 320 |
+
+
+
+| Entorno | Subnet | IPs reservadas Azure | IPs utilizables Azure |
+|---|---|---:|---:|
+| PROD | `/24` | 5 | 251 |
+| NonProd | `/26` | 5 | 59 |
+| Total aplicación | `/24 + /26` | 10 | 310 |
+
+
+| Concepto | Cálculo |
+|---|---|
+| Total IPs `/16` | `2^16 = 65,536` |
+| Consumo por aplicación | `256 + 64 = 320` |
+| Máximo teórico aplicaciones | `65,536 / 320 = 204` |
+
+
+---
+
+# Capacidad dentro de un `/16`
+
+## Red regional
+
+```text
+10.180.0.0/16
 
 # Qué estás viendo en el diagrama
 
@@ -828,23 +861,33 @@ porque:
 
 # Qué significa /16, /17, /18... /30
 
-| CIDR | Host bits | Cálculo | Total IPs | Hosts utilizables |
-|---|---|---|---|---|
-| /16 | 16 | Host bits: 32 - 16 = 16<br>Total IPs: 2^16 = 65,536 | 65,536 | 65,534 |
-| /17 | 15 | Host bits: 32 - 17 = 15<br>Total IPs: 2^15 = 32,768 | 32,768 | 32,766 |
-| /18 | 14 | Host bits: 32 - 18 = 14<br>Total IPs: 2^14 = 16,384 | 16,384 | 16,382 |
-| /19 | 13 | Host bits: 32 - 19 = 13<br>Total IPs: 2^13 = 8,192 | 8,192 | 8,190 |
-| /20 | 12 | Host bits: 32 - 20 = 12<br>Total IPs: 2^12 = 4,096 | 4,096 | 4,094 |
-| /21 | 11 | Host bits: 32 - 21 = 11<br>Total IPs: 2^11 = 2,048 | 2,048 | 2,046 |
-| /22 | 10 | Host bits: 32 - 22 = 10<br>Total IPs: 2^10 = 1,024 | 1,024 | 1,022 |
-| /23 | 9 | Host bits: 32 - 23 = 9<br>Total IPs: 2^9 = 512 | 512 | 510 |
-| /24 | 8 | Host bits: 32 - 24 = 8<br>Total IPs: 2^8 = 256 | 256 | 254 |
-| /25 | 7 | Host bits: 32 - 25 = 7<br>Total IPs: 2^7 = 128 | 128 | 126 |
-| /26 | 6 | Host bits: 32 - 26 = 6<br>Total IPs: 2^6 = 64 | 64 | 62 |
-| /27 | 5 | Host bits: 32 - 27 = 5<br>Total IPs: 2^5 = 32 | 32 | 30 |
-| /28 | 4 | Host bits: 32 - 28 = 4<br>Total IPs: 2^4 = 16 | 16 | 14 |
-| /29 | 3 | Host bits: 32 - 29 = 3<br>Total IPs: 2^3 = 8 | 8 | 6 |
-| /30 | 2 | Host bits: 32 - 30 = 2<br>Total IPs: 2^2 = 4 | 4 | 2 |
+| CIDR | Host bits | Cálculo | Total IPs | Hosts utilizables clásicos | Hosts utilizables Azure |
+|---|---:|---|---:|---:|---:|
+| /16 | 16 | Host bits: 32 - 16 = 16<br>Total IPs: 2^16 = 65,536 | 65,536 | 65,534 | 65,531 |
+| /17 | 15 | Host bits: 32 - 17 = 15<br>Total IPs: 2^15 = 32,768 | 32,768 | 32,766 | 32,763 |
+| /18 | 14 | Host bits: 32 - 18 = 14<br>Total IPs: 2^14 = 16,384 | 16,384 | 16,382 | 16,379 |
+| /19 | 13 | Host bits: 32 - 19 = 13<br>Total IPs: 2^13 = 8,192 | 8,192 | 8,190 | 8,187 |
+| /20 | 12 | Host bits: 32 - 20 = 12<br>Total IPs: 2^12 = 4,096 | 4,096 | 4,094 | 4,091 |
+| /21 | 11 | Host bits: 32 - 21 = 11<br>Total IPs: 2^11 = 2,048 | 2,048 | 2,046 | 2,043 |
+| /22 | 10 | Host bits: 32 - 22 = 10<br>Total IPs: 2^10 = 1,024 | 1,024 | 1,022 | 1,019 |
+| /23 | 9 | Host bits: 32 - 23 = 9<br>Total IPs: 2^9 = 512 | 512 | 510 | 507 |
+| /24 | 8 | Host bits: 32 - 24 = 8<br>Total IPs: 2^8 = 256 | 256 | 254 | 251 |
+| /25 | 7 | Host bits: 32 - 25 = 7<br>Total IPs: 2^7 = 128 | 128 | 126 | 123 |
+| /26 | 6 | Host bits: 32 - 26 = 6<br>Total IPs: 2^6 = 64 | 64 | 62 | 59 |
+| /27 | 5 | Host bits: 32 - 27 = 5<br>Total IPs: 2^5 = 32 | 32 | 30 | 27 |
+| /28 | 4 | Host bits: 32 - 28 = 4<br>Total IPs: 2^4 = 16 | 16 | 14 | 11 |
+| /29 | 3 | Host bits: 32 - 29 = 3<br>Total IPs: 2^3 = 8 | 8 | 6 | 3 |
+| /30 | 2 | Host bits: 32 - 30 = 2<br>Total IPs: 2^2 = 4 | 4 | 2 | ❌ No válido en Azure |
+
+IPs reservadas por Azure en cada subnet, Azure reserva siempre:
+
+| IP | Uso |
+|---|---|
+| Primera IP | Network address |
+| Segunda IP | Azure default gateway |
+| Tercera IP | Azure DNS |
+| Cuarta IP | Azure future use |
+| Última IP | Broadcast-like reserved |
 
 
 ## Regla importante
