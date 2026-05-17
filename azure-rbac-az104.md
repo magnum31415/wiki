@@ -39,7 +39,7 @@
 Storage Account
  └── File Share
        └── archivo.docx
-
+```
 
 ---
 # Comparativa RBAC: Virtual Machine Contributor vs Disk Snapshot Contributor
