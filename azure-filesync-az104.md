@@ -1,7 +1,257 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 
+- [Microsoft Entra Connect - OU Synchronization (AZ-104)](#microsoft-entra-connect---ou-synchronization-az-104)
+- [📂 AZ-104 – Azure File Sync (Teoría + Orden Correcto)](#-az-104--azure-file-sync-teoría--orden-correcto)
 
+---
+
+# Microsoft Entra Connect - OU Synchronization (AZ-104)
+
+
+## Arquitectura del escenario
+
+```text
+On-Prem AD DS
+      │
+      ▼
+Entra Connect Sync
+      │
+      ▼
+Microsoft Entra ID
+      │
+      ▼
+Azure Files RBAC
+      │
+      ▼
+Azure File Share access
+```
+
+
+# Concepto principal
+
+Microsoft Entra Connect sincroniza identidades entre:
+
+```text
+Active Directory on-prem
+        ↓
+Microsoft Entra ID
+```
+
+---
+
+# Importante
+
+NO es obligatorio sincronizar todo el Active Directory.
+
+Puedes elegir:
+
+- qué usuarios sincronizar
+- qué grupos sincronizar
+- qué Organizational Units (OU) sincronizar
+
+---
+
+# Ejemplo
+
+## Active Directory on-prem
+
+```text
+AD DS
+│
+├── OU1
+│     ├── User2
+│     └── Group1
+│
+└── OU2
+      └── User1
+```
+
+---
+
+# Configuración Entra Connect
+
+```text
+✅ Sync OU1
+❌ Do NOT sync OU2
+```
+
+---
+
+# Resultado en Microsoft Entra ID
+
+```text
+Microsoft Entra ID
+│
+├── User2
+└── Group1
+```
+
+---
+
+# Qué NO aparece
+
+```text
+User1
+```
+
+porque estaba en:
+
+```text
+OU2
+```
+
+y OU2 NO se sincroniza.
+
+---
+
+# Concepto clave examen
+
+La sincronización depende de:
+
+```text
+la OU del objeto
+```
+
+NO:
+
+```text
+de la OU del grupo
+```
+
+---
+
+# Trampa típica AZ-104
+
+Muchos candidatos creen:
+
+```text
+Si sincronizo el grupo,
+todos los miembros funcionan automáticamente.
+```
+
+❌ Incorrecto.
+
+---
+
+# Importante
+
+Aunque:
+
+```text
+Group1 esté sincronizado
+```
+
+↓
+
+si:
+
+```text
+User1 NO está sincronizado
+```
+
+↓
+
+Azure RBAC NO puede evaluar correctamente:
+
+- su identidad
+- su membresía efectiva
+- sus permisos heredados
+
+---
+
+# Resultado
+
+```text
+User1 NO puede acceder a recursos Azure RBAC
+```
+
+aunque pertenezca a:
+
+```text
+Group1
+```
+
+---
+
+# Ejemplo visual
+
+## Caso incorrecto
+
+```text
+Group1 synced
+ └── User1 NOT synced
+```
+
+↓
+
+```text
+Azure no puede resolver membership correctamente
+```
+
+---
+
+# Caso correcto
+
+```text
+Group1 synced
+ └── User1 synced también
+```
+
+↓
+
+```text
+Azure RBAC funciona correctamente
+```
+
+---
+
+# Casos reales enterprise
+
+Muchas empresas sincronizan solo ciertas OUs:
+
+| OU | ¿Sincronizada? |
+|---|---|
+| OU-Synced-Users | ✅ |
+| OU-Admins | ❌ |
+| OU-ServiceAccounts | ❌ |
+| OU-Legacy | ❌ |
+
+---
+
+# Motivos habituales
+
+- seguridad
+- compliance
+- evitar cuentas legacy
+- limitar identidades híbridas
+- evitar sincronizar service accounts
+
+---
+
+# Dónde aparece esto en AZ-104
+
+- Azure Files SMB
+- Hybrid Identity
+- Microsoft Entra Connect
+- Azure RBAC
+- grupos sincronizados
+- usuarios no sincronizados
+- permisos heredados
+
+---
+
+# Regla rápida examen
+
+```text
+Azure RBAC can evaluate only identities that exist in Microsoft Entra ID.
+```
+
+```text
+Unsynchronized AD DS users cannot inherit Azure RBAC permissions.
+```
+
+----
 
 
 # 📂 AZ-104 – Azure File Sync (Teoría + Orden Correcto)
