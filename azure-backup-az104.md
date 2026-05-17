@@ -17,7 +17,8 @@
 - [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
 - [Backup para Blob Storage](#backup-para-blob-storage)
 - [Azure Files Backup (AZ-104)](#azure-files-backup-az-104)
-
+- [Azure Backup Diagnostic Settings (AZ-104)](#azure-backup-diagnostic-settings-az-104)
+  
 # Azure Backup - Teoría importante AZ-104
 
 
@@ -1034,4 +1035,239 @@ The maximum backup frequency for Azure File Shares is every 4 hours.
 
 ```text
 Azure Blob Backup does not support the same frequency as Azure Files Backup.
+```
+---
+# Azure Backup Diagnostic Settings (AZ-104)
+
+# Qué es Azure Backup Diagnostic Settings
+
+Azure Backup Diagnostic Settings son configuraciones que permiten enviar:
+
+- logs
+- métricas
+- eventos
+
+de Azure Backup hacia servicios de monitorización y análisis.
+
+---
+
+# Objetivo principal
+
+Permiten:
+
+- monitorizar backups
+- auditar operaciones
+- detectar errores
+- generar alertas
+- centralizar logs
+
+---
+
+# Importante examen
+
+```text
+Diagnostic Settings NO hacen backups.
+```
+
+↓
+
+solo:
+
+```text
+exportan logs y métricas
+```
+
+---
+
+# Arquitectura típica
+
+```text
+Azure Backup
+      ↓
+Diagnostic Settings
+      ↓
+Log Analytics / Storage / Event Hub
+```
+
+---
+
+# Qué puedes monitorizar
+
+| Evento | Ejemplo |
+|---|---|
+| Backup jobs | Éxito/Fallo |
+| Restore jobs | Restauraciones |
+| Policy changes | Cambios políticas |
+| Alerts | Alertas backup |
+| Retention operations | Expiración backups |
+
+---
+
+# Destinos soportados
+
+| Destino | Uso típico |
+|---|---|
+| Log Analytics Workspace | KQL / alertas |
+| Storage Account | Retención largo plazo |
+| Event Hub | SIEM / Splunk |
+| Partner solutions | Herramientas externas |
+
+---
+
+# Caso típico enterprise
+
+```text
+Azure Backup
+      ↓
+Diagnostic Settings
+      ↓
+Log Analytics Workspace
+      ↓
+Azure Monitor Alerts
+```
+
+---
+
+# Categorías típicas logs
+
+| Categoría | Descripción |
+|---|---|
+| AzureBackupReport | Reportes backup |
+| CoreAzureBackup | Eventos core |
+| AddonAzureBackupJobs | Jobs backup |
+| AddonAzureBackupAlerts | Alertas |
+
+---
+
+# Recursos que soportan Diagnostic Settings
+
+| Recurso | Soporte |
+|---|---|
+| Recovery Services Vault | ✅ |
+| Backup Center | ✅ |
+| Azure Backup jobs | ✅ |
+
+---
+
+# Diferencia importante
+
+| Servicio | Función |
+|---|---|
+| Azure Backup | Realiza backups |
+| Diagnostic Settings | Exporta logs/métricas |
+| Azure Monitor | Analiza/alerta |
+| Log Analytics | Almacena/consulta logs |
+
+---
+
+# Ejemplo típico examen
+
+## Quieres alertar cuando falla un backup
+
+↓
+
+habilitas:
+
+```text
+Diagnostic Settings
+```
+
+↓
+
+envías logs a:
+
+```text
+Log Analytics
+```
+
+↓
+
+creas alerta KQL.
+
+---
+
+# Otro caso típico
+
+## Quieres enviar logs backup a SIEM
+
+↓
+
+usas:
+
+```text
+Diagnostic Settings + Event Hub
+```
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+```text
+Diagnostic Settings realiza backups
+```
+
+❌ Incorrecto.
+
+---
+
+# Trampa 2
+
+```text
+Diagnostic Settings almacena backups
+```
+
+❌ Incorrecto.
+
+---
+
+# Trampa 3
+
+```text
+Azure Monitor reemplaza Azure Backup
+```
+
+❌ Incorrecto.
+
+---
+
+# Conceptos importantes AZ-104
+
+| Concepto | Importancia |
+|---|---|
+| Diagnostic Settings | Muy alta |
+| Log Analytics | Muy alta |
+| Azure Monitor | Muy alta |
+| Recovery Services Vault | Alta |
+| Backup monitoring | Alta |
+
+---
+
+# Flujo típico correcto
+
+```text
+Azure Resource
+      ↓
+Diagnostic Settings
+      ↓
+Log Analytics Workspace
+      ↓
+KQL Queries / Alerts / Dashboards
+```
+
+---
+
+# Reglas rápidas examen
+
+```text
+Diagnostic Settings export logs and metrics.
+```
+
+```text
+Diagnostic Settings do not perform backups.
+```
+
+```text
+Azure Backup monitoring commonly uses Log Analytics.
 ```
