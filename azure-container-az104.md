@@ -150,6 +150,316 @@ ACR
 ```
 
 ---
+# Azure Container Registry - Dedicated Data Endpoints (AZ-104)
+
+# Concepto principal
+
+Azure Container Registry (ACR) separa:
+
+- Management Plane
+- Data Plane
+
+---
+
+# Qué es el Data Plane
+
+El:
+
+```text
+Data Plane
+```
+
+maneja:
+
+- push imágenes
+- pull imágenes
+- layers/blobs
+- operaciones Docker/OCI
+
+---
+
+# Qué es el Management Plane
+
+El:
+
+```text
+Management Plane
+```
+
+maneja:
+
+- configuración del registry
+- networking
+- RBAC
+- webhooks
+- tasks
+- properties
+
+---
+
+# Qué es un Dedicated Data Endpoint
+
+Permite que:
+
+```text
+las operaciones de imágenes
+```
+
+usen:
+
+```text
+un endpoint dedicado
+```
+
+en vez del endpoint general del registry.
+
+---
+
+# Objetivo principal
+
+Mejorar:
+
+- seguridad
+- aislamiento
+- firewalling
+- Private Link
+- routing
+
+---
+
+# Muy importante examen
+
+Dedicated Data Endpoints requieren:
+
+```text
+Premium SKU
+```
+
+---
+
+# La pregunta
+
+Te preguntan:
+
+```text
+¿Qué dos configuraciones debes modificar?
+```
+
+---
+
+# Respuesta correcta
+
+| Configuración | Motivo |
+|---|---|
+| Properties | Activar Dedicated Data Endpoint + Premium |
+| Networking | Configurar acceso/red/Private Endpoint |
+
+---
+
+# Por qué Properties
+
+En:
+
+```text
+Properties
+```
+
+es donde:
+
+- cambias SKU
+- habilitas dedicated data endpoint
+
+---
+
+# Importante
+
+Dedicated Data Endpoints:
+
+❌ NO funcionan en Standard  
+❌ NO funcionan en Basic  
+
+↓
+
+solo:
+
+```text
+Premium
+```
+
+---
+
+# Por qué Networking
+
+Después debes configurar:
+
+- Private Endpoint
+- Public access
+- Firewall rules
+- acceso privado
+
+---
+
+# Flujo real
+
+```text
+1. Upgrade a Premium
+2. Enable dedicated data endpoint
+3. Configure networking/private access
+```
+
+---
+
+# Qué NO sirve
+
+## Overview
+
+❌ Solo información general.
+
+---
+
+## Tasks
+
+❌ Relacionado con ACR Tasks/builds.
+
+---
+
+## IAM
+
+❌ RBAC/permisos.
+
+No configura networking ni data endpoints.
+
+---
+
+## Events
+
+❌ Eventos/Event Grid.
+
+---
+
+# Concepto importante AZ-104
+
+ACR tiene:
+
+```text
+control plane endpoint
+```
+
+y opcionalmente:
+
+```text
+dedicated data endpoints
+```
+
+---
+
+# Visualmente
+
+## Sin Dedicated Data Endpoint
+
+```text
+Docker Client
+      ↓
+registry.azurecr.io
+      ↓
+management + data juntos
+```
+
+---
+
+## Con Dedicated Data Endpoint
+
+```text
+Docker Client
+      ↓
+Dedicated Data Endpoint
+      ↓
+solo tráfico imágenes/blobs
+```
+
+---
+
+# Beneficios
+
+| Beneficio | Explicación |
+|---|---|
+| Seguridad | Mejor aislamiento |
+| Firewall simplificado | Reglas más precisas |
+| Private Link | Mejor integración |
+| Routing separado | Data traffic separado |
+
+---
+
+# Premium añade además
+
+| Feature | Premium |
+|---|---|
+| Dedicated Data Endpoints | ✅ |
+| Geo-replication | ✅ |
+| Private Link | ✅ |
+| Mayor throughput | ✅ |
+| Más concurrencia | ✅ |
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+```text
+Dedicated Data Endpoints funcionan en Standard
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 2
+
+```text
+IAM configura networking
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 3
+
+```text
+Tasks están relacionados con data endpoints
+```
+
+❌ Incorrecto.
+
+---
+
+# Conceptos importantes examen
+
+| Concepto | Importancia |
+|---|---|
+| ACR Premium features | Alta |
+| Data Plane vs Control Plane | Muy alta |
+| Private Link | Alta |
+| Dedicated Data Endpoints | Alta |
+| Networking ACR | Alta |
+
+---
+
+# Regla rápida examen
+
+```text
+Dedicated Data Endpoints require Premium SKU.
+```
+
+```text
+Properties enables the feature.
+```
+
+```text
+Networking configures private/public access.
+```
+---
 
 ## Private Endpoint
 
@@ -384,6 +694,96 @@ A private endpoint does not grant image pull permissions.
 ```text
 Dedicated data endpoints improve networking isolation, not authorization.
 ```
+# Azure Container Registry - Control Plane vs Dedicated Data Endpoints (AZ-104)
+
+| Característica | Control Plane Endpoint | Dedicated Data Endpoint |
+|---|---|---|
+| Objetivo principal | Administrar el registry | Transferencia de imágenes y blobs |
+| Tipo de operaciones | Management Plane | Data Plane |
+| Ejemplos | RBAC, networking, Tasks, webhooks | Push/Pull imágenes Docker |
+| Gestiona configuración ACR | ✅ | ❌ |
+| Gestiona imágenes/layers | ❌ | ✅ |
+| Docker pull/push | ❌ | ✅ |
+| Azure Portal/API management | ✅ | ❌ |
+| Tráfico blobs OCI/Docker | ❌ | ✅ |
+| Necesario para funcionamiento ACR | ✅ | ❌ Opcional |
+| Disponible en Basic | ✅ | ❌ |
+| Disponible en Standard | ✅ | ❌ |
+| Disponible en Premium | ✅ | ✅ |
+| Compatible con Private Link | ✅ | ✅ |
+| Aislamiento tráfico imágenes | ❌ | ✅ |
+| Uso típico | Administración registry | Tráfico containers/imágenes |
+| Endpoint típico | `contoso.azurecr.io` | `contoso.<region>.data.azurecr.io` |
+| Relacionado con | Control Plane | Data Plane |
+| Configuración principal | Properties / IAM / Networking | Properties + Networking |
+| Seguridad avanzada | Limitada | Mejor aislamiento tráfico |
+
+---
+
+# Concepto importante
+
+## Control Plane
+
+Administra:
+
+```text
+el recurso Azure Container Registry
+```
+
+---
+
+## Dedicated Data Endpoint
+
+Administra:
+
+```text
+el tráfico de imágenes y blobs
+```
+
+---
+
+# Visualmente
+
+## Control Plane
+
+```text
+Azure Portal
+      ↓
+contoso.azurecr.io
+      ↓
+Configuración ACR
+```
+
+---
+
+## Dedicated Data Endpoint
+
+```text
+Docker Client
+      ↓
+contoso.<region>.data.azurecr.io
+      ↓
+Push/Pull imágenes
+```
+
+---
+
+# Regla rápida examen
+
+```text
+Control Plane = administración
+```
+
+```text
+Data Endpoint = tráfico imágenes
+```
+
+```text
+Dedicated Data Endpoints require Premium SKU.
+```
+
+
+
 ## Quién debe tener AcrPull
 
 ### Concepto clave
