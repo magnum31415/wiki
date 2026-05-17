@@ -1,5 +1,393 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+- [Azure Virtual Network Peering (AZ-104)](#azure-virtual-network-peering-az-104)
+- [Azure Route Tables y Next Hop Types (AZ-104)](#azure-route-tables-y-next-hop-types-az-104)
+
+---
+
+# Azure Virtual Network Peering (AZ-104)
+
+# Qué es VNet Peering
+
+VNet Peering permite conectar:
+
+```text
+dos Virtual Networks (VNets)
+```
+
+de forma privada usando:
+
+```text
+la red backbone de Microsoft
+```
+
+sin usar:
+
+- Internet
+- VPN Gateway
+- ExpressRoute
+
+---
+
+# Objetivo principal
+
+Permitir comunicación:
+
+```text
+VNet ↔ VNet
+```
+
+como si fueran:
+
+```text
+una sola red
+```
+
+---
+
+# Tipos de peering
+
+| Tipo | Descripción |
+|---|---|
+| Regional VNet Peering | VNets en la misma región |
+| Global VNet Peering | VNets en distintas regiones |
+
+---
+
+# Ejemplos
+
+| VNet | Región |
+|---|---|
+| VNet-Prod | West Europe |
+| VNet-Hub | West Europe |
+
+↓
+
+```text
+Regional Peering
+```
+
+---
+
+| VNet | Región |
+|---|---|
+| VNet-Europe | West Europe |
+| VNet-US | East US |
+
+↓
+
+```text
+Global Peering
+```
+
+---
+
+# Características importantes
+
+| Característica | VNet Peering |
+|---|---|
+| Tráfico privado | ✅ |
+| Usa backbone Microsoft | ✅ |
+| Baja latencia | ✅ |
+| Alto throughput | ✅ |
+| Requiere VPN Gateway | ❌ |
+| Requiere Internet | ❌ |
+
+---
+
+# Comunicación entre VNets
+
+Después del peering:
+
+```text
+VMs pueden comunicarse por IP privada
+```
+
+---
+
+# Requisito importante
+
+Las VNets NO pueden tener:
+
+```text
+overlapping IP ranges
+```
+
+---
+
+# Ejemplo inválido
+
+| VNet | Address Space |
+|---|---|
+| VNet1 | 10.0.0.0/16 |
+| VNet2 | 10.0.0.0/24 |
+
+❌ Overlap.
+
+---
+
+# Ejemplo válido
+
+| VNet | Address Space |
+|---|---|
+| VNet1 | 10.0.0.0/16 |
+| VNet2 | 10.1.0.0/16 |
+
+✅ Correcto.
+
+---
+
+# Concepto clave examen
+
+```text
+Overlapping address spaces prevent VNet peering.
+```
+
+---
+
+# Peering es NO transitivo
+
+MUY importante.
+
+---
+
+# Ejemplo
+
+```text
+VNetA ↔ VNetB
+VNetB ↔ VNetC
+```
+
+↓
+
+```text
+VNetA NO puede hablar con VNetC automáticamente
+```
+
+---
+
+# Esto se llama
+
+```text
+Non-transitive routing
+```
+
+---
+
+# Para tránsito necesitas
+
+- Azure Firewall
+- NVA
+- VPN Gateway transit
+- Virtual WAN
+
+---
+
+# Hub & Spoke
+
+Peering se usa muchísimo en:
+
+```text
+Hub & Spoke architectures
+```
+
+---
+
+# Arquitectura típica
+
+```text
+Spoke1
+    │
+    ▼
+Hub VNet
+    ▲
+    │
+Spoke2
+```
+
+---
+
+# El Hub normalmente contiene
+
+- Azure Firewall
+- VPN Gateway
+- DNS
+- Bastion
+- Shared Services
+
+---
+
+# Opciones importantes del peering
+
+| Opción | Función |
+|---|---|
+| Allow virtual network access | Permite comunicación básica |
+| Allow forwarded traffic | Permite tráfico reenviado por firewall/NVA |
+| Allow gateway transit | Permite compartir VPN Gateway |
+| Use remote gateways | Usa gateway remoto del Hub |
+
+---
+
+# Gateway Transit
+
+Permite que Spokes usen:
+
+```text
+el VPN Gateway del Hub
+```
+
+---
+
+# Ejemplo típico
+
+```text
+On-Prem
+   │
+VPN Gateway (Hub)
+   │
+Hub VNet
+   │
+Spokes
+```
+
+---
+
+# Reglas importantes Gateway Transit
+
+| Regla | Valor |
+|---|---|
+| Solo un remote gateway por VNet | ✅ |
+| Gateway debe estar en Hub | ✅ |
+| Use Remote Gateway y Gateway Transit se complementan | ✅ |
+
+---
+
+# Costes importantes
+
+| Elemento | Coste |
+|---|---|
+| Inbound peering traffic | Normalmente gratis |
+| Outbound peering traffic | Puede tener coste |
+| Global Peering | Más caro |
+
+---
+
+# Límites importantes
+
+| Límite | Valor |
+|---|---|
+| Peering por VNet | Muy alto (depende SKU/subscription) |
+| Overlapping IPs | ❌ No permitido |
+| Transitividad automática | ❌ No |
+
+---
+
+# DNS importante
+
+Peering NO resuelve DNS automáticamente.
+
+Debes configurar:
+
+- Azure DNS Private Resolver
+- custom DNS
+- forwarders
+
+---
+
+# Private Endpoints y Peering
+
+Private Endpoints funcionan a través de peering si:
+
+✅ routing correcto  
+✅ DNS correcto  
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+```text
+Peering = transitive
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 2
+
+```text
+Peering requiere VPN Gateway
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 3
+
+```text
+VNets con overlap pueden hacer peering
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 4
+
+```text
+DNS funciona automáticamente
+```
+
+❌ Incorrecto.
+
+---
+
+# Comparativa rápida
+
+| Característica | Peering | VPN Gateway |
+|---|---|---|
+| Usa Internet | ❌ | Puede |
+| Baja latencia | ✅ | Menor |
+| Alto throughput | ✅ | Menor |
+| Encryption automática | ❌ |
+| Comunicación privada | ✅ | ✅ |
+
+---
+
+# Conceptos importantes AZ-104
+
+| Concepto | Muy importante |
+|---|---|
+| Non-overlapping IPs | ✅ |
+| Non-transitive routing | ✅ |
+| Hub & Spoke | ✅ |
+| Gateway Transit | ✅ |
+| Global vs Regional Peering | ✅ |
+| Allow forwarded traffic | ✅ |
+
+---
+
+# Reglas rápidas examen
+
+```text
+VNet peering uses the Microsoft backbone network.
+```
+
+```text
+Peered VNets cannot have overlapping address spaces.
+```
+
+```text
+VNet peering is not transitive.
+```
+
+```text
+Gateway transit allows spokes to use the hub VPN gateway.
+```
+---
 # Azure Route Tables y Next Hop Types (AZ-104)
 
 ## Índice
