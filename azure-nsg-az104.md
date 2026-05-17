@@ -572,3 +572,46 @@ Public IP addresses do not bypass NSG rules.
 ```text
 Both subnet and NIC NSGs are evaluated.
 ```
+---
+
+En NSG:
+
+la primera regla que coincide gana
+
+y Azure evalúa:
+
+de menor número → mayor número
+En tu ejemplo
+Priority	Acción
+100	Allow RDP
+200	Deny All
+
+Azure empieza por:
+
+100
+
+↓
+
+¿Coincide tráfico RDP?
+
+✅ Sí.
+
+↓
+
+Entonces:
+
+SE DETIENE la evaluación
+
+↓
+
+Resultado:
+
+Allow
+La regla 200
+ni siquiera se evalúa
+
+porque Azure ya encontró:
+
+la primera coincidencia
+Concepto clave NSG
+FIRST MATCH WINS
