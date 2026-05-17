@@ -1041,11 +1041,117 @@ Por ejemplo:
 
 puede subdividirse en:
 
-| Subred | Tamaño |
+| CIDR | Binario tercer octeto | Decimal | Host bits | Total IPs | Hosts utilizables |
+|---|---|---|---|---|---|
+| /17 | 10000000 | 128 | 15 | 32,768 | 32,766 |
+| /18 | 11000000 | 192 | 14 | 16,384 | 16,382 |
+| /19 | 11100000 | 224 | 13 | 8,192 | 8,190 |
+| /20 | 11110000 | 240 | 12 | 4,096 | 4,094 |
+| /21 | 11111000 | 248 | 11 | 2,048 | 2,046 |
+| /22 | 11111100 | 252 | 10 | 1,024 | 1,022 |
+| /23 | 11111110 | 254 | 9 | 512 | 510 |
+| /24 | 11111111 | 255 | 8 | 256 | 254 |
+
+---
+
+# Cómo calcular el rango asociado a un CIDR
+
+## Ejemplo `10.180.32.0/19`
+
+**Red inicial:** ``10.180.32.0/19``
+
+### Paso 1 — Entender el `/19`
+
+``/19`` significa:
+- ``19 bits son network``
+- ``13 bits son host``
+
+porque: ``32 - 19 = 13```
+
+### Paso 2 — Obtener la máscara
+
+- **/19 en binario:** ``11111111.11111111.11100000.00000000``  
+- **y en decimal:** ``255.255.224.0``
+
+### Paso 3 — Encontrar el octeto importante
+
+- **La máscara es:** ``255.255.224.0``
+- **el octeto importante es:** ``224``
+- **Calcular el salto:** ``256 - 224 = 32``
+
+Las redes `/19` avanzan:
+- 0
+- 32
+- 64
+- 96
+- 128
+- 160
+- 192
+- 224
+
+### Paso 4 — Encontrar en qué bloque cae
+
+- **Tu red es:** ``10.180.32.0``
+- **Pertenece al bloque:** ``32 → 63``
+
+porque el siguiente salto sería: ``64``
+
+### Paso 5 — Calcular el final
+
+- La siguiente red sería: ``10.180.64.0/19``
+- La IP anterior es: ``10.180.63.255``
+
+### Resultado final
+
+- **Rango:** ``10.180.32.0 → 10.180.63.255``
+
+
+
+## Ejemplo `10.180.64.0/21`
+
+
+- **CIDR:**  `/21` significa
+- **Network bits:** ``21 bits son network``
+- **Host bits:** ``11 bits son host``  ( 32-21 = 11 )
+- **Total IPs:** ``2^11 = 2048``
+- **/21 en binario:** ``11111111.11111111.11111000.00000000``
+- **La máscara es:** ``255.255.248.0``
+- **el octeto importante es:** ``248``
+- **Calcular el salto:** ``256 - 248 = 8``
+- **Red:** `10.180.64.0/21``` 
+- **Bloque:** ``64 → 71``
+- **Rango:** ``10.180.64.0 → 10.180.71.255 ``
+
+### Cómo avanzan las redes `/21`
+
+| Red CIDR | Network Range |
 |---|---|
-| /24 | 256 IPs |
-| /25 | 128 IPs |
-| /26 | 64 IPs |
+| 10.180.0.0/21 | 10.180.0.0 → 10.180.7.255 |
+| 10.180.8.0/21 | 10.180.8.0 → 10.180.15.255 |
+| 10.180.16.0/21 | 10.180.16.0 → 10.180.23.255 |
+| 10.180.24.0/21 | 10.180.24.0 → 10.180.31.255 |
+| 10.180.32.0/21 | 10.180.32.0 → 10.180.39.255 |
+| 10.180.40.0/21 | 10.180.40.0 → 10.180.47.255 |
+| 10.180.48.0/21 | 10.180.48.0 → 10.180.55.255 |
+| 10.180.56.0/21 | 10.180.56.0 → 10.180.63.255 |
+| 10.180.64.0/21 | 10.180.64.0 → 10.180.71.255 |
+| 10.180.72.0/21 | 10.180.72.0 → 10.180.79.255 |
+| 10.180.80.0/21 | 10.180.80.0 → 10.180.87.255 |
+
+
+ ### Regla rápida examen
+
+```text
+Rango final = siguiente subnet - 1
+```
+
+---
+# Fórmulas importantes
+
+## Host bits
+
+```text
+32 - CIDR
 
 
 ---
@@ -1053,47 +1159,47 @@ puede subdividirse en:
 
 
 ```text
-10.180.0.0/16
+CIDR 10.180.0.0/16
 65,536 IPs
 Máscara: 255.255.0.0
-Rango: 10.180.0.0 → 10.180.255.255
+Network Range: 10.180.0.0 → 10.180.255.255
 │
-├── 10.180.0.0/23
+├── CIDR 10.180.0.0/23
 │   Uso: Hub
 │   Tamaño: 512 IPs
 │   Máscara: 255.255.254.0
 │   Cálculo salto: 256 - 254 = 2
-│   Rango: 10.180.0.0 → 10.180.1.255
+│   Network Range: 10.180.0.0 → 10.180.1.255
 │
 ├── ESPACIO LIBRE
 │   Tamaño: 7,680 IPs
-│   Rango: 10.180.2.0 → 10.180.31.255
+│   Network Range: 10.180.2.0 → 10.180.31.255
 │   Motivo: el siguiente /19 válido debe empezar en múltiplo de 32
 │
-├── 10.180.32.0/19
+├── CIDR 10.180.32.0/19
 │   Uso: Producción
 │   Tamaño: 8,192 IPs
 │   Máscara: 255.255.224.0
 │   Cálculo salto: 256 - 224 = 32
-│   Rango: 10.180.32.0 → 10.180.63.255
+│   Network Range: 10.180.32.0 → 10.180.63.255
 │
-├── 10.180.64.0/21
+├── CIDR 10.180.64.0/21
 │   Uso: NonProd
 │   Tamaño: 2,048 IPs
 │   Máscara: 255.255.248.0
 │   Cálculo salto: 256 - 248 = 8
-│   Rango: 10.180.64.0 → 10.180.71.255
+│   Network Range: 10.180.64.0 → 10.180.71.255
 │
-├── 10.180.72.0/21
+├── CIDR 10.180.72.0/21
 │   Uso: Reserva Growth
 │   Tamaño: 2,048 IPs
 │   Máscara: 255.255.248.0
 │   Cálculo salto: 256 - 248 = 8
-│   Rango: 10.180.72.0 → 10.180.79.255
+│   Network Range: 10.180.72.0 → 10.180.79.255
 │
 └── ESPACIO FUTURO
     Tamaño: 45,056 IPs
-    Rango: 10.180.80.0 → 10.180.255.255
+    Network Range: 10.180.80.0 → 10.180.255.255
 ```
 
 
