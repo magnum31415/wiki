@@ -41,7 +41,8 @@
       32.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-encription-scopes-az104.md">Azure Storage Encryption Scopes</a><br>  
       33.<a href="https://github.com/magnum31415/wiki/blob/main/azure-ITSM-connector-az104.md">Azure ITSM Connector</a><br>  
       34.<a href="https://github.com/magnum31415/wiki/blob/main/azure-subnetting-az194.md">Azure Subnetting</a><br>  
-      35.<a href="https://github.com/magnum31415/wiki/blob/main/azure-availability-sets-az-104.md">Azure Availability Sets</a><br>        
+      35.<a href="https://github.com/magnum31415/wiki/blob/main/azure-availability-sets-az-104.md">Azure Availability Sets</a><br>      
+      36.<a href="https://github.com/magnum31415/wiki/blob/main/azure-usuarios-licencias-az104.md">Azure Usuarios y Licencias</a><br> 
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
