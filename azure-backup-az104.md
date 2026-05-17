@@ -18,6 +18,7 @@
 - [Backup para Blob Storage](#backup-para-blob-storage)
 - [Azure Files Backup (AZ-104)](#azure-files-backup-az-104)
 - [Azure Backup Diagnostic Settings (AZ-104)](#azure-backup-diagnostic-settings-az-104)
+- [Azure Backup Ecosystem - Componentes y Dependencias (AZ-104)](#azure-backup-ecosystem---componentes-y-dependencias-az-104)
   
 # Azure Backup - Teoría importante AZ-104
 
@@ -1270,4 +1271,314 @@ Diagnostic Settings do not perform backups.
 
 ```text
 Azure Backup monitoring commonly uses Log Analytics.
+```
+---
+# Azure Backup Ecosystem - Componentes y Dependencias (AZ-104)
+
+| Componente | Función principal | ¿Hace backups? | ¿Guarda logs? | Dependencia regional | Dependencias importantes | Uso típico |
+|---|---|---|---|---|---|---|
+| Recovery Services Vault (RSV) | Contenedor lógico de backups | ✅ | ❌ | ✅ Muy importante | Debe estar en misma región que muchas cargas protegidas | Azure VM Backup |
+| Azure Backup | Servicio backup gestionado | ✅ | ❌ | ✅ | Usa RSV | Backup VMs/files/SAP |
+| Azure Backup Diagnostic Settings | Exporta logs/métricas | ❌ | ✅ | ⚠️ Recomendado misma región | Requiere RSV + destino logs | Monitoring backup |
+| Log Analytics Workspace (LAW) | Almacena y consulta logs | ❌ | ✅ | ⚠️ Importante por latencia/coste | Azure Monitor | KQL/alertas |
+| Azure Monitor | Monitorización y alertas | ❌ | ✅ | ❌ Global lógico | LAW + Diagnostic Settings | Alertas backup |
+| Backup Center | Vista centralizada backups | ❌ | ❌ | ❌ | RSV + Azure Backup | Gestión centralizada |
+| Storage Account (logs) | Retención logs/export | ❌ | ✅ | ⚠️ Recomendado misma región | Diagnostic Settings | Archivo largo plazo |
+| Event Hub | Streaming logs/SIEM | ❌ | ✅ | ⚠️ Latencia/importante | Diagnostic Settings | Splunk/Sentinel/SIEM |
+| Azure Site Recovery (ASR) | Disaster Recovery/replicación | ❌ | Parcial | ✅ Muy importante | RSV | DR entre regiones |
+
+---
+
+# Relación entre componentes
+
+```text
+Azure Backup
+      ↓
+Recovery Services Vault
+      ↓
+Diagnostic Settings
+      ↓
+Log Analytics Workspace
+      ↓
+Azure Monitor Alerts
+```
+
+---
+
+# Recovery Services Vault (MUY IMPORTANTE)
+
+## Qué es
+
+Es el contenedor lógico donde Azure guarda:
+
+- backups
+- metadata
+- políticas
+- recovery points
+
+---
+
+# Dependencia regional importante
+
+MUY preguntado en AZ-104.
+
+---
+
+# Regla importante
+
+| Recurso protegido | ¿Debe estar misma región que RSV? |
+|---|---|
+| Azure VM | ✅ Sí |
+| Azure Files | ✅ Sí |
+| SQL in Azure VM | ✅ Sí |
+
+---
+
+# Ejemplo
+
+```text
+VM → West Europe
+RSV → West Europe
+```
+
+✅ Correcto.
+
+---
+
+# Incorrecto
+
+```text
+VM → West Europe
+RSV → North Europe
+```
+
+❌ No soportado normalmente.
+
+---
+
+# Log Analytics Workspace
+
+## Qué hace
+
+Guarda:
+
+- logs
+- métricas
+- eventos
+
+NO backups.
+
+---
+
+# Importante
+
+Puede recibir logs desde:
+
+- Azure Backup
+- VMs
+- Firewall
+- Azure Monitor
+- Defender
+
+---
+
+# Dependencia regional
+
+No tan estricta como RSV.
+
+Pero:
+
+```text
+misma región = menos latencia/coste
+```
+
+---
+
+# Azure Backup Diagnostic Settings
+
+## Qué hacen
+
+Exportan:
+
+- logs
+- métricas
+- eventos
+
+---
+
+# NO hacen
+
+❌ backups  
+❌ snapshots  
+❌ restores  
+
+---
+
+# Dependencias
+
+Necesitan:
+
+| Requisito | Necesario |
+|---|---|
+| Recovery Services Vault | ✅ |
+| Destino logs | ✅ |
+| Azure Monitor ecosystem | ✅ |
+
+---
+
+# Azure Monitor
+
+## Qué hace
+
+- alertas
+- dashboards
+- métricas
+- monitorización
+
+---
+
+# NO guarda backups
+
+Solo:
+
+```text
+observabilidad
+```
+
+---
+
+# Backup Center
+
+Vista centralizada para:
+
+- jobs
+- políticas
+- estado backups
+- restores
+
+---
+
+# Importante
+
+Backup Center:
+
+```text
+NO almacena backups
+```
+
+---
+
+# Azure Site Recovery (ASR)
+
+MUY confundido con Azure Backup.
+
+---
+
+# Diferencia importante
+
+| Servicio | Función |
+|---|---|
+| Azure Backup | Backup/restauración |
+| Azure Site Recovery | Replicación/DR |
+
+---
+
+# ASR usa también
+
+```text
+Recovery Services Vault
+```
+
+---
+
+# Trampa típica examen
+
+Muchos creen:
+
+```text
+1 RSV = solo backups
+```
+
+❌ Incorrecto.
+
+También puede usarse para:
+
+```text
+Azure Site Recovery
+```
+
+---
+
+# Tabla rápida importante
+
+| Servicio | Backup | Monitoring | DR |
+|---|---|---|---|
+| Azure Backup | ✅ | ❌ | ❌ |
+| RSV | ✅ | ❌ | ✅ |
+| Diagnostic Settings | ❌ | ✅ | ❌ |
+| Log Analytics | ❌ | ✅ | ❌ |
+| Azure Monitor | ❌ | ✅ | ❌ |
+| ASR | ❌ | ❌ | ✅ |
+
+---
+
+# Dependencias regionales importantes AZ-104
+
+| Componente | Restricción región |
+|---|---|
+| Recovery Services Vault | Muy estricta |
+| Azure VM Backup | Misma región RSV |
+| Azure Files Backup | Misma región RSV |
+| Log Analytics | Flexible |
+| Diagnostic Settings | Flexible |
+| Azure Monitor | Global lógico |
+
+---
+
+# Arquitectura típica enterprise
+
+```text
+Azure VM
+    ↓
+Azure Backup
+    ↓
+Recovery Services Vault
+    ↓
+Diagnostic Settings
+    ↓
+Log Analytics Workspace
+    ↓
+Azure Monitor Alerts
+```
+
+---
+
+# Conceptos MUY importantes examen
+
+| Tema | Importancia |
+|---|---|
+| Recovery Services Vault region dependency | Muy alta |
+| Diagnostic Settings | Muy alta |
+| Azure Monitor vs Backup | Muy alta |
+| ASR vs Backup | Muy alta |
+| Log Analytics | Muy alta |
+
+---
+
+# Reglas rápidas examen
+
+```text
+Recovery Services Vault stores backup data and metadata.
+```
+
+```text
+Diagnostic Settings export logs and metrics.
+```
+
+```text
+Log Analytics stores monitoring data, not backups.
+```
+
+```text
+Azure Backup and Azure Site Recovery both use Recovery Services Vaults.
 ```
