@@ -846,6 +846,13 @@ porque:
 | /29 | 3 | Host bits: 32 - 29 = 3<br>Total IPs: 2^3 = 8 | 8 | 6 |
 | /30 | 2 | Host bits: 32 - 30 = 2<br>Total IPs: 2^2 = 4 | 4 | 2 |
 
+
+## Regla importante
+
+```text
+Cuanto MENOR es el CIDR,
+MÁS grande es la red.
+``
 ---
 
 ## Fórmulas importantes
@@ -893,7 +900,6 @@ porque:
 | /19 | 255.255.224.0 | 256 - 224 = 32 | 32 | 10.0.0.0<br>10.0.32.0<br>...<br>10.0.224.0 |
 | /18 | 255.255.192.0 | 256 - 192 = 64 | 64 | 10.0.0.0<br>10.0.64.0<br>...<br>10.0.192.0 |
 | /17 | 255.255.128.0 | 256 - 128 = 128 | 128 | 10.0.0.0<br>10.0.128.0 |
-
 
 
 ---
@@ -1139,6 +1145,32 @@ porque el siguiente salto sería: ``64``
 | 10.180.80.0/21 | 10.180.80.0 → 10.180.87.255 |
 
 
+## Ejemplo `10.180.0.0/23`
+
+- **CIDR:** /23 significa
+- **Network bits:** 23 bits son network
+- **Host bits:**  ``9 bits son host `` (32 - 23 = 9)
+- **Total IPs:**  ``2^9 = 512 ``
+- **/23 en binario:**  ``11111111.11111111.11111110.00000000 ``
+- **La máscara es:**  ``255.255.254.0 ``
+- **El octeto importante es:**  ``254 ``
+- **Calcular el salto:**  ``256 - 254 = 2 ``
+- **Red:** `10.180.0.0/23`
+- **Bloque:** 0 → 1
+- **Rango:**  ``10.180.0.0 → 10.180.1.255 ``
+
+### Cómo avanzan las redes `/23`
+
+| Red CIDR | Network Range |
+|---|---|
+| 10.180.0.0/23 | 10.180.0.0 → 10.180.1.255 |
+| 10.180.2.0/23 | 10.180.2.0 → 10.180.3.255 |
+| 10.180.4.0/23 | 10.180.4.0 → 10.180.5.255 |
+| 10.180.6.0/23 | 10.180.6.0 → 10.180.7.255 |
+| 10.180.8.0/23 | 10.180.8.0 → 10.180.9.255 |
+| 10.180.10.0/23 | 10.180.10.0 → 10.180.11.255 |
+| 10.180.12.0/23 | 10.180.12.0 → 10.180.13.255 |
+
  ### Regla rápida examen
 
 ```text
@@ -1227,6 +1259,11 @@ Las redes /19 SOLO pueden empezar en:
 **NO puede empezar en:** ``10.180.2.0/19`` ❌ inválido.
 **Entonces cuál es el siguiente /19 válido:**  Después de: ``10.180.0.0/19`` el siguiente posible es: ``10.180.32.0/19``
 
+```text
+Si empiezas asignando redes pequeñas,
+luego puede no caber una red grande alineada correctamente.
+En este caso /24 es menor que /19
+```
     
 ---
 
