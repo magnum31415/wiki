@@ -194,21 +194,22 @@ Todos los NSG tienen reglas por defecto.
 
 # Default inbound rules
 
-| Priority | Nombre | Acción |
-|---|---|---|
-| 65000 | AllowVNetInBound | Allow |
-| 65001 | AllowAzureLoadBalancerInBound | Allow |
-| 65500 | DenyAllInbound | Deny |
+| Priority | Nombre | Acción | Qué significa |
+|---|---|---|---|
+| 65000 | AllowVNetInBound | Allow | Permite tráfico desde la misma VNet |
+| 65001 | AllowAzureLoadBalancerInBound | Allow | Permite tráfico desde Azure Load Balancer |
+| 65500 | DenyAllInbound | Deny | Bloquea TODO el tráfico inbound restante |
 
 ---
 
 # Default outbound rules
 
-| Priority | Nombre | Acción |
-|---|---|---|
-| 65000 | AllowVnetOutbound | Allow |
-| 65001 | AllowInternetOutbound | Allow |
-| 65500 | DenyAllOutbound | Deny |
+| Priority | Nombre | Acción | Qué significa |
+|---|---|---|---|
+| 65000 | AllowVnetOutbound | Allow | Permite tráfico hacia la misma VNet |
+| 65001 | AllowInternetOutbound | Allow | Permite salida hacia Internet |
+| 65500 | DenyAllOutbound | Deny | Bloquea resto tráfico outbound |
+
 
 ---
 
