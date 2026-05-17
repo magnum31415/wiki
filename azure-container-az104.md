@@ -452,6 +452,155 @@ ACR
 
 Servicio de automatización/build dentro de Azure Container Registry.
 
+
+| SKU | ¿Soporta ACR Tasks? |
+|---|---|
+| Basic | ✅ |
+| Standard | ✅ |
+| Premium | ✅ |
+
+# Qué cambia entre SKUs
+
+Lo que cambia NO es:
+
+```text
+la existencia de ACR Tasks
+```
+
+sino:
+
+- rendimiento
+- throughput
+- concurrencia
+- features avanzadas
+
+---
+
+# Qué es ACR Tasks
+
+ACR Tasks permite:
+
+```text
+automatizar builds y operaciones Docker/OCI
+```
+
+directamente dentro de:
+
+```text
+Azure Container Registry
+```
+
+---
+
+# Casos típicos
+
+| Función | Ejemplo |
+|---|---|
+| Build automático | Build imagen al hacer push Git |
+| Scheduled builds | Build nocturno |
+| Base image update | Rebuild automático si cambia imagen base |
+| Multi-step tasks | Pipelines containerizadas |
+
+---
+
+# Tipos de triggers
+
+| Trigger | Descripción |
+|---|---|
+| Source code update | Cambio en Git |
+| Base image update | Cambio imagen base |
+| Timer trigger | Schedule/cron |
+| Manual | Ejecución manual |
+
+---
+
+# Diferencias entre SKUs
+
+| Característica | Basic | Standard | Premium |
+|---|---|---|---|
+| ACR Tasks | ✅ | ✅ | ✅ |
+| Webhooks | ✅ | ✅ | ✅ |
+| Microsoft Entra integration | ✅ | ✅ | ✅ |
+| Throughput | Bajo | Medio | Alto |
+| Concurrent operations | Bajo | Medio | Alto |
+| Geo-replication | ❌ | ❌ | ✅ |
+| Private Link / Private Endpoint | ❌ | ❌ | ✅ |
+| Availability features | Básicas | Medias | Avanzadas |
+
+---
+
+# Qué suele preguntar AZ-104
+
+## Trampa típica
+
+```text
+¿Qué SKU mínimo soporta ACR Tasks?
+```
+
+Respuesta:
+
+```text
+Basic
+```
+
+---
+
+# Otra trampa típica
+
+Muchos candidatos asocian:
+
+```text
+CI/CD avanzado = Premium
+```
+
+❌ Incorrecto.
+
+Premium añade:
+
+- geo-replication
+- Private Link
+- mayor throughput
+- HA avanzada
+
+pero:
+
+```text
+NO habilita ACR Tasks
+```
+
+porque Tasks ya existe en Basic.
+
+---
+
+# Cuándo usar cada SKU
+
+| SKU | Uso típico |
+|---|---|
+| Basic | Dev/Test/Lab |
+| Standard | Producción normal |
+| Premium | Enterprise/global/high-scale |
+
+---
+
+# Concepto importante AZ-104
+
+```text
+Feature availability ≠ performance level
+```
+
+---
+
+# Regla rápida examen
+
+```text
+ACR Tasks is supported in Basic, Standard, and Premium tiers.
+```
+
+```text
+Premium adds advanced networking and geo-replication features.
+```
+
+
 ---
 
 ## Uso típico
