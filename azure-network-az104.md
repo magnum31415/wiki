@@ -730,3 +730,370 @@ User Defined Routes can redirect traffic to a virtual appliance.
 ```text
 Only the Virtual Appliance next hop type requires specifying an IP address.
 ```
+---
+# Azure Connection Monitor (AZ-104)
+
+# Qué es Connection Monitor
+
+Connection Monitor es una funcionalidad de:
+
+```text
+Azure Network Watcher
+```
+
+que permite monitorizar:
+
+```text
+conectividad de red extremo a extremo
+```
+
+entre recursos.
+
+---
+
+# Objetivo principal
+
+Verificar:
+
+- conectividad
+- latencia
+- pérdida paquetes
+- disponibilidad red
+
+entre:
+
+- VMs
+- endpoints
+- aplicaciones
+- URLs
+- on-prem
+- Azure
+
+---
+
+# Qué puede monitorizar
+
+| Origen | Destino |
+|---|---|
+| Azure VM | Azure VM |
+| Azure VM | URL pública |
+| Azure VM | On-prem |
+| Azure VM | IP privada |
+| Azure VM | Endpoint TCP |
+
+---
+
+# Qué comprueba
+
+| Métrica | Explicación |
+|---|---|
+| Reachability | ¿Hay conectividad? |
+| Latency | Tiempo respuesta |
+| Packet loss | Pérdida paquetes |
+| Topology | Ruta/red utilizada |
+| Hop analysis | Saltos/red intermedia |
+
+---
+
+# Servicio relacionado
+
+Connection Monitor pertenece a:
+
+```text
+Azure Network Watcher
+```
+
+---
+
+# Arquitectura típica
+
+```text
+VM Source
+    ↓
+Connection Monitor
+    ↓
+Target Endpoint
+```
+
+---
+
+# Restricción regional MUY IMPORTANTE
+
+Azure Network Watcher's Connection Monitor requiere que:
+
+```text
+la VM origen
+```
+
+y:
+
+```text
+la instancia Connection Monitor
+```
+
+estén en:
+
+```text
+la MISMA región Azure
+```
+
+---
+
+# Ejemplo correcto
+
+| Recurso | Región |
+|---|---|
+| VM origen | West Europe |
+| Connection Monitor | West Europe |
+
+✅ Correcto.
+
+---
+
+# Ejemplo incorrecto
+
+| Recurso | Región |
+|---|---|
+| VM origen | West Europe |
+| Connection Monitor | North Europe |
+
+❌ No soportado.
+
+---
+
+# Importante
+
+El destino monitorizado:
+
+```text
+puede estar en otra región
+```
+
+o incluso:
+
+- on-prem
+- Internet
+- otra nube
+
+---
+
+# Ejemplo típico
+
+Quieres comprobar si:
+
+```text
+VM-App
+```
+
+puede llegar a:
+
+```text
+SQL Server
+```
+
+por:
+
+```text
+TCP 1433
+```
+
+↓
+
+usas:
+
+```text
+Connection Monitor
+```
+
+---
+
+# Casos típicos examen
+
+| Escenario | Solución |
+|---|---|
+| Verificar conectividad VM ↔ VM | Connection Monitor |
+| Detectar latencia red | Connection Monitor |
+| Monitorizar acceso endpoint | Connection Monitor |
+| Verificar puertos abiertos | Connection Monitor |
+
+---
+
+# Muy importante AZ-104
+
+Connection Monitor:
+
+```text
+NO reemplaza NSG
+```
+
+NO hace:
+
+- filtering
+- firewalling
+- routing
+
+↓
+
+solo:
+
+```text
+monitoriza conectividad
+```
+
+---
+
+# Diferencia importante
+
+| Servicio | Función |
+|---|---|
+| NSG | Filtrar tráfico |
+| Route Table | Routing |
+| Connection Monitor | Monitorizar conectividad |
+| Network Watcher | Herramientas networking |
+
+---
+
+# Requisitos importantes
+
+| Requisito | Necesario |
+|---|---|
+| Network Watcher habilitado | ✅ |
+| Azure VM Agent | Normalmente ✅ |
+| Región soportada | ✅ |
+
+---
+
+# Relación con Log Analytics
+
+Puede enviar:
+
+- logs
+- métricas
+- resultados
+
+a:
+
+```text
+Log Analytics Workspace
+```
+
+---
+
+# Concepto importante
+
+Connection Monitor puede detectar:
+
+```text
+dónde falla la conectividad
+```
+
+---
+
+# Ejemplo visual
+
+```text
+VM1
+  ↓
+NSG
+  ↓
+Firewall
+  ↓
+Route Table
+  ↓
+VM2
+```
+
+↓
+
+Connection Monitor ayuda a identificar:
+
+```text
+en qué punto falla
+```
+
+---
+
+# Versiones
+
+| Versión | Estado |
+|---|---|
+| Classic | Antigua |
+| Connection Monitor v2 | Actual/recomendada |
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+```text
+Connection Monitor abre puertos
+```
+
+❌ Incorrecto.
+
+---
+
+# Trampa 2
+
+```text
+Connection Monitor modifica routing
+```
+
+❌ Incorrecto.
+
+---
+
+# Trampa 3
+
+```text
+Connection Monitor reemplaza Network Watcher
+```
+
+❌ Incorrecto.
+
+---
+
+# Conceptos importantes examen
+
+| Concepto | Importancia |
+|---|---|
+| Azure Network Watcher | Muy alta |
+| Connection Monitor | Alta |
+| Connectivity troubleshooting | Muy alta |
+| Restricciones regionales | Muy alta |
+| NSG troubleshooting | Alta |
+| Latency monitoring | Alta |
+
+---
+
+# Herramientas relacionadas Network Watcher
+
+| Herramienta | Función |
+|---|---|
+| Connection Monitor | Monitorizar conectividad |
+| IP Flow Verify | Verificar NSG |
+| Next Hop | Ver routing |
+| Packet Capture | Captura paquetes |
+| NSG Flow Logs | Logs tráfico NSG |
+| Topology | Visualizar red |
+
+---
+
+# Reglas rápidas examen
+
+```text
+Connection Monitor monitors end-to-end network connectivity.
+```
+
+```text
+Connection Monitor is part of Azure Network Watcher.
+```
+
+```text
+Connection Monitor requires the source VM and the Connection Monitor instance to be in the same Azure region.
+```
+
+```text
+Connection Monitor does not filter or route traffic.
+```
