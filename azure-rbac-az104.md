@@ -1,7 +1,7 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # Índice
-
+- [Azure Files - Storage File Data Roles (AZ-104)](#azure-files---storage-file-data-roles-az-104)
 - [Comparativa RBAC: Virtual Machine Contributor vs Disk Snapshot Contributor](#comparativa-rbac-virtual-machine-contributor-vs-disk-snapshot-contributor)
 - [Diferencia: Storage Account Encryption Scope Contributor vs Storage Account Key Operator Service Role (AZ-104)](#diferencia-storage-account-encryption-scope-contributor-vs-storage-account-key-operator-service-role-az-104)
 - [RBAC - Rol Contributor (AZ-104)](#rbac---rol-contributor-az-104)
@@ -9,6 +9,39 @@
 - [Rol Attribute Definition/Assignment Administrator](#rol-attribute-definitionassignment-administrator)
 - [Azure Custom Roles - Actions vs DataActions](#azure-custom-roles---actions-vs-dataactions)
 
+---
+# Azure Files - Storage File Data Roles (AZ-104)
+
+| Rol | Plane | ¿A qué accede? | Lectura archivos | Escritura archivos | Eliminar archivos | Cambiar permisos NTFS | Control total | Uso típico |
+|---|---|---|---|---|---|---|---|---|
+| Storage File Data SMB Share Reader | Data Plane | Datos dentro del File Share | ✅ | ❌ | ❌ | ❌ | ❌ | Usuarios solo lectura |
+| Storage File Data SMB Share Contributor | Data Plane | Datos dentro del File Share | ✅ | ✅ | ✅ | ❌ | ❌ | Usuarios lectura/escritura |
+| Storage File Data SMB Share Elevated Contributor | Data Plane | Datos + permisos SMB/NTFS avanzados | ✅ | ✅ | ✅ | ✅ Parcialmente | ❌ | Administración avanzada SMB |
+| Storage File Data SMB Share Owner | Data Plane | Control completo sobre datos SMB | ✅ | ✅ | ✅ | ✅ | ✅ | Administrador completo del share |
+| Reader | Control Plane | Recurso Azure Storage/File Share | ❌ | ❌ | ❌ | ❌ | ❌ | Ver configuración recursos |
+| Contributor | Control Plane | Administración recursos Azure | ❌ | ❌ | ❌ | ❌ | ❌ | Crear/modificar File Shares |
+| Owner | Control Plane | Administración + RBAC | ❌ | ❌ | ❌ | ❌ | ❌ | Administración completa Azure |
+
+---
+
+# Diferencia importante
+
+| Plane | Qué administra |
+|---|---|
+| Control Plane | Recursos Azure |
+| Data Plane | Datos dentro del recurso |
+
+---
+
+# Ejemplo visual
+
+```text
+Storage Account
+ └── File Share
+       └── archivo.docx
+
+
+---
 # Comparativa RBAC: Virtual Machine Contributor vs Disk Snapshot Contributor
 
 | Acción / Permiso | Virtual Machine Contributor | Disk Snapshot Contributor |
