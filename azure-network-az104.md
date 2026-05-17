@@ -2,6 +2,7 @@
 
 - [Azure Virtual Network Peering (AZ-104)](#azure-virtual-network-peering-az-104)
 - [Azure Route Tables y Next Hop Types (AZ-104)](#azure-route-tables-y-next-hop-types-az-104)
+- [Azure Connection Monitor (AZ-104)](#azure-connection-monitor-az-104)
 
 ---
 
@@ -1077,6 +1078,17 @@ Connection Monitor reemplaza Network Watcher
 | Packet Capture | Captura paquetes |
 | NSG Flow Logs | Logs tráfico NSG |
 | Topology | Visualizar red |
+
+
+# La clave de la pregunta NO es:
+
+``cuántas VNets hay`` 
+
+La clave REAL es: ``cuántas regiones Azure hay``
+
+Porque Connection Monitor tiene esta restricción: ``la VM origen y el Connection Monitor deben estar en la MISMA región``
+
+NO: ``en la misma VNet``
 
 ---
 
