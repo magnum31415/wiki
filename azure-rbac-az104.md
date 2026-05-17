@@ -1,6 +1,7 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # Índice
+- [Azure RBAC Roles - Data Plane vs Control Plane (AZ-104)](#azure-rbac-roles---data-plane-vs-control-plane-az-104)
 - [Azure Files - Storage File Data Roles (AZ-104)](#azure-files---storage-file-data-roles-az-104)
 - [Comparativa RBAC: Virtual Machine Contributor vs Disk Snapshot Contributor](#comparativa-rbac-virtual-machine-contributor-vs-disk-snapshot-contributor)
 - [Diferencia: Storage Account Encryption Scope Contributor vs Storage Account Key Operator Service Role (AZ-104)](#diferencia-storage-account-encryption-scope-contributor-vs-storage-account-key-operator-service-role-az-104)
@@ -9,6 +10,66 @@
 - [Rol Attribute Definition/Assignment Administrator](#rol-attribute-definitionassignment-administrator)
 - [Azure Custom Roles - Actions vs DataActions](#azure-custom-roles---actions-vs-dataactions)
 
+---
+# Azure RBAC Roles - Data Plane vs Control Plane (AZ-104)
+
+| Rol | Tipo | Plane | Qué permite | Ejemplo |
+|---|---|---|---|---|
+| Reader | General Azure | Control Plane | Ver recursos Azure | Ver un Storage Account en Portal |
+| Contributor | General Azure | Control Plane | Crear/modificar recursos | Crear una VM |
+| Owner | General Azure | Control Plane | Administrar recursos + RBAC | Asignar roles IAM |
+| User Access Administrator | General Azure | Control Plane | Administrar RBAC únicamente | Asignar Contributor a un usuario |
+| Storage Blob Data Reader | Storage | Data Plane | Leer blobs | Descargar un archivo blob |
+| Storage Blob Data Contributor | Storage | Data Plane | Leer/escribir blobs | Subir archivos a un container |
+| Storage Blob Data Owner | Storage | Data Plane | Control total blobs | Cambiar ACLs blobs |
+| Storage Queue Data Contributor | Storage | Data Plane | Leer/escribir mensajes queue | Insertar mensajes queue |
+| Storage Table Data Contributor | Storage | Data Plane | Leer/escribir tablas | Insertar entidades table storage |
+| Storage File Data SMB Share Reader | Azure Files | Data Plane | Leer archivos SMB | Abrir un archivo compartido |
+| Storage File Data SMB Share Contributor | Azure Files | Data Plane | Leer/escribir archivos SMB | Modificar documentos en File Share |
+| Storage File Data SMB Share Owner | Azure Files | Data Plane | Control total SMB Share | Administrar permisos NTFS |
+| Key Vault Reader | Key Vault | Control Plane | Ver configuración Key Vault | Ver networking KV |
+| Key Vault Secrets User | Key Vault | Data Plane | Leer secretos | Obtener connection string |
+| Key Vault Administrator | Key Vault | Data Plane + Control parcial | Administrar secretos/keys/certs | Crear secretos |
+| Virtual Machine Contributor | Compute | Control Plane | Administrar VMs | Reiniciar VM |
+| Virtual Machine User Login | Compute | Data Plane | Login usuario VM | Login RDP/SSH |
+| Virtual Machine Administrator Login | Compute | Data Plane | Login administrador VM | Login admin Windows/Linux |
+| AcrPull | Azure Container Registry | Data Plane | Descargar imágenes | Docker pull |
+| AcrPush | Azure Container Registry | Data Plane | Push/Pull imágenes | Docker push |
+| Network Contributor | Networking | Control Plane | Administrar redes | Crear subnet |
+
+---
+
+# Regla rápida AZ-104
+
+| Si el rol... | Entonces suele ser |
+|---|---|
+| Administra recursos Azure | Control Plane |
+| Accede al contenido/datos | Data Plane |
+| Contiene "Data" en el nombre | Normalmente Data Plane |
+
+---
+
+# Ejemplos típicos examen
+
+| Acción | Tipo |
+|---|---|
+| Crear Storage Account | Control Plane |
+| Leer blob dentro container | Data Plane |
+| Crear VNet | Control Plane |
+| Login RDP VM | Data Plane |
+| Descargar imagen Docker ACR | Data Plane |
+
+---
+
+# Concepto clave AZ-104
+
+```text
+Control Plane administra el recurso.
+```
+
+```text
+Data Plane accede al contenido del recurso.
+```
 ---
 # Azure Files - Storage File Data Roles (AZ-104)
 
