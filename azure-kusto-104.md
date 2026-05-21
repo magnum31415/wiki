@@ -583,6 +583,52 @@ resources
 
 Representan los endpoints on-premises definidos en Azure.
 
+Representa: El router/firewall remoto
+
+
+![VPNs.png](./img/azure/VPNs.png)
+
+````
+┌─────────────────────────────────────────────┐
+│                 Microsoft Azure             │
+│                                             │
+│  ┌───────────────────────────────────────┐  │
+│  │        Azure Workloads / VNets        │  │
+│  │                                       │  │
+│  │  Apps / Servers / Landing Zone        │  │
+│  └───────────────────────────────────────┘  │
+│                     │                       │
+│                     ▼                       │
+│         ┌───────────────────────┐           │
+│         │   Azure VPN Gateway   │           │
+│         │(VirtualNetworkGateway)│           │
+│         └───────────────────────┘           │
+└─────────────────┬───────────────────────────┘
+                  │
+                  │  IPsec VPN Tunnel
+                  │  (Connection)
+                  ▼
+        ┌─────────────────────────┐
+        │ Local Network Gateway   │
+        │ (Firewall / Router)     │
+        │                         │
+        │ Madrid / Paris / etc.   │
+        └─────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────┐
+│              On-Premises Network            │
+│                                             │
+│  Corporate Networks                         │
+│  10.x.x.x / 192.168.x.x                    │
+│                                             │
+│  Offices / Datacenters / MPLS              │
+└─────────────────────────────────────────────┘
+````
+
+
+
+
 Aquí suelen aparecer:
 - IPs públicas on-prem
 - rangos corporativos
@@ -612,8 +658,14 @@ resources
     name,
     location,
     gatewayIp = properties.gatewayIpAddress,
-    addressPrefixes = properties.localNetworkAddressSpace.addressPrefixes
+    addressPrefixes = properties.localNetworkAddressSpace.addressPrefixes,
+    bgpPeeringAddress = properties.bgpSettings.bgpPeeringAddress,
+    asn = properties.bgpSettings.asn
 ```
+
+
+
+
 
 ---
 
