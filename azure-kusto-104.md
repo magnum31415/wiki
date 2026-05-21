@@ -728,10 +728,16 @@ Muy útil para:
 resources
 | where type contains 'virtualwan'
 | project
+    subscriptionId,
+    resourceGroup,
     name,
     type,
     location,
-    resourceGroup
+    provisioningState = properties.provisioningState,
+    disableVpnEncryption = properties.disableVpnEncryption,
+    allowBranchToBranchTraffic = properties.allowBranchToBranchTraffic,
+    office365LocalBreakoutCategory = properties.office365LocalBreakoutCategory
+| order by subscriptionId asc, resourceGroup asc
 ```
 
 ---
