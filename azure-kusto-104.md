@@ -2,9 +2,9 @@
 
 Índex
 
-[Kusto (KQL) Basics for Azure Resource Graph](#kusto-kql-basics-for-azure-resource-graph)
-[🔐 Public IP Security Audit - Azure Resource Graph Queries](#-public-ip-security-audit---azure-resource-graph-queries)
-[Azure Landing Zone – Connectivity Discovery Queries](#azure-landing-zone--connectivity-discovery-queries)
+- [Kusto (KQL) Basics for Azure Resource Graph](#kusto-kql-basics-for-azure-resource-graph)
+- [🔐 Public IP Security Audit - Azure Resource Graph Queries](#-public-ip-security-audit---azure-resource-graph-queries)
+- [Azure Landing Zone – Connectivity Discovery Queries](#azure-landing-zone--connectivity-discovery-queries)
 
 ---
 # Kusto (KQL) Basics for Azure Resource Graph
