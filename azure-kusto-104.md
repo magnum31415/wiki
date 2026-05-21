@@ -742,36 +742,274 @@ resources
 
 ---
 
-# 6. Public IP Addresses
+# 6. Azure Public IP Discovery Query
 
-## Qué información obtenemos
+## Objetivo
 
-Lista todas las IPs públicas del tenant.
+Esta query permite inventariar todas las direcciones IP públicas desplegadas en Azure y obtener información sobre:
 
-Muy útil para detectar:
-- conectividad híbrida no documentada
-- NAT manuales
-- appliances legacy
-- endpoints expuestos a internet
+- Qué IPs públicas existen
+- En qué subscription y Resource Group están desplegadas
+- Qué tipo de SKU utilizan
+- Si son dinámicas o estáticas
+- Si son IPv4 o IPv6
+- Qué recurso Azure está usando cada Public IP
 
-Información útil:
-- IP pública
-- SKU
-- región
-- Resource Group
+Muy útil para:
+- auditorías de seguridad
+- Landing Zone assessments
+- análisis de exposición a internet
+- detección de recursos legacy
+- identificación de conectividad híbrida
+- detección de NATs o balanceadores públicos
 
-## Query
+---
+
+# Query
 
 ```kusto
 resources
 | where type =~ 'microsoft.network/publicipaddresses'
 | project
+    subscriptionId,
+    resourceGroup,
     name,
     location,
-    sku = properties.sku.name,
-    ipAddress = properties.ipAddress,
-    resourceGroup
+    sku = tostring(sku.name),
+    ipAddress = tostring(properties.ipAddress),
+    publicIpAllocationMethod = tostring(properties.publicIPAllocationMethod),
+    ipVersion = tostring(properties.publicIPAddressVersion),
+    associatedResourceId = tostring(properties.ipConfiguration.id)
 ```
+
+---
+
+# Explicación de cada campo
+
+| Campo | Descripción |
+|---|---|
+| subscriptionId | Subscription donde está desplegada la Public IP |
+| resourceGroup | Resource Group propietario |
+| name | Nombre de la Public IP |
+| location | Región Azure |
+| sku | SKU de la Public IP (`Basic` o `Standard`) |
+| ipAddress | Dirección IP pública asignada |
+| publicIpAllocationMethod | Tipo de asignación (`Static` o `Dynamic`) |
+| ipVersion | Versión IP (`IPv4` o `IPv6`) |
+| associatedResourceId | Recurso Azure que está utilizando la Public IP |
+
+
+| associatedResourceId contiene | Tipo de recurso | Interpretación probable | Uso típico | Riesgo / Observaciones |
+|---|---|---|---|---|
+| `/virtualNetworkGateways/` | Azure VPN Gateway | Conectividad híbrida Azure ↔ On-Prem | VPN Site-to-Site IPsec | Puede indicar hubs híbridos críticos |
+| `/loadBalancers/` | Azure Load Balancer | Servicio publicado a Internet | Balanceo L4 público | Posible exposición pública |
+| `/applicationGateways/` | Azure Application Gateway | Reverse proxy / WAF | Publicación aplicaciones web | Revisar WAF y hardening |
+| `/azureFirewalls/` | Azure Firewall | Firewall centralizado | Egress / Ingress corporativo | Arquitectura moderna gobernada |
+| `/natGateways/` | NAT Gateway | NAT centralizado | Salida a Internet gobernada | Patrón moderno recomendado |
+| `/networkInterfaces/` | NIC de VM | VM con IP pública directa | Jumpbox, servidor legacy, NAT manual | Riesgo alto si no está gobernado |
+| `/virtualMachines/` | Máquina Virtual | Recurso expuesto directamente | Legacy workloads | Revisar hardening y NSGs |
+| `/bastionHosts/` | Azure Bastion | Acceso administrativo seguro | Administración remota | Patrón recomendado |
+| `/firewallPolicies/` | Firewall Policy | Política Azure Firewall | Seguridad centralizada | Revisar governance |
+| `/publicIPPrefixes/` | Public IP Prefix | Rango reservado de IPs públicas | Arquitectura enterprise | Puede indicar diseño avanzado |
+| `/vpnGateways/` | Virtual WAN VPN Gateway | VPN Gateway de vWAN | Arquitectura moderna hub | Landing Zone / vWAN |
+| `/expressRouteGateways/` | ExpressRoute Gateway | Conectividad privada enterprise | ExpressRoute | Alta criticidad |
+| `/networkVirtualAppliances/` | NVA / Firewall virtual | Appliance third-party | FortiGate / Palo Alto / Cisco | Technical debt o arquitectura avanzada |
+| `null` | No asociado | Public IP huérfana | Recurso sin uso | Coste innecesario / riesgo potencial |
+
+---
+
+# Ejemplos de interpretación
+
+| Caso observado | Posible conclusión |
+|---|---|
+| Muchas IPs asociadas a `virtualNetworkGateways` | Alta dependencia de VPN híbridas |
+| Muchas IPs asociadas a `networkInterfaces` | VMs expuestas directamente |
+| Uso de `natGateways` | Arquitectura moderna de egress |
+| Uso de `azureFirewalls` | Seguridad centralizada |
+| Muchas IPs `Basic SKU` | Recursos legacy |
+| Public IPs sin asociación | Recursos olvidados o technical debt |
+
+---
+
+# Valor para la Landing Zone
+
+Esta información permite:
+- entender la exposición pública actual
+- identificar patrones legacy
+- detectar arquitectura híbrida
+- localizar NATs manuales
+- identificar recursos no gobernados
+- preparar centralización de networking y seguridad
+- detectar technical debt antes de migrar a la Landing Zone
+
+---
+
+# Qué información importante podemos obtener
+
+## 1. Recursos expuestos a Internet
+
+La query permite identificar:
+- recursos publicados a Internet
+- endpoints públicos
+- balanceadores
+- VPN gateways
+- firewalls
+- NAT gateways
+
+---
+
+# 2. Recursos legacy o inseguros
+
+Por ejemplo:
+
+## SKU Basic
+
+```text
+sku = Basic
+```
+
+puede indicar:
+- configuraciones antiguas
+- ausencia de resiliencia avanzada
+- menor nivel de seguridad
+
+---
+
+# 3. Conectividad híbrida
+
+Si el `associatedResourceId` contiene:
+
+```text
+/virtualNetworkGateways/
+```
+
+significa:
+- VPN Gateway
+- conectividad híbrida Azure ↔ On-Prem
+
+---
+
+# 4. Balanceadores públicos
+
+Si contiene:
+
+```text
+/loadBalancers/
+```
+
+significa:
+- Load Balancer público
+- aplicaciones expuestas a Internet
+
+---
+
+# 5. Application Gateways
+
+Si contiene:
+
+```text
+/applicationGateways/
+```
+
+significa:
+- Application Gateway
+- reverse proxy
+- WAF
+
+---
+
+# 6. Azure Firewall
+
+Si contiene:
+
+```text
+/azureFirewalls/
+```
+
+significa:
+- Azure Firewall
+- salida centralizada
+- inspección tráfico
+
+---
+
+# 7. NAT Gateways
+
+Si contiene:
+
+```text
+/natGateways/
+```
+
+significa:
+- salida SNAT centralizada
+- arquitectura moderna de egress
+
+---
+
+# 8. Recursos huérfanos
+
+Si:
+
+```text
+associatedResourceId = null
+```
+
+puede indicar:
+- Public IP no utilizada
+- coste innecesario
+- riesgo de exposición futura
+
+---
+
+# Casos de uso típicos
+
+## Landing Zone
+
+- identificar recursos legacy
+- validar centralización de egress
+- detectar arquitecturas no gobernadas
+
+---
+
+## Seguridad
+
+- detectar exposición pública
+- auditar IPs públicas
+- identificar recursos críticos expuestos
+
+---
+
+## Networking
+
+- descubrir balanceadores
+- identificar VPN Gateways
+- detectar NAT Gateways
+- mapear arquitectura híbrida
+
+---
+
+# Ejemplos de interpretación
+
+| associatedResourceId contiene | Tipo probable |
+|---|---|
+| /virtualNetworkGateways/ | VPN Gateway |
+| /loadBalancers/ | Load Balancer |
+| /applicationGateways/ | Application Gateway |
+| /azureFirewalls/ | Azure Firewall |
+| /networkInterfaces/ | VM con IP pública |
+| /natGateways/ | NAT Gateway |
+
+---
+
+# Conclusiones que se pueden extraer
+
+La query permite:
+- inventariar toda la exposición pública Azure
+- detectar conectividad híbrida
+- identificar recursos legacy
+- descubrir componentes críticos de networking
+- analizar arquitectura actual previa a la Landing Zone
 
 ---
 
