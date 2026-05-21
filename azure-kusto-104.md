@@ -496,6 +496,16 @@ Muy útil para:
 - localizar hubs existentes
 - analizar costes y SKUs antiguos
 
+``microsoft.network/virtualnetworkgateways`` Representa el **“dispositivo VPN/ER de Azure”**
+Es decir:
+- el gateway desplegado dentro de una VNet
+- el endpoint Azure del túnel
+- vive dentro de una VNet
+- tiene una subnet GatewaySubnet
+- tiene IP pública
+- puede soportar MUCHAS conexiones VPN
+
+
 ### Query
 
 ```kusto
@@ -531,6 +541,24 @@ Muy útil para:
 - mapear túneles híbridos
 - descubrir conexiones olvidadas
 - entender dependencias entre Azure y on-prem
+
+``microsoft.network/connections`` Representa: **“cada túnel VPN individual”**
+
+Es decir como "Un túnel VPN específico":
+- una conexión IPsec concreta
+- entre Azure y un endpoint on-prem
+
+
+**Analogía sencilla**
+- ``VirtualNetworkGateway``  es el router VPN
+- ``Connection`` es cada cable/túnel conectado a ese router
+
+
+**Por qué tienes MUCHAS más connections* que VPN Gateway**
+``
+Porque Un único VPN Gateway puede tener MUCHOS túneles VPN
+``
+
 
 ## Query
 
