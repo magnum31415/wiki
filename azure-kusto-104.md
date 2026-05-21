@@ -1,5 +1,12 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+Índex
+
+[Kusto (KQL) Basics for Azure Resource Graph](#kusto-kql-basics-for-azure-resource-graph)
+[🔐 Public IP Security Audit - Azure Resource Graph Queries](#-public-ip-security-audit---azure-resource-graph-queries)
+[Azure Landing Zone – Connectivity Discovery Queries](#azure-landing-zone--connectivity-discovery-queries)
+
+---
 # Kusto (KQL) Basics for Azure Resource Graph
 
 ## 🧠 What is Kusto Query Language (KQL)?
@@ -464,3 +471,359 @@ AzureDiagnostics
 | order by Coincidencias desc
 ````
 
+
+---
+
+# Azure Landing Zone – Connectivity Discovery Queries
+
+## 1. Virtual Network Gateways
+
+### Qué información obtenemos
+
+Permite identificar los gateways VPN o ExpressRoute desplegados en Azure.
+
+Información útil:
+- Tipo de gateway (VPN / ExpressRoute)
+- SKU
+- Región
+- Resource Group
+- Tipo de VPN
+- Subscripción
+
+Muy útil para:
+- detectar conectividad híbrida existente
+- identificar arquitecturas legacy
+- localizar hubs existentes
+- analizar costes y SKUs antiguos
+
+### Query
+
+```kusto
+resources
+| where type =~ 'microsoft.network/virtualnetworkgateways'
+| project
+    subscriptionId,
+    resourceGroup,
+    name,
+    location,
+    gatewayType = properties.gatewayType,
+    vpnType = properties.vpnType,
+    sku = properties.sku.name
+```
+
+---
+
+# 2. Connections
+
+## Qué información obtenemos
+
+Permite descubrir conexiones entre:
+- VPN gateways
+- ExpressRoute gateways
+- Local Network Gateways
+
+Información útil:
+- tipo de conexión
+- gateway Azure utilizado
+- gateway on-prem asociado
+
+Muy útil para:
+- mapear túneles híbridos
+- descubrir conexiones olvidadas
+- entender dependencias entre Azure y on-prem
+
+## Query
+
+```kusto
+resources
+| where type =~ 'microsoft.network/connections'
+| project
+    subscriptionId,
+    resourceGroup,
+    name,
+    location,
+    connectionType = properties.connectionType,
+    virtualNetworkGateway1 = properties.virtualNetworkGateway1.id,
+    localNetworkGateway2 = properties.localNetworkGateway2.id
+```
+
+---
+
+# 3. Local Network Gateways
+
+## Qué información obtenemos
+
+Representan los endpoints on-premises definidos en Azure.
+
+Aquí suelen aparecer:
+- IPs públicas on-prem
+- rangos corporativos
+- MPLS
+- sedes
+- datacenters
+
+Información útil:
+- IP pública del peer on-prem
+- rangos CIDR corporativos
+- ubicación lógica de conexiones híbridas
+
+Muy útil para:
+- inventariar redes corporativas
+- detectar overlaps CIDR
+- identificar sedes conectadas
+- preparar migración a Landing Zone/vWAN
+
+## Query
+
+```kusto
+resources
+| where type =~ 'microsoft.network/localnetworkgateways'
+| project
+    subscriptionId,
+    resourceGroup,
+    name,
+    location,
+    gatewayIp = properties.gatewayIpAddress,
+    addressPrefixes = properties.localNetworkAddressSpace.addressPrefixes
+```
+
+---
+
+# 4. ExpressRoute Circuits
+
+## Qué información obtenemos
+
+Permite descubrir circuitos ExpressRoute existentes.
+
+Información útil:
+- proveedor
+- peering location
+- ancho de banda
+- SKU
+- región
+
+Muy útil para:
+- entender conectividad privada enterprise
+- identificar dependencias críticas
+- validar redundancia
+- preparar arquitectura hub/vWAN
+
+## Query
+
+```kusto
+resources
+| where type =~ 'microsoft.network/expressroutecircuits'
+| project
+    subscriptionId,
+    resourceGroup,
+    name,
+    location,
+    serviceProvider = properties.serviceProviderProperties.serviceProviderName,
+    peeringLocation = properties.serviceProviderProperties.peeringLocation,
+    bandwidth = properties.serviceProviderProperties.bandwidthInMbps,
+    sku = properties.sku.tier
+```
+
+---
+
+# 5. Azure Virtual WAN
+
+## Qué información obtenemos
+
+Permite detectar despliegues de Azure Virtual WAN.
+
+Información útil:
+- Virtual WANs
+- Virtual Hubs
+- regiones utilizadas
+
+Muy útil para:
+- detectar arquitecturas modernas
+- identificar hubs centralizados
+- preparar integración con nueva Landing Zone
+
+## Query
+
+```kusto
+resources
+| where type contains 'virtualwan'
+| project
+    name,
+    type,
+    location,
+    resourceGroup
+```
+
+---
+
+# 6. Public IP Addresses
+
+## Qué información obtenemos
+
+Lista todas las IPs públicas del tenant.
+
+Muy útil para detectar:
+- conectividad híbrida no documentada
+- NAT manuales
+- appliances legacy
+- endpoints expuestos a internet
+
+Información útil:
+- IP pública
+- SKU
+- región
+- Resource Group
+
+## Query
+
+```kusto
+resources
+| where type =~ 'microsoft.network/publicipaddresses'
+| project
+    name,
+    location,
+    sku = properties.sku.name,
+    ipAddress = properties.ipAddress,
+    resourceGroup
+```
+
+---
+
+# 7. Virtual Networks
+
+## Qué información obtenemos
+
+Inventario completo de VNets y direccionamiento IP.
+
+Información útil:
+- nombre VNet
+- región
+- rangos CIDR
+- subscripción
+
+Muy útil para:
+- detectar overlaps IP
+- preparar Hub & Spoke
+- diseñar routing híbrido
+- validar segmentación
+
+## Query
+
+```kusto
+resources
+| where type =~ 'microsoft.network/virtualnetworks'
+| project
+    subscriptionId,
+    resourceGroup,
+    name,
+    location,
+    addressSpace = properties.addressSpace.addressPrefixes
+```
+
+---
+
+# 8. Subscripciones visibles en el tenant
+
+## Qué información obtenemos
+
+Permite validar qué subscriptions son visibles para nuestra identidad.
+
+Muy útil para:
+- validar cobertura del inventario
+- comprobar permisos RBAC
+- detectar subscriptions fuera del scope
+
+## Query
+
+```kusto
+resourcecontainers
+| where type == 'microsoft.resources/subscriptions'
+| project subscriptionId, name
+```
+
+---
+
+# 9. Número de recursos por subscripción
+
+## Qué información obtenemos
+
+Permite validar rápidamente si estamos consultando múltiples subscriptions.
+
+Muy útil para:
+- confirmar alcance tenant-wide
+- detectar subscriptions vacías
+- validar permisos
+
+## Query
+
+```kusto
+resources
+| summarize count() by subscriptionId
+```
+
+---
+
+# 10. Effective Route Table (CLI)
+
+## Qué información obtenemos
+
+Permite analizar las rutas efectivas aplicadas a una NIC/VM.
+
+Información útil:
+- next hop
+- UDRs
+- propagación BGP
+- rutas híbridas
+- default routes
+
+Muy útil para:
+- troubleshooting híbrido
+- validar propagación BGP
+- entender routing real
+
+## Query / Command
+
+```bash
+az network nic show-effective-route-table
+```
+
+---
+
+# 11. Recomendaciones para el inventario de conectividad
+
+## Se recomienda documentar
+
+- Tipo de conectividad
+- Región Azure
+- CIDRs Azure
+- CIDRs on-prem
+- Dependencias aplicativas
+- Equipo owner
+- Criticidad
+- Estado HA/redundancia
+- Uso de BGP
+- Tipo de firewall/NVA
+- Dependencia de IPs públicas
+- Integración futura con Landing Zone
+
+---
+
+# 12. Elementos frecuentemente olvidados
+
+## También deberían inventariarse
+
+- DNS híbrido
+- Private DNS Zones
+- Forwarders
+- UDRs
+- NAT Gateways
+- Azure Firewall
+- NVAs
+- Proxies
+- Bastion
+- Certificados VPN
+- Dependencias GRS/RA-GRS
+- ExpressRoute Global Reach
+- Routing BGP
+- Overlaps CIDR
+- Private Endpoints consumidos desde on-prem
