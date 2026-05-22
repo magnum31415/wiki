@@ -15,6 +15,10 @@ And the vHub uses:
 
 to decide how traffic flows.
 
+![vwan-afw-1-nva-2](./img/azure/vwan-afw-1-nva-2.png)
+
+
+
 ### Route Tables vs Routing Intent  
 | Concept           | Route Tables                    | Routing Intent                                                      |
 | ------------------- | ------------------------------- | ------------------------------------------------------------------- |
@@ -45,6 +49,119 @@ to decide how traffic flows.
 | Internet Traffic    | Controls all Internet-bound traffic (`0.0.0.0/0`) | Force all outbound Internet traffic through Azure Firewall or FortiGate         |
 | Private Traffic     | Controls internal/private traffic                 | Force Spoke-to-Spoke, VPN, ExpressRoute, and On-Prem traffic through a firewall |
 
+Routing Intent mainly works with two traffic categories.
+
+#### 1. Internet Traffic
+
+This means: ``0.0.0.0/0``
+
+All Internet-bound traffic.
+
+Example:
+````
+Internet Traffic
+   ↓
+Azure Firewall
+````
+
+This forces all outbound Internet traffic from spokes through the firewall.
+
+#### 2. Private Traffic
+
+This includes:
+- RFC1918 traffic
+- Spoke-to-Spoke
+- On-Prem
+- VPN
+- ExpressRoute
+
+Example:
+````
+Private Traffic
+   ↓
+FortiGate NVA
+````
+
+This forces internal/private traffic through the security provider.
+
+**What Problem Does Routing Intent Solve?**
+
+Without Routing Intent, you would need:
+
+Hundreds or thousands of UDRs distributed across:
+  - spokes
+  - subnets
+  - environments
+
+That becomes difficult to maintain.
+
+
+
+
+
+### Security Provider 
+A Security Provider in Azure Virtual WAN is:
+
+````
+The firewall or security appliance
+responsible for inspecting and filtering traffic.
+````
+Azure Virtual WAN itself does NOT inspect traffic.
+It delegates that function to a Security Provider.
+
+**Examples of Security Providers**
+
+| Security Provider | Type                      |
+| ----------------- | ------------------------- |
+| Azure Firewall    | Microsoft native firewall |
+| FortiGate NVA     | Fortinet firewall         |
+| Palo Alto NVA     | Palo Alto firewall        |
+| CheckPoint NVA    | CheckPoint firewall       |
+
+
+### Security Provider Association
+Azure Virtual WAN itself does NOT inspect traffic. It needs an external security engine.
+
+That firewall/NVA becomes the:
+
+````
+Security Provider
+````
+and the link between the vHub and the firewall is the:
+
+
+````
+Security Provider Association
+````
+
+A Security Provider Association is the relationship between: 
+
+````
+Azure Virtual WAN Hub
+        ↓
+Security Provider (Firewall/NVA)
+````
+
+It tells the vHub:
+
+````
+"This is the firewall/security engine
+that must inspect traffic."
+````
+
+**Example**
+````
+vHub
+   ↓
+Security Provider Association
+   ↓
+FortiGate NVA
+````
+Meaning:
+````
+The vHub will send traffic to FortiGate
+according to the Routing Intent policies.
+````
 
 
 ### Simplified Traffic Flow
@@ -155,61 +272,38 @@ Main Purpose
 
 Routing Intent is used to force traffic through:
 
-Azure Firewall
-FortiGate NVA
-Palo Alto
-CheckPoint
-Other supported Security Providers
-Main Traffic Types
-
-Routing Intent mainly works with two traffic categories.
-
-1. Internet Traffic
-
-This means:
-
-0.0.0.0/0
-
-All Internet-bound traffic.
-
-Example:
-
-Internet Traffic
-   ↓
-Azure Firewall
-
-This forces all outbound Internet traffic from spokes through the firewall.
-
-2. Private Traffic
-
-This includes:
-
-RFC1918 traffic
-Spoke-to-Spoke
-On-Prem
-VPN
-ExpressRoute
-
-Example:
-
-Private Traffic
-   ↓
-FortiGate NVA
-
-This forces internal/private traffic through the security provider.
-
-What Problem Does Routing Intent Solve?
-
-Without Routing Intent, you would need:
-
-Hundreds or thousands of UDRs
-
-distributed across:
-
-spokes
-subnets
-environments
-
-That becomes difficult to maintain.
+- Azure Firewall
+- FortiGate NVA
+- Palo Alto
+- CheckPoint
+- Other supported Security Providers
+- Main Traffic Types
 
 Routing Intent centralizes everything inside the vHub.
+
+
+## Future migration to another Security Provider
+
+**How the Firewall Migration Works in Azure Virtual WAN**
+
+You configure the vHub through:
+
+- Routing Intent
+- Route Tables
+- Security Provider Association
+
+
+#### Today:
+
+``Spokes → vWAN Hub → Routing Intent -> Security Provider -> Azure Firewall``
+
+
+![vwan-afw](img/azure/vwan-afw.png)
+
+#### Future:
+
+``Spokes → vWAN Hub → Routing Intent -> Security Provider -> FortiGate NVA``
+
+![vwan-nva](img/azure/vwan-nva.png)
+
+
