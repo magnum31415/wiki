@@ -2,7 +2,100 @@
 
 # vWAN
 
+````
+                    Azure Virtual WAN
+                 (Global Networking Layer)
+                               │
+        ┌──────────────────────┴──────────────────────┐
+        │                                             │
+        │                                             │
+        ▼                                             ▼
 
+┌───────────────────────┐                 ┌───────────────────────┐
+│ Germany West Central  │                 │    Sweden Central     │
+│         Region        │                 │        Region         │
+└───────────────────────┘                 └───────────────────────┘
+            │                                           │
+            ▼                                           ▼
+
+┌───────────────────────┐                 ┌───────────────────────┐
+│         vHub          │                 │         vHub          │
+│ Germany West Central  │                 │    Sweden Central     │
+└───────────────────────┘                 └───────────────────────┘
+            │                                           │
+            │                                           │
+   ┌────────┼────────┐                        ┌─────────┼────────┐
+   │        │        │                        │         │        │
+   ▼        ▼        ▼                        ▼         ▼        ▼
+
+┌────────┐ ┌────────┐ ┌────────┐      ┌────────┐ ┌────────┐ ┌────────┐
+│Spoke A │ │Spoke B │ │Spoke C │      │Spoke X │ │Spoke Y │ │Spoke Z │
+└────────┘ └────────┘ └────────┘      └────────┘ └────────┘ └────────┘
+
+
+````
+
+````mermaid
+flowchart TB
+
+%% =========================
+%% Styles
+%% =========================
+classDef wan fill:#dbeafe,stroke:#2563eb,stroke-width:2,color:#111
+classDef region fill:#fde68a,stroke:#d97706,stroke-width:2,color:#111
+classDef hub fill:#bfdbfe,stroke:#1d4ed8,stroke-width:2,color:#111
+classDef spoke fill:#dcfce7,stroke:#16a34a,stroke-width:2,color:#111
+
+%% =========================
+%% Azure Virtual WAN
+%% =========================
+vWAN["Azure Virtual WAN<br/>(Global Networking Layer)"]:::wan
+
+%% =========================
+%% Regions
+%% =========================
+Region1["Germany West Central<br/>Region"]:::region
+Region2["Sweden Central<br/>Region"]:::region
+
+%% =========================
+%% vHubs
+%% =========================
+Hub1["vHub<br/>Germany West Central"]:::hub
+Hub2["vHub<br/>Sweden Central"]:::hub
+
+%% =========================
+%% Spokes Germany
+%% =========================
+SpokeA["Spoke A<br/>Prod"]:::spoke
+SpokeB["Spoke B<br/>NonProd"]:::spoke
+SpokeC["Spoke C<br/>Shared Services"]:::spoke
+
+%% =========================
+%% Spokes Sweden
+%% =========================
+SpokeX["Spoke X<br/>Prod DR"]:::spoke
+SpokeY["Spoke Y<br/>Prod AI Workloads"]:::spoke
+SpokeZ["Spoke Z<br/>Legacy"]:::spoke
+
+%% =========================
+%% Connections
+%% =========================
+vWAN --> Region1
+vWAN --> Region2
+
+Region1 --> Hub1
+Region2 --> Hub2
+
+Hub1 --> SpokeA
+Hub1 --> SpokeB
+Hub1 --> SpokeC
+
+Hub2 --> SpokeX
+Hub2 --> SpokeY
+Hub2 --> SpokeZ
+````
+
+## vWAN Hub in one region
 ````
                    Azure Virtual WAN
                     West Europe vHub
@@ -26,16 +119,6 @@
         On-prem        Circuits       VNet Connections
 ````
 
-| Resource                             |      Approximate Limit |
-| ------------------------------------ | ---------------------: |
-| VNet connections per vHub            |                    500 |
-| Connected VNets (spokes) recommended |                   ~500 |
-| Branch connections (VPN sites)       | Depends on gateway SKU |
-| ExpressRoute circuits                |               Multiple |
-| Route tables per vHub                |               Multiple |
-| Routes learned/propagated            |              Thousands |
-
-
 **Azure Virtual WAN Hub Design – West Europe**
 ````
 10.180.0.0/23 – West Europe vHub
@@ -55,6 +138,23 @@ Purpose:
 - Branch / Site-to-Site VPN connections
 - ExpressRoute connectivity
 ````
+
+
+
+
+
+
+| Resource                             |      Approximate Limit |
+| ------------------------------------ | ---------------------: |
+| VNet connections per vHub            |                    500 |
+| Connected VNets (spokes) recommended |                   ~500 |
+| Branch connections (VPN sites)       | Depends on gateway SKU |
+| ExpressRoute circuits                |               Multiple |
+| Route tables per vHub                |               Multiple |
+| Routes learned/propagated            |              Thousands |
+
+
+
 
 **Microsoft states that a minimum /22 is required to allow Azure Firewall to scale to maximum throughput.**
 
