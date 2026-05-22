@@ -2,6 +2,13 @@
 
 # vWAN
 
+**Azure Virtual WAN** is a Microsoft-managed global networking service that centrally connects and secures:
+- branch offices
+- VPNs
+- ExpressRoute circuits
+- virtual networks
+- and remote users through regional virtual hubs.
+
 ````mermaid
 flowchart TB
 
@@ -63,6 +70,16 @@ Hub2 --> SpokeZ
 ````
 
 ## vWAN Hub in one region
+
+**Azure Virtual WAN Hub** is a regional Microsoft-managed networking hub inside Azure Virtual WAN that provides
+- centralized routing
+- connectivity
+- security services between VNets
+- VPNs
+- ExpressRoute
+- and firewalls.
+
+
 ````
                    Azure Virtual WAN
                     West Europe vHub
