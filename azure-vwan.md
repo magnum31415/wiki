@@ -2,6 +2,65 @@
 
 # vWAN
 
+
+````
+                   Azure Virtual WAN
+                    West Europe vHub
+                    10.180.0.0/23
+
+        ┌─────────────────────────────────────┐
+        │          Virtual WAN Hub            │
+        │          10.180.0.0/23              │
+        │             (512 IPs)               │
+        │                                     │
+        │  - VPN Gateway                      │
+        │  - ExpressRoute Gateway             │
+        │  - Azure Firewall today             │
+        │  - FortiGate NVA in the future      │
+        │  - vHub route tables                │
+        │  - Routing Intent / Policies        │
+        └─────────────────────────────────────┘
+              ▲             ▲             ▲
+              │             │             │
+        VPN Sites     ExpressRoute      Spokes
+        On-prem        Circuits       VNet Connections
+````
+
+| Resource                             |      Approximate Limit |
+| ------------------------------------ | ---------------------: |
+| VNet connections per vHub            |                    500 |
+| Connected VNets (spokes) recommended |                   ~500 |
+| Branch connections (VPN sites)       | Depends on gateway SKU |
+| ExpressRoute circuits                |               Multiple |
+| Route tables per vHub                |               Multiple |
+| Routes learned/propagated            |              Thousands |
+
+
+**Azure Virtual WAN Hub Design – West Europe**
+````
+10.180.0.0/23 – West Europe vHub
+Range: 10.180.0.0 – 10.180.1.255
+Total Capacity: 512 IPs
+
+Purpose:
+- Azure Virtual WAN Hub managed address space
+- vHub Router
+- vHub Route Tables
+- Routing Intent
+- VPN Gateway
+- ExpressRoute Gateway
+- Azure Firewall in secured vHub
+- Future FortiGate NVA integration
+- Spoke VNet connections
+- Branch / Site-to-Site VPN connections
+- ExpressRoute connectivity
+````
+
+**Microsoft states that a minimum /22 is required to allow Azure Firewall to scale to maximum throughput.**
+
+Importante: Azure reserva 5 IPs por subnet, así que una /26 tiene 64 IPs totales, pero 59 utilizables.
+
+
 ## Architectural Point
 
 - In Azure Virtual WAN: ``Spokes do NOT point directly to the firewall.``
