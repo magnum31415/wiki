@@ -470,6 +470,15 @@ que automáticamente:
 
 # 25. Arquitecturas que SÍ tienen sentido
 
+| Arquitectura | Componentes | Coste aproximado | Nivel | Cuándo tiene sentido |
+|---|---|---|---|---|
+| Coste optimizado | DDoS Basic + Application Gateway WAF v2 | ~200–500+ USD/mes | Básico / Inicial | Primera API pública, coste limitado, entorno regional |
+| Protección reforzada | DDoS IP Protection + Application Gateway WAF v2 | ~400–700+ USD/mes | Medio / Seguridad reforzada | API crítica, pocas Public IPs, necesidad DDoS avanzada |
+| Enterprise moderado | Azure Front Door Standard + Application Gateway WAF v2 | ~250–650+ USD/mes | Enterprise | Usuarios globales, CDN, routing global, failover |
+| Enterprise avanzado | Azure Front Door Premium + Application Gateway WAF v2 | ~500–1500+ USD/mes | Enterprise avanzado | Multi-región, backend privado, edge security avanzada |
+| Enterprise completo | Azure Front Door Premium + Application Gateway WAF v2 + Azure Firewall HUB + DDoS Network Protection Plan | ~3500–5000+ USD/mes | Enterprise global | Muchas aplicaciones públicas, compliance alto, arquitectura global crítica |
+
+
 # DDoS Basic + WAF
 
 ```text
