@@ -1,754 +1,130 @@
-# Azure DDoS Protection Plan
+# DDoS Protection en Azure — Documento de estudio
 
-## Área / Categoría
+## 1. Qué es y para qué sirve
 
-| Área | Categoría |
-|---|---|
-| Networking | Seguridad de Red |
-| Servicio Azure | Azure DDoS Protection |
-| Dominio ALZ | Connectivity / Security |
-| Capa OSI | Protección Layer 3 / Layer 4 |
+Azure DDoS Protection protege recursos expuestos a Internet frente a ataques Distributed Denial of Service.
 
----
+Un ataque DDoS intenta saturar un servicio con mucho tráfico malicioso para dejarlo inaccesible.
 
-# Descripción General
-
-Azure DDoS Protection es un servicio administrado de Azure que protege recursos expuestos a Internet frente a ataques Distributed Denial of Service (DDoS).
-
-Proporciona mitigación automática frente a:
+Ejemplos:
+- SYN Flood
+- UDP Flood
 - ataques volumétricos
-- ataques de protocolo
-- agotamiento de recursos
+- ataques de amplificación
+- agotamiento de conexiones
 
-antes de que el tráfico malicioso llegue al entorno del cliente.
+Azure DDoS Protection trabaja principalmente en Layer 3 / Layer 4.
+
+No sustituye a:
+- WAF
+- Azure Firewall
+- Azure Front Door
+- Application Gateway
+
+Los complementa.
 
 ---
 
-# Tipos de Servicio
+## 2. Servicios principales
 
-| Tipo | Incluido | Descripción |
+| Servicio | Qué es | Dónde se aplica |
 |---|---|---|
-| DDoS Basic | Sí (por defecto) | Protección básica incluida automáticamente en Azure |
-| DDoS Network Protection | De pago | Protección avanzada enterprise para VNets |
+| Azure DDoS Basic | Protección básica incluida por defecto en Azure | Automática, sin configuración |
+| Azure DDoS IP Protection | Protección avanzada para una Public IP concreta | Directamente sobre la Public IP |
+| Azure DDoS Network Protection Plan | Protección avanzada enterprise para múltiples VNets | Asociado a VNets |
 
 ---
 
-# Concepto Arquitectónico Importante
+## 3. Azure DDoS Basic
 
-## DDoS Protection se asocia a una VNet
+Azure DDoS Basic está incluido automáticamente en Azure.
 
-El DDoS Protection Plan NO se asocia directamente a:
-- Public IPs
-- Application Gateway
-- Azure Firewall
-
-Se asocia a una:
+No hay que:
+- crear ningún recurso
+- asociarlo a una VNet
+- activarlo en una Public IP
+- pagar coste adicional
 
 ```text
-Virtual Network (VNet)
+Azure DDoS Basic
+   ↓
+Incluido automáticamente
+   ↓
+Sin configuración
+```
+
+Uso:
+- protección básica por defecto
+- entornos no críticos
+- primera capa mínima de protección
+
+Coste:
+
+```text
+Incluido
 ```
 
 ---
 
-# Qué queda protegido automáticamente
+## 4. Azure DDoS IP Protection
 
-Cuando una VNet está asociada a un DDoS Protection Plan, Azure protege automáticamente los recursos públicos dentro de esa VNet, incluyendo:
+Azure DDoS IP Protection protege una Public IP individual frente a ataques DDoS Layer 3 / Layer 4.
 
-- Public IP Addresses
-- Application Gateway
-- Azure Firewall
-- Load Balancers
-- Workloads expuestos a Internet
-
----
-
-# Cómo funciona la mitigación
-
-La mitigación DDoS NO ocurre dentro de la VNet.
-
-Azure realiza la mitigación en la:
-
-```text
-Microsoft Azure Global Edge Network
-```
-
-antes de que el tráfico malicioso llegue a los recursos Azure.
-
----
-
-# Flujo de Tráfico
+Es útil cuando sólo tienes una o pocas aplicaciones públicas.
 
 ```text
 Internet
    ↓
-Azure Global Edge Network
-(Detección y Mitigación DDoS)
+Azure Global Edge
+running Azure DDoS IP Protection
    ↓
-Public IP
-   ↓
-Application Gateway / Firewall
-   ↓
-Backend Workload
-```
-
----
-
-# Diferencia entre DDoS Protection y WAF
-
-| DDoS Protection | WAF |
-|---|---|
-| Protección Layer 3 / Layer 4 | Protección Layer 7 |
-| Protege frente a ataques volumétricos | Protege frente a ataques web |
-| SYN Flood, UDP Flood | SQL Injection, XSS |
-| Mitigación en el edge de Azure | Protección a nivel aplicación |
-
----
-
-# Comparativa de Protección DDoS y Publicación Segura en Azure
-
-| Servicio | Coste aproximado | Capa de protección | Objetivo principal | Alcance | Funcionalidades principales | Caso de uso típico | Notas |
-|---|---|---|---|---|---|---|---|
-| Azure DDoS Basic | Incluido | L3 / L4 | Protección DDoS básica | Toda la plataforma Azure | Mitigación automática básica de ataques volumétricos | Protección básica por defecto en Azure | Incluido automáticamente |
-| Azure DDoS Network Protection Plan | ~2.944 USD/mes | L3 / L4 | Protección DDoS enterprise avanzada | Múltiples VNets | Adaptive tuning, telemetry, alertas, cost protection, informes de mitigación | Entornos enterprise con muchos servicios públicos | Se asocia a VNets, no directamente a Public IPs |
-| Azure DDoS IP Protection | ~199 USD/mes por Public IP | L3 / L4 | Protección DDoS avanzada para una IP concreta | Public IP individual | Mitigación avanzada para endpoints críticos | Una sola API pública o entorno pequeño | Alternativa económica al plan completo |
-| Azure Application Gateway WAF v2 | ~200–500+ USD/mes según uso | L7 (HTTP/HTTPS) | Publicación segura de aplicaciones | Ingress de aplicaciones/APIs | WAF, SSL offload, autoscaling, protección OWASP, path routing | APIs públicas y aplicaciones web | NO reemplaza DDoS Protection |
-| Azure Front Door Standard | ~35–150+ USD/mes según tráfico | L7 Global Edge | Ingress global y aceleración web | Edge global Microsoft | CDN, routing global, integración WAF, caché | Aplicaciones web globales | Buena opción enterprise económica |
-| Azure Front Door Premium | ~300–1000+ USD/mes según tráfico | L7 Global Edge | Ingress enterprise avanzado | Edge global Microsoft | WAF, Private Link, seguridad avanzada, failover global | Aplicaciones enterprise internet-facing | Muy buena alternativa a ingress centralizado complejo |
-
----
-
-# Comparativa de Capas de Seguridad
-
-| Servicio | Tipo principal de protección |
-|---|---|
-| DDoS Protection | Ataques volumétricos (SYN Flood, UDP Flood, amplification attacks) |
-| WAF v2 | Ataques web HTTP/HTTPS (SQL Injection, XSS, OWASP Top 10) |
-| Azure Front Door | Protección global de ingress y aceleración web |
-
-# Servicios que SÍ se complementan en Azure
-
-Estos servicios NO compiten entre sí.  
-La mayoría protegen capas diferentes y por eso normalmente se usan conjuntamente.
-
----
-
-# 1. DDoS Protection + Application Gateway WAF v2
-
-## Muy recomendado
-
-```text
-Internet
-   ↓
-DDoS Protection
-(L3/L4 volumetric protection)
+Protected Public IP
    ↓
 Application Gateway WAF v2
-(L7 web protection)
    ↓
 Backend API
 ```
 
-## Qué aporta cada uno
+### Dónde se instala
 
-| Servicio | Protege |
+Se habilita directamente en la Public IP.
+
+```text
+Public IP Address
+→ DDoS Protection
+→ Enable DDoS IP Protection
+```
+
+### En qué suscripción debería estar
+
+Debe estar en la misma suscripción donde está la Public IP.
+
+Ejemplo:
+
+| Recurso | Suscripción |
 |---|---|
-| DDoS Protection | SYN Flood, UDP Flood, ataques volumétricos |
-| WAF v2 | SQL Injection, XSS, OWASP Top 10 |
-
-## Caso típico
-
-- APIs públicas
-- aplicaciones web enterprise
-- ingress ALZ estándar
-
----
-
-# 2. Azure Front Door + WAF
-
-## Muy recomendado
-
-```text
-Internet
-   ↓
-Azure Front Door WAF
-   ↓
-Backend API / App Gateway
-```
-
-## Beneficios
-
-| Función | Front Door |
-|---|---|
-| Global edge protection | ✅ |
-| CDN | ✅ |
-| WAF | ✅ |
-| Multi-region failover | ✅ |
-| Rate limiting | ✅ |
-
-## Muy útil para
-
-- aplicaciones globales
-- APIs públicas
-- servicios multi-región
-
----
-
-# 3. Azure Front Door + Application Gateway WAF v2
-
-## Arquitectura enterprise muy común
-
-```text
-Internet
-   ↓
-Azure Front Door
-(Global edge)
-   ↓
-Application Gateway WAF v2
-(Regional ingress)
-   ↓
-Private Backend
-```
-
----
-
-## Qué aporta cada capa
-
-| Servicio | Función |
-|---|---|
-| Front Door | Global routing, CDN, edge security |
-| App Gateway WAF | Regional ingress, app routing, TLS termination |
-
----
-
-## Cuándo tiene sentido
-
-- multi-región
-- alta disponibilidad
-- enterprise internet applications
-
----
-
-# 4. DDoS Protection + Azure Firewall
-
-## Muy habitual en ALZ
-
-```text
-Internet
-   ↓
-DDoS Protection
-   ↓
-Azure Firewall
-   ↓
-Spokes
-```
-
----
-
-## Qué protege cada uno
-
-| Servicio | Función |
-|---|---|
-| DDoS Protection | Absorción ataques volumétricos |
-| Azure Firewall | Filtrado tráfico y egress inspection |
-
----
-
-# 5. Application Gateway WAF + Azure Firewall
-
-## Arquitectura ALZ típica
-
-```text
-Ingress:
-Internet
-   ↓
-Application Gateway WAF
-   ↓
-Backend
-
-Egress:
-Backend
-   ↓
-Azure Firewall HUB
-   ↓
-Internet
-```
-
----
-
-## Muy importante
-
-Aquí:
-- WAF protege inbound HTTP/HTTPS
-- Firewall controla outbound/egress.
-
----
-
-# 6. Front Door + DDoS Protection + WAF + Firewall
-
-## Arquitectura enterprise avanzada
-
-```text
-Internet
-   ↓
-Azure Front Door WAF
-   ↓
-Application Gateway WAF
-   ↓
-Private Backend
-   ↓
-UDR
-   ↓
-Azure Firewall HUB
-```
-
-Opcionalmente:
-```text
-DDoS Protection
-```
-protegiendo VNets/backend regionales.
-
----
-
-# Qué NO suele tener sentido
-
-| Combinación | Motivo |
-|---|---|
-| DDoS Network Protection + pequeña app no crítica | Coste muy alto |
-| App Gateway WAF + Public VM directa | Rompe patrón seguro |
-| Firewall como único ingress HTTP | No sustituye WAF |
-| Sólo DDoS sin WAF | No protege ataques web |
-
----
-
-# Recomendación realista para vuestra ALZ inicial
-
-## Coste optimizado
-
-```text
-DDoS Basic
-   +
-Application Gateway WAF v2
-   +
-Azure Firewall HUB
-```
-
----
-
-# Recomendación enterprise futura
-
-```text
-Azure Front Door Premium
-   +
-Application Gateway WAF v2
-   +
-Azure Firewall HUB
-   +
-DDoS Protection
-```
-
-cuando:
-- existan múltiples apps públicas
-- multi-región
-- requisitos enterprise/compliance altos.
-
----
-
-# Recomendación Inicial ALZ (Optimizada por Coste)
-
-| Componente | Recomendación |
-|---|---|
-| Azure Firewall | ✅ Sí |
-| Application Gateway WAF v2 | ✅ Sí |
-| DDoS Basic | ✅ Ya incluido |
-| Centralized Egress | ✅ Sí |
-| DDoS Network Protection | ❌ No inicialmente |
-| DDoS IP Protection | ⚠️ Evaluar sólo para APIs críticas |
-| Azure Front Door | ⚠️ Opción enterprise futura |
-
----
-
-# Arquitectura Típica
-
-```text
-Internet
-   ↓
-DDoS Basic / Front Door Edge
-   ↓
-Application Gateway WAF v2
-   ↓
-Private Backend API
-   ↓
-UDR
-   ↓
-Azure Firewall HUB
-   ↓
-Internet outbound
-```
-
----
-
-# Notas Importantes
-
-## DDoS Network Protection
-
-- Se asocia a VNets
-- Modelo enterprise centralizado
-- Coste mensual fijo elevado
-- Recomendado cuando existen múltiples servicios críticos públicos
-
----
-
-## DDoS IP Protection
-
-- Protección por Public IP
-- Mucho más económico para entornos pequeños
-- Buen equilibrio para una API crítica aislada
-
----
-
-## Application Gateway WAF v2
-
-- Protección web Layer 7
-- Reverse proxy
-- Patrón de ingress seguro
-- Patrón recomendado habitual en ALZ
-
----
-
-## Azure Front Door
-
-- Presencia global en el edge Microsoft
-- Muy buena seguridad y escalabilidad
-- Excelente para aplicaciones enterprise multi-región o internet-facing
-
----
-
-# Arquitectura Típica ALZ
-
-```text
-Connectivity Subscription
-   ↓
-DDoS Protection Plan
-   ↓
-Asociado a:
-   - Spoke VNet A
-   - Spoke VNet B
-   - Shared Services VNet
-```
-
----
-
-# Modelo de Gobernanza Recomendado en ALZ
-
-| Componente | Ownership |
-|---|---|
-| DDoS Protection Plan | GroupIT Cloud |
-| Asociación a VNets | GroupIT Cloud |
-| Exposición pública de aplicaciones | Application Teams mediante patrones aprobados |
-| Gobernanza WAF | GroupIT Cloud |
-
----
-
-# Conceptos Importantes para Examen
-
-## Concepto Clave 1
-
-Los DDoS Protection Plans se asocian a VNets, NO directamente a Public IPs.
-
-## Concepto Clave 2
-
-La mitigación ocurre en el Azure global edge network.
-
-## Concepto Clave 3
-
-DDoS Protection complementa:
-- Azure Firewall
-- Application Gateway WAF
-- Azure Front Door
-
-No los reemplaza.
-
----
-
-# Ejemplo
-
-```text
-Ataque SYN Flood de 500 Gbps
-        ↓
-Azure Edge detecta el ataque
-        ↓
-El tráfico es mitigado antes de llegar a la Public IP
-        ↓
-Sólo tráfico limpio llega al Application Gateway
-```
-
-# Coste Aproximado
-
-## DDoS Basic
-
-```text
-Incluido gratuitamente en Azure
-```
-
----
-
-## DDoS Network Protection
-
-Modelo de coste:
-- coste fijo mensual por plan
-- permite proteger múltiples VNets bajo el mismo plan
+| Application Gateway WAF v2 | Workload / Spoke Subscription |
+| Public IP | Workload / Spoke Subscription |
+| DDoS IP Protection | Misma Workload / Spoke Subscription |
 
 ### Coste aproximado
 
-| Servicio | Coste aproximado |
-|---|---|
-| DDoS Network Protection Plan | ~2.500 - 3.000 USD/mes |
-
-⚠️ El precio puede variar según región y cambios de Microsoft.
-
----
-
-# Consideraciones Importantes de Coste
-
-## El coste NO es por VNet
-
-El coste es:
 ```text
-por DDoS Protection Plan
+~199 USD/mes por Public IP
 ```
 
-Por eso normalmente en ALZ:
-- se centraliza
-- se comparte entre múltiples VNets
-
 ---
 
-# Ejemplo Enterprise
+## 5. Azure DDoS Network Protection Plan
+
+Azure DDoS Network Protection Plan es el modelo enterprise.
+
+Protege múltiples VNets mediante un plan centralizado.
 
 ```text
 Connectivity Subscription
    ↓
-1 DDoS Protection Plan
-   ↓
-Protege:
-- Shared Services VNet
-- Spoke VNet A
-- Spoke VNet B
-- Spoke VNet C
-```
-
----
-
-# Beneficios Enterprise
-
-| Beneficio | Explicación |
-|---|---|
-| Cost sharing | Un único plan protege muchas VNets |
-| Central governance | Gobernanza centralizada |
-| Attack telemetry | Métricas y alertas avanzadas |
-| Cost protection | Protección frente a costes derivados de ataques |
-| Integration | Azure Monitor / Sentinel |
-
----
-
-# Concepto Arquitectónico Importante
-
-## DDoS Protection se asocia a una VNet
-
-El DDoS Protection Plan NO se asocia directamente a:
-- Public IPs
-- Application Gateway
-- Azure Firewall
-
-Se asocia a una:
-
-```text
-Virtual Network (VNet)
-```
-
----
-
-# Qué queda protegido automáticamente
-
-Cuando una VNet está asociada a un DDoS Protection Plan, Azure protege automáticamente los recursos públicos dentro de esa VNet, incluyendo:
-
-- Public IP Addresses
-- Application Gateway
-- Azure Firewall
-- Load Balancers
-- Workloads expuestos a Internet
-
----
-
-# Cómo funciona la mitigación
-
-La mitigación DDoS NO ocurre dentro de la VNet.
-
-Azure realiza la mitigación en la:
-
-```text
-Microsoft Azure Global Edge Network
-```
-
-antes de que el tráfico malicioso llegue a los recursos Azure.
-
----
-
-# Flujo de Tráfico
-
-```text
-Internet
-   ↓
-Azure Global Edge Network
-(Detección y Mitigación DDoS)
-   ↓
-Public IP
-   ↓
-Application Gateway / Firewall
-   ↓
-Backend Workload
-```
-
----
-
-# Diferencia entre DDoS Protection y WAF
-
-| DDoS Protection | WAF |
-|---|---|
-| Protección Layer 3 / Layer 4 | Protección Layer 7 |
-| Protege frente a ataques volumétricos | Protege frente a ataques web |
-| SYN Flood, UDP Flood | SQL Injection, XSS |
-| Mitigación en el edge de Azure | Protección a nivel aplicación |
-
----
-
-# Diferencia entre DDoS Protection y Azure Firewall
-
-| DDoS Protection | Azure Firewall |
-|---|---|
-| Mitigación DDoS | Filtrado e inspección de tráfico |
-| Mitigación automática | Reglas configurables |
-| Azure global edge | Desplegado dentro de Azure |
-| Absorción de ataques | Gobernanza y seguridad de red |
-
----
-
-# Arquitectura Típica ALZ
-
-```text
-Connectivity Subscription
-   ↓
-DDoS Protection Plan
-   ↓
-Asociado a:
-   - Spoke VNet A
-   - Spoke VNet B
-   - Shared Services VNet
-```
-
----
-
-# Modelo de Gobernanza Recomendado en ALZ
-
-| Componente | Ownership |
-|---|---|
-| DDoS Protection Plan | GroupIT Cloud |
-| Asociación a VNets | GroupIT Cloud |
-| Exposición pública de aplicaciones | Application Teams mediante patrones aprobados |
-| Gobernanza WAF | GroupIT Cloud |
-
----
-
-# Conceptos Importantes para Examen
-
-## Concepto Clave 1
-
-Los DDoS Protection Plans se asocian a VNets, NO directamente a Public IPs.
-
-## Concepto Clave 2
-
-La mitigación ocurre en el Azure global edge network.
-
-## Concepto Clave 3
-
-DDoS Protection complementa:
-- Azure Firewall
-- Application Gateway WAF
-- Azure Front Door
-
-No los reemplaza.
-
----
-
-# Ejemplo
-
-```text
-Ataque SYN Flood de 500 Gbps
-        ↓
-Azure Edge detecta el ataque
-        ↓
-El tráfico es mitigado antes de llegar a la Public IP
-        ↓
-Sólo tráfico limpio llega al Application Gateway
-```
-
-# Cómo funciona realmente
-
-## 1. Creas el recurso global
-
-```text
 DDoS Network Protection Plan
-```
-
-Este recurso:
-- existe a nivel de suscripción/resource group
-- normalmente en:
-
-```text
-Connectivity Subscription
-```
-
----
-
-## 2. Luego eliges qué VNets lo usan
-
-En cada VNet:
-
-```text
-Enable DDoS Protection
-→ Select existing DDoS Plan
-```
-
----
-
-## Entonces conceptualmente
-
-```text
-1 DDoS Plan
-    ↓
-Many VNets can consume it
-```
-
----
-
-# Importante
-
-NO existe algo como:
-
-```text
-Enable DDoS for whole tenant
-```
-
-Azure NO hace eso automáticamente.
-
----
-
-# Arquitectura típica ALZ
-
-```text
-Connectivity Subscription
-   ↓
-Central DDoS Protection Plan
    ↓
 Associated to:
    - Hub VNet
@@ -757,13 +133,292 @@ Associated to:
    - Spoke VNet B
 ```
 
+### Dónde se instala
+
+Se crea como recurso Azure:
+
+```text
+Microsoft.Network/ddosProtectionPlans
+```
+
+Normalmente en:
+
+```text
+Connectivity Subscription
+```
+
+### Cómo se activa
+
+No se activa a nivel tenant.
+
+Se crea el plan y luego se asocia VNet por VNet:
+
+```text
+VNet
+→ DDoS Protection
+→ Enable
+→ Select existing DDoS Plan
+```
+
+### Importante
+
+No existe:
+
+```text
+Enable DDoS for whole tenant
+```
+
+Azure no protege automáticamente todas las VNets con Network Protection.
+
+### Coste aproximado
+
+```text
+~2,944 USD/mes
+```
+
 ---
 
-# Entonces sí
+## 6. Tabla comparativa — DDoS IP Protection vs DDoS Network Protection Plan
 
-| Acción | Correcto |
+| Característica | DDoS IP Protection | DDoS Network Protection Plan |
+|---|---|---|
+| Alcance | Una Public IP | Múltiples VNets |
+| Coste aproximado | ~199 USD/mes por Public IP | ~2,944 USD/mes |
+| Ideal para | Una API pública o pocas IPs críticas | Muchas aplicaciones públicas |
+| Se asocia a | Public IP | VNet |
+| Modelo ALZ | Workload / Spoke Subscription | Connectivity Subscription |
+| Centralización | Baja / media | Alta |
+| Coste para una sola app | Más razonable | Normalmente caro |
+| Coste para muchas IPs | Puede crecer rápido | Más eficiente a escala |
+| Protege Layer 3 / Layer 4 | Sí | Sí |
+| Sustituye WAF | No | No |
+| Sustituye Azure Firewall | No | No |
+
+---
+
+## 7. Tabla comparativa general
+
+| Servicio | Coste aproximado | Capa | Para qué sirve | Dónde se aplica | Cuándo usarlo |
+|---|---:|---|---|---|---|
+| Azure DDoS Basic | Incluido | L3 / L4 | Protección DDoS básica | Automático en Azure | Siempre, viene por defecto |
+| Azure DDoS IP Protection | ~199 USD/mes por Public IP | L3 / L4 | Protección avanzada por IP pública | Public IP | Una API pública crítica |
+| Azure DDoS Network Protection Plan | ~2,944 USD/mes | L3 / L4 | Protección enterprise para muchas VNets/IPs | VNets | Muchas apps públicas o alto riesgo |
+| Azure Application Gateway WAF v2 | ~200–500+ USD/mes según uso | L7 | Reverse proxy + WAF regional | Spoke o Shared Services | APIs/webs públicas regionales |
+| Azure Front Door Standard | ~35–150+ USD/mes según tráfico | L7 Global | Ingress global, CDN, routing | Edge global Microsoft | Web/API pública simple o global |
+| Azure Front Door Premium | ~300–1000+ USD/mes según tráfico | L7 Global | Ingress global avanzado, WAF, Private Link | Edge global Microsoft | Enterprise, multi-región, backend privado |
+
+---
+
+## 8. Diferencia entre DDoS, WAF, Front Door y Firewall
+
+| Servicio | Protege contra | Capa |
+|---|---|---|
+| DDoS Protection | Ataques volumétricos, SYN Flood, UDP Flood | L3 / L4 |
+| Application Gateway WAF v2 | SQL Injection, XSS, OWASP Top 10 | L7 |
+| Azure Front Door | Ingress global, WAF, CDN, failover | L7 Global |
+| Azure Firewall | Filtrado de red, egress, DNAT/SNAT | L3-L7 |
+
+---
+
+## 9. Combinaciones que SÍ tienen sentido
+
+### 9.1 DDoS Basic + Application Gateway WAF v2
+
+Tiene sentido para una primera fase con coste controlado.
+
+```text
+Internet
+   ↓
+DDoS Basic
+   ↓
+Application Gateway WAF v2
+   ↓
+Private Backend API
+```
+
+Por qué:
+- DDoS Basic ya está incluido
+- WAF protege Layer 7
+- coste razonable
+- patrón típico para una API pública
+
+---
+
+### 9.2 DDoS IP Protection + Application Gateway WAF v2
+
+Muy buena opción para una sola API crítica.
+
+```text
+Internet
+   ↓
+DDoS IP Protection
+   ↓
+Protected Public IP
+   ↓
+Application Gateway WAF v2
+   ↓
+Backend API
+```
+
+Por qué:
+- DDoS IP Protection protege la Public IP
+- WAF protege la aplicación HTTP/HTTPS
+- más barato que DDoS Network Protection
+
+---
+
+### 9.3 DDoS Network Protection Plan + Application Gateway WAF v2
+
+Tiene sentido en entornos enterprise con muchas aplicaciones públicas.
+
+```text
+Internet
+   ↓
+DDoS Network Protection
+   ↓
+Application Gateway WAF v2
+   ↓
+Backend API
+```
+
+Por qué:
+- DDoS protege L3/L4
+- WAF protege L7
+- modelo centralizado ALZ
+
+No lo usaría para una única app salvo que sea muy crítica.
+
+---
+
+### 9.4 Azure Front Door Standard/Premium + Application Gateway WAF v2
+
+Tiene sentido para arquitectura enterprise o multi-región.
+
+```text
+Internet
+   ↓
+Azure Front Door
+   ↓
+Application Gateway WAF v2
+   ↓
+Private Backend
+```
+
+Por qué:
+- Front Door aporta edge global, CDN, routing y failover
+- App Gateway aporta ingress regional y routing interno
+- útil para multi-región o alta disponibilidad
+
+---
+
+### 9.5 Azure Front Door Premium + Private Backend
+
+Muy buena arquitectura enterprise.
+
+```text
+Internet
+   ↓
+Azure Front Door Premium
+   ↓
+Private Link
+   ↓
+Private Backend
+```
+
+Por qué:
+- evita exposición pública directa del backend
+- soporta Private Link
+- mejora seguridad de publicación
+
+---
+
+### 9.6 Application Gateway WAF v2 + Azure Firewall
+
+Tiene sentido, pero cada uno protege un flujo distinto.
+
+```text
+Ingress:
+Internet
+   ↓
+Application Gateway WAF v2
+   ↓
+Backend API
+
+Egress:
+Backend API
+   ↓
+UDR
+   ↓
+Azure Firewall HUB
+   ↓
+Internet
+```
+
+Por qué:
+- WAF protege tráfico entrante HTTP/HTTPS
+- Azure Firewall controla salida a Internet
+
+---
+
+## 10. Combinaciones que NO suelen tener sentido
+
+| Combinación | Por qué no suele tener sentido |
 |---|---|
-| Crear un único DDoS Plan centralizado | ✅ |
-| Compartirlo entre VNets | ✅ |
-| Activarlo VNet por VNet | ✅ |
-| Activarlo automáticamente para todo el tenant | ❌ |
+| DDoS Network Protection Plan para una sola app no crítica | Coste fijo muy alto |
+| DDoS IP Protection + DDoS Network Protection sobre el mismo escenario | Puede ser redundante si la VNet ya está cubierta por Network Protection |
+| WAF sin ningún control DDoS adicional en apps muy críticas | WAF no protege bien ataques volumétricos L3/L4 |
+| Sólo DDoS Protection sin WAF para una API pública | No protege ataques web como SQL Injection o XSS |
+| Azure Firewall como único control para publicar APIs HTTP | Azure Firewall no sustituye un WAF |
+| Public IP directa en VM + WAF separado | Rompe el patrón seguro de ingress |
+| Front Door Premium + Application Gateway WAF v2 + DDoS Network Protection para una app pequeña | Puede ser técnicamente válido, pero demasiado caro y complejo |
+
+---
+
+## 11. Recomendación para una sola aplicación con coste limitado
+
+Para una única API pública, empezaría con:
+
+```text
+DDoS Basic
+   +
+Application Gateway WAF v2
+   +
+Azure Firewall HUB para egress
+```
+
+Si la API es crítica o el riesgo DDoS es relevante:
+
+```text
+DDoS IP Protection
+   +
+Application Gateway WAF v2
+   +
+Azure Firewall HUB para egress
+```
+
+No empezaría con:
+
+```text
+DDoS Network Protection Plan
+```
+
+salvo que:
+- haya varias aplicaciones públicas
+- existan muchas Public IPs
+- haya requisitos de compliance fuertes
+- el impacto de caída sea muy alto
+- el coste mensual esté justificado
+
+---
+
+## 12. Resumen final
+
+| Escenario | Recomendación |
+|---|---|
+| Protección mínima | DDoS Basic |
+| Una API pública con coste limitado | DDoS Basic + App Gateway WAF v2 |
+| Una API pública crítica | DDoS IP Protection + App Gateway WAF v2 |
+| Muchas aplicaciones públicas | DDoS Network Protection Plan + WAF |
+| App global/multi-región | Front Door Standard/Premium |
+| App enterprise con backend privado | Front Door Premium + Private Link |
+| ALZ con control de salida | Azure Firewall HUB + UDR |
