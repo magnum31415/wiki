@@ -1,3 +1,5 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
 # DDoS Protection en Azure — Documento de estudio
 
 ## 1. Qué es y para qué sirve
