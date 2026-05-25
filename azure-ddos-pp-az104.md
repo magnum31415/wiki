@@ -125,6 +125,232 @@ Backend Workload
 | WAF v2 | Ataques web HTTP/HTTPS (SQL Injection, XSS, OWASP Top 10) |
 | Azure Front Door | Protección global de ingress y aceleración web |
 
+# Servicios que SÍ se complementan en Azure
+
+Estos servicios NO compiten entre sí.  
+La mayoría protegen capas diferentes y por eso normalmente se usan conjuntamente.
+
+---
+
+# 1. DDoS Protection + Application Gateway WAF v2
+
+## Muy recomendado
+
+```text
+Internet
+   ↓
+DDoS Protection
+(L3/L4 volumetric protection)
+   ↓
+Application Gateway WAF v2
+(L7 web protection)
+   ↓
+Backend API
+```
+
+## Qué aporta cada uno
+
+| Servicio | Protege |
+|---|---|
+| DDoS Protection | SYN Flood, UDP Flood, ataques volumétricos |
+| WAF v2 | SQL Injection, XSS, OWASP Top 10 |
+
+## Caso típico
+
+- APIs públicas
+- aplicaciones web enterprise
+- ingress ALZ estándar
+
+---
+
+# 2. Azure Front Door + WAF
+
+## Muy recomendado
+
+```text
+Internet
+   ↓
+Azure Front Door WAF
+   ↓
+Backend API / App Gateway
+```
+
+## Beneficios
+
+| Función | Front Door |
+|---|---|
+| Global edge protection | ✅ |
+| CDN | ✅ |
+| WAF | ✅ |
+| Multi-region failover | ✅ |
+| Rate limiting | ✅ |
+
+## Muy útil para
+
+- aplicaciones globales
+- APIs públicas
+- servicios multi-región
+
+---
+
+# 3. Azure Front Door + Application Gateway WAF v2
+
+## Arquitectura enterprise muy común
+
+```text
+Internet
+   ↓
+Azure Front Door
+(Global edge)
+   ↓
+Application Gateway WAF v2
+(Regional ingress)
+   ↓
+Private Backend
+```
+
+---
+
+## Qué aporta cada capa
+
+| Servicio | Función |
+|---|---|
+| Front Door | Global routing, CDN, edge security |
+| App Gateway WAF | Regional ingress, app routing, TLS termination |
+
+---
+
+## Cuándo tiene sentido
+
+- multi-región
+- alta disponibilidad
+- enterprise internet applications
+
+---
+
+# 4. DDoS Protection + Azure Firewall
+
+## Muy habitual en ALZ
+
+```text
+Internet
+   ↓
+DDoS Protection
+   ↓
+Azure Firewall
+   ↓
+Spokes
+```
+
+---
+
+## Qué protege cada uno
+
+| Servicio | Función |
+|---|---|
+| DDoS Protection | Absorción ataques volumétricos |
+| Azure Firewall | Filtrado tráfico y egress inspection |
+
+---
+
+# 5. Application Gateway WAF + Azure Firewall
+
+## Arquitectura ALZ típica
+
+```text
+Ingress:
+Internet
+   ↓
+Application Gateway WAF
+   ↓
+Backend
+
+Egress:
+Backend
+   ↓
+Azure Firewall HUB
+   ↓
+Internet
+```
+
+---
+
+## Muy importante
+
+Aquí:
+- WAF protege inbound HTTP/HTTPS
+- Firewall controla outbound/egress.
+
+---
+
+# 6. Front Door + DDoS Protection + WAF + Firewall
+
+## Arquitectura enterprise avanzada
+
+```text
+Internet
+   ↓
+Azure Front Door WAF
+   ↓
+Application Gateway WAF
+   ↓
+Private Backend
+   ↓
+UDR
+   ↓
+Azure Firewall HUB
+```
+
+Opcionalmente:
+```text
+DDoS Protection
+```
+protegiendo VNets/backend regionales.
+
+---
+
+# Qué NO suele tener sentido
+
+| Combinación | Motivo |
+|---|---|
+| DDoS Network Protection + pequeña app no crítica | Coste muy alto |
+| App Gateway WAF + Public VM directa | Rompe patrón seguro |
+| Firewall como único ingress HTTP | No sustituye WAF |
+| Sólo DDoS sin WAF | No protege ataques web |
+
+---
+
+# Recomendación realista para vuestra ALZ inicial
+
+## Coste optimizado
+
+```text
+DDoS Basic
+   +
+Application Gateway WAF v2
+   +
+Azure Firewall HUB
+```
+
+---
+
+# Recomendación enterprise futura
+
+```text
+Azure Front Door Premium
+   +
+Application Gateway WAF v2
+   +
+Azure Firewall HUB
+   +
+DDoS Protection
+```
+
+cuando:
+- existan múltiples apps públicas
+- multi-región
+- requisitos enterprise/compliance altos.
+
 ---
 
 # Recomendación Inicial ALZ (Optimizada por Coste)
