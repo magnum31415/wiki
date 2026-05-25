@@ -383,3 +383,79 @@ El tráfico es mitigado antes de llegar a la Public IP
         ↓
 Sólo tráfico limpio llega al Application Gateway
 ```
+
+# Cómo funciona realmente
+
+## 1. Creas el recurso global
+
+```text
+DDoS Network Protection Plan
+```
+
+Este recurso:
+- existe a nivel de suscripción/resource group
+- normalmente en:
+
+```text
+Connectivity Subscription
+```
+
+---
+
+## 2. Luego eliges qué VNets lo usan
+
+En cada VNet:
+
+```text
+Enable DDoS Protection
+→ Select existing DDoS Plan
+```
+
+---
+
+## Entonces conceptualmente
+
+```text
+1 DDoS Plan
+    ↓
+Many VNets can consume it
+```
+
+---
+
+# Importante
+
+NO existe algo como:
+
+```text
+Enable DDoS for whole tenant
+```
+
+Azure NO hace eso automáticamente.
+
+---
+
+# Arquitectura típica ALZ
+
+```text
+Connectivity Subscription
+   ↓
+Central DDoS Protection Plan
+   ↓
+Associated to:
+   - Hub VNet
+   - Shared Services VNet
+   - Spoke VNet A
+   - Spoke VNet B
+```
+
+---
+
+# Entonces sí
+
+| Acción | Correcto |
+|---|---|
+| Crear un único DDoS Plan centralizado | ✅ |
+| Compartirlo entre VNets | ✅ |
+| Activarlo VNet por VNet | ✅ |
+| Activarlo automáticamente para todo el tenant | ❌ |
