@@ -104,14 +104,96 @@ Backend Workload
 
 ---
 
-# Diferencia entre DDoS Protection y Azure Firewall
+# Comparativa de Protección DDoS y Publicación Segura en Azure
 
-| DDoS Protection | Azure Firewall |
+| Servicio | Coste aproximado | Capa de protección | Objetivo principal | Alcance | Funcionalidades principales | Caso de uso típico | Notas |
+|---|---|---|---|---|---|---|---|
+| Azure DDoS Basic | Incluido | L3 / L4 | Protección DDoS básica | Toda la plataforma Azure | Mitigación automática básica de ataques volumétricos | Protección básica por defecto en Azure | Incluido automáticamente |
+| Azure DDoS Network Protection Plan | ~2.944 USD/mes | L3 / L4 | Protección DDoS enterprise avanzada | Múltiples VNets | Adaptive tuning, telemetry, alertas, cost protection, informes de mitigación | Entornos enterprise con muchos servicios públicos | Se asocia a VNets, no directamente a Public IPs |
+| Azure DDoS IP Protection | ~199 USD/mes por Public IP | L3 / L4 | Protección DDoS avanzada para una IP concreta | Public IP individual | Mitigación avanzada para endpoints críticos | Una sola API pública o entorno pequeño | Alternativa económica al plan completo |
+| Azure Application Gateway WAF v2 | ~200–500+ USD/mes según uso | L7 (HTTP/HTTPS) | Publicación segura de aplicaciones | Ingress de aplicaciones/APIs | WAF, SSL offload, autoscaling, protección OWASP, path routing | APIs públicas y aplicaciones web | NO reemplaza DDoS Protection |
+| Azure Front Door Standard | ~35–150+ USD/mes según tráfico | L7 Global Edge | Ingress global y aceleración web | Edge global Microsoft | CDN, routing global, integración WAF, caché | Aplicaciones web globales | Buena opción enterprise económica |
+| Azure Front Door Premium | ~300–1000+ USD/mes según tráfico | L7 Global Edge | Ingress enterprise avanzado | Edge global Microsoft | WAF, Private Link, seguridad avanzada, failover global | Aplicaciones enterprise internet-facing | Muy buena alternativa a ingress centralizado complejo |
+
+---
+
+# Comparativa de Capas de Seguridad
+
+| Servicio | Tipo principal de protección |
 |---|---|
-| Mitigación DDoS | Filtrado e inspección de tráfico |
-| Mitigación automática | Reglas configurables |
-| Azure global edge | Desplegado dentro de Azure |
-| Absorción de ataques | Gobernanza y seguridad de red |
+| DDoS Protection | Ataques volumétricos (SYN Flood, UDP Flood, amplification attacks) |
+| WAF v2 | Ataques web HTTP/HTTPS (SQL Injection, XSS, OWASP Top 10) |
+| Azure Front Door | Protección global de ingress y aceleración web |
+
+---
+
+# Recomendación Inicial ALZ (Optimizada por Coste)
+
+| Componente | Recomendación |
+|---|---|
+| Azure Firewall | ✅ Sí |
+| Application Gateway WAF v2 | ✅ Sí |
+| DDoS Basic | ✅ Ya incluido |
+| Centralized Egress | ✅ Sí |
+| DDoS Network Protection | ❌ No inicialmente |
+| DDoS IP Protection | ⚠️ Evaluar sólo para APIs críticas |
+| Azure Front Door | ⚠️ Opción enterprise futura |
+
+---
+
+# Arquitectura Típica
+
+```text
+Internet
+   ↓
+DDoS Basic / Front Door Edge
+   ↓
+Application Gateway WAF v2
+   ↓
+Private Backend API
+   ↓
+UDR
+   ↓
+Azure Firewall HUB
+   ↓
+Internet outbound
+```
+
+---
+
+# Notas Importantes
+
+## DDoS Network Protection
+
+- Se asocia a VNets
+- Modelo enterprise centralizado
+- Coste mensual fijo elevado
+- Recomendado cuando existen múltiples servicios críticos públicos
+
+---
+
+## DDoS IP Protection
+
+- Protección por Public IP
+- Mucho más económico para entornos pequeños
+- Buen equilibrio para una API crítica aislada
+
+---
+
+## Application Gateway WAF v2
+
+- Protección web Layer 7
+- Reverse proxy
+- Patrón de ingress seguro
+- Patrón recomendado habitual en ALZ
+
+---
+
+## Azure Front Door
+
+- Presencia global en el edge Microsoft
+- Muy buena seguridad y escalabilidad
+- Excelente para aplicaciones enterprise multi-región o internet-facing
 
 ---
 
