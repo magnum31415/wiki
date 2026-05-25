@@ -534,3 +534,6 @@ y dentro:
 
 **Approved Modules**
 - Facilitan: patrones seguros.
+
+# Arquitectura típica ALZ
+
