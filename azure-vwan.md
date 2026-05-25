@@ -449,4 +449,88 @@ You configure the vHub through:
 
 ![vwan-nva](img/azure/vwan-nva.png)
 
+---
 
+# Arquitectura ALZ típica
+````
+Application Team
+   ↓
+Can deploy only:
+- Application Gateway WAF_v2
+- WAF enabled
+- Standard Public IP
+- DDoS IP Protection enabled
+````
+
+## Lo más maduro
+
+NO dejar que configuren esto manualmente.
+
+Sino: ``Approved Terraform Module``
+que ya:
+
+- crea WAF_v2
+- activa WAF
+- Prevention mode
+- OWASP policy
+- diagnostics
+- DDoS IP Protection
+- tags
+- naming
+
+## Qué significa realmente
+
+Que vosotros creáis: ``módulos Terraform corporativos reutilizables``
+
+ya validados por:
+
+- seguridad
+- networking
+- governance
+- cloud team.
+
+##Estructura típica
+````
+terraform-modules/
+│
+├── secure-app-gateway/
+├── secure-public-ip/
+├── secure-vnet/
+├── firewall-rules/
+└── spoke-networking/
+````
+
+
+### El app team NO hace esto
+
+``resource "azurerm_application_gateway" ...`` directamente.
+
+En cambio usa: `` module "secure_ingress"``. Ese módulo lo crea GroupIT Cloud
+
+````hcl
+module "api_ingress" {
+  source = "git::https://dev.azure.com/company/alz-modules//secure-app-gateway"
+
+  app_name = "api-prod"
+  region   = "westeurope"
+}
+````
+
+y dentro:
+
+- crea App Gateway WAF_v2
+- habilita WAF
+- configura OWASP
+- crea Public IP Standard
+- habilita DDoS IP Protection
+- activa diagnostics
+- aplica tags/naming
+- configura backend seguro.
+
+### Entonces el modelo ALZ maduro es
+
+**Policies**
+- Impiden: patrones inseguros.
+
+**Approved Modules**
+- Facilitan: patrones seguros.
