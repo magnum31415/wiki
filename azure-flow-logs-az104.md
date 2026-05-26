@@ -2,33 +2,277 @@
 
 # Azure NSG Flow Logs — Technical Overview
 
-## Servicios Azure relacionados con NSG
-| Servicio Azure                 | Relación con NSG                |
-| ------------------------------ | ------------------------------- |
-| Virtual Network (VNet)         | NSG protege VNets/Subnets       |
-| Subnet                         | NSG se asocia a subnets         |
-| Network Interface (NIC)        | NSG puede asociarse a NICs      |
-| Virtual Machines               | Protege VMs                     |
-| Azure Kubernetes Service (AKS) | Controla tráfico de nodos/pods  |
-| Load Balancer                  | Filtrado tráfico LB             |
-| Application Gateway            | Protección backend              |
-| Azure Firewall                 | Complementario                  |
-| Bastion                        | Control acceso administrativo   |
-| VPN Gateway                    | Protección conectividad híbrida |
-| ExpressRoute                   | Segmentación/red enterprise     |
-| Network Watcher                | Genera NSG Flow Logs            |
-| Traffic Analytics              | Analiza Flow Logs               |
-| Log Analytics                  | Almacena/análisis logs          |
-| Microsoft Sentinel             | SIEM                            |
-| CrowdStrike Falcon             | SIEM/XDR integration            |
-| Azure Policy                   | Governance NSGs                 |
-| Defender for Cloud             | Security recommendations        |
-| DDoS Protection                | Protección volumétrica          |
-| Application Security Groups    | Agrupación lógica workloads     |
+##  Azure Services and Relationship with NSGs
 
+| Azure Service | Has NSG Directly? | Relationship with NSG |
+|---|---|---|
+| Virtual Network (VNet) | ❌ No | NSGs are NOT attached to VNets directly |
+| Subnet | ✅ Yes | Most common place where NSGs are associated |
+| Network Interface (NIC) | ✅ Yes | NSG can be attached directly to VM NIC |
+| Virtual Machines | ⚠️ Indirect | VM protected through Subnet NSG or NIC NSG |
+| Azure Kubernetes Service (AKS) | ⚠️ Indirect | NSGs protect AKS node subnets and node pools |
+| Load Balancer | ⚠️ Indirect | NSG filters traffic reaching backend VMs/subnets |
+| Application Gateway | ⚠️ Indirect | NSGs protect App Gateway subnet and backend subnets |
+| Azure Firewall | ❌ No | Azure Firewall does NOT use NSGs internally |
+| Bastion | ⚠️ Indirect | Bastion subnet usually protected by NSG |
+| VPN Gateway | ⚠️ Indirect | GatewaySubnet may have NSG limitations/recommendations |
+| ExpressRoute Gateway | ⚠️ Indirect | Similar to VPN Gateway |
+| Network Watcher | ❌ No | Generates NSG Flow Logs |
+| Traffic Analytics | ❌ No | Consumes/analyzes NSG Flow Logs |
+| Log Analytics | ❌ No | Stores/analyzes logs |
+| Microsoft Sentinel | ❌ No | SIEM consuming logs |
+| CrowdStrike Falcon | ❌ No | External SIEM/XDR consuming logs |
+| Azure Policy | ❌ No | Governs/enforces NSG configuration |
+| Defender for Cloud | ❌ No | Provides NSG recommendations/security posture |
+| DDoS Protection | ❌ No | Protects public IPs/VNets, not NSGs |
+| Application Security Groups (ASG) | ⚠️ Related | Logical grouping used INSIDE NSG rules |
 
 ![azure-nsg-flow-logs](./img/azure/nsg-flow-logs.png)
 
+---
+
+# Important Clarification
+
+## NSGs can ONLY be associated directly to:
+
+```text
+1. Subnets
+2. Network Interfaces (NICs)
+```
+
+---
+
+# Everything Else
+
+Most Azure services are:
+
+```text
+Protected THROUGH the subnet
+```
+
+rather than having their own NSG object.
+
+---
+
+# Visual Example
+
+## VM Example
+
+```text
+VM
+ ↓
+NIC
+ ↓
+NSG
+```
+
+or
+
+```text
+VM
+ ↓
+Subnet
+ ↓
+NSG
+```
+
+---
+
+# AKS Example
+
+```text
+AKS Nodes
+     ↓
+AKS Subnet
+     ↓
+NSG
+```
+
+---
+
+# Application Gateway Example
+
+```text
+Application Gateway
+        ↓
+Dedicated Subnet
+        ↓
+NSG
+```
+
+---
+
+# Important Azure Firewall Difference
+
+Azure Firewall is DIFFERENT.
+
+It already IS:
+
+```text
+A firewall appliance/service
+```
+
+So:
+
+```text
+Azure Firewall ≠ NSG
+```
+
+They complement each other.
+
+---
+
+# Typical Landing Zone Pattern
+
+```text
+Internet
+    ↓
+Application Gateway / Firewall
+    ↓
+NSG-protected subnets
+    ↓
+Workloads
+```
+
+---
+
+# Extremely Important Design Principle
+
+## NSGs are mainly:
+
+```text
+Micro-segmentation controls
+```
+
+inside VNets/subnets.
+
+---
+
+# While Azure Firewall is usually:
+
+```text
+Centralized network security
+```
+
+---
+
+# Another Important Clarification
+
+## NSG Flow Logs only exist for NSGs
+
+Meaning:
+
+```text
+No NSG
+=
+No NSG Flow Logs
+```
+
+---
+
+# Example
+
+## This generates NSG Flow Logs
+
+```text
+Subnet
+  └── NSG attached
+```
+
+---
+
+## This does NOT
+
+```text
+VNet without NSG
+```
+
+---
+
+# Application Security Groups (ASG)
+
+Very commonly confused.
+
+ASG is NOT a firewall.
+
+It is:
+
+```text
+A logical grouping mechanism
+```
+
+used INSIDE NSG rules.
+
+Example:
+
+```text
+Allow ASG-Web → ASG-App on TCP 443
+```
+
+instead of using raw IPs.
+
+---
+
+# The Two Core NSG Association Models
+
+## Model 1 — Subnet NSG
+
+Most common.
+
+```text
+Subnet
+   └── NSG
+```
+
+---
+
+## Model 2 — NIC NSG
+
+More granular.
+
+```text
+VM NIC
+   └── NSG
+```
+
+---
+
+# Enterprise Recommendation
+
+Usually preferred:
+
+## Subnet-level NSGs
+
+Reasons:
+
+- simpler governance
+- scalable
+- easier Landing Zone management
+- easier policy enforcement
+
+---
+
+# NIC-level NSGs
+
+Usually avoided unless:
+
+- exceptional workloads
+- legacy applications
+- very granular isolation needed
+
+---
+
+# Key Concept
+
+## NSG is NOT a standalone security platform
+
+It is:
+
+```text
+A distributed Layer 3/4 filtering mechanism
+```
+
+embedded into Azure networking.
 
 ## What are NSG Flow Logs?
 
