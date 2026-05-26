@@ -2,8 +2,8 @@
 
 # Application Gateway
 
-[Cómo se configura la Public IP del Azure Application Gateway WAF_v2](#cómo-se-configura-la-public-ip-del-azure-application-gateway-waf_v2)
-[Azure WAF Services and SKUs — Comparison Table](#azure-waf-services-and-skus--comparison-table)
+- [Cómo se configura la Public IP del Azure Application Gateway WAF_v2](#cómo-se-configura-la-public-ip-del-azure-application-gateway-waf_v2)
+- [Azure WAF Services and SKUs — Comparison Table](#azure-waf-services-and-skus--comparison-table)
 
 ---
 
