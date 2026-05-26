@@ -209,15 +209,15 @@ Application Gateway
 
 # 4. Componentes internos del Application Gateway
 
-| Componente | Función |
-|---|---|
-| Public IP | Entrada Internet |
-| Frontend IP | IP frontend del gateway |
-| Listener | Escucha HTTP/HTTPS |
-| Rule | Routing |
-| Backend Pool | APIs/VMs/App Services |
-| Probe | Health checks |
-| WAF Policy | Protección OWASP |
+| Componente | Función | Descripción | Ejemplo |
+|---|---|---|---|
+| Public IP | Entrada Internet | Dirección IP pública que expone el Application Gateway a Internet | `52.168.x.x` |
+| Frontend IP | IP frontend del gateway | Configuración IP que usa el gateway para recibir tráfico | Frontend público HTTPS en puerto 443 |
+| Listener | Escucha HTTP/HTTPS | Componente que escucha peticiones HTTP/HTTPS en un puerto concreto | Listener HTTPS para `api.company.com:443` |
+| Rule | Routing | Regla que decide a qué backend enviar el tráfico | `/api/* → Backend Pool API` |
+| Backend Pool | APIs/VMs/App Services | Grupo de servidores o servicios backend que reciben tráfico | AKS, VMs privadas, App Services |
+| Probe | Health checks | Verificación periódica del estado de los backends | GET `/health` cada 30 segundos |
+| WAF Policy | Protección OWASP | Reglas WAF para detectar y bloquear ataques web | OWASP CRS 3.2 + Prevention Mode |
 
 ---
 
