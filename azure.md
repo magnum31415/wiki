@@ -46,6 +46,7 @@
       37.<a href="https://github.com/magnum31415/wiki/blob/main/azure-nsg-az104.md">Azure Network Security Group</a><br>   
       38.<a href="https://github.com/magnum31415/wiki/blob/main/azure-waf.md">Azure WAF</a><br>   
       39.<a href="https://github.com/magnum31415/wiki/blob/main/azure-ddos-pp-az104.md">Azure DDOS</a><br>   
+      40.<a href="https://github.com/magnum31415/wiki/blob/main/azure-application-gateway-az104.md">Azure Application Gateway</a><br>   
       100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>         
     </td>
     <td>
