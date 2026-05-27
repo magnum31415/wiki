@@ -1868,6 +1868,9 @@ Group-based licensing requires Entra ID P1 or P2.
 ---
 # Self-Service Password Reset (SSPR) en Microsoft Entra ID
 
+En SSPR, las security questions no se pueden usar para cuentas con roles administrativos. 
+Aunque en la configuración general de SSPR estén habilitadas las preguntas de seguridad, esa opción aplica a usuarios normales, no a administradores.
+
 ## Escenario
 
 Existen las siguientes identidades:
