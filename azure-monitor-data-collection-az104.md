@@ -89,6 +89,53 @@ qué recopilar
 cómo filtrarlo
 dónde enviarlo
 ```
+**qué es realmente un Data Collection Rule (DCR) en Azure Monitor.**
+
+Un DCR no sirve para “leer cualquier recurso Azure”.
+Sirve para definir:
+
+- qué datos recoger
+- desde qué origen compatible
+- y a dónde enviarlos
+
+Normalmente se usa con:
+
+- Azure Monitor Agent (AMA)
+- máquinas virtuales
+- servidores híbridos
+- eventos Windows
+- syslog
+- performance counters
+- logs personalizados
+
+**¿qué puede ser “data source” en un DCR?**
+
+En Azure, los data sources soportados por DCR son principalmente:
+
+# Azure Monitor - Data Collection Rules (DCR) Supported Data Sources
+
+| Soportado por DCR | Elemento | Explicación |
+|---|---|---|
+| ✅ SI | Virtual Machines (Azure VM) | El DCR puede instalar/configurar el Azure Monitor Agent (AMA) y recoger métricas, eventos Windows, syslog, logs personalizados y performance counters desde la VM. |
+| ✅ SI | Azure Arc Servers | Los servidores híbridos registrados con Azure Arc pueden ejecutar Azure Monitor Agent (AMA) y enviar datos mediante DCR igual que una Azure VM. |
+| ✅ SI | Windows Events | Los eventos del Event Viewer de Windows pueden recogerse mediante AMA + DCR. Ejemplo: Security, Application o System logs. |
+| ✅ SI | Syslog | Los servidores Linux pueden enviar logs Syslog mediante AMA y DCR. |
+| ✅ SI | Performance Counters | El DCR puede recoger contadores de rendimiento de Windows/Linux como CPU, memoria, disco o red. |
+| ✅ SI | IIS Logs | Los logs de Internet Information Services (IIS) pueden recopilarse desde servidores Windows mediante DCR. |
+| ✅ SI | Custom Text Logs | El DCR puede monitorizar ficheros de texto personalizados y enviar sus logs a Azure Monitor / Log Analytics. |
+| ✅ SI | Prometheus Metrics (AKS) | Azure Monitor Managed Prometheus puede usar DCR para recopilar métricas Prometheus desde AKS. |
+| ❌ NO | Storage Accounts | Un Storage Account puede almacenar logs, enviar diagnósticos e integrarse con Azure Monitor. PERO no es un “data source” soportado directamente en un DCR. Se usan Diagnostic Settings, no AMA + DCR. |
+| ❌ NO | Log Analytics Workspaces | El Workspace es normalmente el DESTINO de los datos, no el origen. Un DCR envía datos hacia Log Analytics, Metrics, Event Hub o Storage. |
+| ❌ NO | Azure SQL Databases | Azure SQL puede enviar logs y métricas mediante Diagnostic Settings y SQL Auditing, pero no actúa como data source directo de un DCR basado en AMA. |
+| ❌ NO | Azure Storage Blobs | Los blobs pueden contener logs o datos, pero no son orígenes soportados directamente por DCR. |
+| ❌ NO | Azure Key Vault | Key Vault usa Diagnostic Settings para enviar logs y métricas, no DCR como data source directo. |
+| ❌ NO | Azure Firewall | Azure Firewall exporta logs mediante Diagnostic Settings hacia Log Analytics/Event Hub/Storage, no mediante DCR clásico. |
+| ❌ NO | NSG Flow Logs | Los NSG Flow Logs se configuran mediante Network Watcher y Storage Account, no mediante DCR. |
+| ❌ NO | Application Gateway | Application Gateway envía logs mediante Diagnostic Settings, no como data source directo de DCR. |
+| ❌ NO | Azure Load Balancer | El Load Balancer puede enviar métricas y diagnósticos, pero no es origen directo compatible con DCR. |
+| ❌ NO | Azure Bastion | Bastion usa Diagnostic Settings para logs y métricas; no soporta AMA + DCR como origen directo. |
+
+
 
 ---
 
