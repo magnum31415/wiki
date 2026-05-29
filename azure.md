@@ -81,7 +81,8 @@
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-400.md">AZ-400: Designing and Implementing Microsoft DevOps Solutions</a><br>
       2. <a href="https://github.com/magnum31415/wiki/blob/main/azure-terraform.md">Azure Terraform</a><br>
-      3. <a href="https://github.com/magnum31415/wiki/blob/main/azure-devops.md">Azure DevOps</a><br>    
+      3. <a href="https://github.com/magnum31415/wiki/blob/main/azure-devops.md">Azure DevOps</a><br>   
+      4. <a href="https://github.com/magnum31415/wiki/blob/main/azure-devops-flow.md">Azure DevOps Flow</a><br>   
     </td>
   </tr>
 </table>
