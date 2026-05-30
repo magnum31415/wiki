@@ -4,6 +4,7 @@
 
 - [Pipelines](#pipelines)
 - [¿Qué es un Pull Request?](#qué-es-un-pull-request)
+- [¿Cómo aprobar una Pull Request en Azure DevOps?](#cómo-aprobar-una-pull-request-en-azure-devops)
 
 ---
 # Pipelines
@@ -836,3 +837,262 @@ main
 ```
 
 Este es el flujo estándar que encontrarás en la mayoría de repositorios de Azure DevOps con Terraform, Azure Landing Zones y entornos corporativos donde `main` está protegida.
+
+---
+
+# ¿Cómo aprobar una Pull Request en Azure DevOps?
+
+Una vez creada la Pull Request y ejecutadas correctamente las pipelines de validación (CI), los revisores pueden aprobarla.
+
+---
+
+# Paso 1: Abrir la Pull Request
+
+Entrar en:
+
+```text
+Azure DevOps
+→ Repos
+→ Pull Requests
+```
+
+Seleccionar la Pull Request pendiente.
+
+---
+
+# Paso 2: Revisar los cambios
+
+En la pestaña:
+
+```text
+Files
+```
+
+podrás ver:
+
+```text
+Archivos modificados
+Líneas añadidas
+Líneas eliminadas
+Comentarios
+```
+
+Por ejemplo:
+
+```diff
++ allow_https = true
+- allow_http = true
+```
+
+---
+
+# Paso 3: Revisar el resultado de las Pipelines
+
+En la parte superior del PR normalmente aparecerá algo similar a:
+
+```text
+✓ Terraform Validate
+✓ Terraform Plan
+✓ Security Scan
+```
+
+o
+
+```text
+❌ Terraform Validate
+```
+
+Si alguna pipeline falla normalmente no se debería aprobar el PR.
+
+---
+
+# Paso 4: Aprobar
+
+En la esquina superior derecha encontrarás:
+
+```text
+Reviewers
+```
+
+y una opción similar a:
+
+```text
+Approve
+```
+
+o
+
+```text
+Set vote
+```
+
+Opciones habituales:
+
+```text
+Approve
+Approve with suggestions
+Wait for author
+Reject
+```
+
+---
+
+# Significado de cada opción
+
+## Approve
+
+```text
+✓ Estoy de acuerdo con los cambios.
+✓ Puede fusionarse.
+```
+
+---
+
+## Approve with suggestions
+
+```text
+✓ El cambio es correcto.
+✓ Tengo pequeñas recomendaciones.
+✓ No bloqueo el merge.
+```
+
+---
+
+## Wait for author
+
+```text
+Necesito que el autor haga cambios antes de aprobar.
+```
+
+---
+
+## Reject
+
+```text
+No estoy de acuerdo con los cambios.
+No debería fusionarse.
+```
+
+---
+
+# Paso 5: Verificar que se cumplen las políticas
+
+Dependiendo del repositorio pueden existir políticas como:
+
+```text
+Minimum reviewers = 1
+```
+
+o
+
+```text
+Minimum reviewers = 2
+```
+
+Por ejemplo:
+
+```text
+Ricard          ✓ Approve
+Cloud Team Lead ✓ Approve
+```
+
+Cuando todas las aprobaciones requeridas estén completas aparecerá algo parecido a:
+
+```text
+All requirements satisfied
+```
+
+---
+
+# Paso 6: Completar la Pull Request
+
+Si tienes permisos para hacerlo:
+
+```text
+Complete
+```
+
+o
+
+```text
+Complete Pull Request
+```
+
+Azure DevOps realizará:
+
+```text
+Merge feature/add-policy
+               ↓
+              main
+```
+
+---
+
+# Flujo completo
+
+```text
+Developer
+    │
+    ├─ Crea rama
+    ├─ Hace cambios
+    ├─ Push
+    │
+    ▼
+Pull Request
+    │
+    ├─ CI Pipeline
+    ├─ Terraform Plan
+    ├─ Security Checks
+    │
+    ▼
+Reviewers
+    │
+    ├─ Approve
+    │
+    ▼
+Complete Pull Request
+    │
+    ▼
+Merge a main
+    │
+    ▼
+CD Pipeline
+    │
+    ▼
+Terraform Apply
+```
+
+---
+
+# Caso típico en vuestro Azure Landing Zone
+
+```text
+1. Keryl modifica Terraform
+
+2. Crea Pull Request
+
+3. Se ejecuta la CI
+
+   ✓ terraform validate
+   ✓ terraform plan
+
+4. Ricard revisa el plan
+
+5. Ricard pulsa:
+
+   Approve
+
+6. Azure DevOps detecta:
+
+   ✓ Todas las aprobaciones recibidas
+
+7. Se pulsa:
+
+   Complete Pull Request
+
+8. Se ejecuta la CD
+
+   terraform apply
+
+9. Los cambios quedan desplegados en Azure
+```
