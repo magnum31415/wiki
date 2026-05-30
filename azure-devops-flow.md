@@ -1,4 +1,6 @@
-# ndice
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+# Índice
 
 - [Pipelines](#pipelines)
 - [¿Qué es un Pull Request?](#qué-es-un-pull-request)
