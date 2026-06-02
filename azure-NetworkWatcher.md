@@ -2,7 +2,9 @@
 
 - [Azure Network Watcher](#azure-network-watcher)
 - [Virtual Network Flow Logs Deployment Plan](#virtual-network-flow-logs-deployment-plan)
+- [Grant SIEM Access to VNet Flow Logs Storage Accounts Using Microsoft Entra ID](#grant-siem-access-to-vnet-flow-logs-storage-accounts-using-microsoft-entra-id)
 
+  
 # Azure Network Watcher
 
 ## ¿Qué es Network Watcher?
@@ -592,4 +594,239 @@ Connectivity Subscription
 
           Corporate SIEM
 ```
+---
+# Grant SIEM Access to VNet Flow Logs Storage Accounts Using Microsoft Entra ID
 
+## Objective
+
+Allow the corporate SIEM to securely read VNet Flow Logs stored in Azure Storage Accounts using Microsoft Entra ID authentication and Azure RBAC.
+
+## Prerequisites
+
+- Corporate SIEM capable of authenticating against Azure using a Service Principal.
+- Storage Accounts already deployed:
+  - st-netlogs-prod-gwc-001
+  - st-netlogs-prod-swc-001
+- Appropriate permissions in Azure:
+  - Application Administrator or equivalent in Entra ID.
+  - Owner or User Access Administrator on the Storage Accounts.
+
+## Step 1 - Create a Service Principal
+
+### Create an Application Registration
+
+Navigate to:
+
+```text
+Microsoft Entra ID
+└── App registrations
+    └── New registration
+```
+
+Example:
+
+```text
+Name: sp-siem-vnetflowlogs
+```
+
+Record:
+
+```text
+Application (Client) ID
+Directory (Tenant) ID
+```
+
+---
+
+## Step 2 - Create Credentials
+
+Navigate to:
+
+```text
+App registrations
+└── sp-siem-vnetflowlogs
+    └── Certificates & secrets
+```
+
+Create one of the following:
+
+### Option A - Client Secret
+
+```text
+New client secret
+```
+
+Record:
+
+```text
+Secret Value
+```
+
+### Option B - Certificate (Recommended)
+
+Upload a certificate provided by the SIEM team.
+
+---
+
+## Step 3 - Assign Storage Blob Data Reader Role
+
+### Germany West Central Storage Account
+
+Navigate to:
+
+```text
+st-netlogs-prod-gwc-001
+└── Access Control (IAM)
+    └── Add role assignment
+```
+
+Assign:
+
+```text
+Role:
+Storage Blob Data Reader
+
+Member:
+sp-siem-vnetflowlogs
+```
+
+### Sweden Central Storage Account
+
+Navigate to:
+
+```text
+st-netlogs-prod-swc-001
+└── Access Control (IAM)
+    └── Add role assignment
+```
+
+Assign:
+
+```text
+Role:
+Storage Blob Data Reader
+
+Member:
+sp-siem-vnetflowlogs
+```
+
+---
+
+## Step 4 - Verify Storage Configuration
+
+Navigate to:
+
+```text
+Storage Account
+└── Configuration
+```
+
+Recommended settings:
+
+```text
+Public Blob Access = Disabled
+Minimum TLS Version = TLS 1.2
+```
+
+This prevents anonymous access while still allowing authenticated access through Microsoft Entra ID.
+
+---
+
+## Step 5 - Provide Information to the SIEM Team
+
+Deliver:
+
+```text
+Tenant ID
+Client ID
+Client Secret or Certificate
+Storage Account Names
+Container Names
+```
+
+Example:
+
+```text
+Tenant ID:
+xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+Client ID:
+xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+Storage Accounts:
+st-netlogs-prod-gwc-001
+st-netlogs-prod-swc-001
+```
+
+---
+
+## Step 6 - SIEM Connection Flow
+
+```text
+Corporate SIEM
+        │
+        ▼
+Microsoft Entra ID
+        │
+        ▼
+Service Principal
+        │
+        ▼
+Storage Blob Data Reader
+        │
+        ▼
+Storage Account
+        │
+        ▼
+VNet Flow Logs
+```
+
+---
+
+## Security Recommendations
+
+### Recommended
+
+```text
+Public Blob Access = Disabled
+Authentication = Microsoft Entra ID
+Authorization = Azure RBAC
+Role = Storage Blob Data Reader
+```
+
+### Avoid
+
+```text
+Storage Account Access Keys
+Anonymous Blob Access
+Shared Credentials Between Systems
+```
+
+---
+
+## Validation
+
+Verify that the SIEM can:
+
+```text
+Authenticate against Microsoft Entra ID
+List containers
+Read blobs
+Download VNet Flow Log files
+```
+
+Verify that the SIEM cannot:
+
+```text
+Delete blobs
+Modify blobs
+Change Storage Account configuration
+```
+
+The assigned role should remain:
+
+```text
+Storage Blob Data Reader
+```
+
+to enforce least-privilege access.
