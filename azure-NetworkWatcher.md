@@ -409,6 +409,8 @@ Normalmente:
 
 # Virtual Network Flow Logs Deployment Plan
 
+![vnet-flow-logs](./img/azure/vnet-flow-logs.png)
+
 ## 1. Enable Network Watcher
 
 Enable or verify Network Watcher in both regions:
