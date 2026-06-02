@@ -1,5 +1,8 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+- [Azure Network Watcher](#azure-network-watcher)
+- [Virtual Network Flow Logs Deployment Plan](#virtual-network-flow-logs-deployment-plan)
+
 # Azure Network Watcher
 
 ## ¿Qué es Network Watcher?
@@ -400,3 +403,193 @@ Normalmente:
     - Ubicado en Connectivity Subscription
     - Dentro de NetworkWatcherRG
 ```
+---
+
+# Virtual Network Flow Logs Deployment Plan
+
+## 1. Enable Network Watcher
+
+Enable or verify Network Watcher in both regions:
+
+```text
+Connectivity Subscription
+│
+├── NetworkWatcher_germanywestcentral
+└── NetworkWatcher_swedencentral
+```
+
+Notes:
+
+- Verify whether Network Watcher already exists.
+- One Network Watcher is required per Azure region.
+- Network Watcher itself does not generate logs; it provides the platform required for VNet Flow Logs.
+
+---
+
+## 2. Create Storage Accounts
+
+Create one regional Storage Account per region:
+
+```text
+Connectivity Subscription
+
+Germany West Central
+└── st-netlogs-prod-gwc-001
+    └── VNet Flow Logs
+        └── Retention: 90 days
+
+Sweden Central
+└── st-netlogs-prod-swc-001
+    └── VNet Flow Logs
+        └── Retention: 90 days
+```
+
+Recommended configuration:
+
+```text
+Performance: Standard
+Redundancy: ZRS
+Minimum TLS Version: TLS 1.2
+Public Blob Access: Disabled
+Lifecycle Management: Enabled
+```
+
+Lifecycle Management:
+
+```text
+vnet-flow-logs/*
+Delete after 90 days
+```
+
+---
+
+## 3. Enforce VNet Flow Logs through Azure Policy
+
+Deploy an Azure Policy (DeployIfNotExists) to automatically enable VNet Flow Logs on newly created VNets.
+
+```text
+New VNet
+    │
+    ▼
+Azure Policy
+    │
+    ▼
+Deploy VNet Flow Logs
+    │
+    ▼
+Regional Storage Account
+```
+
+Policy scope:
+
+```text
+Platform Landing Zones Management Group
+```
+
+or
+
+```text
+Connectivity Management Group
+```
+
+depending on the ALZ hierarchy.
+
+Objective:
+
+```text
+Ensure that all production VNets have VNet Flow Logs enabled automatically.
+```
+
+---
+
+## 4. Grant SIEM Access
+
+Grant the SIEM access to both Storage Accounts:
+
+```text
+st-netlogs-prod-gwc-001
+st-netlogs-prod-swc-001
+```
+
+Preferred authentication method:
+
+```text
+Microsoft Entra ID
++
+RBAC
+```
+
+Recommended role:
+
+```text
+Storage Blob Data Reader
+```
+
+Assigned to:
+
+```text
+SIEM Service Principal
+```
+
+or
+
+```text
+SIEM Managed Identity
+```
+
+The SIEM team must confirm whether they require:
+
+```text
+- Direct Blob Storage access
+- Event Hub integration
+- Log Analytics integration
+```
+
+---
+
+## 5. Terraform Implementation
+
+Add the implementation to the ALZ Accelerator repository:
+
+```text
+modules/
+└── vnet-flow-logs/
+
+platform/
+└── connectivity/
+    └── vnet-flow-logs.tf
+```
+
+Terraform resources:
+
+```text
+- Network Watcher (if required)
+- Storage Accounts
+- Lifecycle Policies
+- RBAC Assignments
+- VNet Flow Logs
+- Azure Policy Assignment
+```
+
+---
+
+## Expected Result
+
+```text
+Connectivity Subscription
+│
+├── NetworkWatcher_germanywestcentral
+├── NetworkWatcher_swedencentral
+│
+├── st-netlogs-prod-gwc-001
+│   └── VNet Flow Logs (90 days)
+│
+└── st-netlogs-prod-swc-001
+    └── VNet Flow Logs (90 days)
+
+                │
+                ▼
+
+          Corporate SIEM
+```
+
