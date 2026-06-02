@@ -1,3 +1,5 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
 # vnet-flow-logs
 
 # Virtual Network Flow Logs (VNFL)
