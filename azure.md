@@ -70,6 +70,7 @@
       15. <a href="https://github.com/magnum31415/wiki/blob/main/azure-functions.md">Azure Functions</a><br>
       16. <a href="https://github.com/magnum31415/wiki/blob/main/azure-policy.md">Azure Policy</a><br>
       16. <a href="https://github.com/magnum31415/wiki/blob/main/azure-policy-assignments.md">Azure Policy Assignments</a><br>
+      16. <a href="https://github.com/magnum31415/wiki/blob/main/azure-policy-alz.md">Azure Policy ALZ</a><br>      
       17. <a href="https://github.com/magnum31415/wiki/blob/main/azure-app-services.md">Azure App Services</a><br>
       18. <a href="https://github.com/magnum31415/wiki/blob/main/azure-logic-apps.md">Azure Logic Apps</a><br>
       19. <a href="https://github.com/magnum31415/wiki/blob/main/azure-key-vault.md">Azure Key Vault</a><br>
