@@ -8,6 +8,47 @@
 - [¿De dónde sale Deny-AppGateway-Without-WAF?](#de-dónde-sale-deny-appgateway-without-waf)
 
 ----
+# Azure Landing Zones Library - platform/alz
+
+
+- [Azure Landing Zones Library - platform/alz](https://github.com/Azure/Azure-Landing-Zones-Library/tree/main/platform/alz)
+
+La librería: ``platform/alz`` Es el **catálogo oficial de componentes reutilizables de Azure Landing Zones.** Microsoft la creó para que todas las implementaciones ALZ (Terraform, Bicep, Accelerator, etc.) consuman los mismos artefactos de gobierno y no tengan que reinventarlos en cada proyecto.
+
+## ¿Para qué sirve?
+
+Contiene definiciones reutilizables de:
+
+- Management Groups
+- Archetypes
+- Policy Definitions
+- Policy Assignments
+- Policy Set Definitions (Initiatives)
+- Role Definitions
+
+Por ejemplo:
+````
+platform/alz
+│
+├── archetype_definitions
+├── policy_assignments
+├── policy_definitions
+├── policy_set_definitions
+└── role_definitions
+````
+
+La idea es que tú no tengas que crear desde cero cosas como:
+
+````
+Deny-Public-IP-On-NIC
+Audit-PeDnsZones
+Deploy-Private-DNS-Zones
+Enable-DDoS-VNET
+````
+
+porque Microsoft ya las ha modelado y probado.
+
+
 
 # Cómo se organizan las policies en ALZ
 
@@ -457,5 +498,16 @@ archetype_definitions/
 
 corp-enforced
 ````
+
+## Resumen práctico
+
+| Quieres hacer                          | Fichero/directorio que tocas                                                             |
+| -------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Añadir una policy que ya existe en ALZ | `lib/archetype_definitions/*.yaml`                                                       |
+| Crear un assignment propio             | `lib/policy_assignments/` + `lib/archetype_definitions/`                                 |
+| Crear una policy propia                | `lib/policy_definitions/` + `lib/policy_assignments/` + `lib/archetype_definitions/`     |
+| Quitar una policy heredada             | `policy_assignments_to_remove` en el archetype                                           |
+| Añadir una initiative propia           | `lib/policy_set_definitions/` + `lib/policy_assignments/` + `lib/archetype_definitions/` |
+
 
 
