@@ -36,7 +36,7 @@
 
 
 
-![Flujo](./img/azure/Azure-VNET FLOW LOGS-CrodStrike.png)
+![Flujo](./img/azure/Azure-VNET-FLOW-LOGS-CrodStrike.png)
 
 # Creacion de recursos
 
