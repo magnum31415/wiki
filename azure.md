@@ -49,6 +49,9 @@
       40.<a href="https://github.com/magnum31415/wiki/blob/main/azure-application-gateway-az104.md">Azure Application Gateway</a><br>  
       41.<a href="https://github.com/magnum31415/wiki/blob/main/azure-flow-logs-az104.md">Azure Flow Logs</a><br>  
       42.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vnet-flow-logs-az104.md">Azure VNet Flow Logs</a><br>  
+      42.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vnetflowlogs-siem.md">Azure VNet Flow Logs - CrowdStrike</a><br>  
+      
+
       43.<a href="https://github.com/magnum31415/wiki/blob/main/azure-NetworkWatcher.md">Azure Network Watcher</a><br>  
      100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>         
     </td>
