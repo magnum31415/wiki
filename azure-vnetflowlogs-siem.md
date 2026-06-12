@@ -1,7 +1,9 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+# Azure VNET Flow Logs -> SIEM "CrowdStrike"
 
 # Fujo con CrowdStrike
 ````
-
                  Azure VNet
                     │
                     ▼
@@ -32,24 +34,27 @@
          CrowdStrike Falcon Next-Gen SIEM
 ````
 
+
+
+![Flujo](./img/azure/Azure-VNET FLOW LOGS-CrodStrike.png)
+
 # Creacion de recursos
 
-alz-platform-connectivity
-- ✅ Network Watcher
-- ✅ Storage Account GWC
-- ✅ Storage Account SWC
-- ✅ Blob Container vnet-flow-logs
-- ✅ VNet Flow Logs
+**alz-platform-connectivity**
+- Network Watcher
+- VNet Flow Logs
+- Storage Accounts
+- Blob Containers
 
-alz-platform-management
-- ✅ Log Analytics Workspace
-- ✅ Traffic Analytics
-- ✅ Data Export Rule
-- ✅ Event Hub Namespace
-- ✅ Event Hub
-- ✅ Alertas
-- ✅ Workbooks
-- ✅ Dashboards
+**alz-platform-management**
+- Log Analytics Workspace
+- Traffic Analytics
+- Data Export Rules
+- Event Hub Namespace
+- Event Hub
+- Alert Rules
+- Workbooks
+- Dashboards
 
 ----
 # Bloques
