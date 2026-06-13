@@ -47,24 +47,26 @@ Ejemplo:
 - Quieres recuperar solo ese fichero.
 
 Proceso:
-````
-Recovery Services Vault
-        │
-        ▼
+
+| Orden | Acción real | Concepto |
+|--------|-------------|----------|
+| 1 | **From the Azure portal, click File Recovery from the vault** | Iniciar el proceso de recuperación de archivos desde el Recovery Services Vault. No se restaura la VM completa. |
+| 2 | **Select a restore point that contains the deleted files** | Elegir un punto de restauración anterior al borrado de los archivos. |
+| 3 | **Download and run the script to mount a drive on the local computer** | Descargar y ejecutar el script generado por Azure Backup, que monta el recovery point como una unidad local. |
+| 4 | **Copy the files by using File Explorer** | Acceder a la unidad montada y copiar los archivos necesarios al equipo local. |
+
+### Secuencia para memorizar
+
+```text
 File Recovery
-        │
-        ▼
+        ↓
 Select Restore Point
-        │
-        ▼
-Download Script
-        │
-        ▼
-Mount Recovery Point
-        │
-        ▼
+        ↓
+Download & Run Script
+        ↓
 Copy Files
-````
+```
+
 
 ## 2. Restore VM (Full VM Restore)
 
@@ -77,15 +79,30 @@ El disco está corrupto.
 Quieres recuperar toda la máquina.
 
 Proceso:
-````
+| Orden | Acción real | Concepto |
+|--------|-------------|----------|
+| 1 | **From the Azure portal, open the Recovery Services Vault** | Acceder al Recovery Services Vault que contiene la copia de seguridad de la máquina virtual. |
+| 2 | **Select the protected virtual machine** | Seleccionar la VM que se desea restaurar. |
+| 3 | **Click Restore VM** | Iniciar el proceso de restauración completa de la máquina virtual. |
+| 4 | **Select the restore point** | Elegir el punto de restauración desde el que se recuperará la VM. |
+| 5 | **Configure the restore options** | Elegir la suscripción, grupo de recursos, red virtual y demás parámetros de la nueva VM. |
+| 6 | **Start the restore operation** | Azure crea una nueva máquina virtual a partir del backup seleccionado. |
+
+### Secuencia para memorizar
+
+```text
 Recovery Services Vault
-        │
-        ▼
+        ↓
+Select Virtual Machine
+        ↓
 Restore VM
-        │
-        ▼
-Create new VM
-````
+        ↓
+Select Restore Point
+        ↓
+Configure Restore
+        ↓
+Create New VM
+```
 
 ## 3. Restore Disks 
 
@@ -100,18 +117,34 @@ Obtienes los discos gestionados (Managed Disks) y luego puedes:
 - extraer información
 
 Proceso:
-````
+| Orden | Acción real | Concepto |
+|--------|-------------|----------|
+| 1 | **From the Azure portal, open the Recovery Services Vault** | Acceder al Recovery Services Vault que contiene la copia de seguridad de la VM. |
+| 2 | **Select the protected virtual machine** | Seleccionar la máquina virtual cuyos discos se desean recuperar. |
+| 3 | **Click Restore Disks** | Iniciar el proceso de restauración de los discos, no de la máquina virtual completa. |
+| 4 | **Select the restore point** | Elegir el punto de restauración desde el que se recuperarán los discos. |
+| 5 | **Configure the restore options** | Indicar la cuenta de almacenamiento y demás opciones necesarias para la restauración. |
+| 6 | **Start the restore operation** | Azure restaura los discos (Managed Disks) a partir del backup seleccionado. |
+| 7 | **Use the restored Managed Disks** | Crear una nueva VM, adjuntar el disco a otra VM o extraer información del disco restaurado. |
+
+## Secuencia para memorizar
+
+```text
 Recovery Services Vault
-        │
-        ▼
+        ↓
+Select Virtual Machine
+        ↓
 Restore Disks
-        │
-        ▼
-Managed Disks
-        │
-        ▼
-Attach to VM
-````
+        ↓
+Select Restore Point
+        ↓
+Configure Restore
+        ↓
+Restore Managed Disks
+        ↓
+Attach to VM (optional)
+```
+
 
 Pregunta típica: ``You need to recover only the OS disk...``
 
@@ -122,13 +155,30 @@ No eliges Restore VM, sino Restore Disks.
 En algunos escenarios puedes restaurar sobrescribiendo la VM existente.
 
 Conceptualmente:
-````
-Backup
-      │
-Restore
-      │
+| Orden | Acción real | Concepto |
+|--------|-------------|----------|
+| 1 | **From the Azure portal, open the Recovery Services Vault** | Acceder al Recovery Services Vault que contiene la copia de seguridad de la VM. |
+| 2 | **Select the protected virtual machine** | Seleccionar la máquina virtual que se desea restaurar. |
+| 3 | **Click Restore VM** | Iniciar el proceso de restauración de la máquina virtual. |
+| 4 | **Select the restore point** | Elegir el punto de restauración desde el que se recuperará la VM. |
+| 5 | **Choose Replace Existing VM** | Indicar que la restauración debe sobrescribir la máquina virtual existente en lugar de crear una nueva. |
+| 6 | **Start the restore operation** | Azure reemplaza la VM existente con el contenido del backup seleccionado. |
+
+### Secuencia para memorizar
+
+```text
+Recovery Services Vault
+        ↓
+Select Virtual Machine
+        ↓
+Restore VM
+        ↓
+Select Restore Point
+        ↓
 Replace Existing VM
-````
+        ↓
+Overwrite Existing VM
+```
 
 Menos frecuente en el examen.
 
@@ -138,19 +188,43 @@ Si el Recovery Services Vault tiene activado: ``Geo-Redundant Storage (GRS)``
 
 puedes restaurar desde la región secundaria.
 
+
+
 Ejemplo:
 ````
 West Europe
       │
       │ disaster
       ▼
-
 North Europe
-
       │
-
 Cross Region Restore
 ````
+
+
+| Orden | Acción real | Concepto |
+|--------|-------------|----------|
+| 1 | **Verify that the Recovery Services Vault uses Geo-Redundant Storage (GRS)** | Cross Region Restore solo está disponible si el Recovery Services Vault utiliza GRS (y la funcionalidad está habilitada). |
+| 2 | **Open the Recovery Services Vault** | Acceder al Recovery Services Vault que contiene las copias de seguridad. |
+| 3 | **Select Cross Region Restore** | Iniciar el proceso de restauración utilizando la región secundaria. |
+| 4 | **Select the restore point** | Elegir el punto de restauración disponible en la región secundaria. |
+| 5 | **Select the recovery option** | Elegir si restaurar una VM completa, discos o utilizar otra opción disponible. |
+| 6 | **Start the restore operation** | Azure realiza la restauración utilizando la copia replicada en la región secundaria. |
+
+### Secuencia para memorizar
+
+```text
+Recovery Services Vault (GRS)
+        ↓
+Cross Region Restore
+        ↓
+Select Restore Point
+        ↓
+Select Recovery Option
+        ↓
+Restore from Secondary Region
+```
+
 
 ## 6. Cross Subscription Restore ⭐⭐
 
@@ -166,6 +240,35 @@ Restore
       ▼
 Subscription B
 ````
+
+
+| Orden | Acción real | Concepto |
+|--------|-------------|----------|
+| 1 | **Verify that Cross Subscription Restore is supported and enabled** | Comprobar que el escenario y la configuración permiten restaurar recursos en otra suscripción. |
+| 2 | **Open the Recovery Services Vault** | Acceder al Recovery Services Vault que contiene la copia de seguridad. |
+| 3 | **Select the protected virtual machine** | Seleccionar la VM que se desea restaurar. |
+| 4 | **Click Restore VM or Restore Disks** | Iniciar la restauración de la VM completa o únicamente de los discos. |
+| 5 | **Select the restore point** | Elegir el punto de restauración adecuado. |
+| 6 | **Select the target subscription** | Elegir una suscripción distinta de la original como destino de la restauración. |
+| 7 | **Configure the remaining restore options and start the restore** | Configurar el grupo de recursos, red y demás parámetros, e iniciar la restauración en la nueva suscripción. |
+
+## Secuencia para memorizar
+
+```text
+Recovery Services Vault
+        ↓
+Select Virtual Machine
+        ↓
+Restore VM / Restore Disks
+        ↓
+Select Restore Point
+        ↓
+Select Target Subscription
+        ↓
+Restore into Another Subscription
+```
+
+
 ## 7. Instant Restore ⭐
 
 Azure Backup mantiene snapshots temporales.
@@ -179,7 +282,30 @@ Instant Restore
      VM
 ````
 
+| Orden | Acción real | Concepto |
+|--------|-------------|----------|
+| 1 | **Open the Recovery Services Vault** | Acceder al Recovery Services Vault que contiene la copia de seguridad de la VM. |
+| 2 | **Select the protected virtual machine** | Seleccionar la máquina virtual que se desea restaurar. |
+| 3 | **Select Restore VM** | Iniciar el proceso de restauración de la VM. |
+| 4 | **Select a recent restore point (snapshot)** | Elegir un punto de restauración basado en un snapshot reciente disponible para Instant Restore. |
+| 5 | **Start the restore operation** | Azure utiliza el snapshot disponible para acelerar la restauración. |
+| 6 | **Restore the virtual machine quickly from the snapshot** | La restauración se realiza de forma mucho más rápida que utilizando únicamente los datos almacenados en el Recovery Services Vault. |
 
+## Secuencia para memorizar
+
+```text
+Recovery Services Vault
+        ↓
+Select Virtual Machine
+        ↓
+Restore VM
+        ↓
+Select Recent Snapshot
+        ↓
+Instant Restore
+        ↓
+Fast VM Recovery
+```
 
 
 
