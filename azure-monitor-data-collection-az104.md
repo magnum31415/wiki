@@ -39,34 +39,57 @@ Azure Monitor puede recopilar:
 
 # Componentes principales
 
-```mermaid
-graph TD
-
-    A[Azure Resources / VMs / Servers]
-        --> B[Azure Monitor Agent - AMA]
-
-    B --> C[Data Collection Rules - DCR]
-
-    %% DATA TYPES
-    C --> D[Collected Data Types]
-
-    D --> D1[Windows Event Logs]
-    D --> D2[Syslog]
-    D --> D3[Performance Counters]
-    D --> D4[Custom Logs]
-
-    D1 --> X[XPath Filters]
-
-    %% DESTINATIONS
-    C --> E[Destinations]
-
-    E --> E1[Log Analytics Workspace]
-    E --> E2[Azure Monitor Metrics]
-    E --> E3[Storage Account]
-    E --> E4[Event Hub]
-
-    E1 --> K[KQL Queries]
+```                  Azure VM / Arc Server
+                           │
+                           │ (Association)
+                           ▼
+                 Data Collection Rule (DCR)
+                           │
+             ┌─────────────┼─────────────┐
+             │             │             │
+             ▼             ▼             ▼
+      Windows Events     Syslog    Performance Counters
+             │
+             ├── IIS Logs
+             ├── Custom Text Logs
+             └── Prometheus Metrics (AKS)
+                           │
+                           ▼
+                    Destination(s)
+                           │
+          ├── Log Analytics Workspace
+          ├── Azure Monitor Metrics
+          ├── Event Hub
+          └── (Storage Direct en escenarios específicos)
 ```
+
+**La regla mental que usaría para el examen**
+````
+(1) Resource
+    Azure VM
+    Azure Arc Server
+    AKS
+          │
+          ▼
+(2) Azure Monitor Agent (AMA)
+          │
+          ▼
+(3) Data Sources
+    - Windows Events
+    - Syslog
+    - Performance Counters
+    - IIS Logs
+    - Custom Logs
+    - Prometheus
+          │
+          ▼
+(4) Destinations
+    - Log Analytics Workspace
+    - Azure Monitor Metrics
+    - Event Hub
+    - Storage Direct (casos específicos)
+````
+
 
 ## 1. Azure Monitor Agent (AMA)
 
@@ -78,20 +101,71 @@ Se instala en:
 - Arc-enabled servers
 - máquinas híbridas
 
----
+## 2. Recursos compatibles con DCR (Association Targets)
 
-## 2. Data Collection Rules (DCR)
+| Recurso                    | Compatible |
+| -------------------------- | ---------- |
+| ✅ Azure VM                 | Sí         |
+| ✅ Azure Arc Server         | Sí         |
+| ✅ AKS (Managed Prometheus) | Sí         |
+| ❌ Storage Account          | No         |
+| ❌ Log Analytics Workspace  | No         |
+| ❌ Azure SQL Database       | No         |
+| ❌ Azure Firewall           | No         |
+| ❌ Application Gateway      | No         |
+| ❌ Key Vault                | No         |
+
+## 3. Data Sources que puede configurar un DCR
+
+| Data Source            | Compatible |
+| ---------------------- | ---------- |
+| ✅ Windows Event Logs   | Sí         |
+| ✅ Syslog               | Sí         |
+| ✅ Performance Counters | Sí         |
+| ✅ IIS Logs             | Sí         |
+| ✅ Custom Text Logs     | Sí         |
+| ✅ Prometheus Metrics   | Sí         |
+
+## 4. Destinations que puede configurar un DCR
+
+
+| Destination | ¿Compatible? | Comentario |
+|-------------|------------|------------|
+| ✅ Log Analytics Workspace | Sí | Destino más habitual y el que aparece en AZ-104. |
+| ✅ Azure Monitor Metrics | Sí | Permite enviar datos al almacén de métricas. |
+| ✅ Event Hub | Sí | Para streaming e integración con terceros. |
+| ✅ Storage Blob Direct | Sí* | Disponible para escenarios específicos soportados por DCR modernos. |
+| ✅ Storage Table Direct | Sí* | Disponible para escenarios específicos soportados por DCR modernos. |
+   
+# Data Collection Rule (DCR)
+
+## Què és?
+Una Data Collection Rule (DCR) es una configuración que le dice a Azure Monitor:
+
+1. Qué datos recoger.
+2. Desde dónde recogerlos.
+3. A dónde enviarlos.
+4. (Opcionalmente) Cómo transformarlos antes de almacenarlos.
+
+Es decir, una DCR es simplemente una regla de recopilación de datos.
 
 Definen:
 
 ```text
 qué recopilar
+   - Windows Events
+    - Syslog
+    - Performance Counters
 cómo filtrarlo
+    - VM1
 dónde enviarlo
+    - Log Analytics Workspace
 ```
+
 **qué es realmente un Data Collection Rule (DCR) en Azure Monitor.**
 
 Un DCR no sirve para “leer cualquier recurso Azure”.
+
 Sirve para definir:
 
 - qué datos recoger
@@ -108,75 +182,9 @@ Normalmente se usa con:
 - performance counters
 - logs personalizados
 
-**¿qué puede ser “data source” en un DCR?**
-
-En Azure, los data sources soportados por DCR son principalmente:
-
-# Azure Monitor - Data Collection Rules (DCR) Supported Data Sources
-
-| Soportado por DCR | Elemento | Explicación |
-|---|---|---|
-| ✅ SI | Virtual Machines (Azure VM) | El DCR puede instalar/configurar el Azure Monitor Agent (AMA) y recoger métricas, eventos Windows, syslog, logs personalizados y performance counters desde la VM. |
-| ✅ SI | Azure Arc Servers | Los servidores híbridos registrados con Azure Arc pueden ejecutar Azure Monitor Agent (AMA) y enviar datos mediante DCR igual que una Azure VM. |
-| ✅ SI | Windows Events | Los eventos del Event Viewer de Windows pueden recogerse mediante AMA + DCR. Ejemplo: Security, Application o System logs. |
-| ✅ SI | Syslog | Los servidores Linux pueden enviar logs Syslog mediante AMA y DCR. |
-| ✅ SI | Performance Counters | El DCR puede recoger contadores de rendimiento de Windows/Linux como CPU, memoria, disco o red. |
-| ✅ SI | IIS Logs | Los logs de Internet Information Services (IIS) pueden recopilarse desde servidores Windows mediante DCR. |
-| ✅ SI | Custom Text Logs | El DCR puede monitorizar ficheros de texto personalizados y enviar sus logs a Azure Monitor / Log Analytics. |
-| ✅ SI | Prometheus Metrics (AKS) | Azure Monitor Managed Prometheus puede usar DCR para recopilar métricas Prometheus desde AKS. |
-| ❌ NO | Storage Accounts | Un Storage Account puede almacenar logs, enviar diagnósticos e integrarse con Azure Monitor. PERO no es un “data source” soportado directamente en un DCR. Se usan Diagnostic Settings, no AMA + DCR. |
-| ❌ NO | Log Analytics Workspaces | El Workspace es normalmente el DESTINO de los datos, no el origen. Un DCR envía datos hacia Log Analytics, Metrics, Event Hub o Storage. |
-| ❌ NO | Azure SQL Databases | Azure SQL puede enviar logs y métricas mediante Diagnostic Settings y SQL Auditing, pero no actúa como data source directo de un DCR basado en AMA. |
-| ❌ NO | Azure Storage Blobs | Los blobs pueden contener logs o datos, pero no son orígenes soportados directamente por DCR. |
-| ❌ NO | Azure Key Vault | Key Vault usa Diagnostic Settings para enviar logs y métricas, no DCR como data source directo. |
-| ❌ NO | Azure Firewall | Azure Firewall exporta logs mediante Diagnostic Settings hacia Log Analytics/Event Hub/Storage, no mediante DCR clásico. |
-| ❌ NO | NSG Flow Logs | Los NSG Flow Logs se configuran mediante Network Watcher y Storage Account, no mediante DCR. |
-| ❌ NO | Application Gateway | Application Gateway envía logs mediante Diagnostic Settings, no como data source directo de DCR. |
-| ❌ NO | Azure Load Balancer | El Load Balancer puede enviar métricas y diagnósticos, pero no es origen directo compatible con DCR. |
-| ❌ NO | Azure Bastion | Bastion usa Diagnostic Settings para logs y métricas; no soporta AMA + DCR como origen directo. |
 
 
 
----
-
-## 3. Destinos
-
-Los datos pueden enviarse a:
-
-| Destino | Uso |
-|---|---|
-| Log Analytics Workspace | Logs y consultas KQL |
-| Azure Monitor Metrics | Métricas |
-| Event Hub | Streaming |
-| Storage Account | Archivado |
-
----
-
-# Flujo típico
-
-```text
-VM / Resource
-    ↓
-Azure Monitor Agent (AMA)
-    ↓
-Data Collection Rule (DCR)
-    ↓
-Log Analytics Workspace
-```
-
----
-
-# Qué hace exactamente una DCR
-
-Una DCR define:
-
-- qué eventos recopilar
-- qué métricas recopilar
-- filtros
-- transformaciones
-- destinos
-
----
 
 # Ejemplo típico
 
@@ -185,9 +193,7 @@ Una DCR define:
 ```text
 Windows Security Events
 ```
-
 ↓
-
 La DCR utiliza:
 
 ```text
@@ -199,9 +205,7 @@ para filtrar.
 ---
 
 # Importante examen
-
 DCR reemplaza gradualmente al antiguo:
-
 ```text
 Log Analytics Agent (MMA/OMS Agent)
 ```
@@ -214,43 +218,6 @@ Log Analytics Agent (MMA/OMS Agent)
 |---|---|
 | Log Analytics Agent (MMA) | Legacy / Deprecated |
 | Azure Monitor Agent (AMA) | Recomendado |
-
----
-
-# Qué puede recopilar una DCR
-
-| Tipo | Compatible |
-|---|---|
-| Windows Event Logs | ✅ |
-| Syslog | ✅ |
-| Performance Counters | ✅ |
-| IIS Logs | ✅ |
-| Custom Logs | ✅ |
-
----
-
-# XPath y KQL
-
-| Lenguaje | Uso |
-|---|---|
-| XPath | Filtrar Windows Events en DCR |
-| KQL | Consultar logs en Log Analytics |
-
----
-
-# Trampa típica AZ-104
-
-Pensar que:
-
-```text
-KQL define qué logs recopilar
-```
-
-❌ Incorrecto.
-
-↓
-
-KQL consulta datos ya ingeridos.
 
 ---
 
