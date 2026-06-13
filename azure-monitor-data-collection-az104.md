@@ -97,36 +97,24 @@ Data Collection Rule (DCR)
 
 ```text
 (1) Resource
-
     Azure VM
     Azure Arc Server
     AKS
-
           │
-
           ▼
-
 (2) Azure Monitor Agent (AMA)
-
           │
-
           ▼
-
 (3) Data Sources
-
     - Windows Event Logs
     - Syslog
     - Performance Counters
     - IIS Logs
     - Custom Text Logs
     - Prometheus Metrics
-
           │
-
           ▼
-
 (4) Destinations
-
     - Log Analytics Workspace
     - Azure Monitor Metrics
     - Event Hub
