@@ -1,6 +1,6 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
-# Azure Monitor Data Collection (AZ-104)
+# Azure Monitor Data Collection, DCR and Azure Monitor Agent (AMA) (AZ-104)
 
 - [Azure Monitor Data Collection (AZ-104)](#azure-monitor-data-collection-az-104)
   - [Azure Monitor Data Collection](#azure-monitor-data-collection)
@@ -33,6 +33,10 @@
   - [Trampas típicas AZ-104](#trampas-típicas-az-104)
   - [Reglas rápidas](#reglas-rápidas)
   - [Frases clave AZ-104](#frases-clave-az-104)
+
+---
+
+# Azure Monitor Data Collection (AZ-104)
 
 ## Azure Monitor Data Collection
 
