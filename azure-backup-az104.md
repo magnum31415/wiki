@@ -308,6 +308,128 @@ Fast VM Recovery
 ```
 
 
+---
+# Azure Backup Retention
+## Concepto
+
+Una **Backup Policy** de Azure Backup define:
+
+- cuándo se realiza el backup (Schedule)
+- cuánto tiempo se conserva (Retention)
+
+La política de retención puede incluir simultáneamente reglas:
+
+- Daily
+- Weekly
+- Monthly
+- Yearly
+
+![Azure-Backup-Retentiton](./img/azure/Azure-Backup-Retentiton.png)
+
+## Cómo funciona la retención
+
+Una idea muy importante para el AZ-104:
+
+> **Azure NO crea un backup distinto para cada nivel de retención.**
+
+Se realiza un único backup.
+
+Después Azure determina si ese backup cumple alguna regla:
+
+- diaria
+- semanal
+- mensual
+- anual
+
+y le asigna la retención correspondiente.
+
+
+
+## Tipos de retención
+
+### Daily Retention
+
+Conserva los backups diarios.
+
+Ejemplo:
+
+```text
+Daily Retention: 30 days
+```
+
+```text
+1 Jan  → 30 días
+2 Jan  → 30 días
+3 Jan  → 30 días
+```
+
+### Weekly Retention
+
+Conserva los backups realizados un determinado día de la semana.
+
+Ejemplo:
+
+```text
+Every Sunday : 10 weeks
+```
+
+### Monthly Retention
+
+Conserva determinados backups mensuales.
+
+Por ejemplo:
+
+```text
+First Sunday: 36 months
+```
+
+### Yearly Retention
+
+Conserva determinados backups anuales.
+
+Por ejemplo:
+
+```text
+First Sunday of March: 10 years
+```
+
+
+## Retención efectiva
+
+La regla más importante del examen:
+
+**Un mismo backup puede cumplir varias reglas de retención simultáneamente.**
+
+No existen cuatro backups. Existe uno solo:
+
+
+**Azure conserva la retención más larga**
+
+Supongamos:
+
+| Tipo | Retención |
+|----------|-----------|
+| Daily | 30 días |
+| Weekly | 10 semanas |
+| Monthly | 36 meses |
+| Yearly | 10 años |
+
+Si un backup cumple las cuatro reglas:
+
+```text
+Backup
+      │
+      ├── 30 días
+      ├── 10 semanas
+      ├── 36 meses
+      └── 10 años
+```
+
+la retención efectiva será: 
+
+```text
+10 years
+```
 
 ---
 
