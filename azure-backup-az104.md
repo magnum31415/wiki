@@ -22,6 +22,167 @@
   
 # Azure Backup - Teoría importante AZ-104
 
+# Escenarios de recuperación de Azure Backup
+
+Es mucho más rápido que restaurar desde el Recovery Services Vault.
+
+| Escenario                    | Cuándo usarlo                        |
+| ---------------------------- | ------------------------------------ |
+| ✅ File Recovery              | Recuperar archivos individuales      |
+| ✅ Restore VM                 | Recuperar una VM completa            |
+| ✅ Restore Disks              | Recuperar únicamente los discos      |
+| ✅ Replace Existing VM        | Sobrescribir una VM existente        |
+| ✅ Cross Region Restore       | Restaurar desde la región secundaria |
+| ✅ Cross Subscription Restore | Restaurar en otra suscripción        |
+| ✅ Instant Restore            | Restauración rápida desde snapshot   |
+
+## 1. Restore Files (File Recovery)
+
+Recuperar uno o varios archivos individuales.
+
+Ejemplo:
+
+- Se ha borrado /home/ricard/documento.txt
+- Quieres recuperar solo ese fichero.
+
+Proceso:
+````
+Recovery Services Vault
+        │
+        ▼
+File Recovery
+        │
+        ▼
+Select Restore Point
+        │
+        ▼
+Download Script
+        │
+        ▼
+Mount Recovery Point
+        │
+        ▼
+Copy Files
+````
+
+## 2. Restore VM (Full VM Restore)
+
+Restaurar una máquina virtual completa.
+
+Ejemplo:
+
+La VM se ha eliminado.
+El disco está corrupto.
+Quieres recuperar toda la máquina.
+
+Proceso:
+````
+Recovery Services Vault
+        │
+        ▼
+Restore VM
+        │
+        ▼
+Create new VM
+````
+
+## 3. Restore Disks 
+
+Recuperar únicamente los discos de la VM.
+
+No crea automáticamente una VM.
+
+Obtienes los discos gestionados (Managed Disks) y luego puedes:
+
+- crear una VM manualmente
+- conectar el disco a otra VM
+- extraer información
+
+Proceso:
+````
+Recovery Services Vault
+        │
+        ▼
+Restore Disks
+        │
+        ▼
+Managed Disks
+        │
+        ▼
+Attach to VM
+````
+
+Pregunta típica: ``You need to recover only the OS disk...``
+
+No eliges Restore VM, sino Restore Disks.
+
+## 4. Replace Existing VM ⭐⭐
+
+En algunos escenarios puedes restaurar sobrescribiendo la VM existente.
+
+Conceptualmente:
+````
+Backup
+      │
+Restore
+      │
+Replace Existing VM
+````
+
+Menos frecuente en el examen.
+
+## 5. Cross Region Restore (CRR) ⭐⭐
+
+Si el Recovery Services Vault tiene activado: ``Geo-Redundant Storage (GRS)``
+
+puedes restaurar desde la región secundaria.
+
+Ejemplo:
+````
+West Europe
+      │
+      │ disaster
+      ▼
+
+North Europe
+
+      │
+
+Cross Region Restore
+````
+
+## 6. Cross Subscription Restore ⭐⭐
+
+Permite restaurar una VM o discos en otra suscripción (si está soportado y configurado).
+
+Ejemplo:
+````
+Subscription A
+      │
+Backup
+      │
+Restore
+      ▼
+Subscription B
+````
+## 7. Instant Restore ⭐
+
+Azure Backup mantiene snapshots temporales.
+
+Si el backup es reciente:
+````
+   Snapshot
+      │
+Instant Restore
+      │
+     VM
+````
+
+
+
+
+
+---
 
 # ¿Qué es un Vault?
 
