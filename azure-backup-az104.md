@@ -3,6 +3,7 @@
 # Índice
 
 - [Azure Backup - Teoría importante AZ-104](#azure-backup---teoría-importante-az-104)
+- [Escenarios de recuperación de Azure Backup](#escenarios-de-recuperación-de-azure-backup)
 - [¿Qué es un Vault?](#qué-es-un-vault)
 - [Recovery Services vault (RSV)](#recovery-services-vault-rsv)
 - [Backup vault](#backup-vault)
