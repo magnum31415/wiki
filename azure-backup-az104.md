@@ -4,6 +4,8 @@
 
 - [Azure Backup - Teoría importante AZ-104](#azure-backup---teoría-importante-az-104)
 - [Escenarios de recuperación de Azure Backup](#escenarios-de-recuperación-de-azure-backup)
+- [Azure Backup Retention](#azure-backup-retention)
+- [Azure Monitor Private Link Scope (AMPLS)](#azure-monitor-private-link-scope-ampls)
 - [¿Qué es un Vault?](#qué-es-un-vault)
 - [Recovery Services vault (RSV)](#recovery-services-vault-rsv)
 - [Backup vault](#backup-vault)
@@ -16,10 +18,11 @@
 - [Qué quiere evaluar Microsoft](#qué-quiere-evaluar-microsoft)
 - [Resumen para memorizar](#resumen-para-memorizar)
 - [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
-- [Backup para Blob Storage](#backup-para-blob-storage)
+- [Azure Backup para Blob Storage (AZ-104)](#azure-backup-para-blob-storage-az-104)
 - [Azure Files Backup (AZ-104)](#azure-files-backup-az-104)
 - [Azure Backup Diagnostic Settings (AZ-104)](#azure-backup-diagnostic-settings-az-104)
 - [Azure Backup Ecosystem - Componentes y Dependencias (AZ-104)](#azure-backup-ecosystem---componentes-y-dependencias-az-104)
+
   
 # Azure Backup - Teoría importante AZ-104
 | Concepto           | Definición                                                                                                                                                                                                                                                                           | Ejemplo de uso                                                                                                                                                                                                          |
@@ -28,7 +31,10 @@
 | **Batch Job**      | Trabajo que procesa un conjunto de tareas automáticamente y sin intervención del usuario. En Azure suele utilizarse para ejecutar operaciones masivas o programadas sobre múltiples recursos. No es un concepto específico de Azure Backup, sino un concepto general de informática. | Un proceso nocturno que ejecuta el backup de 500 máquinas virtuales o que procesa miles de registros de una base de datos cada madrugada.                                                                               |
 | **Batch Schedule** | Planificación o programación de un Batch Job. Define **cuándo** debe ejecutarse el trabajo (hora, frecuencia, calendario, etc.). Tampoco es un concepto específico de Azure Backup.                                                                                                  | Configurar un Batch Job para ejecutarse todos los días a las **02:00 AM** o todos los domingos a las **01:00 AM**.                                                                                                      |
 | **Recovery Plan**  | En Azure Site Recovery (ASR), es un plan que define el **orden y la secuencia** en que deben recuperarse y arrancarse los recursos durante un proceso de Disaster Recovery (DR). Puede incluir grupos de máquinas, scripts y acciones manuales.                                      | Tras una caída del datacenter principal, el Recovery Plan arranca primero las bases de datos, después los servidores de aplicaciones y finalmente los servidores web, ejecutando scripts de validación entre cada paso. |
+#
 
+
+---
 
 # Escenarios de recuperación de Azure Backup
 
@@ -437,6 +443,194 @@ la retención efectiva será:
 ```text
 10 years
 ```
+---
+# Azure Monitor Private Link Scope (AMPLS)
+
+## Qué es
+
+**Azure Monitor Private Link Scope (AMPLS)** es un recurso de Azure que permite acceder de forma privada a los servicios de Azure Monitor mediante **Azure Private Link**.
+
+Su objetivo es que el tráfico entre los recursos de una red privada y Azure Monitor **no pase por Internet pública**.
+
+La primera vez que se ve AMPLS parece redundante: "Si ya tengo un Private Endpoint, ¿para qué necesito además un AMPLS?".
+
+La clave es que AMPLS no conecta una VM con un único recurso, sino que define el ámbito privado de Azure Monitor.
+
+**¿Qué sentido tiene que incluya estos tres servicios?**
+
+- Log Analytics Workspace
+- Application Insights
+- Azure Monitor
+
+Porque **los tres forman parte del ecosistema de Azure Monitor** y muchas soluciones utilizan varios de ellos simultáneamente.
+
+**Sin AMPLS**
+
+Cada recurso tendría que exponer su acceso por separado.
+````
+                 VNet
+                  │
+         +--------+--------+
+         │                 │
+         ▼                 ▼
+ Private Endpoint     Private Endpoint
+         │                 │
+         ▼                 ▼
+ Log Analytics      Application Insights
+````
+
+**Con AMPLS**
+
+Existe un único ámbito privado para Azure Monitor.
+
+````
+                    VNet
+                     │
+                     ▼
+             Private Endpoint
+                     │
+                     ▼
+      Azure Monitor Private Link Scope
+          │            │            │
+          ▼            ▼            ▼
+ Log Analytics   Application     Azure Monitor
+    Workspace      Insights 
+````
+
+
+En otras palabras:
+
+> **Un AMPLS crea un ámbito privado para que los recursos puedan comunicarse con Azure Monitor utilizando direcciones IP privadas.**
+
+
+!Azure-Monitor-Private-Link-Scope-AMPLS](./img/azure/Azure-Monitor-Private-Link-Scope-AMPLS.png)
+
+## Para qué sirve
+
+AMPLS se utiliza para:
+
+- Acceder a Log Analytics Workspaces de forma privada.
+- Acceder a Azure Monitor de forma privada.
+- Evitar el uso de Internet pública.
+- Reducir la superficie de exposición.
+- Cumplir requisitos de seguridad y compliance.
+- Integrar Azure Monitor con redes privadas mediante Private Endpoints.
+
+
+
+
+## Cómo funciona
+
+Sin AMPLS:
+
+```text
+Azure VM
+      │
+      ▼
+ Internet
+      │
+      ▼
+Azure Monitor
+```
+
+Con AMPLS:
+
+```text
+Azure VM
+      │
+      ▼
+Private Endpoint
+      │
+      ▼
+Azure Monitor Private Link Scope
+      │
+      ▼
+Azure Monitor
+```
+
+Todo el tráfico permanece dentro de la red privada de Azure.
+
+## Arquitectura
+
+```text
+                    Virtual Network
+        +--------------------------------------+
+        |                                      |
+        |     Azure VM / Azure Arc Server      |
+        |                 │                    |
+        |                 ▼                    |
+        |         Private Endpoint             |
+        |                 │                    |
+        +-----------------│--------------------+
+                          │
+                          ▼
+          Azure Monitor Private Link Scope
+                          │
+             ┌────────────┴────────────┐
+             ▼                         ▼
+     Log Analytics Workspace     Azure Monitor
+             ▼
+      Application Insights
+```
+## Qué recursos puede incluir
+
+Un AMPLS puede asociarse, entre otros, con:
+
+- Log Analytics Workspace
+- Application Insights
+- Azure Monitor
+
+Su función es proporcionar acceso privado a estos servicios mediante Private Link.
+
+## Ventajas
+
+- Comunicación privada con Azure Monitor.
+- El tráfico no utiliza Internet pública.
+- Mayor seguridad.
+- Menor superficie de ataque.
+- Compatible con redes aisladas.
+- Facilita el cumplimiento de requisitos regulatorios.
+- Integración con Private DNS.
+
+## Azure Monitor Private Link Scope (AMPLS) (AZ-104)
+
+Un **Azure Monitor Private Link Scope (AMPLS)** es un recurso **específico de Azure Monitor**.
+
+¿Puede utilizarse para otros servicios? **No**
+
+No es un mecanismo genérico para proporcionar conectividad privada a cualquier servicio Azure.
+
+Su única finalidad es proporcionar acceso privado a determinados componentes de Azure Monitor mediante **Azure Private Link**.
+
+### ¿Qué servicios puede incluir un AMPLS?
+
+Principalmente:
+
+| Servicio | Compatible |
+|-----------|------------|
+| ✅ Log Analytics Workspace | Sí |
+| ✅ Application Insights | Sí |
+| ✅ Azure Monitor | Sí |
+
+
+### Arquitectura típica
+
+```text
+Azure VM
+      │
+      ▼
+Private Endpoint
+      │
+      ▼
+Azure Monitor Private Link Scope (AMPLS)
+      │
+      ├──────────────► Log Analytics Workspace
+      │
+      ├──────────────► Azure Monitor
+      │
+      └──────────────► Application Insights
+```
+
 
 ---
 
