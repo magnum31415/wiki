@@ -47,13 +47,13 @@ Ejemplo:
 - Quieres recuperar solo ese fichero.
 
 Proceso:
+| Orden | Acción real                                                            | Concepto                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ----- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | **From the Azure portal, click File Recovery from the vault**          | Iniciar el proceso de recuperación de archivos desde el **Recovery Services Vault**. No se restaura la VM completa.                                                                                                                                                                                                                                                                                                              |
+| 2     | **Select a restore point that contains the deleted files**             | Elegir un punto de restauración anterior al borrado de los archivos para asegurarse de que estos están incluidos en la copia de seguridad.                                                                                                                                                                                                                                                                                       |
+| 3     | **Download and run the script to mount a drive on the local computer** | Descargar y ejecutar el script generado por Azure Backup, que monta el *Recovery Point* como una unidad local. **El script no tiene por qué ejecutarse en la VM que perdió los archivos; puede ejecutarse desde cualquier equipo (Windows o Linux, según el escenario soportado) que tenga los permisos necesarios y conectividad con el Recovery Services Vault. Incluso puede utilizarse aunque la VM original ya no exista.** |
+| 4     | **Copy the files by using File Explorer**                              | Acceder a la unidad montada y copiar los archivos necesarios al equipo local (o a otra ubicación de destino). En un entorno Windows se utiliza normalmente **File Explorer**; en Linux se podrían utilizar herramientas como `cp` o `rsync`.                                                                                                                                                                                     |
 
-| Orden | Acción real | Concepto |
-|--------|-------------|----------|
-| 1 | **From the Azure portal, click File Recovery from the vault** | Iniciar el proceso de recuperación de archivos desde el Recovery Services Vault. No se restaura la VM completa. |
-| 2 | **Select a restore point that contains the deleted files** | Elegir un punto de restauración anterior al borrado de los archivos. |
-| 3 | **Download and run the script to mount a drive on the local computer** | Descargar y ejecutar el script generado por Azure Backup, que monta el recovery point como una unidad local. |
-| 4 | **Copy the files by using File Explorer** | Acceder a la unidad montada y copiar los archivos necesarios al equipo local. |
 
 ### Secuencia para memorizar
 
