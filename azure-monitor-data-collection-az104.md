@@ -2,6 +2,38 @@
 
 # Azure Monitor Data Collection (AZ-104)
 
+- [Azure Monitor Data Collection (AZ-104)](#azure-monitor-data-collection-az-104)
+  - [Azure Monitor Data Collection](#azure-monitor-data-collection)
+  - [Qué tipos de datos puede recopilar](#qué-tipos-de-datos-puede-recopilar)
+  - [Componentes principales](#componentes-principales)
+  - [Regla mental para el examen](#regla-mental-para-el-examen)
+  - [Azure Monitor Agent (AMA)](#azure-monitor-agent-ama)
+  - [Recursos compatibles con DCR (Association Targets)](#recursos-compatibles-con-dcr-association-targets)
+  - [Data Sources que puede configurar un DCR](#data-sources-que-puede-configurar-un-dcr)
+  - [Destinations que puede configurar un DCR](#destinations-que-puede-configurar-un-dcr)
+
+- [Data Collection Rule (DCR)](#data-collection-rule-dcr)
+  - [Qué es](#qué-es)
+  - [Concepto importante](#concepto-importante)
+  - [Ejemplo típico](#ejemplo-típico)
+  - [Importante para el examen](#importante-para-el-examen)
+  - [Diferencia importante](#diferencia-importante)
+  - [Reglas rápidas para el examen](#reglas-rápidas-para-el-examen)
+  - [Frases clave AZ-104](#frases-clave-az-104)
+
+- [Azure Monitor DCR Queries - XPath vs KQL vs WQL vs T-SQL](#azure-monitor-dcr-queries---xpath-vs-kql-vs-wql-vs-t-sql)
+  - [Concepto clave para el examen](#concepto-clave-para-el-examen)
+  - [XPath](#xpath)
+  - [KQL (Kusto Query Language)](#kql-kusto-query-language)
+  - [WQL (WMI Query Language)](#wql-wmi-query-language)
+  - [T-SQL](#t-sql)
+  - [Diferencia clave](#diferencia-clave)
+  - [Flujo real](#flujo-real)
+  - [Qué puede recopilar una DCR](#qué-puede-recopilar-una-dcr)
+  - [Trampas típicas AZ-104](#trampas-típicas-az-104)
+  - [Reglas rápidas](#reglas-rápidas)
+  - [Frases clave AZ-104](#frases-clave-az-104)
+
 ## Azure Monitor Data Collection
 
 Azure Monitor Data Collection es el mecanismo que utiliza Azure Monitor para:
