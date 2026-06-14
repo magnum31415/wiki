@@ -24,6 +24,7 @@
 - [❓ ¿Por qué Live Migration solo funciona en cuentas Standard y no Premium?](#-por-qué-live-migration-solo-funciona-en-cuentas-standard-y-no-premium)
 - [✅ Respuesta correcta](#-respuesta-correcta)
 - [Azure Storage Immutability (AZ-104)](#azure-storage-immutability-az-104)
+- [Pregunta típica del AZ-104: "Access Policy"](#pregunta-típica-del-az-104-access-policy)
 ---
 
 # 📦 Azure Storage – Resumen ampliado para AZ-104
@@ -716,3 +717,213 @@ No Blob Immutability
 | Queue Storage | ❌ No soporta Blob Immutability |
 | Table Storage | ❌ No soporta Blob Immutability |
 
+---
+
+# Pregunta típica del AZ-104: "Access Policy"
+
+## Trampa del examen
+
+Es frecuente encontrar preguntas como:
+
+> You must ensure that any new blobs uploaded to a blob container cannot be altered or deleted for one year.
+>
+> Which configuration should you apply?
+
+La respuesta correcta suele ser:
+
+✅ **Access Policy**
+
+Sin embargo, esto puede resultar confuso.
+
+Muchos candidatos piensan inmediatamente en una **Stored Access Policy** para SAS Tokens, pero **NO es eso**.
+
+En este contexto, Microsoft se está refiriendo a la configuración de **Immutable Blob Storage** disponible dentro de:
+
+```text
+Storage Account
+      │
+      ▼
+Containers
+      │
+      ▼
+archivecontainer
+      │
+      ▼
+Access Policy
+      │
+      ▼
+Immutable Blob Storage
+      │
+      ├── Time-based Retention
+      └── Legal Hold
+```
+
+## Ejemplo
+
+- Supongamos que hoy es:``14/06/2026``
+- Se configura: ``Time-based Retention = 365 days``
+
+Se suben estos blobs:
+
+| Blob | Fecha creación | Protegido hasta |
+|------|---------------|-----------------|
+| blob1.pdf | 14/06/2026 | 14/06/2027 |
+| blob2.pdf | 20/08/2026 | 20/08/2027 |
+| blob3.zip | 01/01/2027 | 01/01/2028 |
+
+Cada blob queda protegido durante **365 días desde su creación**.
+
+Durante ese período:
+
+```text
+Modify      ❌
+Overwrite   ❌
+Delete      ❌
+```
+
+Una vez finalizado:
+
+```text
+Delete      ✅
+```
+
+## Dónde se configura
+
+En Azure Portal:
+
+```text
+Storage Account
+      │
+      ▼
+Containers
+      │
+      ▼
+archivecontainer
+      │
+      ▼
+Access Policy
+      │
+      ▼
+Immutable Blob Storage
+      │
+      ├── Time-based Retention
+      └── Legal Hold
+```
+
+## No confundir con
+| Concepto                                | ¿Qué controla?                                            | Ejemplo                                                                                                                                       | ¿Protege contra borrado/modificación? |
+| --------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| **Access Policy (Immutability Policy)** | Inmutabilidad de los blobs (WORM)                         | Configurar **Time-based Retention = 365 días** para que cualquier blob nuevo del contenedor no pueda modificarse ni eliminarse durante 1 año. | ✅ Sí                                  |
+| **Stored Access Policy (SAS)**          | Restricciones para los **Shared Access Signatures (SAS)** | Crear una política llamada `read-policy` que permita generar SAS con permisos de solo lectura y fecha de expiración determinada.              | ❌ No                                  |
+| **Access Control (IAM)**                | Permisos de usuarios, grupos y aplicaciones               | Asignar el rol **Storage Blob Data Contributor** a un usuario para que pueda subir y modificar blobs.                                         | ❌ No                                  |
+| **Access Level**                        | Nivel de acceso público del contenedor                    | Configurar el contenedor como **Private**, **Blob** o **Container**.                                                                          | ❌ No                                  |
+| **Access Tier**                         | Nivel de almacenamiento y coste                           | Configurar un blob o una cuenta como **Hot**, **Cool** o **Archive**.                                                                         | ❌ No                                  |
+
+## Ejemplo comparando Immutability y SAS
+
+### 1. Immutability Policy (Access Policy)
+
+```text
+Storage Account
+      │
+      ▼
+archivecontainer
+      │
+      ▼
+Access Policy
+      │
+      ▼
+Time-based Retention = 365 days
+
+blob1.pdf   🔒
+blob2.zip   🔒
+blob3.docx  🔒
+```
+
+Resultado:
+
+```text
+Modify      ❌
+Overwrite   ❌
+Delete      ❌
+```
+
+---
+
+### 2. Stored Access Policy (SAS)
+
+```text
+Storage Account
+      │
+      ▼
+archivecontainer
+      │
+      ▼
+Stored Access Policy
+          │
+          ├── Name: read-policy
+          ├── Permission: Read
+          └── Expiry: 31/12/2026
+
+                    │
+                    ▼
+
+        SAS Token
+?sp=r&st=...&se=...&sig=...
+```
+
+Resultado:
+
+* Controla **quién puede acceder** y **durante cuánto tiempo**.
+* **No protege** el blob contra modificaciones o eliminaciones.
+* Si un usuario tiene permisos suficientes por otro mecanismo (IAM, otra SAS, etc.), podrá modificar o borrar el blob.
+
+## Regla rápida para el AZ-104
+
+| Si lees en el enunciado...      | Piensa en...                    |
+| ------------------------------- | ------------------------------- |
+| WORM                            | ✅ Immutability Policy           |
+| Cannot modify                   | ✅ Immutability Policy           |
+| Cannot delete                   | ✅ Immutability Policy           |
+| Retain for 1 year               | ✅ Time-based Retention          |
+| Legal Hold                      | ✅ Immutability Policy           |
+| SAS Token                       | ✅ Stored Access Policy          |
+| Temporary URL                   | ✅ SAS                           |
+| Expiration Date                 | ✅ SAS                           |
+| Read / Write / List permissions | ✅ SAS o IAM (según el contexto) |
+
+
+---
+
+## Chuleta para el examen
+
+| Si lees... | Piensa en... |
+|------------|--------------|
+| Access Policy + cannot delete/modify blobs | ✅ Immutability Policy |
+| Time-based Retention | ✅ Immutability |
+| Legal Hold | ✅ Immutability |
+| Access Control (IAM) | Permisos |
+| Access Level | Acceso público |
+| Access Tier | Hot / Cool / Cold / Archive |
+
+## Regla para memorizar
+
+```text
+Access Policy
+      │
+      ▼
+Immutable Blob Storage
+      │
+      ├── Time-based Retention
+      └── Legal Hold
+```
+
+**En el AZ-104, si el requisito dice:**
+
+- "cannot be modified"
+- "cannot be deleted"
+- "WORM"
+- "retain for 1 year"
+- "immutable"
+
+la respuesta casi siempre apunta a una **Immutability Policy (Access Policy del Blob Container)** y **no** a IAM, Access Level ni Access Tier.
