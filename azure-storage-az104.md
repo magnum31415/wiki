@@ -355,6 +355,107 @@ Se utiliza principalmente para:
 | Queue Storage | ❌ No | No soporta inmutabilidad. |
 | Table Storage | ❌ No | No soporta inmutabilidad. |
 
+En realidad, son dos mecanismos distintos de inmutabilidad.
+
+| Característica                              | Storage Account (Version-level Immutability)                       | Blob Container Immutability                            |
+| ------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------ |
+| Ámbito                                      | Versiones individuales de blobs                                    | Todo el contenedor                                     |
+| Granularidad                                | Nivel de versión del blob                                          | Nivel de contenedor                                    |
+| Requiere Blob Versioning                    | ✅ Sí                                                               | ❌ No necesariamente                                    |
+| Se aplica automáticamente a todos los blobs | ❌ No, protege las versiones                                        | ✅ Sí                                                   |
+| Caso de uso típico                          | Proteger versiones frente a borrados o modificaciones              | Cumplimiento normativo (WORM) sobre todo el contenedor |
+| Se configura en                             | **Storage Account → Data Protection → Version-level immutability** | **Container → Immutability Policy**                    |
+
+### 1. Blob Container Immutability
+
+Es la opción clásica y la más preguntada en el AZ-104.
+
+````
+Storage Account
+        │
+        ▼
+   Blob Container
+        │
+        ▼
+ Immutability Policy
+        │
+        ▼
+ ┌─────────────┐
+ │ blob1       │
+ │ blob2       │
+ │ blob3       │
+ └─────────────┘
+````
+
+Todos los blobs del contenedor quedan protegidos por la política.
+
+Se pueden configurar:
+- Time-based Retention
+- Legal Hold
+
+### 2. Storage Account - Version-level Immutability
+
+Aquí la protección es sobre las versiones de los blobs, no sobre el contenedor.
+
+````
+Storage Account
+        │
+        ▼
+Version-level Immutability
+        │
+        ▼
+  blob.txt
+    │
+    ├── Version 1   🔒
+    ├── Version 2   🔒
+    └── Version 3   🔒
+````
+Si el blob cambia:
+````
+    blob.txt
+        │
+     Modificar
+        │
+        ▼
+   Nueva versión
+````
+las versiones anteriores permanecen protegidas.
+
+Para ello es necesario tener habilitado:
+````
+Storage Account
+        │
+        ▼
+Data Protection
+        │
+        ├── Blob Versioning ✅
+        └── Version-level Immutability ✅
+````        
+
+### Regla rápida para el AZ-104
+````
+Blob Container
+        │
+        ▼
+Protege todos los blobs del contenedor
+````
+````
+Storage Account
+        │
+        ▼
+Version-level Immutability
+        │
+        ▼
+Protege las versiones de los blobs
+````
+
+**Forma fácil de recordarlo**
+
+- **Blob Container Immutability** = "🔒 Este contenedor es WORM".
+- **Version-level Immutability** = "🔒 Las versiones de cada blob quedan protegidas".
+
+
+
 ## 1. Storage Account (Version-level Immutability)
 
 Puede habilitarse una política de inmutabilidad a nivel del Storage Account para proteger versiones de blobs.
