@@ -37,7 +37,8 @@
       28.<a href="https://github.com/magnum31415/wiki/blob/main/azure-network-az104.md">Azure Network</a><br>   
       29.<a href="https://github.com/magnum31415/wiki/blob/main/azure-disk-encryption-az104.md">Azure Disk Encryption</a><br> 
       30.<a href="https://github.com/magnum31415/wiki/blob/main/azure-certificates-az104.md">Azure Certificates</a><br>
-      31.<a href="https://github.com/magnum31415/wiki/blob/main/azure-monitor-data-collection-az104.md">Azure Monitor Data Collection</a><br>   
+      31.<a href="https://github.com/magnum31415/wiki/blob/main/azure-monitor-data-collection-az104.md">Azure Monitor Data Collection</a><br> 
+      31.<a href="https://github.com/magnum31415/wiki/blob/main/azure-monitor-alerts-az104.md">Azure Monitor Alerts</a><br> 
       32.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-encription-scopes-az104.md">Azure Storage Encryption Scopes</a><br>  
       33.<a href="https://github.com/magnum31415/wiki/blob/main/azure-ITSM-connector-az104.md">Azure ITSM Connector</a><br>  
       34.<a href="https://github.com/magnum31415/wiki/blob/main/azure-subnetting-az194.md">Azure Subnetting</a><br>  
