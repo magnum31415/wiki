@@ -2,7 +2,7 @@
 
 # Azure Monitor Alerts and Alert Processing Rules (AZ-104)
 
-![Azure-Monitor-Alerting-Architecture](./img/azure/Azure-Monitor-Alerting-Architecture)
+![Azure-Monitor-Alerting-Architecture](./img/azure/Azure-Monitor-Alerting-Architecture.png)
 
 ## Conceptos básicos
 
