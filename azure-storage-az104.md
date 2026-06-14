@@ -23,6 +23,7 @@
 - [🔄 Live Migration from Azure Support](#-live-migration-from-azure-support)
 - [❓ ¿Por qué Live Migration solo funciona en cuentas Standard y no Premium?](#-por-qué-live-migration-solo-funciona-en-cuentas-standard-y-no-premium)
 - [✅ Respuesta correcta](#-respuesta-correcta)
+- [Azure Storage Immutability (AZ-104)](#azure-storage-immutability-az-104)
 ---
 
 # 📦 Azure Storage – Resumen ampliado para AZ-104
@@ -319,3 +320,298 @@ Si es Premium, la única opción es:
 **Premium = más rígido pero más rápido**
 
 Por eso Live Migration solo aplica a Standard.
+
+---
+# Azure Storage Immutability (AZ-104)
+
+## Concepto
+
+La **immutability** (inmutabilidad) impide que los datos puedan ser:
+
+- modificados
+- sobrescritos
+- eliminados
+
+durante un período determinado o indefinidamente.
+
+Se utiliza principalmente para:
+
+- WORM (Write Once Read Many)
+- requisitos legales
+- cumplimiento normativo (compliance)
+- auditorías
+- protección frente a ransomware
+
+---
+
+## ¿A qué nivel puede configurarse?
+
+| Nivel | Soportado | Comentario |
+|----------|-----------|------------|
+| Storage Account | ✅ Sí (Version-level immutability) | Configuración para proteger versiones de blobs. |
+| Blob Container | ✅ Sí | El caso más habitual. Se aplica a todos los blobs del contenedor. |
+| Blob (Object Level / Version) | ✅ Sí (Version-level immutability) | Puede aplicarse sobre versiones individuales de blobs. |
+| Azure Files | ❌ No | No soporta Blob Immutability Policy. |
+| Queue Storage | ❌ No | No soporta inmutabilidad. |
+| Table Storage | ❌ No | No soporta inmutabilidad. |
+
+## 1. Storage Account (Version-level Immutability)
+
+Puede habilitarse una política de inmutabilidad a nivel del Storage Account para proteger versiones de blobs.
+
+Conceptualmente:
+
+```text
+Storage Account
+       │
+       ▼
+Version-level Immutability
+       │
+       ▼
+Blob Versions
+```
+
+Se configura desde:
+
+```text
+Storage Account
+    ▼
+Data Protection
+    ▼
+Version-level Immutability
+```
+
+Requisitos:
+
+- Blob Versioning habilitado.
+- Servicio Blob Storage.
+
+
+## 2. Blob Container
+
+Es el escenario más habitual y el más preguntado en el AZ-104.
+
+La política se aplica al contenedor completo.
+
+```text
+Storage Account
+      │
+      ▼
+Blob Container
+      │
+      ▼
+Immutability Policy
+      │
+      ▼
+Todos los blobs del contenedor
+```
+
+Se configura desde:
+
+```text
+Storage Account
+    ▼
+Containers
+    ▼
+Seleccionar Container
+    ▼
+Immutability Policy
+```
+
+Se puede definir:
+
+- Time-based Retention
+- Legal Hold
+
+## 3. Blob Version (Object Level)
+
+Con Version-level Immutability:
+
+```text
+Blob
+
+    │
+
+    ├── Version 1
+
+    ├── Version 2
+
+    └── Version 3
+```
+
+Cada versión puede quedar protegida frente a:
+
+- modificación
+- eliminación
+
+durante el período definido.
+
+---
+
+## Tipos de políticas
+
+### Time-based Retention Policy
+
+Protege los datos durante un período determinado.
+
+Ejemplo:
+
+```text
+Retention 365 days
+```
+
+Durante ese tiempo:
+
+```text
+Delete ❌
+Modify ❌
+Overwrite ❌
+```
+
+Una vez expirado el período:
+
+```text
+Delete ✅
+```
+
+## Legal Hold
+
+No depende del tiempo.
+
+Los datos permanecen protegidos hasta eliminar explícitamente el Legal Hold.
+
+```text
+    Blob
+      │
+Legal Hold
+      │
+      ▼
+Cannot Delete
+Cannot Modify
+```
+
+
+## Activación en Azure Portal
+
+### Storage Account (Version-level)
+
+```text
+Storage Account
+      ▼
+Data Protection
+      ▼
+Version-level Immutability
+      ▼
+    Enable
+```
+
+
+### Blob Container
+
+```text
+Storage Account
+      ▼
+Containers
+      ▼
+Container
+      ▼
+Immutability Policy
+      ▼
+Configure
+      ▼
+Time-based Retention
+      or
+  Legal Hold
+```
+
+
+## Resumen
+
+| Nivel | Soporta Immutability | Cómo se activa |
+|----------|---------------------|----------------|
+| Storage Account | ✅ Sí (Version-level) | Data Protection → Version-level Immutability |
+| Blob Container | ✅ Sí | Container → Immutability Policy |
+| Blob Version | ✅ Sí | Mediante Version-level Immutability |
+| Azure Files | ❌ No | No soportado |
+| Queue Storage | ❌ No | No soportado |
+| Table Storage | ❌ No | No soportado |
+
+
+## Trampas típicas del AZ-104
+
+### Trampa 1
+
+Pensar que toda la Storage Account queda WORM automáticamente ❌ Incorrecto.
+
+Normalmente la política protege:
+
+- Blob Containers
+- Blob Versions
+
+
+### Trampa 2
+
+Pensar que Azure Files soporta Blob Immutability. ❌ Incorrecto.
+
+Azure Files no soporta esta funcionalidad.
+
+
+### Trampa 3
+
+Pensar que Queue o Table Storage soportan políticas WORM. ❌ Incorrecto.
+
+No soportan Blob Immutability Policy.
+
+
+## Regla rápida para memorizar
+
+```text
+Blob Container
+       │
+       ▼
+Immutability Policy
+```
+
+```text
+Storage Account
+       │
+       ▼
+Version-level Immutability
+```
+
+```text
+Azure Files
+       │
+       ▼
+No Blob Immutability
+```
+
+```text
+Queue Storage
+       │
+       ▼
+No Blob Immutability
+```
+
+```text
+Table Storage
+       │
+       ▼
+No Blob Immutability
+```
+
+---
+
+## Chuleta AZ-104
+
+| Si lees... | Piensa en... |
+|------------|--------------|
+| WORM | Immutability Policy |
+| Blob Container | Immutability Policy |
+| Time-based retention | Blob Immutability |
+| Legal Hold | Blob Immutability |
+| Version-level immutability | Storage Account + Blob Versioning |
+| Azure Files | ❌ No soporta Blob Immutability |
+| Queue Storage | ❌ No soporta Blob Immutability |
+| Table Storage | ❌ No soporta Blob Immutability |
+
