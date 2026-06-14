@@ -25,6 +25,8 @@
 - [✅ Respuesta correcta](#-respuesta-correcta)
 - [Azure Storage Immutability (AZ-104)](#azure-storage-immutability-az-104)
 - [Pregunta típica del AZ-104: "Access Policy"](#pregunta-típica-del-az-104-access-policy)
+- [Stored Access Policy vs Shared Access Signature (SAS)](#stored-access-policy-vs-shared-access-signature-sas)
+
 ---
 
 # 📦 Azure Storage – Resumen ampliado para AZ-104
@@ -927,3 +929,232 @@ Immutable Blob Storage
 - "immutable"
 
 la respuesta casi siempre apunta a una **Immutability Policy (Access Policy del Blob Container)** y **no** a IAM, Access Level ni Access Tier.
+
+---
+
+# Stored Access Policy vs Shared Access Signature (SAS)
+
+## Concepto
+
+Una **Shared Access Signature (SAS)** es el **token** que concede acceso limitado a un recurso de Azure Storage.
+
+Una **Stored Access Policy** es una **política almacenada en Azure Storage** que puede utilizar una SAS para definir sus permisos y fechas de validez.
+
+En otras palabras:
+
+```text
+Stored Access Policy
+        │
+        ▼
+Defines:
+- Permissions
+- Start Time
+- Expiry Time
+
+        │
+        ▼
+
+Shared Access Signature (SAS)
+
+        │
+        ▼
+
+Access to Blob / Container
+```
+
+---
+
+## Diferencia principal
+
+| Stored Access Policy | Shared Access Signature (SAS) |
+|----------------------|-------------------------------|
+| Es una política almacenada en Azure Storage. | Es el token que se entrega al cliente. |
+| Define permisos y periodo de validez. | Se utiliza para acceder al recurso. |
+| Puede modificarse o eliminarse posteriormente. | Una vez emitida, contiene una referencia a la política o sus propios parámetros. |
+| Se crea sobre un Container, Queue, Table o File Share (según el servicio). | Puede ser Service SAS, Account SAS o User Delegation SAS. |
+| Permite revocar muchas SAS modificando una única política. | Se distribuye a usuarios o aplicaciones. |
+
+---
+
+## SAS sin Stored Access Policy
+
+La propia SAS incluye toda la información:
+
+```text
+Generate SAS
+
+Permissions : Read, Write
+Start       : 14 Jun 2026
+Expiry      : 21 Jun 2026
+
+        │
+        ▼
+
+https://storage.blob.core.windows.net/container/blob.txt
+?sp=rw
+&st=...
+&se=...
+&sig=...
+```
+
+Si quieres cambiar la expiración o los permisos:
+
+- ❌ Hay que generar una nueva SAS.
+
+---
+
+## SAS con Stored Access Policy
+
+Primero se crea una política:
+
+```text
+Stored Access Policy
+
+Name        : backup-policy
+Permissions : Read
+Expiry      : 31 Dec 2026
+```
+
+Después se genera una SAS que referencia esa política:
+
+```text
+Stored Access Policy
+        │
+        ▼
+backup-policy
+        │
+        ▼
+        SAS
+        │
+        ▼
+blob.txt
+```
+
+La SAS utiliza la política para obtener sus permisos y fechas de validez.
+
+Si posteriormente modificas:
+
+```text
+backup-policy
+
+Expiry:
+31 Dec 2026
+        │
+        ▼
+15 Jul 2026
+```
+
+todas las SAS asociadas quedan afectadas automáticamente.
+
+---
+
+## Ejemplo práctico
+
+### Sin Stored Access Policy
+
+```text
+Customer A
+      │
+      ▼
+
+SAS (Read, 1 year)
+
+      │
+      ▼
+
+blob.pdf
+```
+
+Si quieres revocarla:
+
+- Crear una nueva SAS.
+- Invalidar la anterior por otros mecanismos.
+
+---
+
+### Con Stored Access Policy
+
+```text
+                 backup-policy
+              (Read, 1 year)
+                      │
+        ┌─────────────┴─────────────┐
+        │                           │
+      SAS 1                       SAS 2
+        │                           │
+        └─────────────┬─────────────┘
+                      │
+                  blob.pdf
+```
+
+Si eliminas o modificas `backup-policy`:
+
+```text
+backup-policy ❌
+
+        │
+
+        ▼
+
+SAS 1 ❌
+SAS 2 ❌
+```
+
+Todas las SAS asociadas quedan revocadas o modificadas automáticamente.
+
+---
+
+## Comparativa rápida con Immutability Policy
+
+| Concepto | ¿Qué controla? | Ejemplo | ¿Protege contra borrado/modificación? |
+|----------|----------------|----------|---------------------------------------|
+| **Immutability Policy (Access Policy)** | Inmutabilidad de los blobs (WORM) | Time-based Retention = 365 días | ✅ Sí |
+| **Stored Access Policy** | Permisos y validez de una SAS | `backup-policy` (Read, 1 año) | ❌ No |
+| **Shared Access Signature (SAS)** | Token temporal de acceso | URL con `?sp=...&sig=...` | ❌ No |
+| **Access Control (IAM)** | Permisos de usuarios y aplicaciones | Storage Blob Data Contributor | ❌ No |
+| **Access Level** | Acceso público | Private / Blob / Container | ❌ No |
+| **Access Tier** | Nivel de almacenamiento | Hot / Cool / Cold / Archive | ❌ No |
+
+---
+
+## Regla rápida para el AZ-104
+
+| Si lees... | Piensa en... |
+|------------|--------------|
+| Shared Access Signature (SAS) | Token de acceso |
+| Stored Access Policy | Política reutilizable para SAS |
+| Revocar muchas SAS fácilmente | Stored Access Policy |
+| Cambiar permisos sin regenerar todas las SAS | Stored Access Policy |
+| URL con `?sp=...&sig=...` | SAS |
+| Immutability / WORM | ❌ No tiene relación con SAS |
+| Time-based Retention | ❌ No tiene relación con SAS |
+| Legal Hold | ❌ No tiene relación con SAS |
+
+---
+
+## Forma fácil de recordarlo
+
+```text
+Stored Access Policy
+        │
+        ▼
+Define las reglas
+
+        │
+        ▼
+
+Shared Access Signature (SAS)
+        │
+        ▼
+Es el token que usa el cliente
+```
+
+O aún más resumido:
+
+```text
+Stored Access Policy = Reglas
+
+Shared Access Signature (SAS) = Token
+
+Immutability Policy = Protección WORM
+```
