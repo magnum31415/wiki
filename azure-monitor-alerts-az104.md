@@ -8,9 +8,10 @@
 
 En Azure Monitor intervienen tres componentes principales:
 
-- Alert Rule
-- Action Group
-- Alert Processing Rule
+1. Alert Rule
+2. Alert
+3. Alert Processing Rule
+4. Action Group
 
 Es fundamental distinguir claramente su función, ya que es una pregunta muy habitual en el AZ-104.
 
@@ -18,26 +19,33 @@ Es fundamental distinguir claramente su función, ya que es una pregunta muy hab
 
 # Arquitectura
 
+| Elemento                  | Función                                                 | ¿Lo configuras? |
+| ------------------------- | ------------------------------------------------------- | --------------- |
+| **Alert Rule**            | Detecta eventos y crea alertas                          | ✅ Sí            |
+| **Alert**                 | Representa la alerta creada (New, Acknowledged, Closed) | ❌ No            |
+| **Alert Processing Rule** | Modifica el tratamiento de una alerta ya creada         | ✅ Sí            |
+| **Action Group**          | Ejecuta acciones (Email, SMS, Webhook, Logic App...)    | ✅ Sí            |
+
+
 ```text
-Azure Resource
-       │
-       ▼
-Event / Metric / Log
-       │
-       ▼
-Alert Rule
-       │
-       ▼
-Alert Created
-       │
-       ▼
-Alert Processing Rule
-       │
-       ▼
-Action Group
-       │
-       ▼
-Email / SMS / Webhook / Logic App / Function
+                 Event / Metric / Log
+                          │
+                          ▼
+                    1. Alert Rule
+                   (detecta el evento)
+                          │
+                          ▼
+                   2. Alert Created
+              (la alerta existe y aparece
+                 en Azure Monitor)
+                          │
+                          ▼
+              3. Alert Processing Rule
+          (suprime o modifica acciones)
+                          │
+                          ▼
+                  4. Action Group
+          (Email, SMS, Webhook, etc.)
 ```
 
 ---
