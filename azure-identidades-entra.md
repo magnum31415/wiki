@@ -123,6 +123,40 @@ Puede imaginarse como:
 Es la "persona" que representa a la aplicación.
 ```
 
+### Crear una Service Principal
+Si nos piden crear una Service Principal primero debemos crear la App Registration
+
+````
+        1. Crear App Registration
+                    │
+                    ▼
+        2. Se crea un Service Principal
+           (automáticamente o explícitamente)
+                    │
+                    ▼
+        3. Asignar permisos (RBAC)
+                    │
+                    ▼
+        4. Utilizarlo desde la aplicación,
+           Terraform, Azure DevOps, etc.
+````
+
+Cuando lo creas desdeel Portal de Azure
+
+Creas una:
+````
+Microsoft Entra ID
+    └── App registrations
+            └── New registration
+````
+y Microsoft Entra ID crea automáticamente el Service Principal correspondiente en tu tenant.
+
+Resultado:
+````
+App Registration
+        │
+        └──────────────► Service Principal
+````
 ---
 
 ## 1.3 Enterprise Application
