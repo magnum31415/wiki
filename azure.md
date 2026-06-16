@@ -15,6 +15,7 @@
       6.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vpn-az104.md">Azure VPN</a><br>
       7.<a href="https://github.com/magnum31415/wiki/blob/main/azure-filesync-az104.md">Azure File Sync</a><br>
       8.<a href="https://github.com/magnum31415/wiki/blob/main/azure-entraid-104.md">Azure EntraId</a><br>
+      8.<a href="https://github.com/magnum31415/wiki/blob/main/azure-identidades-entra.md">Azure Identidades EntraId</a><br>
       9.<a href="https://github.com/magnum31415/wiki/blob/main/azure-storage-104.md">Azure Storage</a><br>
       10.<a href="https://github.com/magnum31415/wiki/blob/main/azure-hub-and-spoke-104.md">Azure Hub & Spoke</a><br>
       11.<a href="https://github.com/magnum31415/wiki/blob/main/azure-policy-104.md">Azure Policy</a><br>
