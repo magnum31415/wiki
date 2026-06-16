@@ -272,6 +272,11 @@ Este identificador es el que utiliza Azure RBAC internamente.
 
 # 2. Relación entre todos ellos
 
+Porque, por defecto, el **Service Principal se crea a partir de la App Registration y hereda su nombre**. 
+Sin embargo, es importante entender que **son dos objetos distintos**.
+
+El nombre es simplemente un atributo descriptivo (displayName), no un identificador.
+
 ```text
                     App Registration
 
