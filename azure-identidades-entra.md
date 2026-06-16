@@ -32,6 +32,8 @@ Service Connection utiliza un Service Principal
 
 ![azure-identidades-entraid](./img/azure/azure-identidades-entra.png)
 
+
+
 # Relación entre App Registration, Service Principal y Asignación de Roles (RBAC)
 
 ![azure-serviceprincipal-rbac](./img/azure/azure-serviceprincipal-rbac.png)
@@ -39,6 +41,29 @@ Service Connection utiliza un Service Principal
 ---
 
 # 1. Definiciones sencillas
+
+## 1.0 Managed Identity
+
+Una Managed Identity es una identidad gestionada automáticamente por Azure que permite a un recurso autenticarse de forma segura en otros servicios de Azure sin necesidad de almacenar credenciales.
+
+Ejemplo: Una máquina virtual necesita acceder a un Storage Account:
+````
+                 Azure Virtual Machine
+                          │
+                          │ tiene asignada
+                          ▼
+                  Managed Identity
+                          │
+                          │ tiene asignado el rol
+                          ▼
+            Storage Blob Data Contributor
+                          │
+                          │ sobre
+                          ▼
+                  Azure Storage Account
+````
+
+![azure-managedidentity](./img/azure/azure-managedidentity.png)
 
 ## 1.1 App Registration
 
