@@ -137,3 +137,25 @@ resource "azurerm_network_watcher" "gwc" {
 - ✅ Terraform crea el recurso si no existe.
 - ✅ Después lo gestiona en su estado (terraform.tfstate).
 - ✅ Aparecerá en terraform plan como + create si aún no existe.
+
+# TAGS
+## locals.tf
+````
+# Common tags applied to all resources in the Connectivity platform.
+locals {
+  tags = {
+    environment = "prod"
+    managed_by  = "terraform"
+    platform    = "connectivity"
+  }
+}
+````
+
+## extend local tags
+
+````
+tags = merge(local.tags, {
+  environment = "dev"
+  workload    = "vnet-flow-logs"
+})
+````
