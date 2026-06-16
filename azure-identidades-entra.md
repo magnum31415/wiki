@@ -20,6 +20,8 @@ La clave para entenderlo es pensar que:
 - Una **Enterprise Application** es simplemente la representación del **Service Principal** en el portal de Microsoft Entra ID.
 - Una **Service Connection** es un objeto propio de Azure DevOps que utiliza un **Service Principal** para autenticarse contra Azure.
 - Un **Object ID** es el identificador único de un objeto dentro de un tenant de Microsoft Entra ID (usuario, grupo, Service Principal, etc.). En el caso de un **Service Principal**, es el identificador que utiliza Azure RBAC para asignar roles y permisos sobre los recursos de Azure.
+- Un **`principal_id` en Terraform** hace referencia al **Object ID de un Security Principal** (usuario, grupo, Service Principal o Managed Identity), es decir, a la identidad a la que se asignará un rol RBAC sobre un recurso de Azure. En ningún caso debe confundirse con el **Application ID (Client ID)**.
+  
 
 
 En otras palabras:
@@ -34,15 +36,52 @@ Service Connection utiliza un Service Principal
 
 ![azure-identidades-entraid](./img/azure/azure-identidades-entra.png)
 
+## Regla mnemotécnica
+````
+Application ID (Client ID)
+        │
+        ├── OAuth
+        ├── OIDC
+        ├── az login
+        └── Azure DevOps Service Connection
+
+Object ID
+        │
+        ├── principal_id (Terraform)
+        ├── Azure RBAC
+        ├── Owner
+        ├── Contributor
+        └── Storage Blob Data Contributor
+````
 
 
 # Relación entre App Registration, Service Principal y Asignación de Roles (RBAC)
 
 ![azure-serviceprincipal-rbac](./img/azure/azure-serviceprincipal-rbac.png)
 
+````
+principal_id
+      │
+      ▼
+
+Object ID
+
+      │
+      ▼
+
+Usuario
+Grupo
+Service Principal
+Managed Identity
+````
 ---
 
 # 1. Definiciones sencillas
+
+## 1.0 Terraform Resource - principal_id
+
+principal_id aparece en bastantes recursos del provider azurerm, y siempre debes asociarlo mentalmente con el Object ID de una identidad (Security Principal).
+
 
 ## 1.0 Managed Identity
 
