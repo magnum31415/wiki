@@ -15,8 +15,22 @@ La clave para entenderlo es pensar que:
 
 - Una **App Registration** define una aplicación.
 - Un **Service Principal** representa la identidad de esa aplicación dentro de un tenant.
-- Una **Enterprise Application** es simplemente la representación del Service Principal en el portal de Microsoft Entra ID.
-- Una **Service Connection** es un objeto propio de Azure DevOps que utiliza un Service Principal para autenticarse contra Azure.
+- Una **Enterprise Application** es simplemente la representación del **Service Principal** en el portal de Microsoft Entra ID.
+- Una **Service Connection** es un objeto propio de Azure DevOps que utiliza un **Service Principal** para autenticarse contra Azure.
+- Un **Object ID** es el identificador único de un objeto dentro de un tenant de Microsoft Entra ID (usuario, grupo, Service Principal, etc.). En el caso de un **Service Principal**, es el identificador que utiliza Azure RBAC para asignar roles y permisos sobre los recursos de Azure.
+
+
+En otras palabras:
+
+```text
+Enterprise Application = Service Principal
+
+Service Connection ≠ Service Principal
+
+Service Connection utiliza un Service Principal
+```
+
+![azure-identidades-entraid](./img/azure/azure-identidades-entra.png)
 
 ---
 
