@@ -187,6 +187,8 @@ estás viendo realmente el Service Principal.
 
 ## 1.4 Service Connection (Azure DevOps)
 
+**Azure DevOps (Service Connection con Workload Identity Federation) utiliza el ``Application ID (Client ID)``, NO el ``Object ID`` del Service Principal.**
+
 Una Service Connection es un objeto propio de Azure DevOps.
 
 No existe en Microsoft Entra ID.
@@ -220,24 +222,14 @@ Service Principal
 Azure Resources
 ```
 
-Ejemplo:
-
-```text
-Nombre:
-sc-alz-connectivity-apply
-
-Authentication:
-Workload Identity Federation
-
-Utiliza el Service Principal:
-
-Application ID:
-1f386f75-bc02-4197-9a0d-5237fec42cc5
-```
 
 La Service Connection NO es una identidad.
 
 Simplemente utiliza una identidad para autenticarse.
+
+
+![azure-service-connection](./img/azure/azure-service-connection.png)
+
 
 ---
 
@@ -346,6 +338,13 @@ El nombre es simplemente un atributo descriptivo (displayName), no un identifica
               Authentication:
               Workload Identity Federation
 ```
+
+En tu ejemplo concreto, los tres objetos tienen el mismo displayName, pero son objetos distintos.
+
+Cuando configuras una Service Connection con Workload Identity Federation, Azure DevOps no utiliza el nombre para autenticarse.
+
+Internamente utiliza el Application ID (Client ID) de la App Registration y la federación OIDC para obtener un token para el Service Principal.
+
 
 ---
 
