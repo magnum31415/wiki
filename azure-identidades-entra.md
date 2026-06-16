@@ -32,6 +32,10 @@ Service Connection utiliza un Service Principal
 
 ![azure-identidades-entraid](./img/azure/azure-identidades-entra.png)
 
+# Relación entre App Registration, Service Principal y Asignación de Roles (RBAC)
+
+![azure-serviceprincipal-rbac](./img/azure/azure-serviceprincipal-rbac.png)
+
 ---
 
 # 1. Definiciones sencillas
