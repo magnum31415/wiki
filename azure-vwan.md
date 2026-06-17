@@ -161,6 +161,10 @@ to decide how traffic flows.
 ![vwan-afw-1-nva-2](./img/azure/vwan-afw-1-nva-2.png)
 
 
+## Routing Intend
+
+![vWAN-Routing-Intend](./img/azure/vWAN-Routing-Intend.png)
+
 
 ### Route Tables vs Routing Intent  
 | Concept           | Route Tables                    | Routing Intent                                                      |
