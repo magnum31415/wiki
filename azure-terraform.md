@@ -159,3 +159,240 @@ tags = merge(local.tags, {
   workload    = "vnet-flow-logs"
 })
 ````
+
+---
+
+# Terraform `locals`
+
+En Terraform, un bloque `locals {}` sirve para definir **variables locales calculadas** que solo existen dentro del módulo donde se declaran.
+
+Se utilizan para:
+
+- Evitar repetir código.
+- Simplificar expresiones largas.
+- Construir nombres de recursos.
+- Centralizar lógica y configuraciones.
+- Crear mapas y estructuras reutilizables.
+
+Resumen:
+- Los locales se definen dentro del propio módulo.
+- No pueden modificarse desde fuera.
+
+
+## Ejemplo: simplificar expresiones largas
+
+Sin `locals`:
+
+```hcl
+resource_group_name = var.custom_replacements.names.primary_flow_logs_resource_group_name
+```
+
+Con `locals`:
+
+```hcl
+locals {
+  primary_flow_logs_rg_name = var.custom_replacements.names.primary_flow_logs_resource_group_name
+}
+
+resource_group_name = local.primary_flow_logs_rg_name
+```
+
+El código resulta mucho más legible.
+
+---
+
+## Sintaxis básica
+
+```hcl
+locals {
+  environment = "prod"
+  location    = "westeurope"
+}
+```
+
+Uso:
+
+```hcl
+resource "azurerm_resource_group" "main" {
+  name     = "rg-${local.environment}"
+  location = local.location
+}
+```
+
+## Locales con lógica
+
+También pueden contener cálculos.
+
+```hcl
+locals {
+  environment = "prod"
+
+  instance_count = local.environment == "prod" ? 3 : 1
+}
+```
+
+Resultado:
+
+```text
+instance_count = 3
+```
+
+---
+
+## Locales con listas
+
+```hcl
+locals {
+  regions = [
+    "germanywestcentral",
+    "swedencentral"
+  ]
+}
+```
+
+Uso:
+
+```hcl
+location = local.regions[0]
+```
+
+---
+
+## Locales con mapas
+
+```hcl
+locals {
+  tags = {
+    environment = "prod"
+    owner       = "platform-team"
+    managed_by  = "terraform"
+  }
+}
+```
+
+Uso:
+
+```hcl
+tags = local.tags
+```
+
+---
+
+## Locales con objetos complejos
+
+```hcl
+locals {
+  firewall_policy_rule_collection_groups = {
+    primary_base = {
+      enabled             = true
+      firewall_policy_key = "primary"
+      name                = "fwpcg-base-gwc"
+      priority            = 100
+    }
+
+    primary_docscan_prod = {
+      enabled             = true
+      firewall_policy_key = "primary"
+      name                = "fwpcg-docscan-prod-gwc"
+      priority            = 200
+    }
+  }
+}
+```
+
+Este patrón suele utilizarse junto con:
+
+```hcl
+for_each = local.firewall_policy_rule_collection_groups
+```
+
+para crear múltiples recursos automáticamente.
+
+---
+
+## Referencia a un local
+
+Siempre se accede mediante:
+
+```hcl
+local.nombre_del_local
+```
+
+Ejemplos:
+
+```hcl
+local.location
+local.environment
+local.tags
+local.primary_flow_logs_rg_name
+```
+
+---
+
+## Buenas prácticas
+
+### Correcto
+
+```hcl
+locals {
+  resource_prefix = "${var.environment}-${var.location}"
+}
+```
+
+```hcl
+name = "${local.resource_prefix}-rg"
+```
+
+---
+
+### Evitar
+
+```hcl
+name = "${var.environment}-${var.location}-rg"
+```
+
+repetido en decenas de recursos.
+
+---
+
+## Regla práctica
+
+Usa `locals` cuando:
+
+- El valor se calcula dentro del módulo.
+- Vas a reutilizar una expresión varias veces.
+- Quieres mejorar la legibilidad.
+- Necesitas construir nombres o estructuras complejas.
+
+Usa `variables` cuando:
+
+- El valor debe venir desde fuera del módulo.
+- Debe ser configurable por el usuario o por un módulo padre.
+
+
+---
+# Variables (`var`)
+
+Las variables reciben valores desde fuera del módulo.
+
+```hcl
+variable "location" {
+  type = string
+}
+```
+
+Uso:
+
+```hcl
+location = var.location
+```
+
+Los valores pueden venir de:
+
+- terraform.tfvars
+- Variables de entorno
+- Azure DevOps Pipelines
+- Módulos padre
+- Línea de comandos
+
+---
