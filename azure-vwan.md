@@ -539,5 +539,7 @@ y dentro:
 **Approved Modules**
 - Facilitan: patrones seguros.
 
-# Arquitectura típica ALZ
+# Virtual Hub connections
+
+![virtual-hub-connections](./img/azure/virtual-hub-connections.png)
 
