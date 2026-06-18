@@ -54,7 +54,9 @@
       42.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vnetflowlogs-siem.md">Azure VNet Flow Logs - CrowdStrike</a><br>  
       43.<a href="https://github.com/magnum31415/wiki/blob/main/azure-NetworkWatcher.md">Azure Network Watcher</a><br>  
       44.<a href="https://github.com/magnum31415/wiki/blob/main/azure-private-endpoint.md">Azure Private Endpoint</a><br>      
-      45.<a href="https://github.com/magnum31415/wiki/blob/main/azure-arm-az104.md">Azure ARMt</a><br>
+      45.<a href="https://github.com/magnum31415/wiki/blob/main/azure-arm-az104.md">Azure ARM</a><br>
+      46.<a href="https://github.com/magnum31415/wiki/blob/main/azure-firewall.md">Azure FIREWALL</a><br>
+      47.<a href="https://github.com/magnum31415/wiki/blob/main/azure-pim.md">Azure PIM</a><br>
      100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>         
     </td>
     <td>
