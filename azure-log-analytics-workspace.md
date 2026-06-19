@@ -562,3 +562,57 @@ Mediante Data Export Rules.
 | Traffic Analytics | Analiza NSG Flow Logs |
 | NTANetAnalytics | Tabla generada por Traffic Analytics |
 | Data Export Rule | Exporta datos a Event Hub o Storage |
+
+---
+
+| Aspecto | Log Analytics (Azure Monitor Logs) | Log Analytics Workspace (LAW) |
+|----------|------------------------------------|-------------------------------|
+| ¿Qué es? | Servicio de análisis y consulta de logs | Repositorio donde se almacenan los datos |
+| Función principal | Consultar, analizar y correlacionar información | Almacenar logs, eventos y métricas |
+| Equivalencia | Motor de consultas (Query Engine) | Base de datos |
+| Lenguaje utilizado | Kusto Query Language (KQL) | No aplica |
+| Permite ejecutar consultas | Sí | No |
+| Permite crear alertas | Sí | Los datos residen aquí, pero las alertas utilizan Log Analytics para evaluarlas |
+| Permite crear Workbooks | Sí | Los Workbooks consumen datos almacenados aquí |
+| Permite investigar incidentes | Sí | Proporciona los datos para la investigación |
+| Contiene tablas | Consulta tablas | Almacena tablas |
+| Ejemplo | `AzureActivity \| where TimeGenerated > ago(24h)` | `law-prod-weu-001` |
+| Almacena datos | No | Sí |
+| Ejecuta KQL | Sí | No |
+| Utilizado por Sentinel | Sí, para realizar consultas y análisis | Sí, como repositorio de datos |
+| Utilizado por Traffic Analytics | Consulta los datos procesados | Almacena la tabla `NTANetAnalytics` |
+| Coste asociado | Sin coste específico por el motor de consulta | Coste por ingesta y retención de datos |
+
+### Ejemplo práctico
+
+```text
+Azure Firewall
+      │
+      ▼
+Diagnostic Settings
+      │
+      ▼
+Log Analytics Workspace
+      │
+      ├── AzureDiagnostics
+      ├── AzureActivity
+      ├── Heartbeat
+      └── NTANetAnalytics
+      │
+      ▼
+Azure Monitor Logs (KQL)
+      │
+      ▼
+Consultas, Alertas, Workbooks y Sentinel
+```
+
+### Regla rápida para el examen
+
+| Si lees... | Piensa en... |
+|------------|--------------|
+| "Store logs" | Log Analytics Workspace |
+| "Run KQL query" | Log Analytics (Azure Monitor Logs) |
+| "Retention" | Log Analytics Workspace |
+| "Analyze logs" | Log Analytics (Azure Monitor Logs) |
+| "Data ingestion" | Log Analytics Workspace |
+| "Alert based on query" | Ambos: los datos están en LAW y la consulta la ejecuta Log Analytics |
