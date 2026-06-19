@@ -59,6 +59,7 @@
       47.<a href="https://github.com/magnum31415/wiki/blob/main/azure-pim.md">Azure PIM</a><br>
       48.<a href="https://github.com/magnum31415/wiki/blob/main/azure-log-analytics-workspace.md">Azure Log Analytics Workspace</a><br>
       49.<a href="https://github.com/magnum31415/wiki/blob/main/azure-network-watcher.md">Azure Network Watcher</a><br>
+      50.<a href="https://github.com/magnum31415/wiki/blob/main/azure-amba.md">Azure AMBA</a><br>
       100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>         
     </td>
     <td>
