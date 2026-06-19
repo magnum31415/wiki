@@ -57,7 +57,8 @@
       45.<a href="https://github.com/magnum31415/wiki/blob/main/azure-arm-az104.md">Azure ARM</a><br>
       46.<a href="https://github.com/magnum31415/wiki/blob/main/azure-firewall.md">Azure FIREWALL</a><br>
       47.<a href="https://github.com/magnum31415/wiki/blob/main/azure-pim.md">Azure PIM</a><br>
-     100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>         
+      48.<a href="https://github.com/magnum31415/wiki/blob/main/azure-log-analytics-workspace.md">Azure Log Analytics Workspace</a><br>
+      100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>         
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
