@@ -60,7 +60,8 @@
       48.<a href="https://github.com/magnum31415/wiki/blob/main/azure-log-analytics-workspace.md">Azure Log Analytics Workspace</a><br>
       49.<a href="https://github.com/magnum31415/wiki/blob/main/azure-network-watcher.md">Azure Network Watcher</a><br>
       50.<a href="https://github.com/magnum31415/wiki/blob/main/azure-amba.md">Azure AMBA</a><br>
-      100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>         
+      51.<a href="https://github.com/magnum31415/wiki/blob/main/azure-defender-for-cloud.md">Azure azure Defender Cloud </a><br>      
+      100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>     
     </td>
     <td>
       1. <a href="https://github.com/magnum31415/wiki/blob/main/azure-client.md">Azure Client</a><br>
