@@ -14,6 +14,7 @@
 - [Cómo arreglar las subscriptions actuales](#cómo-arreglar-las-subscriptions-actuales)
 - [Microsoft Entra ID - Group Naming Policy](#microsoft-entra-id---group-naming-policy)
 - [Microsoft Entra ID - Security Groups (AZ-104)](#microsoft-entra-id---security-groups-az-104)
+- [Microsoft Entra ID - Group-Based Licensing (AZ-104)](#microsoft-entra-id---group-based-licensing-az-104)
 - [Microsoft Fabric](#microsoft-fabric)
 - [Microsoft Fabric Licensing y Group-Based Licensing](#microsoft-fabric-licensing-y-group-based-licensing)
 - [Self-Service Password Reset (SSPR) en Microsoft Entra ID](#self-service-password-reset-sspr-en-microsoft-entra-id)
@@ -1415,6 +1416,253 @@ Security groups simplify permission management.
 ```text
 Dynamic groups can automatically include users based on attributes.
 ```
+---
+# Microsoft Entra ID - Group-Based Licensing (AZ-104)
+
+## Qué es Group-Based Licensing
+
+Group-Based Licensing permite asignar licencias a un grupo de Microsoft Entra ID en lugar de asignarlas usuario por usuario.
+
+Cuando una licencia se asigna a un grupo:
+
+```text
+Grupo
+   ↓
+Licencia
+   ↓
+Usuarios
+```
+todos los usuarios miembros del grupo reciben automáticamente la licencia.
+
+## Ventajas
+
+| Ventaja | Descripción |
+|----------|-------------|
+| Administración centralizada | Se gestionan licencias desde un único grupo |
+| Menos errores | No hay que asignar licencias usuario por usuario |
+| Escalable | Fácil para miles de usuarios |
+| Automatizable | Funciona muy bien con Dynamic Groups |
+
+
+## Requisitos
+
+| Licencia Entra ID | Group-Based Licensing |
+|-------------------|----------------------|
+| Free | ❌ |
+| P1 | ✅ |
+| P2 | ✅ |
+
+
+## Ejemplo práctico
+
+### Grupos
+
+```text
+Group1
+```
+
+### Usuarios
+
+```text
+User1
+User2
+User3
+```
+
+### Membresía
+
+```text
+Group1
+├─ User1
+├─ User2
+└─ User3
+```
+
+### Licencia asignada
+
+```text
+Group1
+└─ Microsoft Entra ID P2
+```
+
+Resultado:
+
+```text
+User1 → P2
+User2 → P2
+User3 → P2
+```
+
+Todos reciben automáticamente la licencia.
+
+## Qué ocurre si añades un usuario nuevo
+
+Inicialmente:
+
+```text
+Group1
+├─ User1
+├─ User2
+└─ User3
+```
+
+Después:
+
+```text
+Group1
+├─ User1
+├─ User2
+├─ User3
+└─ User4
+```
+
+Resultado:
+
+```text
+User4 → recibe automáticamente la licencia P2
+```
+
+No es necesario realizar ninguna acción adicional.
+
+## Qué ocurre si eliminas un usuario del grupo
+
+Antes:
+
+```text
+Group1
+├─ User1
+├─ User2
+└─ User3
+```
+
+Después:
+
+```text
+Group1
+├─ User1
+└─ User3
+```
+
+Resultado:
+
+```text
+User2 pierde automáticamente la licencia P2
+```
+
+---
+
+## Licencias heredadas
+
+Cuando una licencia proviene de un grupo:
+
+```text
+Group1
+   ↓
+Microsoft Entra ID P2
+   ↓
+User1
+```
+
+User1 recibe una licencia heredada.
+
+## Regla importante AZ-104
+
+Las licencias heredadas desde grupos NO pueden eliminarse directamente del usuario.
+
+Para eliminar la licencia hay que:
+
+- quitar al usuario del grupo
+- o quitar la licencia al grupo
+
+## Ejemplo de examen AZ-104
+
+### Configuración
+
+```text
+Group1
+└─ Licencia P2
+
+User1
+└─ Miembro de Group1
+```
+
+### Pregunta
+
+```text
+Can you remove the Microsoft Entra ID P2 license from User1?
+```
+
+### Respuesta
+
+```text
+False
+```
+
+### Motivo
+
+La licencia es heredada desde Group1.
+
+Microsoft Entra ID no permite eliminar individualmente una licencia asignada mediante Group-Based Licensing.
+
+## Grupos anidados (Nested Groups)
+
+Supongamos:
+
+```text
+Group1
+└─ Group2
+    └─ User2
+```
+
+Y la licencia está asignada a Group1:
+
+```text
+Group1
+└─ P2 License
+```
+
+Resultado:``ser2 NO recibe la licencia``
+
+## Regla importante examen
+
+Las licencias NO se heredan a través de grupos anidados.
+
+```text
+Grupo con licencia
+   └─ Usuario directo
+        → ✅ Licencia
+
+Grupo con licencia
+   └─ Otro grupo
+         └─ Usuario
+              → ❌ Sin licencia
+```
+
+## Tabla resumen examen
+
+| Situación | Resultado |
+|------------|------------|
+| Usuario miembro directo del grupo licenciado | ✅ Recibe licencia |
+| Usuario dentro de un grupo anidado | ❌ No recibe licencia |
+| Eliminar licencia heredada directamente del usuario | ❌ No permitido |
+| Quitar usuario del grupo | ✅ Pierde licencia |
+| Quitar licencia del grupo | ✅ Todos pierden licencia |
+
+
+## Reglas rápidas AZ-104
+
+- Group-Based Licensing requires Microsoft Entra ID P1 or P2.
+- Licenses assigned through groups cannot be removed directly from individual users.
+- Group-based licenses are inherited.
+- Nested groups do not receive licenses transitively.
+
+## Frases clave AZ-104
+
+- Group-based licensing simplifies license management.
+- Users inherit licenses from licensed groups.
+- Inherited licenses cannot be removed directly from users.
+- Group-based licensing does not support nested group inheritance.
+
 ---
 # Microsoft Fabric
 
