@@ -5,7 +5,10 @@
 
 - [Azure VM Redeploy y Scheduled Maintenance (AZ-104)](#azure-vm-redeploy-y-scheduled-maintenance-az-104)
 - [Azure Desired State Configuration (DSC)](#azure-desired-state-configuration-dsc---az-104)
- 
+- [Azure vCPU Quotas (AZ-104)](#azure-vcpu-quotas-az-104)
+
+---
+
 # Azure VM Redeploy y Scheduled Maintenance (AZ-104)
 
 ## Scheduled Maintenance
@@ -882,4 +885,251 @@ DSC can automatically correct configuration drift.
 
 ```text
 Azure Automation State Configuration integrates DSC into Azure.
+```
+
+---
+
+# Azure vCPU Quotas (AZ-104)
+
+## Conceptos básicos
+
+Azure controla el despliegue de máquinas virtuales mediante cuotas de vCPU.
+
+Existen dos tipos principales de cuotas:
+
+1. Cuotas por familia de VM.
+2. Cuota regional total.
+
+Para crear una VM deben cumplirse ambas simultáneamente.
+
+
+## Cuota Regional Total
+
+Limita el número total de vCPUs que pueden existir en una región de Azure dentro de una suscripción.
+
+Ejemplo:
+
+| Región  | Cuota   |
+| ------- | ------- |
+| West US | 20 vCPU |
+
+Uso actual:
+
+| VM  | vCPU |
+| --- | ---- |
+| VM1 | 2    |
+| VM2 | 8    |
+
+- Total: ``2 + 8 = 10 vCPU ``
+- Quedan disponibles: ``20 - 10 = 10 vCPU``
+
+
+## Cuotas por Familia
+
+Cada familia de máquinas virtuales tiene su propia cuota.
+
+Ejemplo:
+
+| Familia            | Cuota |
+| ------------------ | ----- |
+| Standard BS Family | 20    |
+| Standard D Family  | 20    |
+| Standard E Family  | 20    |
+
+Ejemplo de uso:
+
+| VM  | Familia | vCPU |
+| --- | ------- | ---- |
+| VM1 | BS      | 2    |
+| VM2 | BS      | 8    |
+
+- Consumo BS: ``10 vCPU ``
+- Consumo D:``0 vCPU``
+
+
+## Ambas cuotas deben cumplirse
+
+Ejemplo:
+
+### Cuotas
+
+| Tipo           | Límite |
+| -------------- | ------ |
+| BS Family      | 20     |
+| Total Regional | 20     |
+
+### Uso actual
+
+| VM  | Familia | vCPU |
+| --- | ------- | ---- |
+| VM1 | BS      | 18   |
+
+Intentamos desplegar:
+
+```text
+VM2 = 4 vCPU
+```
+
+Resultado:
+
+- **Familia BS** : Supera el límite : ``18 + 4 = 22``
+- **Regional**: También supera el límite ``18 + 4 = 22``
+
+❌ No se puede desplegar.
+
+
+## Estado de las máquinas virtuales y cuotas
+
+| Estado                    | Qué significa                                                   | Coste compute | IP pública dinámica            | Cuota vCPU                                                                      |
+| ------------------------- | --------------------------------------------------------------- | ------------- | ------------------------------ | ------------------------------------------------------------------------------- |
+| **Running**               | VM ejecutándose                                                 | ✅ Sí          | Se mantiene                    | ✅ Cuenta                                                                        |
+| **Stopped (Allocated)**   | SO apagado desde dentro de la VM o desde Azure sin liberar host | ✅ Sí          | Se mantiene                    | ✅ Cuenta                                                                        |
+| **Stopped (Deallocated)** | Azure libera el host físico                                     | ❌ No          | Puede liberarse si es dinámica | ✅ Cuenta para límites de recursos desplegados, pero no consume capacidad física |
+
+
+
+Aunque la VM no esté ejecutándose, sigue existiendo como recurso desplegado.
+
+Esta es una de las preguntas trampa más habituales del examen.
+
+---
+
+## Cómo calcular rápidamente en el examen
+
+### Paso 1
+
+Sumar las vCPU ya utilizadas.
+
+Ejemplo:
+
+```text
+VM1 = 2
+VM2 = 16
+---------
+18
+```
+
+### Paso 2
+
+Añadir las vCPU de la nueva VM.
+
+```text
+18 + 2 = 20
+```
+
+### Paso 3
+
+Comprobar cuota de familia.
+
+```text
+20 <= 20
+```
+
+✅ Correcto
+
+### Paso 4
+
+Comprobar cuota regional.
+
+```text
+20 <= 20
+```
+
+✅ Correcto
+
+Resultado:
+
+```text
+La VM puede desplegarse.
+```
+
+
+### Qué ocurre al alcanzar exactamente el límite
+
+Azure permite llegar exactamente al valor de la cuota.
+
+Ejemplo:
+
+| Cuota | Uso final |
+| ----- | --------- |
+| 20    | 20        |
+
+```text
+20 <= 20
+```
+
+✅ Permitido
+
+
+## Qué ocurre si se supera el límite
+
+Ejemplo:
+
+| Cuota | Uso final |
+| ----- | --------- |
+| 20    | 21        |
+
+```text
+21 > 20
+```
+
+❌ No permitido
+
+
+## Preguntas típicas del AZ-104
+
+### ¿Las cuotas son por suscripción?
+
+Sí.
+
+Las cuotas se aplican a nivel de suscripción.
+
+
+### ¿Las cuotas son por región?
+
+Sí.
+
+Cada región tiene sus propias cuotas.
+
+Ejemplo:
+
+```text
+West Europe
+Sweden Central
+Germany West Central
+East US
+```
+
+Cada una mantiene sus propios límites.
+
+
+### ¿Las cuotas son por familia?
+
+Sí.
+
+Cada familia mantiene su propia cuota independiente.
+
+Ejemplo:
+
+```text
+Standard B Family
+Standard D Family
+Standard E Family
+Standard F Family
+```
+
+## Regla de examen
+
+Cuando veas una pregunta sobre despliegue de VMs:
+
+1. Calcula las vCPU actualmente utilizadas.
+2. Añade las vCPU de la nueva VM.
+3. Comprueba la cuota de la familia.
+4. Comprueba la cuota regional.
+5. Si ambas se cumplen, el despliegue es posible.
+
+Si una sola cuota se supera:
+
+```text
+Deployment fails.
 ```
