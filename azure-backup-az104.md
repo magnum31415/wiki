@@ -321,7 +321,28 @@ Restore into Another Subscription
 
 ## 7. Instant Restore ⭐
 
-Azure Backup mantiene snapshots temporales.
+
+![Azure Instant Restore](./img/azure/azure-instant-restore.png)
+
+
+Instant Restore en Azure Backup es una técnica que permite restaurar una VM muy rápidamente utilizando los snapshots locales que Azure crea cuando realiza el backup.
+
+La diferencia clave es:
+| Método          | Desde dónde restaura                            |
+| --------------- | ----------------------------------------------- |
+| Instant Restore | Snapshot almacenado cerca de la VM              |
+| Restore normal  | Datos almacenados en el Recovery Services Vault |
+
+Cuando Azure ejecuta un backup de una VM:
+
+1. Crea un snapshot de los discos.
+2. Ese snapshot se mantiene durante unos días (normalmente 2-5 días según la configuración).
+3. En paralelo, copia los datos al Recovery Services Vault para almacenamiento a largo plazo.
+
+Si necesitas restaurar una VM reciente, Azure puede usar directamente el snapshot sin tener que recuperar los datos del Vault.
+
+
+**Azure Backup mantiene snapshots temporales.**
 
 Si el backup es reciente:
 ````
@@ -357,6 +378,67 @@ Instant Restore
 Fast VM Recovery
 ```
 
+## Ejemplo práctico
+
+Supongamos una VM:
+
+- Nombre: vm-sap-prod
+- Disco OS: 128 GB
+- Disco Data: 1 TB
+
+### Día 1 - 02:00
+
+Azure Backup ejecuta el backup:
+
+````
+VM
+ │
+ ├─ Snapshot local (Instant Restore)
+ │
+ └─ Recovery Services Vault
+````
+### Día 1 - 10:00
+
+Un administrador elimina accidentalmente:
+````
+D:\SAPDATA\clientes.db
+````
+
+### Restauración con Instant Restore
+
+Azure utiliza el snapshot local:
+
+````
+Snapshot
+   │
+   └─ Disco temporal restaurado
+            │
+            └─ Recuperar archivo
+````
+
+Tiempo típico:
+- Minutos.
+
+### Si el backup tiene 20 días
+
+El snapshot ya no existe:
+
+````
+VM
+ │
+ └─ Recovery Services Vault
+````
+
+Azure debe:
+
+1. Leer los datos del Vault.
+2. Recrear discos.
+3. Restaurar la VM.
+
+Tiempo típico:
+
+- Decenas de minutos.
+- Horas en VMs muy grandes.
 
 ---
 # Azure Backup Retention
