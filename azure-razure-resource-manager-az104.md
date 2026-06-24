@@ -28,6 +28,36 @@ Los locks forman parte de **Azure Resource Manager (ARM)**.
 
 Su objetivo principal es proteger recursos críticos frente a errores humanos.
 
+
+## Azure permite asignar un nombre a cada lock cuando lo creas.
+
+Por ejemplo:
+````
+Nombre del lock: Protect-Production
+Tipo: Delete
+````
+o
+````
+Nombre del lock: NoDelete
+Tipo: Delete
+````
+o
+````
+Nombre del lock: Lock
+Tipo: Delete
+````
+
+Todos hacen exactamente lo mismo si el tipo es Delete.
+
+## Azure solo tiene 2 tipos de Resource Locks.
+
+| Lock Type     | Nombre API   | Efecto                      |
+| ------------- | ------------ | --------------------------- |
+| **Delete**    | CanNotDelete | Impide eliminar             |
+| **Read-only** | ReadOnly     | Impide modificar y eliminar |
+
+No existen más tipos de locks en Azure Resource Manager.
+
 ---
 
 ## Tipos de Locks
