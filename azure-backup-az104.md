@@ -24,7 +24,31 @@
 - [Azure Backup Ecosystem - Componentes y Dependencias (AZ-104)](#azure-backup-ecosystem---componentes-y-dependencias-az-104)
 
   
+# Recovery Services Vault
+
+El Recovery Services Vault es el repositorio central donde Azure Backup almacena y gestiona tanto los Recovery Points como los datos necesarios para realizar las restauraciones.
+
+````
+Recovery Services Vault
+│
+├─ Backup Policies
+├─ Protected Items
+├─ Recovery Points
+├─ Backup Jobs
+├─ Restore Jobs
+└─ Backup Data
+      │
+      ├─ VM Disks
+      ├─ Azure Files
+      ├─ SQL Backups
+      └─ SAP HANA Backups
+````
+
+![Azure Recovery Services Vault](./img/azure/azure-recovery-services-vault.png)
+
+---
 # Azure Backup - Teoría importante AZ-104
+
 
 | Concepto                    | Definición                                                                                                                                                                                                                                                                                                                                       | Ejemplo de uso                                                                                                                                                                                                          |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -44,7 +68,17 @@
 
 # Escenarios de recuperación de Azure Backup
 
-Es mucho más rápido que restaurar desde el Recovery Services Vault.
+Realmente **todas las restauraciones parten del Recovery Services Vault**, porque es donde Azure Backup almacena y gestiona los Recovery Points.
+
+Lo que quería decir es:
+
+| Método            | Desde dónde se recupera                                       | Velocidad                                       |
+| ----------------- | ------------------------------------------------------------- | ----------------------------------------------- |
+| **File Recovery** | Monta directamente el Recovery Point como una unidad temporal | ✅ Muy rápido para recuperar unos pocos archivos |
+| **Restore VM**    | Azure reconstruye una VM completa                             | ❌ Más lento                                     |
+| **Restore Disks** | Azure restaura discos completos                               | ❌ Más lento                                     |
+
+
 
 | Escenario                    | Cuándo usarlo                        |
 | ---------------------------- | ------------------------------------ |
@@ -58,7 +92,16 @@ Es mucho más rápido que restaurar desde el Recovery Services Vault.
 
 ## 1. Restore Files (File Recovery)
 
+La ventaja de File Recovery no es que evite el Recovery Services Vault, sino que:
+
+- No restaura una VM completa.
+- No restaura discos completos.
+- No crea recursos nuevos en Azure.
+- Simplemente monta el punto de recuperación y te permite copiar los ficheros que necesitas.
 Recuperar uno o varios archivos individuales.
+
+- ✅ Es mucho más rápido que realizar una restauración completa de la VM o de los discos, ya que Azure monta directamente el Recovery Point y permite copiar únicamente los archivos necesarios.
+- ✅ Es la opción más eficiente cuando solo necesitas recuperar algunos archivos, ya que evita restaurar la VM o los discos completos.
 
 Ejemplo:
 
