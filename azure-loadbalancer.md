@@ -35,25 +35,27 @@
 
 ## 🔷 Comparativa Load Balancing en Azure (Referencia AZ-305)
 
-| Característica | L4 Load Balancer (Standard) | Application Gateway (L7) | Azure Front Door | Traffic Manager | Gateway Load Balancer |
-|----------------|-----------------------------|--------------------------|------------------|-----------------|-----------------------|
-| Capa OSI | L4 (TCP/UDP) | L7 (HTTP/HTTPS) | L7 Global | DNS (no OSI clásico) | L3/L4 |
-| Ámbito | Regional | Regional | Global | Global | Regional |
-| Público / Interno | Ambos | Ambos | Público | Público | Interno |
-| Port forwarding | ✅ | ❌ | ❌ | ❌ | ❌ |
-| HTTPS health probe | ✅ | ✅ | ✅ | ✅ (HTTP/HTTPS) | ❌ |
-| URL-based routing | ❌ | ✅ | ✅ | ❌ | ❌ |
-| Path-based routing | ❌ | ✅ | ✅ | ❌ | ❌ |
-| Host-based routing | ❌ | ✅ | ✅ | ❌ | ❌ |
-| WAF | ❌ | ✅ | ✅ | ❌ | ❌ |
-| SSL termination | ❌ | ✅ | ✅ | ❌ | ❌ |
-| Global failover | ❌ | ❌ | ✅ | ✅ | ❌ |
-| Multi-region routing | ❌ | ❌ | ✅ | ✅ | ❌ |
-| Backend pool | VM / VMSS / AS | VM / VMSS / App Service | Regional endpoints | DNS endpoints | NVAs (firewalls, appliances) |
-| Protección SQL injection | ❌ | ✅ (WAF) | ✅ (WAF) | ❌ | ❌ |
-| Escalado automático | Sí | Sí | Sí | Sí | Sí |
-| CDN / Edge caching | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Backend típico | VM / VMSS | Web Apps / APIs | Multi-región | Endpoints regionales | NVAs |
+| Característica | L4 Load Balancer (Standard) | Internal Load Balancer (ILB) | Application Gateway (L7) | Azure Front Door | Traffic Manager | Gateway Load Balancer |
+|----------------|-----------------------------|------------------------------|--------------------------|------------------|-----------------|-----------------------|
+| Capa OSI | L4 (TCP/UDP) | L4 (TCP/UDP) | L7 (HTTP/HTTPS) | L7 Global | DNS (no OSI clásico) | L3/L4 |
+| Ámbito | Regional | Regional | Regional | Global | Global | Regional |
+| Público / Interno | Ambos | Interno | Ambos | Público | Público | Interno |
+| Port forwarding | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| HTTPS health probe | ✅ | ❌ (TCP/HTTP) | ✅ | ✅ | ✅ (HTTP/HTTPS) | ❌ |
+| URL-based routing | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| Path-based routing | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| Host-based routing | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| WAF | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| SSL termination | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| Global failover | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| Multi-region routing | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| Backend pool | VM / VMSS / AS | VM / VMSS / AS | VM / VMSS / App Service | Regional endpoints | DNS endpoints | NVAs (firewalls, appliances) |
+| Protección SQL injection | ❌ | ❌ | ✅ (WAF) | ✅ (WAF) | ❌ | ❌ |
+| Escalado automático | Sí | Sí | Sí | Sí | Sí | Sí |
+| CDN / Edge caching | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Backend típico | VM / VMSS | Aplicaciones privadas, AD, SQL, APIs internas | Web Apps / APIs | Multi-región | Endpoints regionales | NVAs |
+| Accesible desde Internet | ✅ (si tiene Frontend público) | ❌ | ✅ (si tiene Frontend público) | ✅ | ✅ | ❌ |
+| IP Frontend | Pública o privada | Solo privada | Pública o privada | Pública global | DNS | Transparente |
 
 ---
 
