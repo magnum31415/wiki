@@ -2734,6 +2734,19 @@ Attribute Assignment Administrator can assign custom security attributes.
 | **Security** | Seguridad y permisos | ✅ Sí | ✅ Sí | ❌ No | ❌ No |
 | **Microsoft 365** | Colaboración | ❌ No | ✅ Sí | ✅ Sí | ✅ Sí |
 
+
+| Característica        | Security Group            | Microsoft 365 Group      |
+| --------------------- | ------------------------- | ------------------------ |
+| Permisos Azure (RBAC) | ✅                         | ⚠️ No es el uso habitual |
+| Licencias             | ✅                         | ✅                        |
+| Outlook Mailbox       | ❌                         | ✅                        |
+| SharePoint Site       | ❌                         | ✅                        |
+| Teams                 | ❌                         | ✅                        |
+| Planner               | ❌                         | ✅                        |
+| Nested Groups         | ✅                         | ❌                        |
+| Microsoft Entra Roles | ❌ (salvo Role-Assignable) | ❌                        |
+
+
 ---
 
 ## Security Group
@@ -2882,3 +2895,28 @@ Security Group = Permisos
 
 Microsoft 365 Group = Colaboración
 ```
+---
+
+# Role-Assignable Group
+
+**Role-Assignable Group no es un tipo de grupo distinto** como "Security" o "Microsoft 365".
+
+Es un Security Group especial con IsAssignableToRole = True
+
+Es una propiedad especial de un Security Group.
+
+Visualmente:
+````
+Security Group
+├── Normal Security Group
+└── Role-Assignable Security Group
+````
+Por tanto, tu tabla quedaría mejor así:
+| Tipo                             | Uso principal               | Azure RBAC  | Licencias | Teams/Outlook | Grupos anidados | Puede recibir Entra Roles |
+| -------------------------------- | --------------------------- | ----------- | --------- | ------------- | --------------- | ------------------------- |
+| Security Group                   | Permisos y seguridad        | ✅           | ✅         | ❌             | ✅               | ❌                         |
+| Security Group (Role-Assignable) | Administración privilegiada | ✅           | ✅         | ❌             | ✅               | ✅                         |
+| Microsoft 365 Group              | Colaboración                | ⚠️ Limitado | ✅         | ✅             | ❌               | ❌                         |
+| Mail-enabled Security Group      | Seguridad + correo          | ❌           | ❌         | Correo        | ❌               | ❌                         |
+| Distribution List                | Distribución de correo      | ❌           | ❌         | Correo        | ❌               | ❌                         |
+
