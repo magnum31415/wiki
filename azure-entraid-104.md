@@ -19,6 +19,7 @@
 - [Microsoft Fabric Licensing y Group-Based Licensing](#microsoft-fabric-licensing-y-group-based-licensing)
 - [Self-Service Password Reset (SSPR) en Microsoft Entra ID](#self-service-password-reset-sspr-en-microsoft-entra-id)
 - [Microsoft Entra Custom Security Attributes (AZ-104)](#microsoft-entra-custom-security-attributes-az-104)
+- [Microsoft Entra ID Groups (AZ-104)](#microsoft-entra-id-groups-az-104)
 
 ---
 
@@ -2721,4 +2722,163 @@ Groups are not supported assignment targets.
 
 ```text
 Attribute Assignment Administrator can assign custom security attributes.
+```
+---
+
+# Microsoft Entra ID Groups (AZ-104)
+
+## Tipos principales de grupos
+
+| Tipo de grupo | Uso principal | Puede asignarse RBAC | Puede asignarse licencias | Correo/Outlook | Teams |
+|---------------|--------------|----------------------|---------------------------|----------------|--------|
+| **Security** | Seguridad y permisos | ✅ Sí | ✅ Sí | ❌ No | ❌ No |
+| **Microsoft 365** | Colaboración | ❌ No | ✅ Sí | ✅ Sí | ✅ Sí |
+
+---
+
+## Security Group
+
+Se utiliza para:
+
+- Azure RBAC
+- Asignar permisos
+- Asignar licencias
+- Dynamic Membership
+
+Ejemplos:
+
+- Contributor
+- Reader
+- Storage Blob Data Contributor
+- Virtual Machine Administrator Login
+
+Ejemplo:
+
+```text
+DBAdmins (Security Group)
+
+Members:
+- User1
+- User2
+- User3
+```
+
+RBAC:
+
+```text
+DBAdmins
+└── Contributor
+```
+
+Todos los miembros reciben el permiso Contributor.
+
+---
+
+## Microsoft 365 Group
+
+Se utiliza para colaboración.
+
+Al crear un Microsoft 365 Group se crean automáticamente recursos asociados:
+
+- Outlook Mailbox
+- Calendario
+- SharePoint Site
+- Teams (si se habilita)
+- Planner
+
+Ejemplo:
+
+```text
+Marketing Team
+```
+
+Recursos generados:
+
+```text
+Marketing Team
+├── Outlook
+├── Calendar
+├── SharePoint
+├── Teams
+└── Planner
+```
+
+---
+
+## Comparación rápida
+
+| Característica | Security | Microsoft 365 |
+|---------------|----------|---------------|
+| Azure RBAC | ✅ | ❌ |
+| Group-Based Licensing | ✅ | ✅ |
+| Dynamic Membership | ✅ | ✅ |
+| Email compartido | ❌ | ✅ |
+| SharePoint | ❌ | ✅ |
+| Teams | ❌ | ✅ |
+| Uso para permisos Azure | ✅ | ❌ |
+
+---
+
+## Otros tipos de grupos
+
+| Tipo | Descripción |
+|--------|-------------|
+| Security | Seguridad y permisos |
+| Microsoft 365 | Colaboración |
+| Mail-enabled Security | Security Group con correo electrónico |
+| Distribution List | Distribución de correo (Exchange) |
+| Dynamic Security | Security Group con reglas dinámicas |
+| Dynamic Microsoft 365 | Microsoft 365 Group con reglas dinámicas |
+
+---
+
+## Preguntas típicas del AZ-104
+
+### Si la pregunta habla de:
+
+- Azure RBAC
+- Contributor
+- Reader
+- Storage Blob Data Contributor
+- Permisos sobre recursos Azure
+
+Respuesta habitual:
+
+```text
+Security Group
+```
+
+### Si la pregunta habla de:
+
+- Teams
+- Outlook
+- SharePoint
+- Planner
+- Colaboración
+
+Respuesta habitual:
+
+```text
+Microsoft 365 Group
+```
+
+---
+
+## Regla rápida para el examen
+
+| Necesidad | Tipo recomendado |
+|------------|------------------|
+| Asignar permisos Azure | Security |
+| Asignar licencias | Security o Microsoft 365 |
+| Crear un Team de Teams | Microsoft 365 |
+| Compartir buzón y calendario | Microsoft 365 |
+| Azure RBAC | Security |
+| Dynamic Membership | Ambos |
+
+### Mnemotecnia
+
+```text
+Security Group = Permisos
+
+Microsoft 365 Group = Colaboración
 ```
