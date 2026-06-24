@@ -86,7 +86,9 @@ La ventaja de File Recovery no es que evite el Recovery Services Vault, sino que
 - Simplemente monta el punto de recuperación y te permite copiar los ficheros que necesitas.
 Recuperar uno o varios archivos individuales.
 
+
 - ✅ Es mucho más rápido que realizar una restauración completa de la VM o de los discos, ya que Azure monta directamente el Recovery Point y permite copiar únicamente los archivos necesarios.
+  
 - ✅ Es la opción más eficiente cuando solo necesitas recuperar algunos archivos, ya que evita restaurar la VM o los discos completos.
 
 Ejemplo:
