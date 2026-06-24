@@ -210,6 +210,98 @@ La mayoría de empresas utilizan **ambos sistemas conectados**.
 | **Microsoft Entra ID P2** | ~ $9 user/month | Advanced security and identity protection | All P1 features plus Identity Protection, Risk-based Conditional Access, Privileged Identity Management (PIM), Access reviews |
 | **Microsoft Entra Suite** | ~ $12 user/month (varies) | Unified identity, access and security | Includes Entra ID P2 plus Identity Governance, Verified ID, Internet Access and Private Access (Zero Trust access solutions) |
 
+
+## Microsoft Entra Suite 
+Microsoft Entra Suite  es un paquete de licencias que incluye productos como:
+
+- Microsoft Entra ID P2
+- Microsoft Entra Internet Access
+- Microsoft Entra Private Access
+- Microsoft Entra ID Governance
+- Microsoft Entra Verified ID (capacidades asociadas)
+
+Aunque sea una suite, se comporta como una licencia asignable:
+
+- ✅ Puede asignarse directamente a usuarios.
+- ✅ Puede asignarse mediante grupos (Group-Based Licensing).
+
+
+La forma más sencilla de verlo es que **Microsoft Entra ID P2 es una licencia individual**, mientras que **Microsoft Entra Suite es un paquete que incluye P2 y otros productos adicionales**.
+
+| Funcionalidad                        | Microsoft Entra ID P2 | Microsoft Entra Suite |
+| ------------------------------------ | :-------------------: | :-------------------: |
+| Conditional Access                   |           ✅           |           ✅           |
+| Identity Protection                  |           ✅           |           ✅           |
+| Privileged Identity Management (PIM) |           ✅           |           ✅           |
+| Access Reviews                       |           ✅           |           ✅           |
+| Entitlement Management               |           ✅           |           ✅           |
+| Identity Governance                  |           ❌*          |           ✅           |
+| Internet Access (SSE)                |           ❌           |           ✅           |
+| Private Access (ZTNA)                |           ❌           |           ✅           |
+| Verified ID                          |           ❌           |           ✅           |
+| Password Protection                  |           ✅           |           ✅           |
+| Group-Based Licensing                |           ✅           |           ✅           |
+
+* Algunas funcionalidades básicas de gobierno ya están disponibles con P2, pero **Microsoft Entra Suite incluye Microsoft Entra ID Governance completo**.
+
+### Qué incluye cada una
+
+#### Microsoft Entra ID P2
+
+Está orientada a la **protección y administración de identidades**:
+
+- Conditional Access
+- Identity Protection
+- Privileged Identity Management (PIM)
+- Access Reviews
+- Entitlement Management
+- Group-Based Licensing
+
+Uso típico: ``"Quiero MFA, acceso condicional, PIM y proteger identidades."``
+
+#### Microsoft Entra Suite
+
+Incluye todo lo anterior **más una arquitectura Zero Trust más completa**:
+
+- Microsoft Entra ID P2
+- Microsoft Entra ID Governance
+- Microsoft Entra Internet Access
+- Microsoft Entra Private Access
+- Microsoft Entra Verified ID
+
+Uso típico: ``"Quiero reemplazar VPNs tradicionales, controlar acceso a Internet SaaS y aplicar Zero Trust de extremo a extremo."``
+
+
+# Asignar Licencia a usuarios y Grupos 
+Si una licencia aparece en Microsoft Entra ID → Licenses → All products, normalmente:
+
+- ✅ Puede asignarse directamente a usuarios.
+- ✅ Puede asignarse a grupos mediante Group-Based Licensing.
+
+Si es un servicio ligado a recursos de Azure:
+
+- ❌ No se asigna a usuarios.
+- ❌ No se asigna a grupos.
+
+| Servicio / Licencia                         | ¿Se asigna a usuarios? | ¿Se puede asignar a grupos? |
+| ------------------------------------------- | :--------------------: | :-------------------------: |
+| Microsoft Entra ID P1                       |            ✅           |              ✅              |
+| Microsoft Entra ID P2                       |            ✅           |              ✅              |
+| Microsoft Entra Suite                       |            ✅           |              ✅              |
+| Microsoft 365 E5                            |            ✅           |              ✅              |
+| Microsoft Intune                            |            ✅           |              ✅              |
+| Microsoft Defender for Endpoint P2          |            ✅           |              ✅              |
+| Microsoft Defender for Cloud Apps           |            ✅           |              ✅              |
+| Microsoft Defender for Cloud Apps Discovery |            ❌           |              ❌              |
+| Microsoft Defender for Cloud (Servers)      |            ❌           |              ❌              |
+| Azure Backup                                |            ❌           |              ❌              |
+| Azure Key Vault                             |            ❌           |              ❌              |
+| Azure Firewall                              |            ❌           |              ❌              |
+
+
+La excepción que suele aparecer en los exámenes es precisamente **Microsoft Defender for Cloud Apps Discovery**, porque muchos candidatos piensan que es una licencia asignable cuando en realidad es una funcionalidad de descubrimiento dentro de Defender for Cloud Apps.
+
+
 ---
 
 ## Feature Comparison
