@@ -28,21 +28,7 @@
 
 El Recovery Services Vault es el repositorio central donde Azure Backup almacena y gestiona tanto los Recovery Points como los datos necesarios para realizar las restauraciones.
 
-````
-Recovery Services Vault
-│
-├─ Backup Policies
-├─ Protected Items
-├─ Recovery Points
-├─ Backup Jobs
-├─ Restore Jobs
-└─ Backup Data
-      │
-      ├─ VM Disks
-      ├─ Azure Files
-      ├─ SQL Backups
-      └─ SAP HANA Backups
-````
+**Recovery Services Vault almacena tanto los metadatos como los datos de backup**
 
 ![Azure Recovery Services Vault](./img/azure/azure-recovery-services-vault.png)
 
