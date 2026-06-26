@@ -8,6 +8,7 @@
 - [Typical (but not minimal) policy example](#typical-but-not-minimal-policy-example)
 - [Summary](#summary)
 - [Azure Service Endpoint Policy (AZ-104)](#azure-service-endpoint-policy-az-104)
+- [Azure Policy Effects](#azure-policy-effects)
 ---
 
 ## Minimum Azure Policy JSON
@@ -399,4 +400,45 @@ Service Endpoint Policies are regional resources.
 ```text
 The policy region must match the VNet/subnet region.
 ```
+
+---
+# Azure Policy Effects
+
+Azure Policy tiene más efectos de los que normalmente se ven. Para el AZ-104 y para una Azure Landing Zone, estos son los importantes:
+
+| Effect                       | ¿Bloquea? |       ¿Modifica?      | ¿Despliega? | ¿Audita? | Uso típico                                                     |
+| ---------------------------- | :-------: | :-------------------: | :---------: | :------: | -------------------------------------------------------------- |
+| **Deny**                     |     ✅     |           ❌           |      ❌      |     ❌    | Impedir crear recursos no conformes.                           |
+| **Audit**                    |     ❌     |           ❌           |      ❌      |     ✅    | Marcar recursos como Non-Compliant.                            |
+| **AuditIfNotExists**         |     ❌     |           ❌           |      ❌      |     ✅    | Auditar que exista un recurso o configuración relacionada.     |
+| **DeployIfNotExists (DINE)** |     ❌     |           ❌           |      ✅      |     ✅    | Desplegar automáticamente un recurso o configuración si falta. |
+| **Modify**                   |     ❌     |           ✅           |      ❌      |     ✅    | Modificar propiedades del recurso durante el despliegue.       |
+| **Append**                   |     ❌     | ✅ (añade propiedades) |      ❌      |     ✅    | Añadir automáticamente propiedades al recurso.                 |
+| **Disabled**                 |     ❌     |           ❌           |      ❌      |     ❌    | Desactivar temporalmente la política.                          |
+
+## Ejemplo de  AuditIfNotExists
+
+upongamos una política: ``"Las máquinas virtuales deben estar protegidas por Azure Backup."``
+
+La evaluación sería:
+
+````
+Virtual Machine
+        │
+        ▼
+¿Existe una asociación con un Recovery Services Vault?
+        │
+   ┌────┴────┐
+   │         │
+  Sí         No
+   │         │
+   ▼         ▼
+Compliant  Non-Compliant
+````
+
+La VM sigue funcionando perfectamente.
+
+La política únicamente informa de que no existe una protección de backup.
+
+![azure-AuditIfNotExists](./img/azure/azure-AuditIfNotExists.png)
 
