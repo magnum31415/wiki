@@ -1,0 +1,410 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+# Azure Bastion (AZ-104)
+
+
+![VNET BASTION](./img/azure/azure-bastion.png)
+
+## ¿Qué es Azure Bastion?
+
+Azure Bastion es un servicio PaaS que permite conectarse de forma segura a máquinas virtuales de Azure mediante:
+
+- RDP (Windows)
+- SSH (Linux)
+
+sin necesidad de exponer las máquinas virtuales a Internet mediante una Public IP.
+
+El acceso se realiza desde:
+
+- Azure Portal
+- Azure CLI
+- Azure PowerShell
+- Cliente nativo (según SKU)
+
+---
+
+# Arquitectura
+
+```text
+                Internet
+                     │
+              Azure Portal
+                     │
+              HTTPS (443)
+                     │
+          Azure Bastion Host
+                     │
+             AzureBastionSubnet
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+       VM Windows           VM Linux
+        RDP (3389)          SSH (22)
+```
+
+Las máquinas virtuales únicamente necesitan dirección IP privada.
+
+---
+
+# Azure Bastion Host
+
+El Azure Bastion Host es el recurso que se despliega dentro de una Virtual Network.
+
+Es el componente que proporciona el servicio Bastion.
+
+---
+
+# Requisitos para desplegar Azure Bastion
+
+## Virtual Network
+
+Debe existir una VNet.
+
+---
+
+## AzureBastionSubnet
+
+Debe existir una subnet llamada exactamente:
+
+```
+AzureBastionSubnet
+```
+
+El nombre es obligatorio.
+
+---
+
+## Tamaño mínimo de la subnet
+
+Actualmente:
+
+```
+/26
+```
+
+o mayor.
+
+Ejemplos válidos:
+
+- /26
+- /25
+- /24
+
+Ejemplos no válidos:
+
+- /27
+- /28
+- /29
+
+---
+
+## Public IP requerida
+
+Debe cumplir todos estos requisitos:
+
+| Propiedad | Requisito |
+|-----------|-----------|
+| IP Version | IPv4 |
+| SKU | Standard |
+| Assignment | Static |
+| Tier | Regional |
+
+No admite:
+
+- IPv6
+- Basic SKU
+- Dynamic Assignment
+- Global Tier
+
+---
+
+# Conectividad
+
+Azure Bastion puede conectarse a:
+
+- Máquinas virtuales de la misma VNet.
+- Máquinas virtuales de VNets directamente peered.
+
+No puede conectarse mediante peering transitivo.
+
+Ejemplo:
+
+```
+VNet1 ---- VNet2 ---- VNet3
+
+Bastion en VNet1
+
+Puede acceder:
+
+✔ VNet1
+✔ VNet2
+✘ VNet3
+```
+
+---
+
+# Peering
+
+Compatible con:
+
+- VNet Peering
+- Global VNet Peering
+
+Siempre que exista peering directo.
+
+---
+
+# ¿Necesita Public IP la máquina virtual?
+
+No.
+
+Una VM protegida mediante Bastion normalmente tiene:
+
+- Private IP
+- Sin Public IP
+
+---
+
+# Puertos utilizados
+
+Entre el administrador y Bastion:
+
+```
+HTTPS 443
+```
+
+Entre Bastion y las máquinas virtuales:
+
+Windows
+
+```
+3389 (RDP)
+```
+
+Linux
+
+```
+22 (SSH)
+```
+
+Estos puertos permanecen privados dentro de la VNet.
+
+---
+
+# Beneficios
+
+- No requiere Public IP en las VMs.
+- No expone RDP a Internet.
+- No expone SSH a Internet.
+- Servicio administrado (PaaS).
+- Acceso seguro desde Azure Portal.
+
+---
+
+# SKUs
+
+## Basic
+
+Características principales:
+
+- RDP
+- SSH
+- Acceso mediante Azure Portal
+
+---
+
+## Standard
+
+Además de Basic:
+
+- Native Client Support
+- File Transfer
+- IP Connect
+- Shareable Links
+- Kerberos
+- Session Recording (según disponibilidad)
+- Funcionalidades adicionales de administración
+
+---
+
+# Casos de uso
+
+## Windows
+
+```
+Administrador
+      │
+HTTPS
+      │
+Azure Bastion
+      │
+RDP
+      │
+Windows VM
+```
+
+---
+
+## Linux
+
+```
+Administrador
+      │
+HTTPS
+      │
+Azure Bastion
+      │
+SSH
+      │
+Linux VM
+```
+
+---
+
+# Bastion y Network Security Groups
+
+El NSG no debe bloquear el tráfico necesario para Bastion.
+
+---
+
+# Bastion y Route Tables
+
+Azure Bastion funciona independientemente de las Route Tables siempre que exista conectividad entre Bastion y las máquinas virtuales.
+
+---
+
+# Bastion y VPN Gateway
+
+Azure Bastion no sustituye a un VPN Gateway.
+
+Funciones distintas:
+
+Azure Bastion
+
+- Administración segura de VMs.
+
+VPN Gateway
+
+- Conectividad entre Azure y redes on-premises.
+
+---
+
+# Bastion y ExpressRoute
+
+Son servicios independientes.
+
+ExpressRoute proporciona conectividad privada.
+
+Azure Bastion proporciona acceso administrativo seguro.
+
+---
+
+# Bastion y Gateway Transit
+
+No dependen uno del otro.
+
+Gateway Transit únicamente sirve para compartir un VPN Gateway o ExpressRoute Gateway entre VNets.
+
+No afecta a las conexiones Bastion.
+
+---
+
+# Restricciones importantes
+
+- Solo IPv4.
+- Solo Public IP Standard.
+- Solo Public IP Static.
+- Solo Public IP Regional.
+- La subnet debe llamarse AzureBastionSubnet.
+- La subnet debe ser /26 o mayor.
+- Un Bastion pertenece a una única VNet.
+- Puede administrar VNets directamente peered.
+- No soporta peering transitivo.
+
+---
+
+# Recursos relacionados
+
+| Recurso | Obligatorio |
+|----------|-------------|
+| Virtual Network | Sí |
+| AzureBastionSubnet | Sí |
+| Azure Bastion Host | Sí |
+| Public IP Standard | Sí |
+
+---
+
+# Preguntas típicas del AZ-104
+
+## ¿Puede una VM tener únicamente Private IP?
+
+Sí.
+
+---
+
+## ¿Necesita la VM una Public IP?
+
+No.
+
+---
+
+## ¿Puede Bastion administrar una VM en una VNet peered?
+
+Sí.
+
+---
+
+## ¿Puede administrar una VM mediante peering transitivo?
+
+No.
+
+---
+
+## ¿Puede utilizar una Public IP Basic?
+
+No.
+
+---
+
+## ¿Puede utilizar una Public IP Dynamic?
+
+No.
+
+---
+
+## ¿Puede utilizar una Public IP IPv6?
+
+No.
+
+---
+
+## ¿Puede utilizar una Public IP Global Tier?
+
+No.
+
+---
+
+## ¿Puede utilizar una Public IP Regional Tier?
+
+Sí.
+
+---
+
+# Resumen para memorizar
+
+| Característica | Valor |
+|----------------|-------|
+| Servicio | PaaS |
+| Acceso | RDP y SSH |
+| Public IP en VM | No |
+| Public IP Bastion | Standard + Static + Regional + IPv4 |
+| Subnet | AzureBastionSubnet |
+| Tamaño mínimo subnet | /26 |
+| Peering directo | Sí |
+| Peering transitivo | No |
+| Compatible con Global VNet Peering | Sí |
+| VPN Gateway requerido | No |
+| Gateway Transit requerido | No |
+| Puerto Portal → Bastion | HTTPS 443 |
+| Puerto Bastion → Windows | RDP 3389 |
+| Puerto Bastion → Linux | SSH 22 |
