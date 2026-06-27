@@ -418,18 +418,16 @@ Sí.
 
 # Azure Bastion Basic vs Standard (AZ-104)
 
-## Escenario de la pregunta
+## Establecer una conexión **RDP desde Device1 hacia VM1** utilizando Azure Bastion.
 
 Tenemos:
 
 ```text
                  Device1
           (Windows 11 + Azure CLI)
-
                      │
                Internet (HTTPS)
                      │
-
           Bastion1 (Basic SKU)
                      │
             AzureBastionSubnet
@@ -442,70 +440,33 @@ Tenemos:
 
 VM1 **no tiene Public IP**, por lo que **no es posible conectarse directamente mediante RDP desde Internet**.
 
----
+**Solución correcta**
 
-# ¿Qué pide la pregunta?
-
-Establecer una conexión **RDP desde Device1 hacia VM1** utilizando Azure Bastion.
-
----
-
-# Solución correcta
-
-## Paso 1
-
-Actualizar Azure Bastion al SKU Standard.
-
-```
-Upgrade Bastion1 to the Standard SKU
-```
-
-¿Por qué?
-
-Porque **Azure Bastion Basic NO soporta Native Client Support**.
-
----
-
-## Paso 2
-
-Habilitar:
-
-```
-Native Client Support
-```
-
-Esta característica solo está disponible en **Azure Bastion Standard**.
-
----
-
-## Paso 3
-
-Desde Azure CLI ejecutar:
-
+1. **Paso 1:** Actualizar Azure Bastion al SKU Standard
+   Porque **Azure Bastion Basic NO soporta Native Client Support**.
+2. **Paso 2:**  Native Client Support
+   Esta característica solo está disponible en **Azure Bastion Standard**.
+3. **Paso 3:** Desde Azure CLI ejecutar:
 ```bash
+# Este comando:
+# - Crea el túnel seguro.
+# - Inicia automáticamente el cliente RDP.
+# - No requiere abrir manualmente `mstsc.exe`.
+
 az network bastion rdp \
     --name Bastion1 \
     --resource-group RG \
     --target-resource-id VM1
 ```
 
-Este comando:
 
-- Crea el túnel seguro.
-- Inicia automáticamente el cliente RDP.
-- No requiere abrir manualmente `mstsc.exe`.
-
----
-
-# ¿Por qué NO mstsc.exe?
+## ¿Por qué NO mstsc.exe?
 
 Muchas personas piensan:
 
 ```
 Azure CLI
-
 ↓
-
 mstsc.exe
 ```
 
@@ -513,17 +474,11 @@ Pero realmente ocurre esto:
 
 ```
 Azure CLI
-
 ↓
-
 az network bastion rdp
-
 ↓
-
 Azure Bastion
-
 ↓
-
 mstsc.exe (automáticamente)
 ```
 
@@ -541,46 +496,34 @@ No es necesario ejecutar:
 mstsc.exe
 ```
 
----
+## ¿Por qué no Kerberos?
 
-# ¿Por qué no Kerberos?
+- Kerberos únicamente proporciona autenticación integrada.
+- No es necesario para establecer una conexión mediante Azure Bastion.
 
-Kerberos únicamente proporciona autenticación integrada.
 
-No es necesario para establecer una conexión mediante Azure Bastion.
+## ¿Por qué no Just-In-Time (JIT)?
 
----
+- JIT pertenece a Microsoft Defender for Cloud.
+- Sirve para abrir temporalmente RDP o SSH desde Internet.
+- Azure Bastion nunca expone RDP directamente a Internet, por lo que JIT no interviene.
 
-# ¿Por qué no Just-In-Time (JIT)?
-
-JIT pertenece a Microsoft Defender for Cloud.
-
-Sirve para abrir temporalmente RDP o SSH desde Internet.
-
-Azure Bastion nunca expone RDP directamente a Internet, por lo que JIT no interviene.
-
----
 
 # Flujo completo
 
 ```text
-               Device1
-
+           Device1
           Azure CLI
                │
                ▼
-
     az network bastion rdp
                │
                ▼
-
       Bastion Standard
- (Native Client Support)
-
+     (Native Client Support)
                │
                ▼
-
-      VM1 (Private IP)
+        VM1 (Private IP)
 ```
 
 ---
