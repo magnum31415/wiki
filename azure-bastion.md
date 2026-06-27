@@ -416,7 +416,7 @@ Sí.
 
 ---
 
-# # Azure Bastion Basic vs Standard (AZ-104)
+# Azure Bastion Basic vs Standard (AZ-104)
 
 ## Escenario de la pregunta
 
