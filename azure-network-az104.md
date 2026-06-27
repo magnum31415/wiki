@@ -8,7 +8,7 @@
 
 # Azure Virtual Network Peering (AZ-104)
 
-![VNET PEERING](./img/azure/img/azure/azure-vnet-peering-2.png)
+![VNET PEERING](./img/azure/img/azure-vnet-peering-2.png)
 
 # Qué es VNet Peering
 
