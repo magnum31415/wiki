@@ -1,5 +1,10 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+- [Azure Bastion (AZ-104)](#azure-bastion-az-104)
+- [Azure Bastion Basic vs Standard (AZ-104)](#azure-bastion-basic-vs-standard-az-104)
+
+---
+
 # Azure Bastion (AZ-104)
 
 
@@ -408,3 +413,293 @@ Sí.
 | Puerto Portal → Bastion | HTTPS 443 |
 | Puerto Bastion → Windows | RDP 3389 |
 | Puerto Bastion → Linux | SSH 22 |
+
+---
+
+# # Azure Bastion Basic vs Standard (AZ-104)
+
+## Escenario de la pregunta
+
+Tenemos:
+
+```text
+                 Device1
+          (Windows 11 + Azure CLI)
+
+                     │
+               Internet (HTTPS)
+                     │
+
+          Bastion1 (Basic SKU)
+                     │
+            AzureBastionSubnet
+                     │
+                  VNET1
+                     │
+        VM1 (Windows Server 2022)
+            Private IP únicamente
+```
+
+VM1 **no tiene Public IP**, por lo que **no es posible conectarse directamente mediante RDP desde Internet**.
+
+---
+
+# ¿Qué pide la pregunta?
+
+Establecer una conexión **RDP desde Device1 hacia VM1** utilizando Azure Bastion.
+
+---
+
+# Solución correcta
+
+## Paso 1
+
+Actualizar Azure Bastion al SKU Standard.
+
+```
+Upgrade Bastion1 to the Standard SKU
+```
+
+¿Por qué?
+
+Porque **Azure Bastion Basic NO soporta Native Client Support**.
+
+---
+
+## Paso 2
+
+Habilitar:
+
+```
+Native Client Support
+```
+
+Esta característica solo está disponible en **Azure Bastion Standard**.
+
+---
+
+## Paso 3
+
+Desde Azure CLI ejecutar:
+
+```bash
+az network bastion rdp \
+    --name Bastion1 \
+    --resource-group RG \
+    --target-resource-id VM1
+```
+
+Este comando:
+
+- Crea el túnel seguro.
+- Inicia automáticamente el cliente RDP.
+- No requiere abrir manualmente `mstsc.exe`.
+
+---
+
+# ¿Por qué NO mstsc.exe?
+
+Muchas personas piensan:
+
+```
+Azure CLI
+
+↓
+
+mstsc.exe
+```
+
+Pero realmente ocurre esto:
+
+```
+Azure CLI
+
+↓
+
+az network bastion rdp
+
+↓
+
+Azure Bastion
+
+↓
+
+mstsc.exe (automáticamente)
+```
+
+El comando:
+
+```bash
+az network bastion rdp
+```
+
+ya lanza automáticamente el cliente RDP.
+
+No es necesario ejecutar:
+
+```text
+mstsc.exe
+```
+
+---
+
+# ¿Por qué no Kerberos?
+
+Kerberos únicamente proporciona autenticación integrada.
+
+No es necesario para establecer una conexión mediante Azure Bastion.
+
+---
+
+# ¿Por qué no Just-In-Time (JIT)?
+
+JIT pertenece a Microsoft Defender for Cloud.
+
+Sirve para abrir temporalmente RDP o SSH desde Internet.
+
+Azure Bastion nunca expone RDP directamente a Internet, por lo que JIT no interviene.
+
+---
+
+# Flujo completo
+
+```text
+               Device1
+
+          Azure CLI
+               │
+               ▼
+
+    az network bastion rdp
+               │
+               ▼
+
+      Bastion Standard
+ (Native Client Support)
+
+               │
+               ▼
+
+      VM1 (Private IP)
+```
+
+---
+
+# Azure Bastion Basic
+
+Permite:
+
+- Acceso mediante Azure Portal.
+- RDP.
+- SSH.
+
+No permite:
+
+- Native Client Support.
+- Azure CLI.
+- Azure PowerShell.
+- File Transfer.
+- IP Connect.
+- Shareable Links.
+
+---
+
+# Azure Bastion Standard
+
+Incluye todas las características de Basic y además:
+
+- Native Client Support.
+- Azure CLI.
+- Azure PowerShell.
+- `az network bastion rdp`
+- `az network bastion ssh`
+- File Transfer.
+- IP Connect.
+- Shareable Links.
+- Kerberos.
+- Funcionalidades avanzadas de administración.
+
+---
+
+# Comparativa Basic vs Standard
+
+| Característica | Basic | Standard |
+|----------------|:-----:|:--------:|
+| Azure Portal | ✅ | ✅ |
+| RDP | ✅ | ✅ |
+| SSH | ✅ | ✅ |
+| Native Client Support | ❌ | ✅ |
+| Azure CLI (`az network bastion rdp`) | ❌ | ✅ |
+| Azure PowerShell | ❌ | ✅ |
+| Cliente RDP nativo (`mstsc.exe`) | ❌ | ✅ |
+| Cliente SSH nativo | ❌ | ✅ |
+| File Transfer | ❌ | ✅ |
+| Shareable Links | ❌ | ✅ |
+| IP Connect | ❌ | ✅ |
+| Kerberos | ❌ | ✅ |
+
+---
+
+# Regla para el examen AZ-104
+
+Si la pregunta contiene alguna de estas palabras:
+
+- Azure CLI
+- Azure PowerShell
+- Cliente RDP nativo
+- Cliente SSH nativo
+- `az network bastion rdp`
+- `az network bastion ssh`
+
+➡️ La respuesta casi siempre será:
+
+```
+Azure Bastion Standard
++
+Native Client Support
+```
+
+Si únicamente habla de conectarse desde el Azure Portal:
+
+```
+Azure Bastion Basic
+```
+
+es suficiente.
+
+---
+
+# Resumen para memorizar
+
+```text
+                   Azure Bastion
+
+              BASIC
+                 │
+     ┌───────────┴───────────┐
+     │                       │
+ Azure Portal           RDP / SSH
+
+                 ❌ Native Client
+                 ❌ Azure CLI
+                 ❌ Azure PowerShell
+                 ❌ File Transfer
+                 ❌ Shareable Links
+
+
+              STANDARD
+                 │
+     ┌───────────┴───────────┐
+     │                       │
+ Todo lo de Basic      Funciones avanzadas
+
+                 ✅ Native Client
+                 ✅ Azure CLI
+                 ✅ Azure PowerShell
+                 ✅ az network bastion rdp
+                 ✅ az network bastion ssh
+                 ✅ File Transfer
+                 ✅ IP Connect
+                 ✅ Shareable Links
+                 ✅ Kerberos
+```
