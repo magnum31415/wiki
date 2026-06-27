@@ -7,6 +7,141 @@
 
 
 ---
+# Capacidades de Azure Private DNS
+
+Azure Private DNS proporciona **tres capacidades principales**.
+
+---
+
+## 1. Automatic Registration
+
+Permite registrar automáticamente las máquinas virtuales de una **Registration Virtual Network**.
+
+Cuando una VM pertenece a una VNet enlazada mediante un **Virtual Network Link** con **Enable auto registration = Yes**:
+
+- ✅ Azure crea automáticamente un registro **A**.
+- ✅ Si cambia la **Private IP**, actualiza el registro.
+- ✅ Si se elimina la VM, elimina automáticamente el registro DNS.
+
+```text
+Private DNS Zone
+       │
+Virtual Network Link
+(Auto-registration = Yes)
+       │
+      VNet
+       │
+      VM
+       │
+       ▼
+Registro A automático
+```
+
+Ejemplo:
+
+```text
+VM1
+Private IP: 10.0.0.5
+
+↓
+
+vm1.contoso.local → 10.0.0.5
+```
+
+---
+
+## 2. Forward DNS Resolution
+
+Todas las **Virtual Networks enlazadas** a la misma **Private DNS Zone** pueden resolver los registros DNS de dicha zona.
+
+**No es necesario que las VNets estén emparejadas (VNet Peering).**
+
+```text
+        Private DNS Zone
+          contoso.local
+
+          /           \
+         /             \
+     Linked          Linked
+      VNet1           VNet2
+
+VM1 puede resolver VM2
+VM2 puede resolver VM1
+```
+
+### Importante
+
+- ✅ Es necesario un **Virtual Network Link**.
+- ❌ No es necesario **VNet Peering** para la resolución DNS.
+- ⚠️ Si además quieres que exista comunicación IP (RDP, SSH, HTTP, etc.), sí necesitarás VNet Peering, VPN, ExpressRoute u otra conectividad.
+
+---
+
+## 3. Reverse DNS Lookup
+
+Azure admite consultas DNS inversas (**Reverse DNS Lookup**) para las direcciones IP privadas registradas en una Private DNS Zone.
+
+Una consulta inversa devuelve el **FQDN (Fully Qualified Domain Name)** asociado a una dirección IP.
+
+Ejemplo:
+
+```text
+Consulta
+
+10.0.0.5
+
+↓
+
+Respuesta
+
+vm1.contoso.local
+```
+
+Es el proceso inverso al DNS tradicional:
+
+```text
+DNS normal
+
+Nombre → Dirección IP
+
+vm1.contoso.local
+
+↓
+
+10.0.0.5
+```
+
+```text
+Reverse DNS
+
+Dirección IP → Nombre
+
+10.0.0.5
+
+↓
+
+vm1.contoso.local
+```
+
+---
+
+# Resumen para el AZ-104
+
+| Capacidad | Descripción |
+|-----------|-------------|
+| **Automatic Registration** | Registra automáticamente las VMs de una **Registration Virtual Network**. |
+| **Forward DNS Resolution** | Todas las VNets enlazadas pueden resolver los registros DNS de la zona, sin necesidad de VNet Peering. |
+| **Reverse DNS Lookup** | Permite obtener el FQDN asociado a una dirección IP privada. |
+
+## Reglas para memorizar
+
+- **Virtual Network Link** → Permite utilizar la Private DNS Zone.
+- **Enable auto registration = Yes** → Registro automático de las VMs de esa VNet.
+- **Forward DNS Resolution** → Todas las VNets enlazadas pueden resolver nombres.
+- **VNet Peering** → Proporciona conectividad IP, **no resolución DNS**.
+- **Reverse DNS Lookup** → Convierte una dirección IP privada en su nombre DNS (FQDN).
+
+  ---
 # Auto-registration
 
 **Auto-registration** es una característica de **Azure Private DNS Zones** que crea, actualiza y elimina automáticamente los registros DNS de las máquinas virtuales de una **Registration Virtual Network**.
