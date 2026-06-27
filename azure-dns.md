@@ -2,12 +2,9 @@
 
 # Índice
 
--# Índice
-
-- [Private DNS Zones](#private-dns-zones)
 - [Virtual Network Links](#virtual-network-links)
 - [Auto-registration](#auto-registration)
-- [Name Resolution en Azure](#name-resolution-en-azure)
+
 
 ---
 # Auto-registration
