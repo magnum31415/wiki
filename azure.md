@@ -62,6 +62,7 @@
       50.<a href="https://github.com/magnum31415/wiki/blob/main/azure-amba.md">Azure AMBA</a><br>
       51.<a href="https://github.com/magnum31415/wiki/blob/main/azure-defender-for-cloud.md">Azure azure Defender Cloud </a><br>     
       52.<a href="https://github.com/magnum31415/wiki/blob/main/azure-razure-resource-manager-az104.md">Azure Resource Manager</a><br>      
+      56.<a href="https://github.com/magnum31415/wiki/blob/main/azure-bastion.md">Azure Bastion</a><br>   
       100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>     
     </td>
     <td>
