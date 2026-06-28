@@ -2214,6 +2214,18 @@ Para configurar Self-Service Password Reset, necesitas como mínimo uno de estos
 - Global Administrator
 - Authentication Policy Administrator
 
+**SSPR usa grupos compatibles con Microsoft Entra ID para aplicar la política de restablecimiento de contraseña.**
+
+Los grupos soportados son:
+
+| Grupo        | Tipo                        | ¿SSPR se puede habilitar? |
+| ------------ | --------------------------- | :-----------------------: |
+| SecGroup     | Security group              |             ✅             |
+| M365Group    | Microsoft 365 group         |             ✅             |
+| MailSecGroup | Mail-enabled security group |             ❌             |
+
+
+
 ## Security Questions 
 
 Si un usuario tiene un **rol administrativo, no puede utilizar las preguntas de seguridad (Security Questions)** como método de autenticación para **Self-Service Password Reset (SSPR)**.
@@ -2223,6 +2235,17 @@ Aunque en la configuración global de SSPR tengas:
 **Security Questions = Enabled**
 
 esa opción **solo se aplica a usuarios no administradores**.
+
+### Los administradores deben utilizar métodos considerados más seguros, por ejemplo:
+
+- ✅ Microsoft Authenticator
+- ✅ FIDO2 Security Key
+- ✅ Passkey (según disponibilidad)
+- ✅ OATH Hardware Token
+- ✅ Email (solo para determinados escenarios, no como método de SSPR para administradores)
+- ✅ SMS o llamada telefónica (según la configuración y la documentación vigente)
+
+No pueden usar Security Questions.
 
 ## Escenario
 
