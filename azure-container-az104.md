@@ -4,7 +4,7 @@
 
 
 # Índice
-
+- [Azure Containers: soporte Windows vs Linux](#azure-containers-soporte-windows-vs-linux-az-104)
 - [Azure Container Registry (ACR) y Azure Container Instances (ACI) - Resumen AZ-104](#azure-container-registry-acr-y-azure-container-instances-aci---resumen-az-104)
 - [Azure Container Registry (ACR)](#azure-container-registry-acr)
 - [Azure Container Instances (ACI)](#azure-container-instances-aci)
@@ -15,6 +15,22 @@
 - [Azure Container Services - Windows vs Linux Containers](#azure-container-services---windows-vs-linux-containers)
   
 ---
+
+# Azure Containers: soporte Windows vs Linux (AZ-104)
+
+No todos los servicios de contenedores de Azure soportan contenedores Windows.
+
+En el examen AZ-104, si una imagen está basada en **Windows Server**, debes comprobar qué servicios permiten ejecutar **Windows containers**.
+
+## Servicios del escenario
+
+| Servicio | Linux containers | Windows containers |
+|---|:---:|:---:|
+| Azure Container Instances | ✅ | ✅ |
+| Azure Container Apps | ✅ | ❌ |
+| Azure App Service | ✅ | ✅ |
+
+
 
 # Azure Container Registry (ACR)
 
@@ -59,6 +75,12 @@ corpregistry.azurecr.io/webappimage:v1
 ## Qué es
 
 Servicio serverless para ejecutar contenedores sin administrar VMs.
+
+Azure Container Instances puede ejecutar:
+
+- ✅ Contenedores Linux
+- ✅ Contenedores Windows
+
 
 ---
 
@@ -1626,6 +1648,10 @@ Windows containers
 ## Qué es
 
 Servicio PaaS para aplicaciones web y APIs.
+Azure App Service puede ejecutar aplicaciones en contenedores sobre:
+
+- ✅ Linux
+- ✅ Windows
 
 ---
 
@@ -1660,6 +1686,21 @@ Servicio serverless para ejecutar contenedores sin administrar infraestructura.
 ## Qué es
 
 Plataforma moderna serverless basada en Kubernetes.
+
+Azure Container Apps ejecuta contenedores basados en Linux.
+
+No soporta contenedores Windows.
+
+Azure Container Apps parece similar a Azure Container Instances, pero no tiene el mismo soporte de sistema operativo.
+
+| Servicio | Trampa |
+|---|---|
+| Azure Container Instances | Soporta Windows y Linux |
+| Azure Container Apps | No soporta Windows containers |
+| Azure App Service | Soporta Windows y Linux |
+
+
+
 
 ---
 
