@@ -111,11 +111,34 @@ Detects VMs without NSG protection.
 
 👉 High-risk scenario
 
-```kusto
+Esta consulta devuelve únicamente las VMs que no están protegidas por ningún NSG, es decir, ni en la NIC ni en la subnet:
+
+````kusto
 Resources
-| where type == 'microsoft.compute/virtualmachines'
-| where isempty(properties.networkProfile.networkInterfaces[*].properties.networkSecurityGroup)
-```
+| where type =~ 'microsoft.compute/virtualmachines'
+| mv-expand nicRef = properties.networkProfile.networkInterfaces
+| extend nicId = tostring(nicRef.id)
+| join kind=inner (
+    Resources
+    | where type =~ 'microsoft.network/networkinterfaces'
+    | extend nicId = id
+    | extend nicNsgId = tostring(properties.networkSecurityGroup.id)
+    | extend subnetId = tostring(properties.ipConfigurations[0].properties.subnet.id)
+    | project nicId, nicNsgId, subnetId
+) on nicId
+| join kind=leftouter (
+    Resources
+    | where type =~ 'microsoft.network/virtualnetworks'
+    | mv-expand subnet = properties.subnets
+    | extend subnetId = tostring(subnet.id)
+    | extend subnetNsgId = tostring(subnet.properties.networkSecurityGroup.id)
+    | project subnetId, subnetNsgId
+) on subnetId
+| where isempty(nicNsgId) and isempty(subnetNsgId)
+| project VM = name, resourceGroup, nicId, subnetId
+| order by VM asc
+````
+
 
 ---
 
