@@ -540,9 +540,7 @@ Los backups de **Azure App Service** requieren una **Azure Storage Account** par
 
 ## Requisito previo
 
-Antes de configurar un backup de Azure App Service, se debe crear:
-
-> **Azure Storage Account**
+Antes de configurar un backup de Azure App Service, se debe crear:  **Azure Storage Account**
 
 La Storage Account se utiliza como destino para almacenar los backups.
 
@@ -559,15 +557,13 @@ Azure App Service permite configurar:
 
 ## Exclusión de archivos y carpetas
 
-Para excluir archivos o carpetas del backup, se debe crear un archivo llamado:
-
-`_backup.filter`
+Para excluir archivos o carpetas del backup, se debe crear un archivo llamado: ``_backup.filter``
 
 En este archivo se especifican las rutas que deben excluirse.
 
 Ejemplo:
 
-`\site\wwwroot\TempFolder`
+``\site\wwwroot\TempFolder``
 
 En este escenario:
 
