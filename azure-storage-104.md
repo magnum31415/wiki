@@ -414,9 +414,7 @@ Cool tier reduces costs for infrequently accessed data.
 
 # Azure Storage Policies 
 
----
-
-# Tabla resumen de Policies
+## Tabla resumen de Policies
 
 | Tipo de Policy | Categoría | Objetivo | Recursos compatibles | Máximo |
 |---|---|---|---|---|
@@ -455,7 +453,18 @@ graph TD
     D1 --> D2[Storage Account / Blob Storage]
 ```
 
----
+
+Azure utiliza la palabra **policy** para dos mecanismos completamente diferentes.
+
+| Tipo de policy | Objetivo | La pregunta menciona... | Máximo por container |
+|---|---|---|---:|
+| **Stored Access Policy** | Controlar una SAS: permisos y duración | SAS, permisos, expiración | **5** |
+| **Immutable Blob Storage Policy** | Impedir modificar o borrar datos | WORM, retention, legal hold, cannot delete | **2 mecanismos: Time-based retention + Legal hold** |
+
+## Regla para el examen
+
+- **Stored Access Policy = acceso mediante SAS = máximo 5 por container**
+- **Immutable Blob Storage = protección contra modificación y borrado = Time-based retention + Legal hold**
 
 # 1. Stored Access Policy
 
@@ -467,12 +476,38 @@ Una:
 Stored Access Policy
 ```
 
-permite definir permisos SAS reutilizables sobre recursos Azure Storage.
 
-En vez de poner permisos directamente dentro del SAS token,
-el SAS referencia una policy almacenada.
+La **Stored Access Policy** sirve para controlar el acceso mediante una SAS sobre recursos Azure Storage.
 
----
+```text
+Container
+   │
+   └── Stored Access Policy
+           │
+           └── SAS
+```
+En vez de poner permisos directamente dentro del SAS token, el SAS referencia una policy almacenada.
+
+
+Permite definir:
+
+- Qué operaciones se pueden realizar: Read, Write, Delete.
+- Durante cuánto tiempo.
+- Qué SAS utilizan esa política.
+
+Un container admite hasta: **5 Stored Access Policies**
+
+Ejemplo:
+
+```text
+container-partners
+│
+├── policy-read
+├── policy-write
+├── policy-partner-A
+├── policy-partner-B
+└── policy-temporary
+```
 
 ## Recursos compatibles
 
@@ -487,6 +522,8 @@ el SAS referencia una policy almacenada.
 
 ## Máximo
 
+**Azure Storage accounts **support a **maximum of 5 stored access policies per container**.
+
 ```text
 Maximum 5 stored access policies per resource
 ```
@@ -497,8 +534,6 @@ Aplica a:
 - table
 - file share
 
----
-
 ## Qué controla
 
 Puede controlar:
@@ -506,8 +541,6 @@ Puede controlar:
 - permisos
 - expiración
 - start time
-
----
 
 ## Ventaja importante
 
@@ -517,7 +550,6 @@ Permite:
 ✅ modificar expiración sin regenerar SAS  
 ✅ centralizar permisos  
 
----
 
 ## Importante examen
 
@@ -529,11 +561,86 @@ Stored Access Policies:
 
 Solo controlan acceso SAS.
 
+
+## Ejemplo: Imagina este Storage Account:
+
+```text
+Storage Account: stcompany
+│
+├── container-public
+├── container-partners
+└── container-private
+```
+
+Cada contenedor puede tener una política de acceso diferente:
+
+| Container | Access Policy | Permisos | Ejemplo |
+|---|---|---|---|
+| `container-public` | `policy-public` | Read | Los usuarios pueden descargar documentos |
+| `container-partners` | `policy-partners` | Read + Write | Un partner puede subir y descargar archivos |
+| `container-private` | `policy-admin` | Read + Write + Delete | Los administradores tienen control completo |
+
+## Ejemplo: container-partners
+
+En `container-partners` creas una **Stored Access Policy**:
+
+```text
+Policy name: partner-access
+Permissions: Read + Write
+Start: 2026-07-01
+Expiry: 2026-12-31
+```
+
+Después generas una **Service SAS** vinculada a esa política:
+
+```text
+Container
+   │
+   ├── Stored Access Policy
+   │       └── partner-access
+   │              ├── Read
+   │              ├── Write
+   │              └── Expiry: 31/12/2026
+   │
+   └── SAS Token
+           └── Vinculado a partner-access
+```
+
+La ventaja es que si 20 partners usan SAS vinculadas a `partner-access`, puedes cambiar o revocar el acceso modificando **una sola Stored Access Policy**, sin tener que regenerar individualmente las 20 SAS.
+
+## Regla para el examen
+
+> **Stored Access Policy → define permisos y duración → SAS utiliza la policy para acceder al container.**
+
+Una **Stored Access Policy no se asigna directamente a usuarios o grupos de Entra ID**. Para eso se utiliza Azure RBAC.
+
 ---
 
 # 2. Immutable Blob Storage Policy
 
 ## Qué es
+
+Una **Immutable Blob Storage Policy** no controla quién puede acceder.
+
+Controla si los datos pueden ser **modificados o eliminados**.
+
+```text
+Container
+   │
+   └── Immutable Storage
+           │
+           ├── Time-based retention policy
+           │
+           └── Legal hold
+```
+
+Los dos mecanismos de inmutabilidad son:
+
+| Immutable policy | Qué hace | Ejemplo |
+|---|---|---|
+| **Time-based retention** | Impide modificar o borrar durante un período | Conservar facturas durante 7 años |
+| **Legal hold** | Impide modificar o borrar hasta retirar el bloqueo | Documentos bajo investigación judicial |
+
 
 Protección:
 
