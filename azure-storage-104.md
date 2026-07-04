@@ -36,6 +36,23 @@
 | Shared Key (Access Keys) | ❌ | ✔ | An application connects to a storage account using a **connection string with the AccountKey**. | **Access Key (Storage)** | Secret key that provides direct access to the Storage Account. | Key-based authentication |
 | SAS Token | ❌ | ✔ | **Shared Access Signature Token** : A temporary URL is generated to allow download of a specific blob for a limited time. | **Access Key (or delegation key)** | Token generated from a storage key or delegation key to grant temporary access. | Delegated access to storage resources |
 
+
+
+
+| Model                         | Protocol / Access Method | Blob Storage |                                               Azure Files | Queues | Tables |
+| ----------------------------- | ------------------------ | -----------: | --------------------------------------------------------: | -----: | -----: |
+| **Microsoft Entra ID (RBAC)** | REST / HTTPS             |            ✅ |                                                         ✅ |      ✅ |      ✅ |
+| **Microsoft Entra ID (RBAC)** | SMB (`net use`)          |          N/A | ⚠️ Sí, con identidad compatible y configuración adicional |    N/A |    N/A |
+| **Shared Key (Access Keys)**  | REST / HTTPS             |            ✅ |                                                         ✅ |      ✅ |      ✅ |
+| **Shared Key (Access Keys)**  | SMB (`net use`)          |          N/A |                                                         ✅ |    N/A |    N/A |
+| **SAS Token**                 | REST / HTTPS             |            ✅ |                                                         ✅ |      ✅ |      ✅ |
+
+
+
+⚠️ **Sí, con identidad compatible y configuración adicional** 
+- Significa que no basta con tener un usuario en Microsoft Entra ID y asignarle un rol RBAC.
+- Para acceder a Azure Files mediante SMB (net use), Azure Files necesita un sistema de identidad capaz de autenticar mediante Kerberos.
+
 ---
 
 ## Permissions in Azure can be assigned at different scopes within the resource hierarchy
