@@ -174,16 +174,15 @@ ACR
 ---
 # Azure Container Registry - Dedicated Data Endpoints (AZ-104)
 
-# Concepto principal
+## Concepto principal
 
 Azure Container Registry (ACR) separa:
 
 - Management Plane
 - Data Plane
 
----
 
-# Qué es el Data Plane
+### Qué es el Data Plane
 
 El:
 
@@ -198,9 +197,8 @@ maneja:
 - layers/blobs
 - operaciones Docker/OCI
 
----
 
-# Qué es el Management Plane
+### Qué es el Management Plane
 
 El:
 
@@ -217,9 +215,8 @@ maneja:
 - tasks
 - properties
 
----
 
-# Qué es un Dedicated Data Endpoint
+### Qué es un Dedicated Data Endpoint
 
 Permite que:
 
@@ -235,7 +232,62 @@ un endpoint dedicado
 
 en vez del endpoint general del registry.
 
----
+## firma, cifrado, autenticación y distribución de imágenes en Azure Container Registry.
+
+
+| Si la pregunta dice...                  | Piensa en...                |
+| --------------------------------------- | --------------------------- |
+| **signed, trusted, integrity**          | ✍️ **Content Trust**        |
+| **encrypted, data at rest, own key**    | 🔐 **Customer-managed key** |
+| **authentication, access, permissions** | 🔑 **Token**                |
+| **edge, disconnected, synchronization** | 🌍 **Connected registry**   |
+
+
+
+| Concepto             | Configuración en ACR           | ¿Qué hace?                                                    | Ejemplo                                                                             | ¿Cumple «imágenes firmadas y confiables»? |
+| -------------------- | ------------------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------- |
+| ✍️ **Firma**         | **Content Trust**              | Firma y verifica criptográficamente las imágenes              | Verificar que `app:v1` fue publicada por un autor confiable y no ha sido modificada | ✅ **Sí**                                  |
+| 🔐 **Cifrado**       | **Customer-managed key (CMK)** | Cifra las imágenes almacenadas                                | Cifrar las imágenes de ACR con una clave gestionada por la empresa                  | ❌ No                                      |
+| 🔑 **Autenticación** | **Token**                      | Controla quién puede acceder y qué operaciones puede realizar | Permitir a una aplicación hacer `pull` pero no `push`                               | ❌ No                                      |
+| 🌍 **Distribución**  | **Connected registry**         | Sincroniza y distribuye imágenes a otros entornos             | Llevar imágenes desde Azure a un entorno edge u on-premises                         | ❌ No                                      |
+
+### Qué hace Content Trust?
+
+Content Trust responde: **¿Quién publicó esta imagen y ha sido modificada?**
+
+**Cryptographically signed + trusted images = Content Trust**
+
+La idea es:
+
+````
+Developer
+    │
+    │  1. Firma la imagen 🔏
+    ▼
+Azure Container Registry
+    │
+    │  2. Almacena imagen + información de firma
+    ▼
+Cliente
+    │
+    │  3. Verifica la firma 🔍
+    ▼
+¿Imagen confiable?
+   ├── Sí → Pull permitido ✅
+   └── No → Rechazada ❌
+````
+Así puedes verificar dos cosas:
+
+- **Autenticidad:** la imagen fue publicada por alguien autorizado.
+- **Integridad:** la imagen no ha sido modificada desde que fue firmada.
+
+
+### Qué haceCustomer-managed key (CMK)
+
+Customer-managed key (CMK) responde:  **¿Está la imagen cifrada mientras está almacenada?**
+
+
+
 
 # Objetivo principal
 
