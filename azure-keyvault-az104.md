@@ -25,6 +25,7 @@
 - [Tabla resumen examen](#tabla-resumen-examen)
 - [Reglas rápidas AZ-104](#reglas-rápidas-az-104)
 - [Frases clave AZ-104](#frases-clave-az-104)
+- [AES vs 2DES vs RSA](#aes-vs-2des-vs-rsa)
 
 ---
 
@@ -309,3 +310,18 @@ Container Apps commonly use Managed Identities to access Key Vault.
 ```text
 Resource Groups do not restrict Azure resource communication.
 ```
+---
+# AES vs 2DES vs RSA 
+
+| Algoritmo | Significado del acrónimo                               | Tipo       | Claves                          | Velocidad    | Uso típico                         | Seguridad actual | Soporte en Azure Key Vault                    |
+| --------- | ------------------------------------------------------ | ---------- | ------------------------------- | ------------ | ---------------------------------- | ---------------- | --------------------------------------------- |
+| **AES**   | **Advanced Encryption Standard**                       | Simétrico  | La misma clave cifra y descifra | ⚡ Muy rápida | Cifrar grandes cantidades de datos | ✅ Recomendado    | ⚠️ Managed HSM, no Key Vault Standard/Premium |
+| **3DES**  | **Triple Data Encryption Standard**                    | Simétrico  | La misma clave cifra y descifra | 🐢 Lenta     | Sistemas legacy                    | ❌ Obsoleto       | ❌ No soportado como tipo de clave             |
+| **RSA**   | **Rivest–Shamir–Adleman** (apellidos de sus creadores) | Asimétrico | Clave pública + clave privada   | 🐢 Lenta     | Cifrar claves y firmas digitales   | ✅ Sí             | ✅ Key Vault Standard/Premium y Managed HSM    |
+
+
+Un detalle para recordarlo:
+
+- AES → el estándar moderno de cifrado.
+- DES → el estándar antiguo; 3DES lo ejecuta tres veces.
+- RSA → no describe su función: son los apellidos Rivest, Shamir y Adleman.
