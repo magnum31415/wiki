@@ -319,6 +319,7 @@ Resource Groups do not restrict Azure resource communication.
 | **3DES**  | **Triple Data Encryption Standard**                    | Simétrico  | La misma clave cifra y descifra | 🐢 Lenta     | Sistemas legacy                    | ❌ Obsoleto       | ❌ No soportado como tipo de clave             |
 | **RSA**   | **Rivest–Shamir–Adleman** (apellidos de sus creadores) | Asimétrico | Clave pública + clave privada   | 🐢 Lenta     | Cifrar claves y firmas digitales   | ✅ Sí             | ✅ Key Vault Standard/Premium y Managed HSM    |
 
+- Para **Customer-Managed Keys (CMK) almacenadas en Azure Key Vault**, la **longitud máxima soportada de una clave RSA es 4096 bits**.
 
 Un detalle para recordarlo:
 
