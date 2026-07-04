@@ -25,6 +25,7 @@
 - [Azure Storage Policies](#azure-storage-policies)
 - [Azure Storage - Hierarchical Namespace vs Azure Files](#azure-storage---hierarchical-namespace-vs-azure-files)
 - [Azure Storage Routing Preference (AZ-104)](#azure-storage-routing-preference-az-104)
+- [Azure Storage - Encryption Scope](#azure-storage---encryption-scope)
 ---
 
 ## Modelos de autenticación en Azure Storage
@@ -1436,3 +1437,107 @@ The closest Microsoft POP is used to optimize inbound traffic.
 ```text
 Microsoft network routing improves performance and reduces latency.
 ```
+---
+# Azure Storage - Encryption Scope
+
+La clave de esta pregunta está en una frase:
+
+> **One container must use a separate encryption key for data encrypted at rest.**
+
+La respuesta correcta es **Create an encryption scope**.
+
+En una cuenta de Azure Storage, por defecto los datos se cifran **a nivel de Storage Account**. Pero si quieres que un contenedor concreto use una clave diferente, necesitas un **Encryption Scope**.
+
+| Concepto | Configuración | ¿Qué protege/controla? | Ejemplo |
+|---|---|---|---|
+| 🔐 Cifrado independiente | **Encryption Scope** | Datos **at rest** con una clave diferente | `container-sensitive` usa su propia clave |
+| 🔑 Autenticación | Access Keys | Acceso al Storage Account | Una aplicación se autentica con la key |
+| 🌐 Cifrado en tránsito | Minimum TLS version | Comunicación cliente ↔ Azure | Obligar a usar TLS 1.2 |
+| 🎟️ Acceso delegado | SAS | Acceso temporal y limitado | Permitir descargar un blob durante 2 horas |
+
+## ¿Qué es exactamente un Encryption Scope?
+
+Imagina este Storage Account con 10 contenedores:
+
+```text
+Storage Account
+│
+├── container-01 ─┐
+├── container-02  │
+├── container-03  │── Clave por defecto del Storage Account 🔑 A
+├── container-04  │
+├── ...
+├── container-09 ─┘
+│
+└── container-sensitive ── Encryption Scope ── 🔑 B
+```
+
+El **Encryption Scope** crea un "ámbito de cifrado" que puede asociarse a un contenedor.
+
+```text
+Encryption Scope: sensitive-data
+        │
+        ▼
+Container: confidential
+        │
+        ▼
+Cifrado con una clave diferente 🔑
+```
+
+Por eso, antes de crear el contenedor:
+
+```text
+1. Crear Encryption Scope
+          ↓
+2. Crear el Blob Container
+          ↓
+3. Asignarle el Encryption Scope
+```
+
+## Encryption Scope vs Customer-Managed Key (CMK)
+
+| Configuración | Alcance |
+|---|---|
+| **Customer-managed key (CMK)** del Storage Account | Todo el Storage Account |
+| **Encryption Scope** | Contenedores o blobs concretos |
+
+Un Encryption Scope puede usar:
+
+- **Microsoft-managed key**
+- **Customer-managed key** almacenada en Key Vault o Managed HSM
+
+La idea importante es que el **scope** define qué clave se aplica a determinados datos.
+
+## Por qué `Rotate the access keys` es incorrecto
+
+Las **Access Keys no cifran los datos almacenados**. Sirven para autenticarse contra el Storage Account.
+
+```text
+Access Key
+    ↓
+¿Puedes acceder al Storage Account?
+```
+
+Mientras que:
+
+```text
+Encryption Scope
+    ↓
+¿Con qué clave se cifran estos datos?
+```
+
+Son capas de seguridad completamente diferentes.
+
+## Cómo identificar la respuesta en AZ-104
+
+| Si la pregunta dice... | Piensa en... |
+|---|---|
+| **Different key per container/blob** | 🔐 Encryption Scope |
+| **Encrypt entire Storage Account with own key** | 🔐 Customer-managed key |
+| **Regenerate/compromised account key** | 🔑 Rotate Access Keys |
+| **Data in transit / protocol version** | 🌐 TLS |
+| **Temporary delegated access** | 🎟️ SAS |
+
+## Regla para el examen
+
+ **Encryption Scope = usar claves de cifrado diferentes para blobs o contenedores específicos dentro del mismo Storage Account.**
