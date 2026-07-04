@@ -4,7 +4,8 @@
 # Indice
 
 - [Azure Network Security Groups (NSG) - AZ-104)](#azure-network-security-groups-nsg---az-104)
-- 
+
+  
 ---
 
 # Azure Network Security Groups (NSG) - AZ-104
@@ -32,6 +33,18 @@ para:
 - subnets
 - network interfaces (NICs)
 
+
+**Una regla dentro de un NSG no hace absolutamente nada si el NSG no está asociado.**
+
+````
+Crear NSG
+    ↓
+Crear reglas
+    ↓
+Asociar NSG (Subnet y/o Network Interface)
+    ↓
+Las reglas empiezan a aplicarse
+````
 ---
 
 # Qué filtra un NSG
