@@ -6,6 +6,7 @@
 - [Azure VM Redeploy y Scheduled Maintenance (AZ-104)](#azure-vm-redeploy-y-scheduled-maintenance-az-104)
 - [Azure Desired State Configuration (DSC)](#azure-desired-state-configuration-dsc---az-104)
 - [Azure vCPU Quotas (AZ-104)](#azure-vcpu-quotas-az-104)
+- [Azure Availability Set vs VM Scale Set vs Proximity Placement Group](#azure-availability-set-vs-vm-scale-set-vs-proximity-placement-group)
 
 ---
 
@@ -1133,3 +1134,185 @@ Si una sola cuota se supera:
 ```text
 Deployment fails.
 ```
+---
+
+# Azure Availability Set vs VM Scale Set vs Proximity Placement Group
+
+| Servicio | Objetivo principal | Pregunta que responde |
+|---|---|---|
+| **Availability Set** | Alta disponibilidad | ¿Cómo evito que todas mis VMs fallen juntas? |
+| **VM Scale Set (VMSS)** | Escalabilidad + alta disponibilidad | ¿Cómo creo y elimino VMs automáticamente según la carga? |
+| **Proximity Placement Group (PPG)** | Baja latencia | ¿Cómo coloco las VMs físicamente cerca? |
+
+## 1. Availability Set
+
+Un **Availability Set** distribuye varias máquinas virtuales entre diferentes:
+
+- **Fault Domains (FD)**: racks, alimentación o hardware físico diferente.
+- **Update Domains (UD)**: grupos de mantenimiento diferentes.
+
+```text
+Availability Set
+│
+├── Fault Domain 0
+│   └── VM1
+│
+├── Fault Domain 1
+│   └── VM2
+│
+└── Fault Domain 2
+    └── VM3
+```
+
+El objetivo es **separar las VMs** para evitar que todas fallen al mismo tiempo.
+
+Si falla un rack:
+
+```text
+Rack 1 ❌ → VM1 cae
+Rack 2 ✅ → VM2 sigue funcionando
+Rack 3 ✅ → VM3 sigue funcionando
+```
+
+**Caso típico:**
+
+- Dos servidores web.
+- Dos controladores de dominio.
+- Dos servidores de una aplicación legacy.
+
+> **Availability Set = separar para proteger.**
+
+---
+
+## 2. VM Scale Set
+
+Un **Virtual Machine Scale Set** administra un conjunto de máquinas virtuales similares y permite aumentar o reducir automáticamente su número.
+
+```text
+                  Load Balancer
+                       │
+        ┌──────────────┼──────────────┐
+        │              │              │
+       VM1            VM2            VM3
+        │
+        │  CPU > 70 %
+        ▼
+       VM4  ← creada automáticamente
+```
+
+Puede hacer escalado horizontal:
+
+```text
+Carga baja
+VM1  VM2
+
+Carga alta
+VM1  VM2  VM3  VM4  VM5
+
+Carga baja otra vez
+VM1  VM2
+```
+
+El objetivo principal es **escalar horizontalmente**.
+
+**Caso típico:**
+
+- Servidores web.
+- APIs.
+- Aplicaciones con carga variable.
+- Backend de aplicaciones distribuidas.
+
+> **VMSS = crear y eliminar VMs según la demanda.**
+
+---
+
+## 3. Proximity Placement Group
+
+Un **Proximity Placement Group** intenta colocar los recursos de cómputo físicamente cerca unos de otros dentro de un datacenter para reducir la latencia de red.
+
+```text
+Sin PPG
+
+VM1 ───────────────────────── VM2
+        mayor latencia
+
+
+Con PPG
+
+VM1 ─── VM2 ─── VM3
+      baja latencia
+```
+
+El objetivo es reducir la latencia entre máquinas virtuales.
+
+```text
+Availability Set → separar
+PPG              → acercar
+```
+
+**Caso típico:**
+
+- Aplicaciones con mucha comunicación entre servidores.
+- Application Server y Database Server.
+- Clusters de alto rendimiento.
+- Workloads sensibles a latencia.
+
+> **PPG = acercar para reducir latencia.**
+
+---
+
+## Comparación para AZ-104
+
+| Característica | Availability Set | VMSS | PPG |
+|---|---|---|---|
+| Alta disponibilidad | Sí | Sí | No |
+| Escalado automático | No | Sí | No |
+| Protege contra fallo de rack | Sí | Sí | No |
+| Reduce latencia | No | No | Sí |
+| VMs idénticas | No necesario | Normalmente sí | No |
+| Añade o elimina VMs automáticamente | No | Sí | No |
+| Objetivo principal | Disponibilidad | Escalabilidad | Rendimiento |
+
+---
+
+## Regla mental para el examen
+
+```text
+Availability Set
+        ↓
+    separar VMs
+        ↓
+ evitar fallo conjunto
+
+
+VM Scale Set
+        ↓
+   multiplicar VMs
+        ↓
+ adaptarse a la carga
+
+
+Proximity Placement Group
+        ↓
+    acercar VMs
+        ↓
+ reducir latencia
+```
+
+---
+
+## Frase resumen
+
+```text
+Availability Set separa VMs para alta disponibilidad.
+VM Scale Set multiplica VMs para escalar automáticamente.
+Proximity Placement Group acerca VMs para reducir latencia.
+```
+
+---
+
+## Importante
+
+Estos servicios no son necesariamente excluyentes.
+
+Por ejemplo, un **VM Scale Set** puede asociarse a un **Proximity Placement Group** si necesitas muchas VMs escalables y, además, baja latencia entre ellas.
