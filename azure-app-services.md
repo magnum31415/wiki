@@ -98,64 +98,41 @@ Es el **servicio PaaS** completo para alojar aplicaciones web.
 ````
 # 🌳 Árbol completo – Creación y estructura de Azure App Service
 
-Azure Portal
+````
+Azure App Service
 │
-├── 1️⃣ Crear App Service Plan (Infraestructura)
+├── App Service Plan (CÓMPUTO / INFRAESTRUCTURA)
 │       │
-│       ├── Subscription
-│       ├── Resource Group
-│       ├── Name (ej: asp-prod-eastus)
-│       ├── Operating System
+│       ├── CPU y memoria
+│       ├── Sistema operativo
 │       │       ├── Windows
 │       │       └── Linux
-│       ├── Region
-│       ├── Pricing Tier
-│       │       ├── Free / Basic
-│       │       ├── Standard
-│       │       ├── Premium
-│       │       └── Isolated (ASE)
-│       ├── Scale Out (nº instancias)
-│       ├── Autoscale (opcional)
-│       └── Availability Zones (opcional)
-│               └── (mínimo 3 instancias si se activa)
+│       ├── Región
+│       ├── Pricing Tier / SKU
+│       ├── Número de instancias
+│       ├── Scale Up
+│       ├── Scale Out / Autoscale
+│       └── Zone Redundancy
 │
-└── 2️⃣ Crear Web App (Aplicación)
+│       ├── Web App 1 (APLICACIÓN)
+│       │       ├── Runtime (.NET, Python, Java...)
+│       │       ├── Configuration
+│       │       ├── Networking
+│       │       ├── Deployment Slots
+│       │       └── Monitoring
+│       │
+│       ├── Web App 2 (APLICACIÓN)
+│       │
+│       └── Web App 3 (APLICACIÓN)
+│
+└── App Service Environment (ASE)
         │
-        ├── Seleccionar App Service Plan existente
-        │
-        ├── Deployment Stack (Runtime)
-        │       ├── .NET
-        │       ├── Python
-        │       ├── Node.js
-        │       ├── Java
-        │       ├── PHP
-        │       └── Docker / Container
-        │
-        ├── Configuration
-        │       ├── Application Settings
-        │       ├── Connection Strings
-        │       ├── Managed Identity
-        │       └── Key Vault References
-        │
-        ├── Networking
-        │       ├── VNet Integration
-        │       ├── Private Endpoint
-        │       └── Front Door / App Gateway (externo)
-        │
-        ├── Deployment Slots (opcional)
-        │       ├── Production (default)
-        │       ├── Staging
-        │       ├── Testing
-        │       └── Swap (zero downtime)
-        │
-        ├── Monitoring
-        │       ├── Application Insights
-        │       └── Azure Monitor
-        │
-        └── Scaling
-                ├── Scale Up (cambiar tier del Plan)
-                └── Scale Out (más instancias en el Plan)
-
+        └── Entorno dedicado y aislado
+                │
+                └── App Service Plan (Isolated)
+                        │
+                        ├── Web App 1
+                        └── Web App 2
 ````
 
 # 🔵 ¿Qué es Azure App Service?
@@ -360,7 +337,88 @@ Ejemplo:
 - Warm-up automático
 - Rollback inmediato
 
----
+## Tipos de Deployment Slots
+
+En Azure App Service no existen tipos de slots diferentes a nivel técnico.
+
+Existe un único tipo de recurso:
+
+**Deployment Slot**
+
+Los nombres `staging`, `testing`, `development`, etc. son nombres y usos definidos por el administrador.
+
+| Slot | Creación | Uso habitual | Recibe tráfico de producción | Ejemplo |
+|---|---|---|---|---|
+| Production | Se crea automáticamente con la Web App | Aplicación en producción | Sí | `webapp1.azurewebsites.net` |
+| Staging | Se crea manualmente | Validar una nueva versión antes de producción | No, por defecto | `webapp1-staging.azurewebsites.net` |
+| Testing | Se crea manualmente | Pruebas funcionales | No, por defecto | `webapp1-testing.azurewebsites.net` |
+| Development | Se crea manualmente | Desarrollo e integración | No, por defecto | `webapp1-development.azurewebsites.net` |
+
+
+## Número máximo de slots
+
+| Tier     | Ejemplos de SKU        | ¿Soporta Deployment Slots? | Máx. Deployment Slots |
+| -------- | ---------------------- | -------------------------- | --------------------: |
+| Free     | F1                     | ❌ No                       |                     0 |
+| Shared   | D1                     | ❌ No                       |                     0 |
+| Basic    | B1, B2, B3             | ❌ No                       |                     0 |
+| Standard | S1, S2, S3             | ✅ Sí                       |                     5 |
+| Premium  | P0v3, P1v3, P2v3, P3v3 | ✅ Sí                       |                    20 |
+| Isolated | I1v2, I2v2, I3v2       | ✅ Sí                       |                    20 |
+
+En Microsoft **Azure App Service, Scale up** significa **cambiar el SKU/tier** del App Service Plan. Ese cambio **puede aumentar CPU, memoria y más funcionalidades (por ej. SLOTS)**.
+
+> El límite incluye el slot de producción.
+
+## Ejemplo
+
+Una aplicación tiene dos slots:
+
+```text
+webapp1
+├── Production
+│   └── Versión 1.0
+│
+└── Staging
+    └── Versión 2.0
+````
+La nueva versión se despliega primero en ``Staging``.
+````
+Versión 2.0
+      ↓
+Staging Slot
+      ↓
+Pruebas
+      ↓
+Validación
+````
+Cuando la versión ha sido validada, se realiza un ``swap``:
+````
+ANTES DEL SWAP
+Production → Versión 1.0
+Staging    → Versión 2.0
+
+SWAP
+  ↓
+
+DESPUÉS DEL SWAP
+Production → Versión 2.0
+Staging    → Versión 1.0
+
+````
+### Ventajas del Swap
+
+| Característica              | Descripción                                                   |
+| --------------------------- | ------------------------------------------------------------- |
+| Despliegue sin interrupción | Reduce o evita downtime                                       |
+| Validación previa           | Permite probar la aplicación antes de producción              |
+| Rollback                    | Se puede realizar otro swap para volver a la versión anterior |
+| Warm-up                     | Azure prepara la aplicación antes de enviarla a producción    |
+
+
+- **Deployment Slots** → Standard o superior
+- **Slot no disponible** → Scale up 
+- **Nueva versión** → Staging → Test → Swap → Production
 
 ## 🎯 Si lees en examen:
 
