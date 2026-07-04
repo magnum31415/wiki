@@ -2493,6 +2493,28 @@ Microsoft 365 Groups can be used for SSPR scope.
 SSPR is not assigned directly to individual users.
 ```
 
+## Security Group vs Microsoft 365 Grou
+
+| Característica                | **Security Group**            | **Microsoft 365 Group**         |
+| ----------------------------- | ----------------------------- | ------------------------------- |
+| Objetivo principal            | Asignar **permisos y acceso** | **Colaboración** entre usuarios |
+| Azure RBAC                    | ✅ Sí                          | ⚠️ No es su uso principal       |
+| Asignar acceso a aplicaciones | ✅ Sí                          | ⚠️ Limitado / no habitual       |
+| Azure Policy / permisos       | ✅ Sí                          | ❌ No es su objetivo             |
+| SSPR                          | ✅ Sí                          | ✅ Sí                            |
+| Group-Based Licensing         | ✅ Sí                          | ✅ Sí                            |
+| Correo compartido             | ❌ Normalmente no              | ✅ Sí                            |
+| Buzón compartido              | ❌ No                          | ✅ Sí                            |
+| Calendario compartido         | ❌ No                          | ✅ Sí                            |
+| SharePoint                    | ❌ No                          | ✅ Sí                            |
+| Teams                         | ❌ No directamente             | ✅ Sí                            |
+| Puede tener propietarios      | ✅ Sí                          | ✅ Sí                            |
+| Miembros: usuarios            | ✅ Sí                          | ✅ Sí                            |
+| Miembros: dispositivos        | ✅ Sí                          | ❌ No                            |
+| Grupos anidados               | ✅ Sí                          | ❌ No                            |
+| Membresía dinámica            | ✅ Usuarios y dispositivos     | ✅ Solo usuarios                 |
+| Puede ser Role-Assignable     | ✅ Sí, si se crea así          | ❌ No                            |
+
 
 ---
 
