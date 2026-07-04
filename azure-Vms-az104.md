@@ -1146,6 +1146,8 @@ Deployment fails.
 
 ## 1. Availability Set
 
+ **Availability Set = separar para proteger.**
+
 Un **Availability Set** distribuye varias máquinas virtuales entre diferentes:
 
 - **Fault Domains (FD)**: racks, alimentación o hardware físico diferente.
@@ -1180,7 +1182,39 @@ Rack 3 ✅ → VM3 sigue funcionando
 - Dos controladores de dominio.
 - Dos servidores de una aplicación legacy.
 
-> **Availability Set = separar para proteger.**
+
+### Update Domains
+
+Los **Update Domains** protegen frente a mantenimientos planificados de Azure.
+
+Azure no actualiza todas las VMs de un Availability Set al mismo tiempo. Las divide en grupos de actualización.
+
+```text
+Availability Set
+│
+├── Update Domain 0
+│   └── VM1
+│
+├── Update Domain 1
+│   └── VM2
+│
+└── Update Domain 2
+    └── VM3
+```
+
+Si Azure necesita hacer mantenimiento:
+
+```text
+Update Domain 0 🔄 → VM1 puede reiniciarse
+Update Domain 1 ✅ → VM2 sigue funcionando
+Update Domain 2 ✅ → VM3 sigue funcionando
+```
+
+Cuando termina con un Update Domain, Azure continúa con el siguiente.
+
+> **Fault Domain = protege frente a fallo físico.**  
+> **Update Domain = protege frente a mantenimiento planificado.**
+
 
 ---
 
