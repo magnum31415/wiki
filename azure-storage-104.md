@@ -1589,3 +1589,302 @@ Son capas de seguridad completamente diferentes.
 ## Regla para el examen
 
  **Encryption Scope = usar claves de cifrado diferentes para blobs o contenedores específicos dentro del mismo Storage Account.**
+
+ ---
+
+
+ # Azure File Shares (AZ-104)
+
+## Concepto
+
+**Azure Files** proporciona recursos compartidos de archivos totalmente administrados en Azure.
+
+Permite acceder a los mismos archivos desde:
+
+- Windows
+- Linux
+- macOS
+- Aplicaciones
+
+```text
+Storage Account
+        │
+        └── File Share
+                │
+                ├── Folder
+                ├── Folder
+                └── Files
+```
+
+---
+
+## Protocolos soportados
+
+| Protocolo | Puerto | Uso principal |
+|---|---:|---|
+| **SMB** | **TCP 445** | Montar unidades de red desde Windows, Linux o macOS |
+| **NFS** | **TCP 2049** | Montar File Shares desde clientes Linux/Unix |
+| **REST / HTTPS** | **TCP 443** | Acceso mediante API, SDK o herramientas |
+
+---
+
+## SMB (Server Message Block)
+
+SMB permite montar un Azure File Share como una unidad de red.
+
+Ejemplo en Windows:
+
+```cmd
+net use Z: \\apexcorestorage.file.core.windows.net\data
+```
+
+Flujo:
+
+```text
+Windows 10
+    │
+    │ TCP 445
+    ▼
+SMB
+    │
+    ▼
+Azure File Share
+```
+
+### Regla AZ-104
+
+> **Map network drive + Azure File Share = SMB = TCP 445**
+
+---
+
+## Puertos importantes
+
+| Puerto | Protocolo | Uso |
+|---:|---|---|
+| **445** | SMB | Azure File Shares |
+| **443** | HTTPS | REST API / Portal / SDK |
+| **2049** | NFS | NFS File Shares |
+| **3389** | RDP | Acceso remoto a Windows |
+| **80** | HTTP | Tráfico web sin cifrar |
+
+---
+
+## Acceso desde Internet
+
+Para montar directamente un Azure File Share mediante SMB desde un equipo externo:
+
+```text
+Home Computer
+      │
+      │ TCP 445
+      ▼
+Internet
+      │
+      ▼
+Azure File Share
+```
+
+El puerto **TCP 445 outbound** debe estar permitido.
+
+Algunos proveedores de Internet y redes corporativas bloquean el puerto 445.
+
+### Alternativas
+
+Si TCP 445 está bloqueado:
+
+- VPN hacia Azure
+- ExpressRoute
+- Azure File Sync
+
+---
+
+## Modelos de autenticación
+
+| Modelo de autenticación | Protocolo / acceso | Azure Files | Soportado |
+|---|---|---|---|
+| **Shared Key (Access Key)** | SMB (`net use`) | Storage Account Key como contraseña | ✅ |
+| **Shared Key (Access Key)** | REST / HTTPS | Autenticación mediante Account Key | ✅ |
+| **Identity-based authentication** | SMB | Entra Kerberos / AD DS / Entra Domain Services | ✅ |
+| **SAS Token** | REST / HTTPS | Acceso temporal y delegado | ✅ |
+| **SAS Token** | SMB (`net use`) | SAS como contraseña | ❌ |
+
+---
+
+## SAS y Azure Files
+
+Una SAS puede utilizarse para acceder a Azure Files mediante REST/HTTPS:
+
+```text
+Application
+    │
+    │ HTTPS / REST
+    │ SAS Token
+    ▼
+Azure File Share
+```
+
+Una SAS no puede utilizarse como contraseña para SMB:
+
+```text
+net use
+    │
+    │ SMB
+    │ SAS Token
+    ▼
+Azure File Share
+    │
+    └── ❌ No access
+```
+
+### Regla AZ-104
+
+> **SAS + REST/HTTPS → Azure Files ✅**
+
+> **SAS + SMB / net use → Azure Files ❌**
+
+---
+
+## Autenticación basada en identidad para SMB
+
+Azure Files soporta autenticación SMB mediante:
+
+| Sistema de identidad | SMB |
+|---|---|
+| **Microsoft Entra Kerberos** | ✅ |
+| **Active Directory Domain Services (AD DS)** | ✅ |
+| **Microsoft Entra Domain Services** | ✅ |
+
+Flujo:
+
+```text
+Usuario
+    │
+    ▼
+Sistema de identidad
+    │
+    ▼
+Kerberos
+    │
+    ▼
+SMB
+    │
+    ▼
+Azure File Share
+```
+
+También deben configurarse:
+
+1. Autenticación basada en identidad.
+2. Permisos Azure RBAC sobre el File Share.
+3. Permisos de directorio y archivo.
+
+---
+
+## Roles RBAC habituales
+
+| Rol | Permisos |
+|---|---|
+| **Storage File Data SMB Share Reader** | Lectura |
+| **Storage File Data SMB Share Contributor** | Lectura, escritura y eliminación |
+| **Storage File Data SMB Share Elevated Contributor** | Permisos elevados, incluido modificar ACL |
+
+---
+
+## Azure RBAC vs permisos de archivos
+
+El acceso basado en identidad utiliza dos niveles:
+
+```text
+Usuario
+    │
+    ▼
+Azure RBAC
+¿Puede acceder al File Share?
+    │
+    ▼
+Permisos de directorio/archivo
+¿Puede acceder a esta carpeta o archivo?
+```
+
+| Nivel | Controla |
+|---|---|
+| **Azure RBAC** | Acceso al File Share |
+| **Permisos de directorio/archivo** | Acceso a carpetas y archivos concretos |
+
+---
+
+## Azure File Sync
+
+Azure File Sync permite mantener archivos en un Windows Server local y sincronizarlos con Azure Files.
+
+```text
+Windows Server
+      │
+      │ Azure File Sync
+      ▼
+Azure File Share
+```
+
+Componentes principales:
+
+| Componente | Función |
+|---|---|
+| **Storage Sync Service** | Recurso principal de Azure File Sync |
+| **Sync Group** | Define qué ubicaciones se sincronizan |
+| **Cloud Endpoint** | Azure File Share |
+| **Server Endpoint** | Carpeta de Windows Server |
+| **Azure File Sync Agent** | Agente instalado en Windows Server |
+
+---
+
+## Cloud Tiering
+
+Cloud Tiering permite mantener localmente los archivos más utilizados y mover el contenido menos utilizado a Azure.
+
+```text
+Archivos frecuentes
+        │
+        └── Windows Server
+
+Archivos poco utilizados
+        │
+        └── Azure File Share
+```
+
+Los archivos movidos a Azure siguen apareciendo en el servidor como archivos disponibles.
+
+---
+
+## Azure Files vs Blob Storage
+
+| Característica | Azure Files | Blob Storage |
+|---|---|---|
+| Sistema de archivos compartido | ✅ | ❌ |
+| SMB | ✅ | ❌ |
+| NFS | ✅ | ⚠️ Según configuración |
+| Map network drive | ✅ | ❌ |
+| Acceso REST | ✅ | ✅ |
+| Object Storage | ❌ | ✅ |
+| Uso típico | File Server compartido | Objetos, backups, imágenes, logs |
+
+---
+
+## Reglas rápidas para el examen
+
+| Si la pregunta dice... | Piensa en... |
+|---|---|
+| **Map network drive** | SMB |
+| **SMB** | TCP 445 |
+| **NFS** | TCP 2049 |
+| **REST / HTTPS** | TCP 443 |
+| **`net use`** | SMB |
+| **SAS + `net use`** | ❌ No access |
+| **SAS + REST** | ✅ Soportado |
+| **On-premises file server synchronization** | Azure File Sync |
+| **Azure copy of the files** | Cloud Endpoint |
+| **Local Windows Server folder** | Server Endpoint |
+| **Keep frequently used files locally** | Cloud Tiering |
+
+## Regla principal
+
+> **Azure File Share + map network drive = SMB = TCP 445**
