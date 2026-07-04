@@ -1360,6 +1360,28 @@ Incluye:
 - Outlook
 - Planner
 
+### Security enabled 
+
+Security enabled significa: 
+- **¿Puede este grupo usarse como un principal de seguridad para asignarle permisos? **
+- **El grupo puede utilizarse para controlar acceso a recursos.**
+
+| Security enabled | Significado                                   |
+| ---------------- | --------------------------------------------- |
+| `Yes`            | Puede utilizarse para asignar permisos/acceso |
+| `No`             | No se utiliza como principal de seguridad     |
+
+  
+| Tipo de grupo               | Security enabled | Uso principal                            |
+| --------------------------- | ---------------: | ---------------------------------------- |
+| Security group              |              Yes | Permisos, RBAC, acceso a recursos        |
+| Microsoft 365 group         |               No | Colaboración: Teams, SharePoint, Outlook |
+| Mail-enabled security group |              Yes | Seguridad + correo                       |
+| Distribution group          |               No | Distribución de correo                   |
+
+
+Security enabled significa:
+
 ---
 
 ## Diferencia importante
