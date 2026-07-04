@@ -38,6 +38,8 @@
 
 17. [Flujo completo de funcionamiento](#-flujo-completo-de-funcionamiento)
 
+18. [Backups personalizados de Azure App Service](#backups-personalizados-de-azure-app-service)
+
 # Azure App Service
 
 Azure App Service es un servicio PaaS de Azure que permite alojar aplicaciones web y APIs con escalado y alta disponibilidad sin gestionar servidores ni infraestructura.
@@ -528,8 +530,63 @@ App Service Plan (instancias VM gestionadas)
 Storage / Database / Key Vault / Otros servicios
 
 
+---
 
+# Backups personalizados de Azure App Service
 
+## Backup de Azure App Service
+
+Los backups de **Azure App Service** requieren una **Azure Storage Account** para almacenar los datos del backup.
+
+## Requisito previo
+
+Antes de configurar un backup de Azure App Service, se debe crear:
+
+> **Azure Storage Account**
+
+La Storage Account se utiliza como destino para almacenar los backups.
+
+## Configuración del backup
+
+Azure App Service permite configurar:
+
+- Backups programados.
+- Frecuencia del backup.
+- Retención de backups.
+- Backup de la configuración de la aplicación.
+- Backup del contenido de la aplicación.
+- Exclusión de archivos y carpetas.
+
+## Exclusión de archivos y carpetas
+
+Para excluir archivos o carpetas del backup, se debe crear un archivo llamado:
+
+`_backup.filter`
+
+En este archivo se especifican las rutas que deben excluirse.
+
+Ejemplo:
+
+`\site\wwwroot\TempFolder`
+
+En este escenario:
+
+- `LogsFolder` → Incluido en el backup.
+- `TempFolder` → Excluido del backup.
+
+## Vaults
+
+| Servicio | Uso |
+|---|---|
+| Azure Storage Account | Backups de Azure App Service |
+| Backup vault | No se utiliza para backups de App Service |
+| Recovery Services vault | No se utiliza para backups de App Service |
+
+## Regla AZ-104
+
+**Azure App Service Backup → Azure Storage Account**
+
+**Excluir archivos o carpetas → `_backup.filter`**
 
 
 
