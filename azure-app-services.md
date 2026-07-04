@@ -518,7 +518,7 @@ Puede incluir:
 
 # 🔄 Flujo completo de funcionamiento
 
-```text
+````text
 Usuario
    ↓
 DNS / Front Door / WAF (opcional)
@@ -528,9 +528,7 @@ Web App
 App Service Plan (instancias VM gestionadas)
    ↓
 Storage / Database / Key Vault / Otros servicios
-
-
----
+````
 
 # Backups personalizados de Azure App Service
 
