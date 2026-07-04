@@ -26,6 +26,7 @@
 - [Azure Storage - Hierarchical Namespace vs Azure Files](#azure-storage---hierarchical-namespace-vs-azure-files)
 - [Azure Storage Routing Preference (AZ-104)](#azure-storage-routing-preference-az-104)
 - [Azure Storage - Encryption Scope](#azure-storage---encryption-scope)
+- [Azure File Shares (AZ-104)](#azure-file-shares-az-104)
 ---
 
 ## Modelos de autenticación en Azure Storage
