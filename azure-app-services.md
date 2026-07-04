@@ -44,6 +44,8 @@
 
 Azure App Service es un servicio PaaS de Azure que permite alojar aplicaciones web y APIs con escalado y alta disponibilidad sin gestionar servidores ni infraestructura.
 
+![azure-app-service](./img/azure/azure-app-service.png)
+
 Es el **servicio PaaS** completo para alojar aplicaciones web.
 
 - Incluye:
@@ -61,6 +63,7 @@ Es el **servicio PaaS** completo para alojar aplicaciones web.
 | App Service Plan              | Recursos de cómputo                                   | Infraestructura         |
 | Azure Web App                 | Aplicación individual                                 | Aplicación              |
 | App Service Environment (ASE) | Despliegue dedicado de App Service dentro de una VNet | Infraestructura aislada |
+
 
 
 
