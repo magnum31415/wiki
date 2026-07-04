@@ -329,7 +329,6 @@ Optimizado para:
 | Retrieval latency | Alta |
 | Immediate access | ❌ |
 
----
 
 # Tipos de replicación Azure Storage
 
@@ -342,45 +341,6 @@ Optimizado para:
 
 ---
 
-# LRS
-
-```text
-Locally Redundant Storage
-```
-
-Replica datos dentro de un único datacenter.
-
----
-
-# ZRS
-
-```text
-Zone-Redundant Storage
-```
-
-Replica datos entre Availability Zones dentro de la misma región.
-
----
-
-# GRS
-
-```text
-Geo-Redundant Storage
-```
-
-Replica datos automáticamente a otra región Azure.
-
----
-
-# RA-GRS
-
-```text
-Read-Access Geo-Redundant Storage
-```
-
-Igual que GRS pero permitiendo lectura desde la región secundaria.
-
----
 
 # GRS vs ZRS
 
@@ -402,39 +362,14 @@ Igual que GRS pero permitiendo lectura desde la región secundaria.
 | Hierarchical Namespace | Muy alta |
 | ADLS Gen2 | Muy alta |
 
----
 
 # Trampas típicas examen
 
 ## Trampa 1
 
-Pensar que:
+- Pensar que: `` ZRS replica a otra región`` ❌ Incorrecto.
+- ZRS replica solo dentro de la misma región.
 
-```text
-ZRS replica a otra región
-```
-
-❌ Incorrecto.
-
-ZRS replica solo dentro de la misma región.
-
----
-
-## Trampa 2
-
-Confundir:
-
-```text
-Cool Tier
-```
-
-con:
-
-```text
-Archive Tier
-```
-
----
 
 ## Diferencia rápida
 
@@ -444,23 +379,10 @@ Archive Tier
 | Cool | Acceso poco frecuente |
 | Archive | Retención largo plazo |
 
----
-
 ## Trampa 3
 
-Pensar que:
-
-```text
-Azure Data Lake es un servicio separado
-```
-
-❌ Incorrecto.
-
-ADLS Gen2 realmente es:
-
-```text
-Blob Storage + Hierarchical Namespace
-```
+- Pensar que: ``Azure Data Lake es un servicio separado``  ❌ Incorrecto.
+- ADLS Gen2 realmente es: ``Blob Storage + Hierarchical Namespace``
 
 ---
 
