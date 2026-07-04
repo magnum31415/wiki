@@ -583,5 +583,15 @@ En este escenario:
 **Excluir archivos o carpetas → `_backup.filter`**
 
 
+## La trampa del examen AZ-104
+
+Es fácil pensar: ``Backup → Recovery Services Vault``  **Pero eso no siempre es cierto**.
+
+| Recurso           | Destino / sistema de backup |
+| ----------------- | --------------------------- |
+| Azure VM          | Recovery Services vault     |
+| Azure Files       | Recovery Services vault     |
+| Azure App Service | **Azure Storage account**   |
+| Azure Blobs       | Backup vault                |
 
 
