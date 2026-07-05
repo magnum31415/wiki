@@ -948,6 +948,16 @@ pero:
 
 Policy automática para mover o borrar blobs.
 
+| Concepto             | Categoría                  | Compatibilidad con Lifecycle Management | Ejemplo                                                       |
+| -------------------- | -------------------------- | --------------------------------------- | ------------------------------------------------------------- |
+| **StorageV2**        | 🏦 Tipo de Storage Account | ✅                                       | Cuenta de propósito general con blobs, files, queues y tables |
+| **BlobStorage**      | 🏦 Tipo de Storage Account | ✅                                       | Cuenta especializada para almacenar blobs                     |
+| **BlockBlobStorage** | 🏦 Tipo de Storage Account | ✅                                       | Cuenta Premium especializada en Block Blobs                   |
+| **Block Blob**       | 📄 Tipo de blob/archivo    | ✅                                       | Imagen `.jpg`, vídeo `.mp4`, documento `.pdf`                 |
+| **Append Blob**      | 📄 Tipo de blob/archivo    | ✅                                       | Archivo de logs al que se añaden datos continuamente          |
+| **Page Blob**        | 📄 Tipo de blob/archivo    | ❌                                       | Disco virtual `.vhd` de una máquina virtual                   |
+
+
 ---
 
 ## Qué permite
