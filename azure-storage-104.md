@@ -437,6 +437,22 @@ Optimizado para:
 | Retrieval latency | Alta |
 | Immediate access | ❌ |
 
+La clave es que para **mover un blob a Archive** deben cumplirse **dos condiciones:**
+````
+1. El tipo de cuenta debe soportar Archive
+                +
+2. La redundancia debe soportar Archive
+````
+| Tipo de cuenta       | Tier     | ¿Tipo compatible con Archive? | Redundancias posibles                | ¿Qué redundancias soportan Archive? | Resultado                   |
+| -------------------- | -------- | ----------------------------: | ------------------------------------ | ----------------------------------- | --------------------------- |
+| **StorageV2 (GPv2)** | Standard |                             ✅ | LRS, ZRS, GRS, RA-GRS, GZRS, RA-GZRS | LRS, GRS, RA-GRS                    | ✅ Depende de la redundancia |
+| **StorageV2 (GPv2)** | Premium  |                             ❌ | LRS, ZRS                             | Ninguna                             | ❌                           |
+| **BlobStorage**      | Standard |                             ✅ | LRS, GRS, RA-GRS                     | LRS, GRS, RA-GRS                    | ✅                           |
+| **BlockBlobStorage** | Premium  |                             ❌ | LRS, ZRS                             | Ninguna                             | ❌                           |
+| **FileStorage**      | Premium  |                             ❌ | LRS, ZRS                             | Ninguna                             | ❌                           |
+| **Storage (GPv1)**   | Standard |                             ❌ | LRS, GRS, RA-GRS                     | Ninguna                             | ❌                           |
+
+
 
 # Tipos de replicación Azure Storage
 
