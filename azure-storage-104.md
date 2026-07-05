@@ -69,6 +69,19 @@
 
 # Authentication Methods for Azure Storage
 
+| Tipo de autenticación  | Credencial utilizada                           | ¿Qué permisos se aplican?                           | Restricciones                                      |
+| ---------------------- | ---------------------------------------------- | --------------------------------------------------- | -------------------------------------------------- |
+| **Microsoft Entra ID** | Usuario / Service Principal / Managed Identity | **Azure RBAC** asignado a la identidad              | Scope del rol: Storage Account, container, etc.    |
+| **SAS**                | SAS Token                                      | Permisos definidos en el **SAS**                    | Servicio, recurso, permisos, fecha, IP y protocolo |
+| **Access Key**         | `key1` o `key2`                                | **Acceso completo** a los datos del Storage Account | No aplica RBAC ni restricciones del SAS            |
+
+````
+Entra ID → manda RBAC
+SAS      → manda la configuración del SAS
+Key1/2   → acceso completo
+````
+
+
 ## 1. Microsoft Entra ID (RBAC)
 
 Authentication is performed using identities managed in Microsoft Entra ID.
@@ -117,6 +130,8 @@ Example roles:
 
 Authentication is performed using a secret key associated with the storage account.
 
+Storage account keys act like root-level credentials and grant unrestricted full access to all services and data types in the storage account, including blobs (containers), files (file shares), and tables, regardless of the user's Azure RBAC roles. This means that even though User1 has limited RBAC roles, once they connect using the key, those restrictions are bypassed and they can read/write to all three resources.
+
 Each storage account has two keys:
 
 ```text
@@ -124,20 +139,76 @@ Key1
 Key2
 ```
 
-### How it works
+** key1 y key2 tienen dos usos.**
+| Uso de `key1` / `key2`            | Función                                     |
+| --------------------------------- | ------------------------------------------- |
+| Acceso directo al Storage Account | Actúan como credenciales de acceso completo |
+| Firmar un SAS                     | Generan la firma criptográfica del SAS      |
 
-```text
-Application
-      │
-      ▼
-Uses Storage Account Access Key
-      │
-      ▼
-Azure Storage authenticates request
-      │
-      ▼
-Access granted
-```
+
+````
+Storage Account
+└── Access Keys
+    ├── key1
+    └── key2
+         │
+         ├── Uso 1 → Acceso directo al Storage Account
+         │
+         └── Uso 2 → Firmar un Account SAS / Service SAS
+````
+
+
+### Uso 1: acceso directo
+
+````
+Aplicación
+    +
+key1
+    ↓
+Storage Account
+    ↓
+Acceso completo
+````
+En este caso, los permisos limitados del SAS no intervienen, porque no estás usando el SAS.
+
+### Uso 2: firmar un SAS
+````
+key1
+  +
+Permisos seleccionados
+  +
+Fecha de expiración
+  +
+Servicios permitidos
+       ↓
+   SAS Token
+````
+
+Después entregas el SAS, no la key1:
+
+````
+Usuario
+   +
+SAS Token
+    ↓
+Acceso limitado
+````
+
+**Diferencia clave**
+````
+Usar key1 directamente
+        ↓
+Acceso completo
+
+
+Usar un SAS firmado con key1
+        ↓
+Acceso limitado por el SAS
+````
+
+- **key1 / key2 = llaves maestras.**
+- **SAS = permiso temporal y limitado firmado con una de esas llaves.**
+
 
 ### Characteristics
 
@@ -159,6 +230,25 @@ It is generated using:
 
 - Access Key
 - User Delegation Key
+  
+defines las restricciones del SAS:
+| Campo                  | Qué limita                               |
+| ---------------------- | ---------------------------------------- |
+| Allowed services       | Blob, File, Queue, Table                 |
+| Allowed resource types | Service, Container, Object               |
+| Allowed permissions    | Read, Write, Delete, List, etc.          |
+| Start / Expiry         | Periodo de validez                       |
+| Allowed IP addresses   | IPs permitidas                           |
+| Allowed protocols      | HTTPS o HTTP                             |
+| Signing key            | `key1` o `key2` usada para firmar el SAS |
+
+| Campo                      | Pregunta que responde                                             | Tipos                      | Ejemplo                |
+| -------------------------- | ----------------------------------------------------------------- | -------------------------- | ---------------------- |
+| **Allowed services**       | ¿**En qué servicio** de Storage puedo entrar?                     | Blob, File, Queue, Table   | `Blob`                 |
+| **Allowed resource types** | ¿**A qué nivel de recurso** puedo acceder dentro de ese servicio? | Service, Container, Object | `Container` y `Object` |
+
+
+
 
 ### How it works
 
