@@ -10,6 +10,49 @@
 - [Azure Service Endpoint Policy (AZ-104)](#azure-service-endpoint-policy-az-104)
 - [Azure Policy Effects](#azure-policy-effects)
 ---
+## Where Policy definitions can be assigned?
+
+Policy definitions can be assigned at any level in the Azure hierarchy, including the tenant root group, management groups, subscriptions,  resource groups, and individual resource.
+
+Policy Assignment → se puede hacer en cualquier nivel de la jerarquía.
+
+It should be noted that policy cannot be applied to an individual resource from the Azure Portal, however, it can be done via Azure CLI or PowerShell.
+
+| Scope               | ¿Se puede asignar una Policy? | Azure Portal                                  | PowerShell | Azure CLI | Efecto                                                         |
+| ------------------- | ----------------------------- | --------------------------------------------- | ---------- | --------- | -------------------------------------------------------------- |
+| Tenant Root Group   | ✅ Sí                          | ✅                                             | ✅          | ✅         | Afecta a todos los Management Groups, subscriptions y recursos |
+| Management Group    | ✅ Sí                          | ✅                                             | ✅          | ✅         | Afecta a todas las subscriptions y recursos descendientes      |
+| Subscription        | ✅ Sí                          | ✅                                             | ✅          | ✅         | Afecta a todos los Resource Groups y recursos                  |
+| Resource Group      | ✅ Sí                          | ✅                                             | ✅          | ✅         | Afecta a todos los recursos del RG                             |
+| Resource individual | ✅ Sí                          | ⚠️ No directamente desde el selector estándar | ✅          | ✅         | Afecta únicamente a ese recurso                                |
+
+
+## Exclusiones de Azure Policy
+
+Al asignar una Azure Policy, se pueden excluir determinados ámbitos de la evaluación de la policy.
+
+Las exclusiones se configuran mediante: `` Not scopes ``
+
+Una exclusión puede aplicarse a:
+
+| Nivel             | Asignar Policy | Excluir |
+| ----------------- | -------------- | ------- |
+| Tenant Root Group | ✅              | ❌       |
+| Management Group  | ✅              | ✅       |
+| Subscription      | ✅              | ✅       |
+| Resource Group    | ✅              | ✅       |
+| Resource          | ✅              | ✅       |
+
+
+
+**Recursos que pueden especificarse como exclusiones**
+
+- Management Group
+- Subscription
+- Resource Group
+- Resource
+
+El ``Tenant Root Group`` no puede especificarse como exclusión.
 
 ## Minimum Azure Policy JSON
 
