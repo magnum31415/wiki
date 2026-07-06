@@ -103,19 +103,175 @@ Azure Infrastructure
 
 # Qué es un App Service Plan
 
-El:
+El **Pricing Tier** (nivel de precio) de un **Azure App Service Plan** define principalmente:
+
+* Potencia de las instancias: CPU y RAM.
+* Número máximo de instancias.
+* Capacidad de escalado.
+* Funcionalidades disponibles.
+* Alta disponibilidad.
+* Coste.
 
 ```text
 App Service Plan
+│
+├── Operating System → Linux / Windows
+│
+├── Region → West Europe, Germany West Central...
+│
+└── Pricing Tier
+    ├── Free
+    ├── Shared
+    ├── Basic
+    ├── Standard
+    ├── Premium
+    └── Isolated
 ```
 
-define:
+> **Cuanto mayor es el Tier, más recursos, funcionalidades, capacidad de escalado y coste.**
 
-- CPU
-- RAM
-- pricing tier
-- número instancias
-- escalado
+---
+
+# Tier vs SKU
+
+Dentro de cada **Tier** existen diferentes tamaños o **SKUs**.
+
+Ejemplo:
+
+```text
+Tier: Basic
+├── B1
+├── B2
+└── B3
+
+Tier: Standard
+├── S1
+├── S2
+└── S3
+
+Tier: Premium v3
+├── P0v3
+├── P1v3
+├── P2v3
+└── P3v3
+```
+
+Por tanto:
+
+> **Premium v3 = Tier**
+> **P1v3 = SKU o tamaño concreto dentro del Tier**
+
+---
+
+# Principales Pricing Tiers
+
+| Tier        | SKUs típicas | Uso principal           | Autoscale | Zone Redundancy      |
+| ----------- | ------------ | ----------------------- | --------- | -------------------- |
+| Free        | F1           | Pruebas                 | ❌         | ❌                    |
+| Shared      | D1           | Desarrollo              | ❌         | ❌                    |
+| Basic       | B1-B3        | Apps pequeñas           | ❌         | ❌                    |
+| Standard    | S1-S3        | Producción              | ✅         | ❌                    |
+| Premium v2  | P1v2-P3v2    | Alto rendimiento        | ✅         | ✅                    |
+| Premium v3  | P0v3-P3v3    | Producción moderna      | ✅         | ✅                    |
+| Isolated v2 | I1v2-I6v2    | App Service Environment | ✅         | Arquitectura aislada |
+
+---
+
+# Jerarquía de Tiers
+
+```text
+Free / Shared
+      ↓
+    Basic
+      ↓
+   Standard
+      ↓
+ Premium v2 / v3
+      ↓
+ Isolated v2
+```
+
+Cuanto más alto es el Tier:
+
+```text
+↑ CPU y RAM
+↑ Número de instancias
+↑ Capacidad de escalado
+↑ Funcionalidades
+↑ Alta disponibilidad
+↑ Coste
+```
+
+---
+
+# Ejemplo: interpretación de P1v3
+
+```text
+P1v3
+││ └── v3 = Generación
+│└──── 1 = Tamaño
+└───── P = Premium
+```
+
+| SKU  | Tier       | Tamaño  |
+| ---- | ---------- | ------- |
+| B1   | Basic      | Pequeño |
+| B3   | Basic      | Grande  |
+| S1   | Standard   | Pequeño |
+| P1v3 | Premium v3 | Pequeño |
+| P3v3 | Premium v3 | Grande  |
+
+---
+
+# Variantes Memory Optimized
+
+Algunas SKUs Premium tienen variantes optimizadas para memoria, identificadas mediante la letra `m`.
+
+```text
+P1v3  → Premium v3 estándar
+P1mv3 → Premium v3 Memory Optimized
+```
+
+---
+
+# Zone Redundancy
+
+Para el examen AZ-104:
+
+```text
+Basic          ❌
+Standard       ❌
+Premium v2     ✅
+Premium v3     ✅
+```
+
+Ejemplo:
+
+```text
+ASP1 → Linux   + Basic B1       ❌
+ASP2 → Windows + Standard S1    ❌
+ASP3 → Linux   + Premium v3     ✅
+ASP4 → Windows + Premium v3     ✅
+```
+
+> **El sistema operativo Linux o Windows no determina el soporte de Zone Redundancy. El factor principal es el Pricing Tier.**
+
+---
+
+# Regla clave AZ-104
+
+```text
+App Service Plan
+        │
+        ├── Tier → Nivel de capacidades
+        │
+        └── SKU  → Tamaño concreto dentro del Tier
+```
+
+> **Tier = funcionalidades y capacidades disponibles.**
+> **SKU = tamaño y recursos concretos.**
+
+
 
 ---
 
