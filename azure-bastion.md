@@ -7,6 +7,76 @@
 
 # Azure Bastion (AZ-104)
 
+## Tipos
+
+| Tipo de Bastion          | ¿Necesita Public IP propia? | ¿Qué IP usa?                                      |
+| ------------------------ | --------------------------: | ------------------------------------------------- |
+| **Developer**            |                        ❌ No | IP pública compartida y gestionada por Microsoft  |
+| **Basic**                |                        ✅ Sí | **IPv4 + Standard SKU + Regional + Static** |
+| **Standard**             |                        ✅ Sí | **IPv4 + Standard SKU + Regional + Static** |
+| **Premium normal**       |                        ✅ Sí | **IPv4 + Standard SKU + Regional + Static** |
+| **Premium Private-only** |                        ❌ No | IP privada dentro de la VNet                      |
+
+
+La diferencia es que Basic y Standard son dos niveles del recurso Public IP de Azure. No cambia el formato de la IP: ambas pueden ser una IPv4 normal como 20.50.10.8. Cambian sus capacidades, seguridad y disponibilidad.
+| Característica                  | Basic SKU                           | Standard SKU                       |
+| ------------------------------- | ----------------------------------- | ---------------------------------- |
+| Seguridad de entrada            | Más abierta por defecto             | **Secure by default**              |
+| Tráfico entrante                | Permitido por defecto               | Bloqueado hasta permitirlo con NSG |
+| Availability Zones              | ❌ No                                | ✅ Sí                               |
+| Asignación                      | Static o Dynamic                    | **Static**                         |
+| Servicios modernos como Bastion | ❌ No                                | ✅ Sí                               |
+| Estado actual                   | ⚠️ Retirada para la mayoría de usos | ✅ SKU actual                       |
+
+
+### Bastion Developer
+
+Usa una IP pública de la infraestructura compartida de Microsoft, no una Public IP de tu suscripción.
+
+````
+Tu navegador
+      │
+      │ HTTPS
+      ▼
+Infraestructura pública compartida
+de Azure Bastion (Microsoft)
+      │
+      │ Red de Azure
+      ▼
+IP privada de tu VM
+````
+Por tanto:
+
+- ❌ Tú no creas una Public IP.
+- ❌ No aparece una Public IP de Bastion en tu Resource Group.
+- ❌ No necesitas AzureBastionSubnet.
+- ✅ Microsoft proporciona y gestiona el endpoint público compartido.
+
+Es parecido a usar un SaaS: hay IPs públicas por debajo, pero no son recursos tuyos.
+
+### Bastion Basic / Standard
+
+La diferencia entre Basic y Standard no está en el tipo de Public IP. Está en las funcionalidades: Standard añade, entre otras cosas, mayor escalabilidad y funciones avanzadas como cliente nativo, enlaces compartibles, conexión por IP y puertos personalizados.
+
+````
+BASTION BASIC / STANDARD
+────────────────────────
+
+Tú
+ │ HTTPS 443
+ ▼
+Public IP del Bastion  ← IP1
+ │
+ ▼
+Azure Bastion
+ │
+ ├── AzureBastionSubnet
+ │
+ ▼
+VM privada
+````
+
+## Esquema
 
 ![VNET BASTION](./img/azure/azure-bastion.png)
 
