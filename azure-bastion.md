@@ -812,6 +812,22 @@ Tienes:
 
 Necesitas abrir una conexión **RDP** desde tu ordenador utilizando el cliente nativo de Windows (Remote Desktop).
 
+| Funcionalidad         | Basic | Standard | Premium |
+| --------------------- | :---: | :------: | :-----: |
+| Native Client Support |   ❌   |     ✅    |    ✅    |
+| Azure CLI             |   ❌   |     ✅    |    ✅    |
+| Azure PowerShell      |   ❌   |     ✅    |    ✅    |
+| mstsc.exe (RDP)       |   ❌   |     ✅    |    ✅    |
+| Cliente SSH nativo    |   ❌   |     ✅    |    ✅    |
+
+1. Actualizar el Bastion de Basic a Standard.
+2. Ir a Azure Bastion → Configuration.
+3. Habilitar "Native Client Support".
+4. Ya puedes utilizar clientes nativos como:
+  - Remote Desktop (mstsc.exe)
+  - Azure CLI (az network bastion rdp o az network bastion ssh)
+  - Azure PowerShell
+
 ---
 
 # Regla principal
