@@ -20,6 +20,49 @@ Lo primero que debes identificar en una pregunta es **qué tipo de Azure Bastion
 | **Premium** | ✅ Sí | Public IP propia. |
 | **Premium (Private-only)** | ❌ No | Solo IP privada dentro de la VNet. |
 
+## Tipos y funcionalidades (AZ-104)
+
+| Funcionalidad | Developer | Basic | Standard | Premium | Premium (Private-only) |
+|---------------|:---------:|:-----:|:--------:|:-------:|:----------------------:|
+| Conexión desde Azure Portal | ✅ | ✅ | ✅ | ✅ | ✅ (desde red privada) |
+| RDP | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SSH | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Public IP propia | ❌ | ✅ | ✅ | ✅ | ❌ |
+| Public IP compartida de Microsoft | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Solo IP privada | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Native Client Support | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Azure CLI (`az network bastion rdp/ssh`) | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Azure PowerShell | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Cliente RDP (mstsc.exe) | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Cliente SSH nativo | ❌ | ❌ | ✅ | ✅ | ✅ |
+| File Transfer (RDP/SSH) | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Session Recording | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Compartir enlace (Shareable Link) | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Tunneling | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Kerberos Authentication | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Acceso sin exponer puertos RDP/SSH | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Compatible con JIT | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+---
+
+## Importante sobre JIT
+
+**Just-In-Time (JIT) NO es una funcionalidad de Azure Bastion.**
+
+Pertenece a **Microsoft Defender for Cloud**.
+
+Puede utilizarse con cualquier tipo de Bastion (o incluso sin Bastion), aunque **normalmente no aporta valor cuando se utiliza Azure Bastion**, ya que Bastion evita exponer los puertos **3389 (RDP)** y **22 (SSH)** a Internet.
+
+---
+
+## Regla para el AZ-104
+
+- **Developer** → Solo acceso desde el Portal mediante una IP pública compartida de Microsoft.
+- **Basic** → Acceso desde el Portal utilizando una Public IP propia.
+- **Standard** → Añade **Native Client Support**, Azure CLI, PowerShell, mstsc, SSH nativo, File Transfer y Tunneling.
+- **Premium** → Añade **Session Recording** sobre Standard.
+- **Premium (Private-only)** → Igual que Premium, pero sin Public IP; el acceso se realiza únicamente desde una red privada (VPN, ExpressRoute, etc.).
+
 ---
 
 ## 2. Si el Bastion necesita una Public IP...
