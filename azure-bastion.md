@@ -2,32 +2,114 @@
 
 - [Azure Bastion (AZ-104)](#azure-bastion-az-104)
 - [Azure Bastion Basic vs Standard (AZ-104)](#azure-bastion-basic-vs-standard-az-104)
+- [Escenario Necesitas abrir una conexión RDP desde tu ordenador utilizando el cliente nativo de Windows (Remote Desktop).](#escenario-necesitas-abrir-una-conexión-rdp-desde-tu-ordenador-utilizando-el-cliente-nativo-de-windows-remote-desktop)
 
 ---
 
 # Azure Bastion (AZ-104)
 
-## Tipos
+## 1. Tipos de Azure Bastion
 
-| Tipo de Bastion          | ¿Necesita Public IP propia? | ¿Qué IP usa?                                      |
-| ------------------------ | --------------------------: | ------------------------------------------------- |
-| **Developer**            |                        ❌ No | IP pública compartida y gestionada por Microsoft  |
-| **Basic**                |                        ✅ Sí | **IPv4 + Standard SKU + Regional + Static** |
-| **Standard**             |                        ✅ Sí | **IPv4 + Standard SKU + Regional + Static** |
-| **Premium normal**       |                        ✅ Sí | **IPv4 + Standard SKU + Regional + Static** |
-| **Premium Private-only** |                        ❌ No | IP privada dentro de la VNet                      |
+Lo primero que debes identificar en una pregunta es **qué tipo de Azure Bastion** se está utilizando.
 
+| Tipo de Bastion | ¿Necesita una Public IP propia? | ¿Qué IP utiliza? |
+|-----------------|:-------------------------------:|------------------|
+| **Developer** | ❌ No | IP pública compartida y administrada por Microsoft. |
+| **Basic** | ✅ Sí | Public IP propia. |
+| **Standard** | ✅ Sí | Public IP propia. |
+| **Premium** | ✅ Sí | Public IP propia. |
+| **Premium (Private-only)** | ❌ No | Solo IP privada dentro de la VNet. |
 
-La diferencia es que Basic y Standard son dos niveles del recurso Public IP de Azure. No cambia el formato de la IP: ambas pueden ser una IPv4 normal como 20.50.10.8. Cambian sus capacidades, seguridad y disponibilidad.
-| Característica                  | Basic SKU                           | Standard SKU                       |
-| ------------------------------- | ----------------------------------- | ---------------------------------- |
-| Seguridad de entrada            | Más abierta por defecto             | **Secure by default**              |
-| Tráfico entrante                | Permitido por defecto               | Bloqueado hasta permitirlo con NSG |
-| Availability Zones              | ❌ No                                | ✅ Sí                               |
-| Asignación                      | Static o Dynamic                    | **Static**                         |
-| Servicios modernos como Bastion | ❌ No                                | ✅ Sí                               |
-| Estado actual                   | ⚠️ Retirada para la mayoría de usos | ✅ SKU actual                       |
+---
 
+## 2. Si el Bastion necesita una Public IP...
+
+Para los tipos **Basic**, **Standard** y **Premium**, la Public IP debe tener estas propiedades:
+
+| Propiedad de la Public IP | Valor requerido |
+|---------------------------|-----------------|
+| Versión IP | **IPv4** |
+| SKU | **Standard** |
+| Assignment | **Static** |
+| Scope | **Regional** |
+
+> Estas propiedades pertenecen al **recurso Public IP**, no al recurso Azure Bastion.
+
+---
+
+# Tipos de Public IP (NO son tipos de Bastion)
+
+Azure dispone de **tres SKUs** para el recurso **Public IP**.
+
+| Característica | Basic SKU | Standard SKU | Premium SKU |
+|----------------|-----------|--------------|-------------|
+| Seguridad por defecto | Más abierta | ✅ Secure by default | ✅ Secure by default |
+| Tráfico entrante | Permitido por defecto | Bloqueado hasta permitirlo mediante NSG | Bloqueado hasta permitirlo mediante NSG |
+| Availability Zones | ❌ No | ✅ Sí | ✅ Sí |
+| Assignment | Static o Dynamic | **Solo Static** | **Solo Static** |
+| Rendimiento y resiliencia | Básico | Alto | Máximo |
+| Compatible con Azure Bastion | ❌ No | ✅ Sí | ❌ No |
+| Casos de uso habituales | Recursos heredados | La mayoría de servicios modernos de Azure | Servicios de red de alto rendimiento (por ejemplo, Azure Firewall con Virtual WAN y escenarios específicos) |
+| Estado actual | ⚠️ En desuso para nuevos diseños | ✅ SKU recomendado | Casos especializados |
+
+> **Importante para el AZ-104**
+>
+> Aunque exista una **Premium Public IP**, **Azure Bastion NO la utiliza**.
+>
+> Azure Bastion (Basic, Standard y Premium) **siempre requiere una Public IP Standard SKU**.
+
+---
+
+# Cómo reconocer las preguntas del examen
+
+### Si la pregunta habla de...
+
+> **Azure Bastion**
+
+Piensa en el **tipo de Bastion** (Developer, Basic, Standard o Premium) y si necesita una Public IP.
+
+---
+
+### Si la pregunta habla de...
+
+> **Public IP**
+
+Piensa en las propiedades del recurso Public IP:
+
+- IPv4
+- Standard SKU
+- Static
+- Regional
+
+---
+
+# Truco para el examen
+
+```
+¿Qué tipo de Bastion es?
+
+Developer
+    ↓
+No necesita Public IP
+
+Basic / Standard / Premium
+    ↓
+Necesitan Public IP
+    ↓
+IPv4 + Standard SKU + Static + Regional
+
+Premium (Private-only)
+    ↓
+No necesita Public IP
+```
+
+## Resumen para memorizar
+
+| Recurso | Lo que debes recordar |
+|----------|-----------------------|
+| **Azure Bastion** | Existen varios tipos (Developer, Basic, Standard y Premium). |
+| **Public IP** | Tiene diferentes SKUs (Basic, Standard y Premium). |
+| **Relación entre ambos** | Azure Bastion **nunca utiliza una Basic SKU ni una Premium SKU**. Si necesita una Public IP, **siempre debe ser Standard SKU**. |
 
 ### Bastion Developer
 
@@ -716,3 +798,194 @@ es suficiente.
                  ✅ Shareable Links
                  ✅ Kerberos
 ```
+---
+
+
+# Escenario Necesitas abrir una conexión RDP desde tu ordenador utilizando el cliente nativo de Windows (Remote Desktop).
+ 
+
+Tienes:
+
+- Un equipo Windows (Device1).
+- Una máquina virtual (VM1) **sin Public IP**.
+- Un **Azure Bastion Basic** conectado a la misma VNet.
+
+Necesitas abrir una conexión **RDP** desde tu ordenador utilizando el cliente nativo de Windows (Remote Desktop).
+
+---
+
+# Regla principal
+
+El **cliente nativo (Native Client)** **NO está disponible** en Azure Bastion **Basic**.
+
+Para utilizar RDP desde tu propio equipo mediante:
+
+- Remote Desktop (mstsc)
+- Azure CLI
+- Azure PowerShell
+
+es necesario utilizar **Azure Bastion Standard**.
+
+---
+
+# Secuencia correcta
+
+## Paso 1
+
+Actualizar Azure Bastion de **Basic** a **Standard**.
+
+```
+Basic
+   │
+Upgrade
+   ▼
+Standard
+```
+
+---
+
+## Paso 2
+
+Habilitar la característica **Native Client Support**.
+
+Azure Portal
+
+Azure Bastion
+
+Configuration
+
+Enable **Native Client Support**
+
+---
+
+## Paso 3
+
+Desde el equipo local ejecutar:
+
+```bash
+az network bastion rdp \
+  --name "<BastionName>" \
+  --resource-group "<ResourceGroupName>" \
+  --target-resource-id "<VMResourceId>"
+```
+
+Este comando inicia automáticamente la sesión RDP hacia la VM a través de Azure Bastion.
+
+---
+
+# ¿Es necesario ejecutar mstsc.exe?
+
+**No.**
+
+El comando:
+
+```bash
+az network bastion rdp
+```
+
+lanza automáticamente el cliente RDP de Windows.
+
+Por tanto, en una pregunta del examen:
+
+❌ Ejecutar **mstsc.exe** como paso independiente **no es necesario**.
+
+---
+
+# ¿Cuándo usar mstsc.exe?
+
+Solo si el usuario quiere abrir manualmente una conexión RDP.
+
+Cuando se utiliza:
+
+```bash
+az network bastion rdp
+```
+
+Azure CLI se encarga de abrir el cliente RDP.
+
+---
+
+# Características por SKU
+
+| Funcionalidad | Developer | Basic | Standard | Premium |
+|---------------|:--------:|:-----:|:--------:|:-------:|
+| Conexión desde Azure Portal | ✅ | ✅ | ✅ | ✅ |
+| Native Client (RDP/SSH desde PC) | ❌ | ❌ | ✅ | ✅ |
+| Azure CLI (`az network bastion rdp`) | ❌ | ❌ | ✅ | ✅ |
+| Azure PowerShell | ❌ | ❌ | ✅ | ✅ |
+
+---
+
+# Native Client
+
+Native Client permite utilizar aplicaciones instaladas en el ordenador local para conectarse a una VM a través de Azure Bastion.
+
+Ejemplos:
+
+- Remote Desktop (RDP)
+- SSH
+- Azure CLI
+- Azure PowerShell
+
+Sin necesidad de que la VM tenga una Public IP.
+
+---
+
+# Lo que NO era necesario en esta pregunta
+
+## Kerberos Authentication
+
+No es un requisito para conectarse mediante Azure Bastion.
+
+---
+
+## Just-In-Time (JIT)
+
+JIT pertenece a Microsoft Defender for Cloud.
+
+Sirve para limitar el tiempo durante el cual una VM acepta conexiones administrativas.
+
+No es necesario para utilizar Azure Bastion.
+
+---
+
+# Truco para el examen
+
+Si aparece cualquiera de estas palabras:
+
+- Native Client
+- Azure CLI
+- Azure PowerShell
+- `az network bastion rdp`
+- Cliente RDP local
+
+➡️ Piensa inmediatamente:
+
+> **Azure Bastion Standard (o Premium).**
+
+Si el Bastion es **Basic**, el primer paso casi siempre será:
+
+**Upgrade Basic → Standard**
+
+---
+
+# Resumen para memorizar
+
+```
+Basic
+   │
+   ├── Azure Portal ✅
+   └── Native Client ❌
+
+Standard
+   │
+   ├── Azure Portal ✅
+   ├── Native Client ✅
+   ├── Azure CLI ✅
+   ├── Azure PowerShell ✅
+   └── mstsc mediante az network bastion rdp ✅
+```
+
+## Regla de oro (AZ-104)
+
+> Si una pregunta menciona **Native Client**, **Azure CLI**, **Azure PowerShell** o el comando `az network bastion rdp`, la respuesta será **Azure Bastion Standard** (o Premium), ya que **Basic no soporta estas funcionalidades**.
