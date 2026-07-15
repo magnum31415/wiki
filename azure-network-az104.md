@@ -5,6 +5,7 @@
 - [Azure Connection Monitor (AZ-104)](#azure-connection-monitor-az-104)
 - [Service Tags más importantes para el AZ-104](#service-tags-más-importantes-para-el-az-104)
 - [Reglas por defecto de un Network Security Group (NSG) (AZ-104)](#reglas-por-defecto-de-un-network-security-group-nsg-az-104)
+- [¿Dónde se puede asociar un Network Security Group?](#dónde-se-puede-asociar-un-network-security-group)
 
 ---
 
@@ -1305,3 +1306,101 @@ La **primera regla que coincide** con el tráfico determina el resultado y **no 
   - ✅ Se permiten las **Health Probes** del **Azure Load Balancer**.
   - ✅ Se permite la salida a **Internet**.
   - ❌ Todo el resto del tráfico se bloquea mediante las reglas **DenyAllInbound** y **DenyAllOutBound**.
+
+
+---
+
+# ¿Dónde se puede asociar un Network Security Group?
+
+Un **Network Security Group (NSG)** puede asociarse únicamente a:
+
+- ✅ Una **Subnet**
+- ✅ Una **Network Interface (NIC)**
+
+No puede asociarse directamente a una **Virtual Network (VNet)**.
+
+---
+
+# Asociación a una Subnet
+
+```
+Virtual Network
+│
+├── Subnet A ─────────── NSG-A
+│       │
+│       ├── VM1
+│       └── VM2
+│
+└── Subnet B
+        │
+        └── VM3
+```
+
+En este caso:
+
+- Todas las VMs de **Subnet A** heredan las reglas del **NSG-A**.
+- La **Subnet B** no tiene NSG.
+
+---
+
+# Asociación a una NIC
+
+```
+VM1
+│
+└── NIC ─────────── NSG-VM1
+```
+
+Solo afecta a esa máquina virtual.
+
+---
+
+# Se pueden combinar ambos
+
+Es posible tener:
+
+```
+Virtual Network
+│
+└── Subnet ───────── NSG-Subnet
+        │
+        └── VM
+             │
+             └── NIC ───── NSG-NIC
+```
+
+En este caso:
+
+- El tráfico debe ser permitido por **ambos NSG**.
+- Si cualquiera de ellos lo bloquea, el tráfico será denegado.
+
+---
+
+# Regla para el AZ-104
+
+| Recurso | ¿Se puede asociar un NSG? |
+|----------|:-------------------------:|
+| Virtual Network (VNet) | ❌ No |
+| Subnet | ✅ Sí |
+| Network Interface (NIC) | ✅ Sí |
+| Virtual Machine | ❌ No (se asocia a su NIC) |
+
+---
+
+# Clave para el examen
+
+Cuando una pregunta diga:
+
+> "Aplicar las mismas reglas de seguridad a todas las máquinas de una red"
+
+La respuesta suele ser:
+
+**Asociar un NSG a la Subnet.**
+
+Cuando diga:
+
+> "Aplicar reglas únicamente a una máquina virtual"
+
+La respuesta suele ser:
+
+**Asociar un NSG a la Network Interface (NIC) de esa VM.**
