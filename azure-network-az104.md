@@ -3,6 +3,7 @@
 - [Azure Virtual Network Peering (AZ-104)](#azure-virtual-network-peering-az-104)
 - [Azure Route Tables y Next Hop Types (AZ-104)](#azure-route-tables-y-next-hop-types-az-104)
 - [Azure Connection Monitor (AZ-104)](#azure-connection-monitor-az-104)
+- [Service Tags más importantes para el AZ-104](#service-tags-más-importantes-para-el-az-104)
 
 ---
 
@@ -1111,3 +1112,111 @@ Connection Monitor requires the source VM and the Connection Monitor instance to
 ```text
 Connection Monitor does not filter or route traffic.
 ```
+---
+
+# Azure Service Tags (AZ-104)
+
+Los **Service Tags** son **grupos predefinidos de direcciones IP** mantenidos por Microsoft. Se utilizan principalmente en:
+
+- Network Security Groups (NSG)
+- Azure Firewall
+- User Defined Routes (UDR) en determinados escenarios
+
+Su ventaja es que **no es necesario conocer ni mantener manualmente las direcciones IP** de los servicios de Azure, ya que Microsoft las actualiza automáticamente.
+
+---
+
+# Service Tags más importantes para el AZ-104
+
+| Service Tag | Representa | Ejemplo de uso |
+|--------------|------------|----------------|
+| **AzureCloud** | Todos los datacenters públicos de Azure en una región. | Permitir o bloquear acceso a servicios de Azure. |
+| **VirtualNetwork** | La propia Virtual Network. | Permitir tráfico interno entre recursos de la VNet. |
+| **Internet** | Todo Internet (excepto Azure). | Permitir salida a Internet. |
+| **Storage** | Azure Storage. | Permitir acceso a Storage Accounts. |
+| **Sql** | Azure SQL Database. | Permitir acceso a Azure SQL. |
+| **KeyVault** | Azure Key Vault. | Permitir acceso al Key Vault. |
+| **AzureLoadBalancer** | Azure Load Balancer. | Permitir las Health Probes del Load Balancer. |
+| **AppGateway** | Azure Application Gateway. | Reglas específicas para Application Gateway. |
+| **EventHub** | Azure Event Hubs. | Permitir acceso a Event Hubs. |
+| **ServiceBus** | Azure Service Bus. | Permitir acceso a Service Bus. |
+| **AzureMonitor** | Azure Monitor. | Permitir el envío de logs y métricas. |
+| **AzureActiveDirectory** | Microsoft Entra ID. | Permitir autenticación contra Entra ID. |
+| **AzureResourceManager** | Azure Resource Manager (`management.azure.com`). | Permitir operaciones de administración de recursos. |
+| **GuestAndHybridManagement** | Azure Arc y administración híbrida. | Gestión de servidores híbridos mediante Azure Arc. |
+
+---
+
+# Los Service Tags que más aparecen en el AZ-104
+
+| Service Tag | Representa |
+|--------------|------------|
+| **VirtualNetwork** | La propia VNet. |
+| **Internet** | Internet. |
+| **AzureLoadBalancer** | Azure Load Balancer. |
+| **AzureCloud** | Servicios públicos de Azure. |
+| **Storage** | Azure Storage. |
+| **Sql** | Azure SQL Database. |
+| **KeyVault** | Azure Key Vault. |
+
+---
+
+# Ejemplo 1: Permitir acceso únicamente a Azure Storage
+
+```text
+Source      = VirtualNetwork
+Destination = Storage
+Action      = Allow
+```
+
+---
+
+# Ejemplo 2: Bloquear acceso a servicios públicos de Azure
+
+```text
+Destination = AzureCloud
+Action      = Deny
+```
+
+> **Nota:** En muchas preguntas del AZ-104 se utiliza **AzureCloud** como respuesta esperada para bloquear el acceso al portal de Azure. Técnicamente, **AzureCloud** representa un conjunto mucho más amplio de servicios públicos de Azure, no únicamente `https://portal.azure.com`.
+
+---
+
+# Ejemplo 3: Permitir únicamente tráfico dentro de la VNet
+
+```text
+Source      = VirtualNetwork
+Destination = VirtualNetwork
+Action      = Allow
+```
+
+---
+
+# ¿Cómo conocer las direcciones IP incluidas en un Service Tag?
+
+Microsoft publica periódicamente el listado actualizado de direcciones IP asociadas a cada Service Tag.
+
+Ejemplos:
+
+- `Storage.WestEurope`
+- `Storage.NorthEurope`
+- `AzureCloud.WestEurope`
+
+Cada uno de ellos representa cientos o miles de direcciones IP administradas automáticamente por Microsoft.
+
+---
+
+# Service Tags recomendados para memorizar en el AZ-104
+
+| Service Tag | Prioridad |
+|--------------|:---------:|
+| **VirtualNetwork** | ⭐⭐⭐⭐⭐ |
+| **Internet** | ⭐⭐⭐⭐⭐ |
+| **AzureLoadBalancer** | ⭐⭐⭐⭐⭐ |
+| **AzureCloud** | ⭐⭐⭐⭐⭐ |
+| **Storage** | ⭐⭐⭐⭐ |
+| **Sql** | ⭐⭐⭐⭐ |
+| **KeyVault** | ⭐⭐⭐ |
+| **AzureMonitor** | ⭐⭐⭐ |
+| **AzureActiveDirectory** | ⭐⭐⭐ |
+| **AzureResourceManager** | ⭐⭐ |
