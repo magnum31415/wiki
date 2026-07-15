@@ -1,11 +1,9 @@
-[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
-
-# 📑 Índice – Azure Storage AZ-104
 
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # 📑 Índice – Azure Storage AZ-104
 
+- [Métodos de autenticación y autorización para Azure Storage Account (AZ-104)](#métodos-de-autenticación-y-autorización-para-azure-storage-account-az-104)
 - [📦 Azure Storage – Resumen ampliado para AZ-104](#-azure-storage--resumen-ampliado-para-az-104)
 - [🧱 Servicios principales de Azure Storage](#-servicios-principales-de-azure-storage)
 - [2️⃣ Azure Blob Storage](#2️⃣-azure-blob-storage)
@@ -26,6 +24,54 @@
 - [Azure Storage Immutability (AZ-104)](#azure-storage-immutability-az-104)
 - [Pregunta típica del AZ-104: "Access Policy"](#pregunta-típica-del-az-104-access-policy)
 - [Stored Access Policy vs Shared Access Signature (SAS)](#stored-access-policy-vs-shared-access-signature-sas)
+
+---
+
+# Métodos de autenticación y autorización para Azure Storage Account (AZ-104)
+
+| Método | ¿Qué es? | Credenciales utilizadas | Nivel de acceso | Seguridad | Casos de uso típicos | Recomendado |
+|---------|----------|-------------------------|-----------------|-----------|----------------------|-------------|
+| **Microsoft Entra ID + Azure RBAC (IAM)** | Autenticación basada en identidad mediante Microsoft Entra ID y permisos RBAC. | Usuario, Grupo, Service Principal o Managed Identity. | Granular (roles RBAC). | ⭐⭐⭐⭐⭐ Muy alta | Aplicaciones Azure, usuarios corporativos, automatización. | ✅ Sí |
+| **User Delegation SAS** | SAS firmado mediante una User Delegation Key obtenida desde Microsoft Entra ID. | User Delegation Key. | Granular (recurso, permisos, tiempo, IP, protocolo). | ⭐⭐⭐⭐⭐ Muy alta | Aplicaciones modernas que usan Entra ID. | ✅ Mejor opción para SAS |
+| **Service SAS** | SAS para un único servicio (Blob, Files, Queue o Table). | Storage Account Key. | Granular. | ⭐⭐⭐⭐ Alta | Compartir acceso temporal a blobs, archivos, etc. | ✅ Sí |
+| **Account SAS** | SAS que puede abarcar varios servicios del Storage Account. | Storage Account Key. | Amplio. | ⭐⭐⭐ Media-Alta | Administración temporal de varios servicios. | ⚠️ Solo cuando sea necesario |
+| **Stored Access Policy** | Política almacenada en un contenedor o file share que controla uno o varios Service SAS. Permite modificar o revocar los SAS asociados sin regenerarlos. | Se utiliza junto con un **Service SAS**. | Granular. | ⭐⭐⭐⭐⭐ Muy alta | Compartir recursos durante largos periodos con posibilidad de revocación centralizada. | ✅ Muy recomendable cuando se usan Service SAS |
+| **Storage Account Access Keys (Shared Key)** | Claves maestras del Storage Account. Existen dos claves (Key1 y Key2). | Storage Key. | Acceso completo al Storage Account. | ⭐⭐ Baja | Compatibilidad con aplicaciones antiguas y scripts heredados. | ❌ Evitar cuando sea posible |
+| **Anonymous Public Access** | Acceso sin autenticación. | Ninguna. | Solo recursos públicos. | ⭐ Muy baja | Sitios web estáticos, contenido público. | ❌ Solo si el contenido debe ser público |
+
+---
+
+## Notas importantes para el AZ-104
+
+- **Stored Access Policies NO son un método de autenticación por sí mismas.**
+- Una **Stored Access Policy** únicamente puede asociarse a un **Service SAS**.
+- **No pueden utilizarse** con:
+  - User Delegation SAS
+  - Account SAS
+- Su principal ventaja es que permiten:
+  - Cambiar la fecha de expiración.
+  - Cambiar los permisos.
+  - Revocar todos los SAS asociados eliminando la política.
+
+---
+
+## Comparativa rápida
+
+| Característica | Entra ID (IAM) | User Delegation SAS | Service SAS | Account SAS | Storage Keys |
+|----------------|---------------|---------------------|-------------|-------------|--------------|
+| Basado en identidad | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Permisos granulares | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Puede expirar | N/A | ✅ | ✅ | ✅ | ❌ |
+| Puede revocarse fácilmente | ✅ | ❌ | ⚠️ Solo con Stored Access Policy | ❌ | ❌ (hay que regenerar la clave) |
+| Compatible con Stored Access Policy | ❌ | ❌ | ✅ | ❌ | N/A |
+| Acceso completo al Storage | ❌ | ❌ | ❌ | ⚠️ Puede abarcar varios servicios | ✅ |
+| Recomendado por Microsoft | ✅ | ✅ | ✅ | ⚠️ | ❌ |
+
+[!IMPORTANT] **Clave para el examen AZ-104**
+
+Las **Stored Access Policies** suelen aparecer como una respuesta independiente, pero **no son un mecanismo de autenticación**.
+En realidad, son un mecanismo para **gestionar y revocar los permisos** de un **Service SAS**.
+Esta distinción es una de las claves de varias preguntas del examen AZ-104.
 
 ---
 
