@@ -4,6 +4,7 @@
 - [Azure Route Tables y Next Hop Types (AZ-104)](#azure-route-tables-y-next-hop-types-az-104)
 - [Azure Connection Monitor (AZ-104)](#azure-connection-monitor-az-104)
 - [Service Tags más importantes para el AZ-104](#service-tags-más-importantes-para-el-az-104)
+- [Reglas por defecto de un Network Security Group (NSG) (AZ-104)](#reglas-por-defecto-de-un-network-security-group-nsg-az-104)
 
 ---
 
@@ -1220,3 +1221,87 @@ Cada uno de ellos representa cientos o miles de direcciones IP administradas aut
 | **AzureMonitor** | ⭐⭐⭐ |
 | **AzureActiveDirectory** | ⭐⭐⭐ |
 | **AzureResourceManager** | ⭐⭐ |
+
+---
+
+# Reglas por defecto de un Network Security Group (NSG) (AZ-104)
+
+Cada **Network Security Group (NSG)** incluye automáticamente un conjunto de **reglas predeterminadas** que **no pueden eliminarse**, aunque sí pueden ser reemplazadas por reglas personalizadas con una prioridad más alta.
+
+---
+
+# Reglas de entrada (Inbound)
+
+| Prioridad | Nombre | Origen | Destino | Puerto | Acción | Descripción |
+|-----------|---------|--------|---------|--------|--------|-------------|
+| **65000** | AllowVnetInBound | VirtualNetwork | VirtualNetwork | Any | Allow | Permite el tráfico entre recursos de la misma VNet. |
+| **65001** | AllowAzureLoadBalancerInBound | AzureLoadBalancer | Any | Any | Allow | Permite las Health Probes del Azure Load Balancer. |
+| **65500** | DenyAllInbound | Any | Any | Any | Deny | Bloquea todo el tráfico de entrada restante. |
+
+---
+
+# Reglas de salida (Outbound)
+
+| Prioridad | Nombre | Origen | Destino | Puerto | Acción | Descripción |
+|-----------|---------|--------|---------|--------|--------|-------------|
+| **65000** | AllowVnetOutBound | VirtualNetwork | VirtualNetwork | Any | Allow | Permite el tráfico entre recursos de la misma VNet. |
+| **65001** | AllowInternetOutBound | Any | Internet | Any | Allow | Permite que los recursos salgan a Internet. |
+| **65500** | DenyAllOutBound | Any | Any | Any | Deny | Bloquea el resto del tráfico de salida. |
+
+---
+
+# Resumen visual
+
+```text
+INBOUND
+
+65000  AllowVnetInBound
+65001  AllowAzureLoadBalancerInBound
+65500  DenyAllInbound
+```
+
+```text
+OUTBOUND
+
+65000  AllowVnetOutBound
+65001  AllowInternetOutBound
+65500  DenyAllOutBound
+```
+
+---
+
+# Prioridades
+
+- Cuanto **menor** es el número de prioridad, **antes** se evalúa la regla.
+- Las reglas personalizadas pueden tener prioridades entre **100 y 4096**.
+- Las reglas predeterminadas utilizan prioridades **65000 o superiores**.
+
+Ejemplo:
+
+```text
+Priority 100  → Regla personalizada
+Priority 200  → Regla personalizada
+Priority 65000 → Regla predeterminada
+```
+
+La regla con prioridad **100** se evalúa antes que la de **65000**.
+
+---
+
+# Regla de evaluación
+
+Azure evalúa las reglas en orden de prioridad (de menor a mayor número).
+
+La **primera regla que coincide** con el tráfico determina el resultado y **no se siguen evaluando** las siguientes.
+
+---
+
+# Claves para el AZ-104
+
+- Las reglas predeterminadas **no pueden eliminarse**.
+- Las reglas personalizadas **sí pueden sobrescribir el comportamiento** de las reglas predeterminadas utilizando una prioridad menor (100–4096).
+- Por defecto:
+  - ✅ Se permite el tráfico dentro de la misma **Virtual Network**.
+  - ✅ Se permiten las **Health Probes** del **Azure Load Balancer**.
+  - ✅ Se permite la salida a **Internet**.
+  - ❌ Todo el resto del tráfico se bloquea mediante las reglas **DenyAllInbound** y **DenyAllOutBound**.
