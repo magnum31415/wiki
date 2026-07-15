@@ -22,7 +22,7 @@
 - [Azure Files Backup (AZ-104)](#azure-files-backup-az-104)
 - [Azure Backup Diagnostic Settings (AZ-104)](#azure-backup-diagnostic-settings-az-104)
 - [Azure Backup Ecosystem - Componentes y Dependencias (AZ-104)](#azure-backup-ecosystem---componentes-y-dependencias-az-104)
-
+- [Azure Backup Vault vs Recovery Services Vault (AZ-104)](#azure-backup-vault-vs-recovery-services-vault-az-104)
   
 # Recovery Services Vault
 
@@ -2312,3 +2312,137 @@ Log Analytics stores monitoring data, not backups.
 ```text
 Azure Backup and Azure Site Recovery both use Recovery Services Vaults.
 ```
+---
+# Azure Backup Vault vs Recovery Services Vault (AZ-104)
+
+Azure dispone de **dos tipos de Vault** para proteger recursos mediante copias de seguridad. Ambos almacenan **Recovery Points**, pero están orientados a servicios diferentes.
+
+| Característica | **Recovery Services Vault (RSV)** | **Backup Vault (BV)** |
+|----------------|-----------------------------------|------------------------|
+| Servicio | Clásico (Legacy) | Nuevo |
+| Estado | Totalmente soportado | Recomendado para nuevos servicios compatibles |
+| **¿Quién lo usa?** | Azure Backup y Azure Site Recovery (ASR) | Azure Backup (servicios modernos) |
+| Azure Virtual Machines | ✅ Sí | ✅ Sí (mediante Backup Center) |
+| Azure Files | ✅ Sí | ❌ No |
+| SQL Server en Azure VM | ✅ Sí | ❌ No |
+| SAP HANA en Azure VM | ✅ Sí | ❌ No |
+| Azure Disk Backup | ❌ No | ✅ Sí |
+| Azure Blob Backup | ❌ No | ✅ Sí |
+| Backup Center | Compatible | Diseñado para integrarse con Backup Center |
+| Soft Delete | ✅ Sí | ✅ Sí |
+| Cross Region Restore | ✅ Sí | Depende del servicio |
+| Private Endpoint | ✅ Sí | ✅ Sí |
+| **Ejemplo** | Proteger una **VM Windows** con SQL Server y restaurarla en caso de desastre. | Proteger un **Managed Disk** o un **Blob Container** mediante Azure Backup. |
+
+---
+
+# Recovery Services Vault (RSV)
+
+Es el **vault tradicional** utilizado por Azure Backup.
+
+Se utiliza principalmente para:
+
+- Azure Virtual Machines
+- Azure Files
+- SQL Server en Azure VM
+- SAP HANA en Azure VM
+- Azure Site Recovery (ASR)
+
+Ejemplo:
+
+```text
+Azure VM
+      │
+      ▼
+Recovery Services Vault
+      │
+      ▼
+Recovery Points
+```
+
+---
+
+# Backup Vault (BV)
+
+Es el **nuevo tipo de vault** introducido para los servicios modernos de Azure Backup.
+
+Se utiliza principalmente para:
+
+- Azure Disk Backup
+- Azure Blob Backup
+- Nuevos escenarios gestionados desde Backup Center
+
+Ejemplo:
+
+```text
+Managed Disk
+      │
+      ▼
+Backup Vault
+      │
+      ▼
+Recovery Points
+```
+
+---
+
+# Diferencia principal
+
+| Recovery Services Vault | Backup Vault |
+|--------------------------|--------------|
+| Diseñado para cargas de trabajo tradicionales. | Diseñado para nuevos servicios de Azure Backup. |
+| Compatible con Azure Site Recovery. | No soporta Azure Site Recovery. |
+| Soporta Azure Files, SQL y SAP HANA. | Soporta Azure Disk Backup y Blob Backup. |
+
+---
+
+# ¿Cuál utilizar?
+
+| Escenario | Vault recomendado |
+|------------|-------------------|
+| Backup de una Azure VM | Recovery Services Vault (AZ-104) |
+| Backup de Azure Files | Recovery Services Vault |
+| Backup de SQL Server en Azure VM | Recovery Services Vault |
+| Backup de SAP HANA en Azure VM | Recovery Services Vault |
+| Backup de Managed Disks | Backup Vault |
+| Backup de Azure Blob Storage | Backup Vault |
+
+---
+
+# Regla mnemotécnica
+
+## Recovery Services Vault
+
+Piensa en:
+
+> **"Recupero servidores completos."**
+
+- Virtual Machines
+- Azure Files
+- SQL
+- SAP HANA
+- Site Recovery
+
+---
+
+## Backup Vault
+
+Piensa en:
+
+> **"Protejo recursos modernos."**
+
+- Managed Disks
+- Blob Storage
+
+---
+
+# Clave para el AZ-104
+
+Actualmente, la mayoría de preguntas del **AZ-104** siguen utilizando **Recovery Services Vault**, ya que es el vault empleado para proteger:
+
+- Azure Virtual Machines
+- Azure Files
+- SQL Server en Azure VM
+- SAP HANA en Azure VM
+
+Es el tipo de vault que debes conocer mejor para el examen.
