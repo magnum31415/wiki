@@ -6,7 +6,7 @@
 - [Service Tags más importantes para el AZ-104](#service-tags-más-importantes-para-el-az-104)
 - [Reglas por defecto de un Network Security Group (NSG) (AZ-104)](#reglas-por-defecto-de-un-network-security-group-nsg-az-104)
 - [¿Dónde se puede asociar un Network Security Group?](#dónde-se-puede-asociar-un-network-security-group)
-
+- [Service Endpoint vs Private Endpoint (AZ-104)](#service-endpoint-vs-private-endpoint-az-104)
 ---
 
 # Azure Virtual Network Peering (AZ-104)
@@ -1404,3 +1404,243 @@ Cuando diga:
 La respuesta suele ser:
 
 **Asociar un NSG a la Network Interface (NIC) de esa VM.**
+
+---
+
+# Service Endpoint vs Private Endpoint (AZ-104)
+
+Una de las diferencias más importantes del AZ-104 es entender que un **Service Endpoint NO crea una IP privada** para el servicio Azure.
+
+Quien crea una IP privada es el **Private Endpoint**.
+
+---
+
+# Sin Service Endpoint
+
+```text
+VM
+
+↓
+
+Internet
+
+↓
+
+Storage Account
+```
+
+La VM accede al endpoint público del Storage Account.
+
+Ejemplo:
+
+```text
+https://mystorage.blob.core.windows.net
+```
+
+El DNS devuelve una **IP pública**.
+
+---
+
+# Con Service Endpoint
+
+```text
+VM
+
+↓
+
+Subnet
+
+↓
+
+Service Endpoint
+(Microsoft.Storage)
+
+↓
+
+Storage Account
+```
+
+El DNS sigue resolviendo el mismo nombre:
+
+```text
+mystorage.blob.core.windows.net
+```
+
+Y sigue resolviendo una **IP pública**.
+
+No aparece ninguna IP privada.
+
+Lo que cambia es el camino del tráfico y la identidad de origen:
+
+- Azure identifica que el tráfico procede de una VNet/Subnet autorizada.
+- El Storage Account puede permitir únicamente el acceso desde esas VNets.
+
+---
+
+# Con Private Endpoint
+
+```text
+VM
+
+↓
+
+10.10.1.5
+
+↓
+
+Private Endpoint
+
+↓
+
+Storage Account
+```
+
+Ahora el DNS devuelve:
+
+```text
+mystorage.privatelink.blob.core.windows.net
+
+↓
+
+10.1.0.4
+```
+
+El servicio dispone de una **IP privada dentro de la VNet**.
+
+Toda la comunicación se realiza mediante esa IP privada.
+
+---
+
+# Comparación
+
+| Característica | Sin Service Endpoint | Service Endpoint | Private Endpoint | Ejemplo |
+|----------------|---------------------|------------------|------------------|----------|
+| DNS resuelve una IP pública | ✅ | ✅ | ❌ | `mystorage.blob.core.windows.net → 20.x.x.x` |
+| DNS resuelve una IP privada | ❌ | ❌ | ✅ | `mystorage.privatelink.blob.core.windows.net → 10.1.0.4` |
+| El servicio tiene una IP privada dentro de la VNet | ❌ | ❌ | ✅ | Private Endpoint con IP `10.1.0.4` |
+| El servicio puede restringir el acceso por VNet/Subnet | ❌ | ✅ | ✅ | Solo permitir acceso desde `Subnet-Backups` |
+| Puede deshabilitar completamente el acceso público al servicio | ❌ | ⚠️ No completamente (el endpoint sigue siendo público; se restringe quién puede acceder) | ✅ | Storage Account accesible únicamente mediante Private Endpoint |
+| El tráfico utiliza el backbone de Azure | ✅ | ✅ | ✅ | Tráfico entre una VM y un Storage Account |
+| El servicio identifica la VNet/Subnet de origen | ❌ | ✅ | ✅ | Storage Account reconoce que la petición proviene de `VNet-Prod` |
+
+---
+
+# Ejemplo con Microsoft.Storage
+
+## Sin Service Endpoint
+
+```text
+VM
+
+↓
+
+https://mystorage.blob.core.windows.net
+
+↓
+
+IP pública
+```
+
+---
+
+## Con Service Endpoint
+
+```text
+VM
+
+↓
+
+https://mystorage.blob.core.windows.net
+
+↓
+
+IP pública
+
+↓
+
+Azure identifica que la petición procede de una VNet autorizada.
+```
+
+---
+
+## Con Private Endpoint
+
+```text
+VM
+
+↓
+
+10.1.0.4
+
+↓
+
+Storage Account
+```
+
+No se utiliza la IP pública.
+
+---
+
+# Ejemplo con Microsoft.AzureActiveDirectory
+
+Si habilitas un Service Endpoint para:
+
+```text
+Microsoft.AzureActiveDirectory
+```
+
+- El servicio **no obtiene una IP privada**.
+- Se siguen utilizando los endpoints públicos de Microsoft Entra ID.
+- El Service Endpoint permite optimizar el acceso y que determinados servicios reconozcan que el tráfico procede de una VNet autorizada cuando sea aplicable.
+
+---
+
+# Regla mnemotécnica
+
+## Service Endpoint
+
+> **"Sigo llamando a la puerta principal (IP pública), pero Azure sabe desde qué VNet/Subnet vengo."**
+
+```text
+VM
+
+↓
+
+IP pública
+
+↓
+
+Storage Account
+```
+
+---
+
+## Private Endpoint
+
+> **"El servicio tiene una puerta privada dentro de mi VNet."**
+
+```text
+VM
+
+↓
+
+10.1.0.4
+
+↓
+
+Private Endpoint
+
+↓
+
+Storage Account
+```
+
+---
+
+> [!IMPORTANT]
+> **Clave para el AZ-104**
+>
+> - **Service Endpoint** → **IP pública + identidad de la VNet/Subnet**.
+> - **Private Endpoint** → **IP privada dentro de la VNet**.
+>
+> Esa es la diferencia fundamental que más suele preguntar el examen.
