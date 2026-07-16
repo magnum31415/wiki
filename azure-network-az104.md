@@ -7,6 +7,8 @@
 - [Reglas por defecto de un Network Security Group (NSG) (AZ-104)](#reglas-por-defecto-de-un-network-security-group-nsg-az-104)
 - [¿Dónde se puede asociar un Network Security Group?](#dónde-se-puede-asociar-un-network-security-group)
 - [Service Endpoint vs Private Endpoint (AZ-104)](#service-endpoint-vs-private-endpoint-az-104)
+- [→ VNet Peering vs Site-to-Site VPN (AZ-104)](#vnet-peering-vs-site-to-site-vpn-az-104)
+- [→ Global VNet Peering (AZ-104)](#global-vnet-peering-az-104)
 ---
 
 # Azure Virtual Network Peering (AZ-104)
@@ -1644,3 +1646,368 @@ Storage Account
 > - **Private Endpoint** → **IP privada dentro de la VNet**.
 >
 > Esa es la diferencia fundamental que más suele preguntar el examen.
+>
+
+---
+# VNet Peering vs Site-to-Site VPN (AZ-104)
+
+Una de las diferencias más importantes del AZ-104 es entender que **VNet Peering no utiliza un Virtual Network Gateway**, mientras que una **Site-to-Site VPN sí**.
+
+---
+
+# VNet Peering
+
+Cuando se configura un **VNet Peering**, Azure conecta directamente las dos VNets utilizando el **backbone privado de Microsoft**.
+
+No existe ningún gateway intermedio.
+
+```text
+VNET1
+
+────────────── Microsoft Backbone ──────────────
+
+VNET2
+```
+
+Por este motivo:
+
+- ❌ No necesita **GatewaySubnet**.
+- ❌ No necesita **VPN Gateway**.
+- ❌ No necesita **ExpressRoute Gateway**.
+
+---
+
+# Site-to-Site VPN
+
+En una conexión **Site-to-Site VPN**, el tráfico siempre pasa por un **VPN Gateway**.
+
+```text
+VNET1
+   │
+GatewaySubnet
+   │
+VPN Gateway
+   │
+======= IPsec VPN =======
+   │
+VPN Gateway
+   │
+GatewaySubnet
+   │
+VNET2
+```
+
+Por este motivo:
+
+- ✅ Necesita una **GatewaySubnet** en cada VNet.
+- ✅ Necesita un **VPN Gateway** en cada extremo.
+
+Sin una **GatewaySubnet**, no es posible crear el VPN Gateway.
+
+---
+
+# Comparación
+
+| Característica | VNet Peering | Site-to-Site VPN |
+|----------------|:------------:|:----------------:|
+| GatewaySubnet | ❌ | ✅ |
+| VPN Gateway | ❌ | ✅ |
+| ExpressRoute Gateway | ❌ | Opcional (solo para ExpressRoute) |
+| Utiliza el backbone de Microsoft | ✅ | ✅ |
+| Utiliza IPsec/IKE | ❌ | ✅ |
+| Latencia | Muy baja | Mayor |
+| Coste del Gateway | ❌ | ✅ |
+
+---
+
+# Ejemplo del examen
+
+## VNET1
+
+```text
+Address Space
+
+10.10.10.0/24
+
+↓
+
+Subnet11
+
+10.10.10.0/24
+```
+
+Todo el espacio de direcciones está ocupado.
+
+No queda espacio para crear:
+
+```text
+GatewaySubnet
+```
+
+---
+
+## ¿Se puede hacer VNet Peering?
+
+**Sí.**
+
+Porque el Peering **no necesita GatewaySubnet**.
+
+```text
+VNET1
+
+──────────────
+
+VNET2
+```
+
+Respuesta:
+
+```text
+True
+```
+
+---
+
+## ¿Se puede crear una Site-to-Site VPN?
+
+**No.**
+
+Porque primero habría que crear un:
+
+```text
+GatewaySubnet
+```
+
+y no existe espacio libre dentro de la VNet.
+
+Sin **GatewaySubnet** no puede desplegarse un **VPN Gateway**.
+
+Respuesta:
+
+```text
+False
+```
+
+---
+
+# Regla mnemotécnica
+
+## VNet Peering
+
+```text
+VNet
+
+────────────
+
+VNet
+```
+
+> **Cable directo entre VNets.**
+
+No existe ningún Gateway.
+
+---
+
+## Site-to-Site VPN
+
+```text
+VNet
+
+↓
+
+VPN Gateway
+
+~~~~ Internet ~~~~
+
+VPN Gateway
+
+↓
+
+VNet
+```
+
+> **Siempre pasa por un Gateway.**
+
+Necesita una **GatewaySubnet**.
+
+---
+
+> [!IMPORTANT]
+> **Clave para el AZ-104**
+>
+> Hazte siempre esta pregunta:
+>
+> **¿El tráfico pasa por un Gateway?**
+>
+> - **Sí** → Necesitas una **GatewaySubnet**.
+> - **No** → No necesitas una **GatewaySubnet**.
+>
+> Por tanto:
+>
+> - **VNet Peering** → ❌ No necesita GatewaySubnet.
+> - **Site-to-Site VPN** → ✅ Sí necesita GatewaySubnet.
+> - **ExpressRoute** → ✅ Sí necesita GatewaySubnet.
+
+---
+
+# Global VNet Peering (AZ-104)
+
+Azure permite realizar **VNet Peering** entre dos Virtual Networks siempre que se cumplan determinados requisitos.
+
+Una de las preguntas más frecuentes del AZ-104 consiste en determinar si dos VNets pueden conectarse mediante **Global VNet Peering**.
+
+---
+
+# Requisitos para un VNet Peering
+
+Para crear un **VNet Peering** solo deben cumplirse estas condiciones:
+
+| Requisito | Obligatorio |
+|-----------|:-----------:|
+| Los Address Spaces **no pueden solaparse** | ✅ |
+| Pueden estar en distintas suscripciones | ✅ |
+| Pueden estar en distintas regiones (Global VNet Peering) | ✅ |
+| GatewaySubnet | ❌ No necesaria |
+| VPN Gateway | ❌ No necesario |
+
+---
+
+# Ejemplo
+
+## VNET1
+
+```text
+Location:
+West US
+
+Address Space:
+10.10.10.0/24
+```
+
+Rango de direcciones:
+
+```text
+10.10.10.0
+
+↓
+
+10.10.10.255
+```
+
+---
+
+## VNETA
+
+```text
+Location:
+Canada Central
+
+Address Space:
+10.10.128.0/17
+```
+
+Rango de direcciones:
+
+```text
+10.10.128.0
+
+↓
+
+10.10.255.255
+```
+
+---
+
+## ¿Se solapan?
+
+```text
+VNET1
+
+10.10.10.0
+───────────────10.10.10.255
+
+
+
+VNETA
+
+                           10.10.128.0
+                           ───────────────────────────────10.10.255.255
+```
+
+Los rangos **no se solapan**.
+
+Por tanto:
+
+```text
+VNET1
+
+──────────── Global VNet Peering ────────────
+
+VNETA
+```
+
+✅ El peering es posible.
+
+---
+
+# ¿Por qué muchas personas responden False?
+
+Porque suelen pensar que:
+
+- Las VNets deben estar en la misma región.
+- Deben pertenecer a la misma suscripción.
+- Necesitan un VPN Gateway.
+
+Todo eso es **falso** para un **VNet Peering**.
+
+Azure soporta **Global VNet Peering**, por lo que las VNets pueden estar en regiones distintas y en suscripciones distintas.
+
+---
+
+# Comparación con Site-to-Site VPN
+
+| Característica | VNet Peering | Site-to-Site VPN |
+|----------------|:------------:|:----------------:|
+| Address Spaces no solapados | ✅ | ✅ |
+| Distintas regiones | ✅ | ✅ |
+| Distintas suscripciones | ✅ | ✅ |
+| GatewaySubnet | ❌ | ✅ |
+| VPN Gateway | ❌ | ✅ |
+| Utiliza el backbone de Microsoft | ✅ | ✅ |
+
+---
+
+# Regla mnemotécnica
+
+Cuando el examen pregunte:
+
+> **¿Se pueden hacer Peering estas dos VNets?**
+
+Hazte únicamente esta pregunta:
+
+```text
+¿Los Address Spaces se solapan?
+```
+
+- **Sí** → ❌ No se puede hacer Peering.
+- **No** → ✅ Sí se puede hacer Peering.
+
+No importa que:
+
+- Estén en distintas regiones.
+- Estén en distintas suscripciones.
+- No tengan GatewaySubnet.
+- No tengan VPN Gateway.
+
+---
+
+> [!IMPORTANT]
+> **Clave para el AZ-104**
+>
+> El **Global VNet Peering** permite conectar VNets de distintas regiones utilizando el backbone privado de Microsoft.
+>
+> Los únicos requisitos importantes son:
+>
+> - Los **Address Spaces no pueden solaparse**.
+> - No requiere **GatewaySubnet**.
+> - No requiere **VPN Gateway**.
