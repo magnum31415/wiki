@@ -1,9 +1,11 @@
 
-- [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 - [📚 Roles en Azure](#-roles-en-azure)
 - [User Administrator vs Global Administrator vs Authentication Administrator vs User Access Administrator (AZ-104)](#user-administrator-vs-global-administrator-vs-authentication-administrator-vs-user-access-administrator-az-104)
+- [Los cuatro planos principales de Azure](#los-cuatro-planos-principales-de-azure)
 
+  
 # 📚 roles en Azure
 
 ## Planes
