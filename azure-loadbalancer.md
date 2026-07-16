@@ -35,8 +35,8 @@
 
 ## 🔷 Comparativa Load Balancing en Azure (Referencia AZ-305)
 
-| Característica | L4 Load Balancer (Standard) | Internal Load Balancer (ILB) | Application Gateway (L7) | Azure Front Door | Traffic Manager | Gateway Load Balancer |
-|----------------|-----------------------------|------------------------------|--------------------------|------------------|-----------------|-----------------------|
+| Característica | Azure Load Balancer (Standard)<br> **Public Load Balancer "L4"** | Azure Load Balancer (Standard)<br> **Internal Load Balancer (ILB) "L4"**    | Application Gateway (L7) | Azure Front Door | Traffic Manager | Gateway Load Balancer |
+|----------------|-------------------------------|-----------------------------------|--------------------------|------------------|-----------------|-----------------------|
 | Capa OSI | L4 (TCP/UDP) | L4 (TCP/UDP) | L7 (HTTP/HTTPS) | L7 Global | DNS (no OSI clásico) | L3/L4 |
 | Ámbito | Regional | Regional | Regional | Global | Global | Regional |
 | Público / Interno | Ambos | Interno | Ambos | Público | Público | Interno |
@@ -56,6 +56,30 @@
 | Backend típico | VM / VMSS | Aplicaciones privadas, AD, SQL, APIs internas | Web Apps / APIs | Multi-región | Endpoints regionales | NVAs |
 | Accesible desde Internet | ✅ (si tiene Frontend público) | ❌ | ✅ (si tiene Frontend público) | ✅ | ✅ | ❌ |
 | IP Frontend | Pública o privada | Solo privada | Pública o privada | Pública global | DNS | Transparente |
+
+
+## Inbound NAT Rule vs Load Balancing Rule
+
+**Solo aplica al Azure Load Balancer (L4), tanto Public como Internal.**
+
+| Característica                | Inbound NAT Rule                         | Load Balancing Rule         |
+| ----------------------------- | ---------------------------------------- | --------------------------- |
+| Destino                       | Una VM concreta                          | Varias VMs del backend pool |
+| Objetivo                      | Acceso administrativo o conexión directa | Distribuir tráfico          |
+| Ejemplo                       | `LB:3389 → VM3:3389`                     | `LB:443 → VM1/VM2/VM3:443`  |
+| Reparte tráfico               | ❌ No                                     | ✅ Sí                        |
+| Selecciona una VM determinada | ✅ Sí                                     | ❌ No                        |
+
+
+| Servicio                            | Load Balancing Rule | Inbound NAT Rule | Comentario                                                                       |
+| ----------------------------------- | :-----------------: | :--------------: | -------------------------------------------------------------------------------- |
+| **L4 Azure Load Balancer (Public)** |          ✅          |         ✅        | Caso típico del AZ-104.                                                          |
+| **Internal Load Balancer (ILB)**    |          ✅          |         ✅        | Exactamente igual que el público, pero con IP privada.                           |
+| **Application Gateway (L7)**        |          ❌          |         ❌        | Utiliza **Listeners**, **Routing Rules** y **Backend Pools**.                    |
+| **Azure Front Door**                |          ❌          |         ❌        | Utiliza **Routing Rules**, **Origin Groups** y **Origins**.                      |
+| **Traffic Manager**                 |          ❌          |         ❌        | Solo resuelve DNS. No balancea puertos.                                          |
+| **Gateway Load Balancer**           |          ❌          |         ❌        | Encadena appliances de red (Firewall, NVA...). No tiene reglas NAT de este tipo. |
+
 
 ---
 
