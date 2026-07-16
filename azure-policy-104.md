@@ -501,7 +501,7 @@ La política únicamente informa de que no existe una protección de backup.
 | **Backup Policy** | Azure Backup | Define la programación de las copias de seguridad y el período de retención. | Realizar un backup diario a las **23:00** y conservarlo durante **30 días**. |
 | **Storage Management Policy (Lifecycle Management Policy)** | Azure Storage | Automatiza el ciclo de vida de los blobs (mover a Cool, Cold, Archive o eliminar blobs automáticamente según reglas). | Mover los blobs a **Cool** tras **30 días**, a **Archive** tras **180 días** y eliminarlos tras **7 años**. |
 | **Immutable Storage Policy (WORM Policy)** | Azure Storage | Impide modificar o eliminar los datos durante un período determinado (**Time-based Retention**) o indefinidamente (**Legal Hold**). | Proteger documentos financieros durante **10 años** para cumplir requisitos legales. |
-| **DCR (Data Collection Rule)** *(no contiene "Policy")* | Azure Monitor | Define qué datos recoge Azure Monitor Agent y a dónde enviarlos. Se suele confundir con una Policy, pero no lo es. | Recoger los **IIS Logs** de todas las VMs y enviarlos a un **Log Analytics Workspace**. |
+| **Stored Access Policy** | Azure Storage | Permite gestionar y revocar de forma centralizada uno o varios **Service SAS** sin tener que regenerarlos. | Crear una **Stored Access Policy** para un contenedor Blob y asociar varios **Service SAS**. Si se elimina la política, todos esos SAS dejan de ser válidos inmediatamente. |
 
 ---
 
@@ -515,3 +515,4 @@ La política únicamente informa de que no existe una protección de backup.
 > - **Service Endpoint Policy** → Restringe el acceso desde una **Subnet** a recursos específicos de Azure Storage.
 > - **Storage Management Policy** → Automatiza el ciclo de vida de los **Blob Storage**.
 > - **Immutable Storage Policy (WORM)** → Protege los blobs para que no puedan modificarse ni eliminarse.
+> - **Stored Access Policy** → Gestiona y revoca permisos de uno o varios **Service SAS** asociados a un contenedor o file share.
