@@ -10,6 +10,9 @@
 
 # Azure Network Security Groups (NSG) - AZ-104
 
+network security group (NSG) must be in the same region as the virtual network or subnets to which it is applied.
+
+
 # Qué es un NSG
 
 Un:
