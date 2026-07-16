@@ -61,23 +61,130 @@
 
 
 ---
+# User Administrator vs Global Administrator vs Authentication Administrator vs User Access Administrator (AZ-104)
+
+En Azure existen **dos Control Planes independientes**:
+
+- **Microsoft Entra ID (Identity Control Plane)** → Gestiona identidades.
+- **Azure Resource Manager (Azure RBAC Control Plane)** → Gestiona permisos sobre recursos Azure.
+
+Es muy habitual confundir ambos conceptos en el AZ-104.
+
+---
+
+# Los dos Control Planes
+
+```text
+                    Tenant
+
+        ┌─────────────────────────┐
+        │ Microsoft Entra ID      │
+        │ (Identity Control Plane)│
+        └──────────┬──────────────┘
+                   │
+          Global Administrator
+               = root aquí
+                   │
+───────────────────┼────────────────────
+                   │
+        Azure Resource Manager
+          (Azure RBAC Control Plane)
+                   │
+        Management Groups
+              │
+        Subscriptions
+              │
+        Resource Groups
+              │
+          Resources
+```
+---
+
 
 # User Administrator vs Global Administrator vs Authentication Administrator vs User Access Administrator (AZ-104)
 
-Estos cuatro roles pertenecen a ámbitos distintos y es muy habitual confundirlos en el AZ-104.
+En Azure existen **cuatro planos principales**, aunque para el **AZ-104** los dos más importantes son:
 
-| Rol | Ámbito | ¿Qué puede hacer? | Ejemplo |
-|------|--------|-------------------|----------|
-| **Global Administrator** | Microsoft Entra ID | Administración total del tenant. Puede administrar todos los usuarios, grupos, aplicaciones, licencias y la mayoría de configuraciones del tenant. | Crear usuarios, asignar licencias, crear aplicaciones Enterprise, modificar Conditional Access, etc. |
-| **User Administrator** | Microsoft Entra ID | Gestiona usuarios y grupos. Puede crear, modificar y eliminar usuarios, restablecer contraseñas y asignar determinadas licencias. | Crear un nuevo usuario y restablecer su contraseña. |
-| **Authentication Administrator** | Microsoft Entra ID | Gestiona los métodos de autenticación de los usuarios. Puede restablecer MFA, FIDO2, Microsoft Authenticator y otros métodos de autenticación. | Restablecer el registro MFA de un usuario que ha perdido el móvil. |
-| **User Access Administrator** | Azure RBAC | Administra el acceso a los recursos de Azure mediante Azure RBAC. Puede crear y eliminar **Role Assignments**. No administra usuarios. | Asignar el rol **Contributor** sobre una suscripción a un usuario. |
+- **Identity Control Plane (Microsoft Entra ID)**
+- **Management Control Plane (Azure Resource Manager / Azure RBAC)**
+
+Es muy habitual confundir los roles de administración de identidades con los de administración de recursos.
+
+---
+
+# Los cuatro planos principales de Azure
+
+```text
+                           Azure
+
+        ┌─────────────────────────────────────────┐
+        │ Identity Control Plane                  │
+        │ Microsoft Entra ID                      │
+        └─────────────────┬───────────────────────┘
+                          │
+                  Global Administrator
+                     (root del plano)
+                          │
+──────────────────────────┼──────────────────────────────────
+                          │
+        ┌─────────────────▼───────────────────────┐
+        │ Management Control Plane                │
+        │ Azure Resource Manager (Azure RBAC)     │
+        └─────────────────┬───────────────────────┘
+                          │
+                       Owner
+                  (root del ámbito)
+                          │
+──────────────────────────┼──────────────────────────────────
+                          │
+        ┌─────────────────▼───────────────────────┐
+        │ Data Plane                              │
+        │ Datos almacenados en los recursos       │
+        └─────────────────┬───────────────────────┘
+                          │
+            Storage Blob Data Owner
+          Key Vault Administrator
+               (depende del servicio)
+                          │
+──────────────────────────┼──────────────────────────────────
+                          │
+        ┌─────────────────▼───────────────────────┐
+        │ Billing Plane                           │
+        │ Facturación                             │
+        └─────────────────┬───────────────────────┘
+                          │
+                 Billing Account Owner
+            (depende del tipo de facturación)
+```
+
+---
+
+# Comparativa de los cuatro planos
+
+| Plano | ¿Qué administra? | "Root" o rol principal | Ejemplo |
+|--------|------------------|------------------------|----------|
+| **Identity Control Plane** | Identidades (usuarios, grupos, aplicaciones, MFA, licencias, etc.) | **Global Administrator** | Crear usuarios, configurar MFA o Conditional Access. |
+| **Management Control Plane** | Recursos Azure y permisos RBAC. | **Owner** (sobre su ámbito) | Crear una VM, eliminar un Storage Account o asignar el rol Contributor. |
+| **Data Plane** | Los datos almacenados dentro de los recursos. | Depende del servicio (no existe un único "root"). | Leer un blob, consultar una base de datos SQL o recuperar un secreto de Key Vault. |
+| **Billing Plane** | Facturación, costes y métodos de pago. | **Billing Account Owner** (según el modelo de facturación) | Descargar facturas o consultar costes. |
+
+---
+
+# Comparativa de roles
+
+| Rol | Pertenece a | ¿Es el "root" de su Control Plane? | Equivalente aproximado en Linux | ¿Qué administra? | Ejemplo |
+|------|-------------|:----------------------------------:|---------------------------------|------------------|----------|
+| **Global Administrator** | **Microsoft Entra ID** | ✅ Sí | **root** | Administración total del tenant de Microsoft Entra ID (usuarios, grupos, aplicaciones, licencias, Conditional Access, Identity Governance, etc.). | Crear usuarios, asignar licencias, configurar MFA, crear aplicaciones Enterprise, etc. |
+| **User Administrator** | **Microsoft Entra ID** | ❌ No | Administrador de usuarios (`useradd`, `passwd`) | Gestiona usuarios y grupos. Puede crear, modificar y eliminar usuarios, restablecer contraseñas y asignar determinadas licencias. | Crear un usuario y restablecer su contraseña. |
+| **Authentication Administrator** | **Microsoft Entra ID** | ❌ No | Administrador de autenticación/PAM | Gestiona los métodos de autenticación (MFA, Microsoft Authenticator, FIDO2, Windows Hello for Business, etc.). | Restablecer el registro MFA de un usuario. |
+| **User Access Administrator** | **Azure RBAC** | ❌ No | Administrador de permisos (`chmod`, `chown`, `setfacl`, `sudoers`) | Administra los **Role Assignments** de Azure RBAC. Decide quién tiene acceso a los recursos Azure, pero no administra los propios recursos. | Asignar el rol **Contributor** sobre una suscripción a un usuario. |
+| **Owner (Azure RBAC)** | **Azure RBAC** | ✅ Sí (sobre su ámbito) | **root** sobre una Subscription, Resource Group o Resource | Administración total de los recursos del ámbito asignado. Además, puede crear y eliminar **Role Assignments**. | Administrar una suscripción completa y asignar el rol **Reader** a otros usuarios. |
 
 ---
 
 # 1. Global Administrator
 
-Es el rol con más privilegios en Microsoft Entra ID.
+Es el rol con más privilegios de **Microsoft Entra ID**.
 
 Puede administrar prácticamente todo el tenant.
 
@@ -88,8 +195,12 @@ Ejemplos:
 - Aplicaciones
 - Licencias
 - Conditional Access
-- PIM
+- Privileged Identity Management (PIM)
 - Identity Governance
+- Métodos de autenticación
+- Configuración del tenant
+
+> Es el equivalente más cercano al usuario **root** dentro del **Identity Control Plane**.
 
 ---
 
@@ -104,8 +215,11 @@ Puede:
 - Modificar usuarios.
 - Restablecer contraseñas.
 - Administrar grupos.
+- Asignar determinadas licencias.
 
 No administra permisos RBAC sobre recursos Azure.
+
+> Equivalente aproximado: **`useradd`**, **`passwd`**.
 
 ---
 
@@ -121,9 +235,13 @@ Puede:
 - Restablecer Windows Hello for Business.
 - Administrar métodos de autenticación.
 
-No puede crear usuarios.
+No puede:
 
-No puede asignar permisos RBAC.
+- Crear usuarios.
+- Eliminar usuarios.
+- Asignar permisos RBAC.
+
+> Equivalente aproximado: administrador de autenticación (PAM/MFA).
 
 ---
 
@@ -133,7 +251,7 @@ Este rol pertenece a **Azure RBAC**, no a Microsoft Entra ID.
 
 Su función es administrar permisos sobre recursos Azure.
 
-Puede crear:
+Puede crear, modificar y eliminar:
 
 ```text
 Role Assignment
@@ -159,16 +277,539 @@ No puede:
 - Restablecer contraseñas.
 - Configurar MFA.
 
+> Equivalente aproximado: administrar permisos (`chmod`, `chown`, `setfacl`, `sudoers`).
+
+---
+
+# 5. Owner
+
+El rol **Owner** pertenece a **Azure RBAC**.
+
+Tiene control total sobre el ámbito donde está asignado.
+
+Puede administrar:
+
+- Management Groups
+- Subscriptions
+- Resource Groups
+- Resources
+
+Además puede:
+
+- Crear recursos.
+- Modificar recursos.
+- Eliminar recursos.
+- Asignar roles RBAC.
+
+Ejemplo:
+
+```text
+Subscription
+
+↓
+
+Owner
+
+↓
+
+Puede administrar toda la suscripción
+y asignar permisos a otros usuarios.
+```
+
+> Es el equivalente más cercano al usuario **root** dentro del **Management Control Plane**.
+
+---
+
+# Ejemplos de cada plano
+
+## 1. Identity Control Plane
+
+**Rol utilizado:** **Global Administrator**
+
+```text
+Global Administrator
+
+↓
+
+Microsoft Entra ID
+
+↓
+
+Crear usuario
+
+↓
+
+Asignar licencia
+
+↓
+
+Configurar MFA
+```
+
+---
+
+## 2. Management Control Plane
+
+**Rol utilizado:** **Owner**
+
+```text
+Owner
+
+↓
+
+Azure Resource Manager
+
+↓
+
+Crear VM
+
+↓
+
+Crear Storage Account
+
+↓
+
+Asignar Contributor
+```
+
+---
+
+## 3. Data Plane
+
+**Rol utilizado:** **Storage Blob Data Contributor**
+
+```text
+Storage Blob Data Contributor
+
+↓
+
+Storage Account
+
+↓
+
+Blob
+
+↓
+
+Leer
+
+↓
+
+Escribir
+
+↓
+
+Eliminar
+```
+
+Otros ejemplos de roles del Data Plane:
+
+- Storage Blob Data Reader
+- Storage Blob Data Contributor
+- Storage Blob Data Owner
+- Key Vault Administrator
+- Key Vault Secrets User
+
+> No existe un único "root". Cada servicio implementa sus propios roles.
+
+---
+
+## 4. Billing Plane
+
+**Rol utilizado:** **Billing Account Owner**
+
+```text
+Billing Account Owner
+
+↓
+
+Billing Account
+
+↓
+
+Invoices
+
+↓
+
+Cost Management
+
+↓
+
+Payment Methods
+```
+
+Puede:
+
+- Descargar facturas.
+- Consultar costes.
+- Administrar presupuestos.
+- Cambiar métodos de pago.
+
+> No existe un único "root". Depende del modelo de facturación (MCA, EA, CSP...).
+
+---
+
+# Global Administrator vs Owner
+
+Aunque ambos son el "root" de su plano, **no administran lo mismo**.
+
+| Control Plane | "Root" | ¿Qué administra? |
+|---------------|:------:|------------------|
+| **Identity Control Plane** | **Global Administrator** | Usuarios, grupos, aplicaciones, licencias, MFA, Conditional Access, Identity Governance, etc. |
+| **Management Control Plane** | **Owner** | Recursos Azure (VMs, VNets, Storage Accounts, etc.) y asignaciones RBAC sobre su ámbito. |
+
+---
+
+# ¿Qué ocurre con el Root Management Group?
+
+Un **Global Administrator** **no administra automáticamente todos los recursos Azure**.
+
+Puede utilizar:
+
+```text
+Elevate access
+```
+
+Esta acción le asigna automáticamente el rol:
+
+```text
+User Access Administrator
+```
+
+sobre el:
+
+```text
+Root Management Group (/)
+```
+
+Desde ese momento podrá asignarse el rol **Owner** sobre cualquier ámbito de Azure.
+
+---
+
+# Flujo completo
+
+```text
+Global Administrator
+
+        │
+        ▼
+Elevate access
+
+        │
+        ▼
+User Access Administrator
+sobre Root Management Group
+
+        │
+        ▼
+Se asigna
+
+Owner
+
+        │
+        ▼
+
+Management Group
+Subscription
+Resource Group
+Resource
+```
+
+---
+
+# ¿Por qué Microsoft lo hace así?
+
+Por seguridad.
+
+Microsoft separa claramente:
+
+- **Identity Control Plane** → Identidades.
+- **Management Control Plane** → Recursos.
+
+Así un administrador de identidades no obtiene automáticamente control sobre todas las VMs, Storage Accounts o redes del tenant.
+
 ---
 
 # Regla mnemotécnica
 
 | Rol | Piensa en... |
 |------|--------------|
-| **Global Administrator** | **Administra todo el tenant.** |
+| **Global Administrator** | El **root** del **Identity Control Plane**. |
+| **User Administrator** | Administra usuarios. |
+| **Authentication Administrator** | Administra la autenticación. |
+| **User Access Administrator** | Administra quién tiene permisos sobre los recursos Azure. |
+| **Owner** | El **root** del **Management Control Plane** (sobre su ámbito). |
+
+---
+
+# Ejemplos típicos del AZ-104
+
+| Necesidad | Rol adecuado |
+|-----------|--------------|
+| Crear un usuario | **User Administrator** |
+| Restablecer una contraseña | **User Administrator** |
+| Restablecer MFA | **Authentication Administrator** |
+| Asignar Contributor a una VM | **User Access Administrator** o **Owner** |
+| Administrar todos los recursos de una suscripción | **Owner** |
+| Administrar Microsoft Entra ID | **Global Administrator** |
+
+---
+
+> [!IMPORTANT]
+> ## Claves para el AZ-104
+>
+> Existen dos "root" claramente definidos:
+>
+> - **Global Administrator** → Root del **Identity Control Plane**.
+> - **Owner** → Root del **Management Control Plane** (sobre el ámbito asignado).
+>
+> Además:
+>
+> - **User Administrator** administra usuarios.
+> - **Authentication Administrator** administra la autenticación.
+> - **User Access Administrator** administra los **Role Assignments** de Azure RBAC.
+>
+> Un **Global Administrator** **no administra automáticamente todos los recursos Azure**. Si necesita hacerlo, debe utilizar **Elevate access**, que le asigna el rol **User Access Administrator** sobre el **Root Management Group**, desde donde podrá asignarse el rol **Owner**.
+
+---
+
+# Comparativa de roles
+
+| Rol | Pertenece a | ¿Es el "root" de su Control Plane? | Equivalente aproximado en Linux | ¿Qué administra? | Ejemplo |
+|------|-------------|:----------------------------------:|---------------------------------|------------------|----------|
+| **Global Administrator** | **Microsoft Entra ID** | ✅ Sí | **root** | Administración total del tenant de Microsoft Entra ID (usuarios, grupos, aplicaciones, licencias, Conditional Access, Identity Governance, etc.). | Crear usuarios, asignar licencias, configurar MFA, crear aplicaciones Enterprise, etc. |
+| **User Administrator** | **Microsoft Entra ID** | ❌ No | Administrador de usuarios (`useradd`, `passwd`) | Gestiona usuarios y grupos. Puede crear, modificar y eliminar usuarios, restablecer contraseñas y asignar determinadas licencias. | Crear un usuario y restablecer su contraseña. |
+| **Authentication Administrator** | **Microsoft Entra ID** | ❌ No | Administrador de autenticación/PAM | Gestiona los métodos de autenticación (MFA, Microsoft Authenticator, FIDO2, Windows Hello for Business, etc.). | Restablecer el registro MFA de un usuario. |
+| **User Access Administrator** | **Azure RBAC** | ❌ No | Administrador de permisos (`chmod`, `chown`, `setfacl`, `sudoers`) | Administra los **Role Assignments** de Azure RBAC. Decide quién tiene acceso a los recursos Azure, pero no administra los propios recursos. | Asignar el rol **Contributor** sobre una suscripción a un usuario. |
+| **Owner (Azure RBAC)** | **Azure RBAC** | ✅ Sí (sobre su ámbito) | **root** sobre una Subscription, Resource Group o Resource | Administración total de los recursos del ámbito asignado. Además, puede crear y eliminar **Role Assignments**. | Administrar una suscripción completa y asignar el rol **Reader** a otros usuarios. |
+
+---
+
+# 1. Global Administrator
+
+Es el rol con más privilegios de **Microsoft Entra ID**.
+
+Puede administrar prácticamente todo el tenant.
+
+Ejemplos:
+
+- Usuarios
+- Grupos
+- Aplicaciones
+- Licencias
+- Conditional Access
+- Privileged Identity Management (PIM)
+- Identity Governance
+- Métodos de autenticación
+- Configuración del tenant
+
+> Es el equivalente más cercano al usuario **root** dentro del **Identity Control Plane**.
+
+---
+
+# 2. User Administrator
+
+Gestiona identidades.
+
+Puede:
+
+- Crear usuarios.
+- Eliminar usuarios.
+- Modificar usuarios.
+- Restablecer contraseñas.
+- Administrar grupos.
+- Asignar determinadas licencias.
+
+No administra permisos RBAC sobre recursos Azure.
+
+> Equivalente aproximado: **`useradd`**, **`passwd`**.
+
+---
+
+# 3. Authentication Administrator
+
+Solo administra la autenticación.
+
+Puede:
+
+- Restablecer MFA.
+- Eliminar dispositivos Microsoft Authenticator.
+- Restablecer FIDO2 Passkeys.
+- Restablecer Windows Hello for Business.
+- Administrar métodos de autenticación.
+
+No puede:
+
+- Crear usuarios.
+- Eliminar usuarios.
+- Asignar permisos RBAC.
+
+> Equivalente aproximado: administrador de autenticación (PAM/MFA).
+
+---
+
+# 4. User Access Administrator
+
+Este rol pertenece a **Azure RBAC**, no a Microsoft Entra ID.
+
+Su función es administrar permisos sobre recursos Azure.
+
+Puede crear, modificar y eliminar:
+
+```text
+Role Assignment
+```
+
+Ejemplo:
+
+```text
+Ricard
+
+↓
+
+Contributor
+
+↓
+
+Subscription
+```
+
+No puede:
+
+- Crear usuarios.
+- Restablecer contraseñas.
+- Configurar MFA.
+
+> Equivalente aproximado: administrar permisos (`chmod`, `chown`, `setfacl`, `sudoers`).
+
+---
+
+# 5. Owner
+
+El rol **Owner** pertenece a **Azure RBAC**.
+
+Tiene control total sobre el ámbito donde está asignado.
+
+Puede administrar:
+
+- Management Groups
+- Subscriptions
+- Resource Groups
+- Resources
+
+Además puede:
+
+- Crear recursos.
+- Modificar recursos.
+- Eliminar recursos.
+- Asignar roles RBAC.
+
+Ejemplo:
+
+```text
+Subscription
+
+↓
+
+Owner
+
+↓
+
+Puede administrar toda la suscripción
+y asignar permisos a otros usuarios.
+```
+
+> Es el equivalente más cercano al usuario **root** dentro del **Azure RBAC Control Plane**.
+
+---
+
+# Global Administrator vs Owner
+
+Aunque ambos son el "root" de su respectivo Control Plane, **no administran lo mismo**.
+
+| Control Plane | "Root" | ¿Qué administra? |
+|---------------|:------:|------------------|
+| **Microsoft Entra ID** | **Global Administrator** | Usuarios, grupos, aplicaciones, licencias, MFA, Conditional Access, Identity Governance, etc. |
+| **Azure RBAC** | **Owner** | Recursos Azure (VMs, VNets, Storage Accounts, etc.) y asignaciones de roles RBAC dentro de su ámbito. |
+
+---
+
+# ¿Qué ocurre con el Root Management Group?
+
+Un **Global Administrator** **no administra automáticamente todos los recursos Azure**.
+
+Si necesita hacerlo puede utilizar:
+
+```text
+Elevate access
+```
+
+Esta acción le asigna automáticamente el rol:
+
+```text
+User Access Administrator
+```
+
+sobre el:
+
+```text
+Root Management Group (/)
+```
+
+---
+
+# Flujo completo
+
+```text
+Global Administrator
+
+        │
+        ▼
+Elevate access
+
+        │
+        ▼
+User Access Administrator
+sobre Root Management Group
+
+        │
+        ▼
+Puede asignarse
+
+Owner
+
+sobre cualquier:
+
+• Management Group
+• Subscription
+• Resource Group
+• Resource
+```
+
+---
+
+# ¿Por qué Microsoft lo hace así?
+
+Por seguridad.
+
+Microsoft separa:
+
+- La administración de **identidades**.
+- La administración de **recursos**.
+
+Así, un administrador de identidades no obtiene automáticamente permisos sobre todas las máquinas virtuales, redes o bases de datos.
+
+---
+
+# Regla mnemotécnica
+
+| Rol | Piensa en... |
+|------|--------------|
+| **Global Administrator** | **El "root" del Identity Control Plane (Microsoft Entra ID).** |
 | **User Administrator** | **Administra usuarios.** |
 | **Authentication Administrator** | **Administra cómo se autentican los usuarios.** |
-| **User Access Administrator** | **Administra quién tiene acceso a los recursos Azure (RBAC).** |
+| **User Access Administrator** | **Administra quién tiene acceso a los recursos Azure (Azure RBAC).** |
+| **Owner** | **El "root" del Azure RBAC Control Plane (sobre su ámbito).** |
 
 ---
 
@@ -179,9 +820,10 @@ No puede:
 | Crear un usuario nuevo | **User Administrator** |
 | Restablecer la contraseña de un usuario | **User Administrator** |
 | Restablecer el registro MFA | **Authentication Administrator** |
-| Asignar el rol Contributor sobre una VM | **User Access Administrator** |
-| Asignar Owner sobre una suscripción | **User Access Administrator** |
-| Administrar todo el tenant | **Global Administrator** |
+| Asignar el rol Contributor sobre una VM | **User Access Administrator** o **Owner** |
+| Asignar Owner sobre una suscripción | **User Access Administrator** o **Owner** |
+| Administrar todos los recursos de una suscripción | **Owner** |
+| Administrar todo Microsoft Entra ID | **Global Administrator** |
 
 ---
 
@@ -189,7 +831,18 @@ No puede:
 
 No confundas:
 
-- **User Administrator** → Administra **usuarios**.
+- **Global Administrator** → Administra **Microsoft Entra ID (Identity Control Plane)**.
+- **User Administrator** → Administra **usuarios y grupos**.
 - **Authentication Administrator** → Administra **la autenticación** de los usuarios.
-- **User Access Administrator** → Administra **Azure RBAC** (Role Assignments).
-- **Global Administrator** → Administra prácticamente **todo Microsoft Entra ID**.
+- **User Access Administrator** → Administra **Azure RBAC** (Role Assignments), pero **no** los recursos.
+- **Owner** → Administra **los recursos Azure** y también puede **asignar roles RBAC**.
+
+> [!IMPORTANT]
+> **La diferencia que más suele preguntar el AZ-104**
+>
+> Existen dos "root" distintos:
+>
+> - **Global Administrator** → Root del **Identity Control Plane** (Microsoft Entra ID).
+> - **Owner** → Root del **Azure RBAC Control Plane** (sobre el ámbito donde está asignado).
+>
+> Un **Global Administrator** no administra automáticamente todos los recursos Azure. Si necesita hacerlo, debe utilizar **Elevate access**, que le asigna el rol **User Access Administrator** sobre el **Root Management Group**, desde donde podrá asignarse el rol **Owner** sobre cualquier Management Group, Subscription, Resource Group o Resource.
