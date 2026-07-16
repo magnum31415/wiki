@@ -253,6 +253,29 @@ sobre:
 Service Endpoints
 ```
 
+Una **Service Endpoint Policy solo tiene efecto si previamente existe un Service Endpoint habilitado para Microsoft.Storage en la subnet** (no en toda la VNet).
+
+La relación es:
+
+````
+VNet
+│
+└── Subnet
+      │
+      ├── Service Endpoint
+      │      Microsoft.Storage
+      │
+      └── Service Endpoint Policy
+             │
+             ▼
+      Solo permite acceder a:
+      • StorageAccountA
+      • StorageAccountB
+````
+
+**Si no existe el Service Endpoint, la Service Endpoint Policy no hace nada, porque no tiene ningún Service Endpoint sobre el que aplicar restricciones.**
+
+
 ---
 
 # Servicios soportados
