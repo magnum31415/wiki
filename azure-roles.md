@@ -1,5 +1,8 @@
 
-[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+- [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
+- [📚 Roles en Azure](#-roles-en-azure)
+- [User Administrator vs Global Administrator vs Authentication Administrator vs User Access Administrator (AZ-104)](#user-administrator-vs-global-administrator-vs-authentication-administrator-vs-user-access-administrator-az-104)
 
 # 📚 roles en Azure
 
@@ -55,3 +58,138 @@
 | Invoice Section      | Invoice Section Owner        | Control total de una sección de factura (subdivisión de costes)               | Organización por departamentos / proyectos                             | Responsable de IT dentro de Alemania con control sobre su parte del gasto               |
 | Invoice Section      | Invoice Section Contributor  | Gestión operativa de costes en una sección (budgets, análisis)                | Equipos de aplicación / proyectos                                      | Equipo de una aplicación que gestiona su presupuesto y consumo                          |
 | Invoice Section      | Invoice Section Reader       | Solo lectura de costes en una sección concreta                                | Visibilidad para equipos                                               | Equipo de desarrollo que solo necesita ver cuánto consume su aplicación                 |
+
+
+---
+
+# User Administrator vs Global Administrator vs Authentication Administrator vs User Access Administrator (AZ-104)
+
+Estos cuatro roles pertenecen a ámbitos distintos y es muy habitual confundirlos en el AZ-104.
+
+| Rol | Ámbito | ¿Qué puede hacer? | Ejemplo |
+|------|--------|-------------------|----------|
+| **Global Administrator** | Microsoft Entra ID | Administración total del tenant. Puede administrar todos los usuarios, grupos, aplicaciones, licencias y la mayoría de configuraciones del tenant. | Crear usuarios, asignar licencias, crear aplicaciones Enterprise, modificar Conditional Access, etc. |
+| **User Administrator** | Microsoft Entra ID | Gestiona usuarios y grupos. Puede crear, modificar y eliminar usuarios, restablecer contraseñas y asignar determinadas licencias. | Crear un nuevo usuario y restablecer su contraseña. |
+| **Authentication Administrator** | Microsoft Entra ID | Gestiona los métodos de autenticación de los usuarios. Puede restablecer MFA, FIDO2, Microsoft Authenticator y otros métodos de autenticación. | Restablecer el registro MFA de un usuario que ha perdido el móvil. |
+| **User Access Administrator** | Azure RBAC | Administra el acceso a los recursos de Azure mediante Azure RBAC. Puede crear y eliminar **Role Assignments**. No administra usuarios. | Asignar el rol **Contributor** sobre una suscripción a un usuario. |
+
+---
+
+# 1. Global Administrator
+
+Es el rol con más privilegios en Microsoft Entra ID.
+
+Puede administrar prácticamente todo el tenant.
+
+Ejemplos:
+
+- Usuarios
+- Grupos
+- Aplicaciones
+- Licencias
+- Conditional Access
+- PIM
+- Identity Governance
+
+---
+
+# 2. User Administrator
+
+Gestiona identidades.
+
+Puede:
+
+- Crear usuarios.
+- Eliminar usuarios.
+- Modificar usuarios.
+- Restablecer contraseñas.
+- Administrar grupos.
+
+No administra permisos RBAC sobre recursos Azure.
+
+---
+
+# 3. Authentication Administrator
+
+Solo administra la autenticación.
+
+Puede:
+
+- Restablecer MFA.
+- Eliminar dispositivos Microsoft Authenticator.
+- Restablecer FIDO2 Passkeys.
+- Restablecer Windows Hello for Business.
+- Administrar métodos de autenticación.
+
+No puede crear usuarios.
+
+No puede asignar permisos RBAC.
+
+---
+
+# 4. User Access Administrator
+
+Este rol pertenece a **Azure RBAC**, no a Microsoft Entra ID.
+
+Su función es administrar permisos sobre recursos Azure.
+
+Puede crear:
+
+```text
+Role Assignment
+```
+
+Ejemplo:
+
+```text
+Ricard
+
+↓
+
+Contributor
+
+↓
+
+Subscription
+```
+
+No puede:
+
+- Crear usuarios.
+- Restablecer contraseñas.
+- Configurar MFA.
+
+---
+
+# Regla mnemotécnica
+
+| Rol | Piensa en... |
+|------|--------------|
+| **Global Administrator** | **Administra todo el tenant.** |
+| **User Administrator** | **Administra usuarios.** |
+| **Authentication Administrator** | **Administra cómo se autentican los usuarios.** |
+| **User Access Administrator** | **Administra quién tiene acceso a los recursos Azure (RBAC).** |
+
+---
+
+# Ejemplos típicos del AZ-104
+
+| Necesidad | Rol adecuado |
+|-----------|--------------|
+| Crear un usuario nuevo | **User Administrator** |
+| Restablecer la contraseña de un usuario | **User Administrator** |
+| Restablecer el registro MFA | **Authentication Administrator** |
+| Asignar el rol Contributor sobre una VM | **User Access Administrator** |
+| Asignar Owner sobre una suscripción | **User Access Administrator** |
+| Administrar todo el tenant | **Global Administrator** |
+
+---
+
+# Clave para el AZ-104
+
+No confundas:
+
+- **User Administrator** → Administra **usuarios**.
+- **Authentication Administrator** → Administra **la autenticación** de los usuarios.
+- **User Access Administrator** → Administra **Azure RBAC** (Role Assignments).
+- **Global Administrator** → Administra prácticamente **todo Microsoft Entra ID**.
