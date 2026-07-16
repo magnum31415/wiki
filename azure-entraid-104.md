@@ -20,6 +20,8 @@
 - [Self-Service Password Reset (SSPR) en Microsoft Entra ID](#self-service-password-reset-sspr-en-microsoft-entra-id)
 - [Microsoft Entra Custom Security Attributes (AZ-104)](#microsoft-entra-custom-security-attributes-az-104)
 - [Microsoft Entra ID Groups (AZ-104)](#microsoft-entra-id-groups-az-104)
+- [Microsoft Entra Entitlement Management (AZ-104)](#microsoft-entra-entitlement-management-az-104)
+
 
 ---
 
@@ -2999,3 +3001,251 @@ Por tanto, tu tabla quedaría mejor así:
 | Mail-enabled Security Group      | Seguridad + correo          | ❌           | ❌         | Correo        | ❌               | ❌                         |
 | Distribution List                | Distribución de correo      | ❌           | ❌         | Correo        | ❌               | ❌                         |
 
+---
+# Microsoft Entra Entitlement Management (AZ-104)
+
+## ¿Qué es Entitlement Management?
+
+**Microsoft Entra Entitlement Management** permite automatizar el acceso a recursos para:
+
+- Empleados
+- Usuarios externos (B2B)
+- Partners
+- Proveedores
+
+Mediante **Access Packages**, los usuarios pueden solicitar acceso a varios recursos de una sola vez.
+
+---
+
+# Connected Organization
+
+Una **Connected Organization** representa una **organización externa de confianza** cuyos usuarios pueden solicitar Access Packages.
+
+Ejemplos:
+
+- contoso.com
+- fabrikam.com
+- partner.com
+
+No es necesario crear previamente todos los usuarios invitados. Cuando un usuario solicita un Access Package, Microsoft Entra puede crear automáticamente el usuario B2B en el tenant.
+
+---
+
+## Ejemplo
+
+```text
+Tenant: apexcore.com
+
+Connected Organizations
+
+✔ ironclad.com
+✔ fabrikam.com
+
+✘ bluerock.com
+```
+
+En este ejemplo:
+
+- Los usuarios de **ironclad.com** pueden solicitar Access Packages.
+- Los usuarios de **fabrikam.com** pueden solicitar Access Packages.
+- Los usuarios de **bluerock.com** no pueden hacerlo.
+
+---
+
+# Access Package
+
+Un **Access Package** es un conjunto de recursos que se asignan conjuntamente.
+
+Puede incluir:
+
+- Security Groups
+- Microsoft 365 Groups
+- Teams
+- SharePoint Online Sites
+- Enterprise Applications (SaaS)
+
+---
+
+## Ejemplo
+
+```text
+Access Package
+
+Developer Package
+
+Incluye:
+
+✔ Grupo Developers
+✔ Aplicación Azure DevOps
+✔ SharePoint Developers
+✔ Team Developers
+```
+
+Cuando un usuario obtiene el Access Package, recibe acceso automáticamente a todos esos recursos.
+
+---
+
+# Opciones de configuración de un Access Package
+
+## 1. Who can request?
+
+Define quién puede solicitar el Access Package.
+
+Las opciones más habituales son:
+
+| Opción | Descripción |
+|---------|-------------|
+| **For users in your directory** | Solo usuarios internos del tenant. |
+| **For users not in your directory** | Solo usuarios externos (B2B). |
+| **All configured connected organizations** | Solo usuarios pertenecientes a organizaciones configuradas como Connected Organizations. |
+| **Specific connected organizations** | Solo determinadas Connected Organizations seleccionadas. |
+| **All users (All external users)** | Cualquier usuario externo puede solicitarlo, aunque su organización no esté configurada como Connected Organization. |
+
+---
+
+## 2. Approval
+
+Permite configurar aprobaciones.
+
+Opciones habituales:
+
+- No approval required
+- One approver
+- Multiple approvers
+
+---
+
+## 3. Assignment duration
+
+Define cuánto tiempo dura la asignación.
+
+Ejemplos:
+
+- 30 días
+- 90 días
+- 180 días
+- Permanente
+
+También puede configurarse:
+
+- Requerir renovación
+- Permitir extensión
+
+---
+
+# Lifecycle Settings
+
+Las **Lifecycle Settings** determinan qué ocurre cuando un usuario pierde su último Access Package.
+
+---
+
+## Opciones principales
+
+| Configuración | Descripción |
+|---------------|-------------|
+| **Block sign in** | Bloquea el inicio de sesión del usuario externo. |
+| **Delete user after X days** | Elimina el usuario B2B del tenant después del número de días indicado. |
+| **Do nothing** | Mantiene el usuario en el directorio aunque ya no tenga acceso. |
+
+---
+
+## Ejemplo
+
+```text
+Lifecycle Settings
+
+✔ Block sign in
+
+✔ Delete after 30 days
+```
+
+Significa:
+
+1. El usuario pierde su último Access Package.
+2. Se bloquea inmediatamente su inicio de sesión.
+3. Tras 30 días se elimina automáticamente del tenant.
+
+---
+
+# Flujo completo
+
+```text
+External User
+      │
+      ▼
+Connected Organization
+      │
+      ▼
+Solicita un
+Access Package
+      │
+      ▼
+Obtiene acceso a:
+
+• Grupos
+• Aplicaciones
+• Teams
+• SharePoint
+      │
+      ▼
+Finaliza la asignación
+      │
+      ▼
+Lifecycle Settings
+
+• Block sign in
+• Delete after X days
+```
+
+---
+
+# Ejemplo típico del AZ-104
+
+```text
+Tenant
+
+Connected Organization
+
+✔ ironclad.com
+
+✘ bluerock.com
+```
+
+El Access Package está configurado para:
+
+```text
+Who can request?
+
+All configured connected organizations
+```
+
+Resultado:
+
+| Usuario | ¿Puede solicitar el Access Package? |
+|-----------|:-----------------------------------:|
+| user@ironclad.com | ✅ Sí |
+| user@bluerock.com | ❌ No |
+
+---
+
+# Claves para el AZ-104
+
+| Concepto | Debes recordar |
+|-----------|----------------|
+| **Connected Organization** | Organización externa autorizada para solicitar Access Packages. |
+| **Access Package** | Conjunto de recursos que se asignan automáticamente al usuario. |
+| **Who can request?** | Define quién puede solicitar el Access Package. |
+| **Approval** | Permite requerir una o varias aprobaciones. |
+| **Assignment duration** | Duración del acceso y posibilidad de renovación. |
+| **Lifecycle Settings** | Qué ocurre cuando el usuario pierde el último Access Package (bloquear acceso, eliminar usuario, etc.). |
+
+---
+
+> [!IMPORTANT]
+> **Clave para el AZ-104**
+>
+> No confundas:
+>
+> - **Connected Organization** → **Quién puede solicitar** el Access Package.
+> - **Access Package** → **Qué recursos recibe** el usuario.
+> - **Lifecycle Settings** → **Qué ocurre cuando finaliza** el acceso del usuario.
