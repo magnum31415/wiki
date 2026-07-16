@@ -9,6 +9,7 @@
 - [Summary](#summary)
 - [Azure Service Endpoint Policy (AZ-104)](#azure-service-endpoint-policy-az-104)
 - [Azure Policy Effects](#azure-policy-effects)
+- [Recursos y conceptos de Azure que contienen "Policy" (AZ-104)](#recursos-y-conceptos-de-azure-que-contienen-policy-az-104)
 ---
 ## Where Policy definitions can be assigned?
 
@@ -485,3 +486,32 @@ La política únicamente informa de que no existe una protección de backup.
 
 ![azure-AuditIfNotExists](./img/azure/azure-AuditIfNotExists.png)
 
+---
+# Recursos y conceptos de Azure que contienen "Policy" (AZ-104)
+
+| Recurso / Entidad | Servicio | ¿Para qué sirve? | Ejemplo |
+|-------------------|----------|------------------|----------|
+| **Azure Policy** | Governance | Auditar, aplicar o denegar configuraciones de recursos Azure. | Denegar la creación de **Public IPs** o permitir únicamente las regiones **Germany West Central** y **Sweden Central**. |
+| **Policy Definition** | Azure Policy | Define la regla o política. | Crear una definición llamada **Allowed Locations** que solo permita desplegar recursos en dos regiones. |
+| **Policy Assignment** | Azure Policy | Asigna una Policy a un Management Group, Subscription, Resource Group o Resource. | Asignar la Policy **Allowed Locations** a toda una suscripción. |
+| **Policy Initiative (Policy Set Definition)** | Azure Policy | Agrupa varias Policy Definitions en una única iniciativa. | Crear una iniciativa llamada **Corporate Governance** que incluya *Allowed Locations*, *Required Tags* y *Deny Public IP*. |
+| **Service Endpoint Policy** | Networking | Restringe a qué recursos de Azure Storage puede acceder una subnet mediante Service Endpoints. | Permitir que la subnet solo pueda acceder al **StorageAccount-Backups**, aunque tenga habilitado `Microsoft.Storage`. |
+| **Azure Firewall Policy** | Networking | Configuración centralizada de reglas de Azure Firewall. | Crear reglas para permitir **HTTPS**, bloquear **FTP** y publicar un servidor mediante **DNAT**. |
+| **WAF Policy** | Application Gateway / Front Door | Reglas de protección del Web Application Firewall (OWASP, reglas personalizadas, exclusiones, rate limiting, etc.). | Bloquear ataques **SQL Injection** y **Cross-Site Scripting (XSS)** mediante las reglas OWASP. |
+| **Backup Policy** | Azure Backup | Define la programación de las copias de seguridad y el período de retención. | Realizar un backup diario a las **23:00** y conservarlo durante **30 días**. |
+| **Storage Management Policy (Lifecycle Management Policy)** | Azure Storage | Automatiza el ciclo de vida de los blobs (mover a Cool, Cold, Archive o eliminar blobs automáticamente según reglas). | Mover los blobs a **Cool** tras **30 días**, a **Archive** tras **180 días** y eliminarlos tras **7 años**. |
+| **Immutable Storage Policy (WORM Policy)** | Azure Storage | Impide modificar o eliminar los datos durante un período determinado (**Time-based Retention**) o indefinidamente (**Legal Hold**). | Proteger documentos financieros durante **10 años** para cumplir requisitos legales. |
+| **DCR (Data Collection Rule)** *(no contiene "Policy")* | Azure Monitor | Define qué datos recoge Azure Monitor Agent y a dónde enviarlos. Se suele confundir con una Policy, pero no lo es. | Recoger los **IIS Logs** de todas las VMs y enviarlos a un **Log Analytics Workspace**. |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> No confundas estos conceptos:
+>
+> - **Azure Policy** → Gobierno y cumplimiento (**Governance**).
+> - **Azure Firewall Policy** → Configuración del **Azure Firewall**.
+> - **Service Endpoint Policy** → Restringe el acceso desde una **Subnet** a recursos específicos de Azure Storage.
+> - **Storage Management Policy** → Automatiza el ciclo de vida de los **Blob Storage**.
+> - **Immutable Storage Policy (WORM)** → Protege los blobs para que no puedan modificarse ni eliminarse.
