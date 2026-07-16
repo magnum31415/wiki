@@ -1,5 +1,6 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+- [→ Azure Firewall y Virtual Networks (AZ-104)](#azure-firewall-y-virtual-networks-az-104)
 
 ````
 Azure Firewall
@@ -54,3 +55,72 @@ Azure Firewall (Azure Firewall Resource)
             └── rc-nat-app001 (NAT Rule Collection)
                 └── publish-app001-web (Rule)
 ````
+---
+
+# Azure Firewall y Virtual Networks (AZ-104)
+
+Un **Azure Firewall** solo puede conectarse a una **Virtual Network (VNet)** que cumpla los siguientes requisitos:
+
+- Debe estar en la **misma suscripción**.
+- Debe estar en la **misma región**.
+- Debe estar en el **mismo Resource Group** que el Azure Firewall.
+
+La única excepción es la **Public IP**, que **puede estar en un Resource Group diferente**.
+
+---
+
+# Requisitos
+
+| Recurso | Misma suscripción | Misma región | Mismo Resource Group |
+|----------|:-----------------:|:------------:|:--------------------:|
+| Azure Firewall ↔ VNet | ✅ | ✅ | ✅ |
+| Azure Firewall ↔ Public IP | ✅ | ❌ No necesario | ❌ No necesario |
+
+---
+
+# Ejemplo
+
+## Correcto
+
+```text
+Subscription1
+
+RG1
+├── Azure Firewall
+├── VNet1
+└── AzureFirewallSubnet
+
+RG2
+└── Public IP
+```
+
+✅ Configuración válida.
+
+---
+
+## Incorrecto
+
+```text
+Subscription1
+
+RG1
+└── Azure Firewall
+
+RG2
+└── VNet1
+```
+
+❌ No es válido porque el **Firewall y la VNet están en Resource Groups distintos**.
+
+---
+
+> [!IMPORTANT]
+> **Clave para el AZ-104**
+>
+> El **Azure Firewall** y la **VNet** deben estar:
+>
+> - En la **misma suscripción**.
+> - En la **misma región**.
+> - En el **mismo Resource Group**.
+>
+> La **Public IP** del Firewall **sí puede estar en otro Resource Group**.
