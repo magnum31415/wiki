@@ -27,6 +27,7 @@
 - [Azure Storage Routing Preference (AZ-104)](#azure-storage-routing-preference-az-104)
 - [Azure Storage - Encryption Scope](#azure-storage---encryption-scope)
 - [Azure File Shares (AZ-104)](#azure-file-shares-az-104)
+- [→ Métodos de autorización para operaciones de datos en Azure Storage (AZ-104)](#métodos-de-autorización-para-operaciones-de-datos-en-azure-storage-az-104)
 ---
 
 ## Modelos de autenticación en Azure Storage
@@ -2005,3 +2006,27 @@ Los archivos movidos a Azure siguen apareciendo en el servidor como archivos dis
 ## Regla principal
 
 > **Azure File Share + map network drive = SMB = TCP 445**
+
+---
+
+# Métodos de autorización para operaciones de datos en Azure Storage (AZ-104)
+
+La siguiente tabla resume los métodos de autorización compatibles para cada servicio de Azure Storage.
+
+| Azure Storage | Shared Key (Storage Account Key) | Shared Access Signature (SAS) | Microsoft Entra ID (Azure AD) | Active Directory Domain Services (On-Premises) | Anonymous Public Read Access | Storage Local Users |
+|----------------|:-------------------------------:|:-----------------------------:|:-----------------------------:|:----------------------------------------------:|:----------------------------:|:------------------:|
+| **Azure Blobs** | ✅ Supported | ✅ Supported | ✅ Supported | ❌ Not supported | ✅ Supported | ✅ Supported (solo para **SFTP**) |
+| **Azure Files (SMB)** | ✅ Supported | ❌ Not supported | ✅ Supported (solo con **Microsoft Entra Domain Services**) | ✅ Supported (las credenciales deben sincronizarse con Microsoft Entra ID) | ❌ Not supported | ✅ Supported |
+| **Azure Files (REST)** | ✅ Supported | ✅ Supported | ❌ Not supported | ❌ Not supported | ❌ Not supported | ❌ Not supported |
+| **Azure Queues** | ✅ Supported | ✅ Supported | ✅ Supported | ❌ Not supported | ❌ Not supported | ❌ Not supported |
+| **Azure Tables** | ✅ Supported | ✅ Supported | ✅ Supported | ❌ Not supported | ❌ Not supported | ❌ Not supported |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **Azure Blobs** admite prácticamente todos los métodos de autenticación, incluido **Anonymous Public Read Access** y **SFTP (Storage Local Users)**.
+> - **Azure Files (SMB)** **no admite SAS**, pero sí autenticación mediante **Microsoft Entra Domain Services** y **Active Directory Domain Services**.
+> - **Azure Files (REST)** sí admite **SAS**, pero no autenticación mediante Microsoft Entra ID.
+> - **Queues** y **Tables** admiten **Shared Key**, **SAS** y **Microsoft Entra ID**.
