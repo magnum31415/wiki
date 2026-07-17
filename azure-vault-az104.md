@@ -3,7 +3,7 @@
 # Azure Key Vault y Azure Container Apps (AZ-104)
 
 ## Índice
-
+[→ ¿Qué es un Vault en Azure? (AZ-104)](#qué-es-un-vault-en-azure-az-104)
 - [Azure Key Vault y Azure Container Apps (AZ-104)](#azure-key-vault-y-azure-container-apps-az-104)
 - [Escenario](#escenario)
 - [Qué quiere el ejercicio](#qué-quiere-el-ejercicio)
@@ -28,7 +28,158 @@
 - [AES vs 2DES vs RSA](#aes-vs-2des-vs-rsa)
 
 ---
+# ¿Qué es un Vault en Azure? (AZ-104)
 
+En Azure, un **Vault** es un **contenedor seguro** utilizado para almacenar y administrar información crítica.
+
+La palabra **Vault** significa literalmente:
+
+> **Bóveda**
+
+Al igual que la caja fuerte de un banco, un Vault protege recursos importantes y centraliza su administración.
+
+---
+
+# Definición
+
+```text
+Vault
+
+↓
+
+Contenedor seguro
+
+↓
+
+Protege y administra información crítica
+```
+
+---
+
+# ¿Qué puede almacenar un Vault?
+
+Dependiendo del tipo de Vault, puede almacenar:
+
+- Copias de seguridad (Backups)
+- Claves criptográficas
+- Secretos (Passwords, Connection Strings, API Keys...)
+- Certificados digitales
+
+---
+
+# Tipos de Vault más importantes para el AZ-104
+
+| Vault | ¿Qué almacena? | ¿Quién lo utiliza? | Ejemplo |
+|--------|----------------|--------------------|----------|
+| **Recovery Services Vault** | Copias de seguridad tradicionales y Recovery Points | Azure Backup | Backup de máquinas virtuales, Azure Files y SQL Server. |
+| **Backup Vault** | Copias de seguridad modernas de Azure Backup | Azure Backup | Backup de Azure Disks y Azure Blob Storage. |
+| **Azure Key Vault** | Secretos, claves criptográficas y certificados | Aplicaciones, VMs, Azure Services | Almacenar una contraseña de SQL, una clave RSA o un certificado TLS. |
+
+---
+
+# Ejemplo: Azure Key Vault
+
+```text
+Key Vault
+
+├── Secret
+│      SQLPassword
+│
+├── Certificate
+│      empresa.com
+│
+└── Key
+       RSA-2048
+```
+
+---
+
+# Ejemplo: Recovery Services Vault
+
+```text
+Recovery Services Vault
+
+├── VM1 Backup
+├── VM2 Backup
+├── Azure Files Backup
+└── SQL Backup
+```
+
+---
+
+# Ejemplo: Backup Vault
+
+```text
+Backup Vault
+
+├── Disk Backup
+├── Blob Backup
+└── Operational Backup
+```
+
+---
+
+# ¿Por qué Microsoft utiliza Vaults?
+
+Porque permiten centralizar:
+
+- La seguridad.
+- La administración.
+- Las políticas.
+- La auditoría.
+- El ciclo de vida de la información protegida.
+
+---
+
+# Regla mnemotécnica
+
+Piensa en una caja fuerte:
+
+```text
+Banco
+
+↓
+
+Caja fuerte
+
+↓
+
+Objetos valiosos
+```
+
+En Azure:
+
+```text
+Vault
+
+↓
+
+Información valiosa
+
+↓
+
+Backups
+Claves
+Secretos
+Certificados
+```
+
+---
+
+> [!IMPORTANT]
+> **Clave para el AZ-104**
+>
+> No memorices **Vault** como un recurso específico.
+>
+> Memoriza la idea de que un **Vault es una bóveda segura** donde Azure almacena y administra información crítica.
+>
+> Después solo debes recordar **qué tipo de información guarda cada Vault**:
+>
+> - **Recovery Services Vault** → Backups tradicionales (VMs, Azure Files, SQL, etc.).
+> - **Backup Vault** → Backups modernos (Azure Disks, Azure Blobs, etc.).
+> - **Azure Key Vault** → Secretos, claves criptográficas y certificados.
+
+---
 ## Escenario
 
 Tenemos:
