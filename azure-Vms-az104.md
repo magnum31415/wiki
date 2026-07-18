@@ -1260,541 +1260,109 @@ El objetivo principal es **escalar horizontalmente**.
 
 ---
 
-# Azure Virtual Machine Scale Sets (VMSS) (AZ-104)
+# Distribución automática en Fault Domains y Update Domains
 
-Los **Azure Virtual Machine Scale Sets (VMSS)** permiten crear y administrar un conjunto de **máquinas virtuales idénticas** que pueden aumentar o disminuir automáticamente en función de la carga.
+Los **Azure Virtual Machine Scale Sets (VMSS)** distribuyen automáticamente las máquinas virtuales entre **Fault Domains (FD)** y **Update Domains (UD)** para proporcionar alta disponibilidad.
 
-Su objetivo principal es proporcionar:
+Por defecto, un **VMSS** utiliza:
 
-- Alta disponibilidad.
-- Escalado automático.
-- Administración simplificada de grandes grupos de VMs.
+- **5 Fault Domains (FD0–FD4)**
+- **5 Update Domains (UD0–UD4)**
 
----
+Durante el mantenimiento planificado de Azure:
 
-# Conceptos clave
-
-Un **Virtual Machine Scale Set (VMSS)** está diseñado para administrar un conjunto de **máquinas virtuales idénticas**.
-
-Sus dos características fundamentales son:
-
-- ✅ Las VMs son **idénticas**.
-- ✅ Implementa **escalado horizontal (Horizontal Scaling)**.
+- Azure **actualiza un único Update Domain cada vez**.
+- Las VMs pertenecientes a los demás Update Domains continúan funcionando.
 
 ---
 
-# Arquitectura
+# Ejemplo (10 máquinas virtuales)
 
-```text
-                Load Balancer
+Supongamos un VMSS con **10 instancias**.
 
-                      │
+Azure puede distribuirlas de la siguiente forma:
 
-      ┌───────────────┼───────────────┐
+| **Update Domain** | **FD0** | **FD1** | **FD2** | **FD3** | **FD4** |
+|:-----------------:|:-------:|:-------:|:-------:|:-------:|:-------:|
+| **UD0** | VM1 | VM2 | - | - | - |
+| **UD1** | - | - | VM3 | VM4 | - |
+| **UD2** | VM6 | - | - | - | VM5 |
+| **UD3** | - | VM7 | VM8 | - | - |
+| **UD4** | - | - | - | VM9 | VM10 |
 
-      ▼               ▼               ▼
-
-     VM1             VM2             VM3
-
-            Virtual Machine Scale Set
-```
-
-Todas las VMs:
-
-- Se crean desde la misma imagen.
-- Tienen la misma configuración.
-- Se administran como un único recurso.
+> **Nota:** La distribución exacta entre **Fault Domains** puede variar. La tabla es un ejemplo para comprender el funcionamiento.
 
 ---
 
-# ¿Las VMs tienen que ser idénticas?
+# Durante el mantenimiento
 
-**Sí.**
+Supongamos que Azure actualiza el **Update Domain UD2**.
 
-Todas las instancias del VMSS se crean a partir de la misma configuración.
+| **Update Domain** | **FD0** | **FD1** | **FD2** | **FD3** | **FD4** |
+|:-----------------:|:-------:|:-------:|:-------:|:-------:|:-------:|
+| **UD0** | ✅ VM1 | ✅ VM2 | - | - | - |
+| **UD1** | - | - | ✅ VM3 | ✅ VM4 | - |
+| **UD2** | ❌ VM6 | - | - | - | ❌ VM5 |
+| **UD3** | - | ✅ VM7 | ✅ VM8 | - | - |
+| **UD4** | - | - | - | ✅ VM9 | ✅ VM10 |
 
-Comparten:
+Resultado:
 
-- Imagen del sistema operativo.
-- Tamaño de la VM (SKU).
-- Configuración.
-- Extensiones.
-- Aplicaciones instaladas (si forman parte de la imagen).
-
-Ejemplo:
-
-```text
-VM Scale Set
-
-├── VM1 (Windows Server 2022 + IIS)
-├── VM2 (Windows Server 2022 + IIS)
-├── VM3 (Windows Server 2022 + IIS)
-└── VM4 (Windows Server 2022 + IIS)
-```
-
-No sería un VMSS válido si cada VM fuera diferente:
-
-```text
-VM1 → Windows
-
-VM2 → Ubuntu
-
-VM3 → SQL Server
-
-VM4 → Domain Controller
-```
-
-En ese caso habría que utilizar VMs independientes o varios VM Scale Sets.
+| Estado | Cantidad |
+|---------|---------:|
+| ✅ Funcionando | **8** |
+| ❌ Reiniciando | **2** |
 
 ---
 
-# ¿Qué tipo de escalado utiliza?
+# ¿Por qué la respuesta correcta es 10 VMs?
 
-Un **VMSS realiza escalado horizontal** (**Scale Out / Scale In**).
+Con un **VM Scale Set de 10 instancias**:
 
-Es decir:
-
-```text
-Más carga
-
-↓
-
-Más máquinas virtuales
-```
-
-Ejemplo:
-
-```text
-3 VMs
-
-↓
-
-6 VMs
-
-↓
-
-10 VMs
-```
-
-Cuando disminuye la carga:
+- Existen **5 Update Domains**.
+- Cada **Update Domain** contiene aproximadamente **2 VMs**.
 
 ```text
 10 VMs
 
 ↓
 
-6 VMs
+5 Update Domains
 
 ↓
 
-3 VMs
+2 VMs por Update Domain
 ```
 
----
-
-# Escalado horizontal vs vertical
-
-| Tipo | ¿Qué hace? | Ejemplo |
-|------|------------|----------|
-| **Horizontal (Scale Out / Scale In)** | Añade o elimina VMs. | Pasar de 3 VMs a 6 VMs. |
-| **Vertical (Scale Up / Scale Down)** | Cambia el tamaño de una VM existente. | Pasar de una **Standard_D2s_v5** a una **Standard_D4s_v5**. |
-
-> Un **VMSS únicamente implementa escalado horizontal**.
-
----
-
-# ¿Cuándo utilizar un VMSS?
-
-Ejemplos:
-
-- Servidores Web IIS.
-- APIs REST.
-- Frontends.
-- Microservicios.
-- Render Farms.
-- Aplicaciones con mucha variación de carga.
-
----
-
-# Características principales
-
-| Característica | VM Scale Set |
-|----------------|--------------|
-| Escalado automático | ✅ |
-| Escalado manual | ✅ |
-| Balanceador de carga | ✅ |
-| VMs idénticas | ✅ |
-| Alta disponibilidad | ✅ |
-| Availability Zones | ✅ |
-| Actualizaciones automáticas | ✅ |
-
----
-
-# Escalado (Scaling)
-
-Existen dos formas de escalar un VMSS.
-
-## Escalado manual
-
-El administrador indica el número de instancias.
-
-Ejemplo:
+Como Azure actualiza **un único Update Domain cada vez**, durante el mantenimiento solo se reinician **2 VMs**.
 
 ```text
-3 VMs
+10 VMs
 
 ↓
 
-6 VMs
-```
-
----
-
-## Escalado automático (Autoscale)
-
-Azure aumenta o reduce automáticamente el número de VMs.
-
-Se basa en reglas.
-
-Ejemplo:
-
-```text
-CPU > 75%
+Azure actualiza UD2
 
 ↓
 
-Añadir 1 VM
-```
-
-o
-
-```text
-CPU < 25%
+2 VMs reiniciando
 
 ↓
 
-Eliminar 1 VM
+8 VMs continúan funcionando
 ```
+
+Por tanto, se cumple el requisito del enunciado:
+
+> **Al menos 8 máquinas virtuales deben permanecer operativas durante el mantenimiento planificado.**
 
 ---
 
-# Elementos de una regla de Autoscale
-
-Una regla siempre tiene:
-
-| Parámetro | Ejemplo |
-|------------|----------|
-| Métrica | Percentage CPU |
-| Operador | Greater than |
-| Umbral (Threshold) | 75% |
-| Acción | Increase count by 1 |
-| Tiempo de evaluación | 10 minutos |
-| Cooldown | 5 minutos |
-
----
-
-# Scale Out
-
-Añade máquinas virtuales.
-
-Ejemplo:
-
-```text
-CPU > 75%
-
-↓
-
-+1 VM
-```
-
----
-
-# Scale In
-
-Elimina máquinas virtuales.
-
-Ejemplo:
-
-```text
-CPU < 25%
-
-↓
-
--1 VM
-```
-
----
-
-# Regla importante del AZ-104
-
-El **Threshold** se interpreta de forma distinta según la acción.
-
-## Scale Out
-
-```text
-CPU >= Threshold
-
-↓
-
-Añadir VMs
-```
-
-Ejemplo:
-
-```text
-Threshold = 75%
-
-CPU = 80%
-
-↓
-
-Scale Out
-```
-
----
-
-## Scale In
-
-```text
-CPU <= Threshold
-
-↓
-
-Eliminar VMs
-```
-
-Ejemplo:
-
-```text
-Threshold = 25%
-
-CPU = 15%
-
-↓
-
-Scale In
-```
-
----
-
-# Capacidad
-
-Siempre existen tres valores.
-
-| Parámetro | Significado |
-|------------|-------------|
-| **Minimum** | Número mínimo de VMs. |
-| **Default** | Número inicial de VMs cuando se crea el Scale Set. |
-| **Maximum** | Número máximo de VMs. |
-
-Ejemplo:
-
-```text
-Minimum = 2
-
-Default = 3
-
-Maximum = 10
-```
-
----
-
-# Escenario típico del AZ-104
-
-```text
-Minimum = 1
-
-Maximum = 10
-
-Default = 3
-
-Scale Out
-
-CPU > 75%
-
-+1 VM
-
-Scale In
-
-CPU < 25%
-
--1 VM
-```
-
-El examen suele preguntar:
-
-> ¿Cuántas VMs habrá después de X minutos?
-
-Hay que tener en cuenta:
-
-- Tiempo de evaluación.
-- Cooldown.
-- Mínimo.
-- Máximo.
-
----
-
-# VMSS vs Availability Set
-
-| Característica | Availability Set | VM Scale Set |
-|----------------|------------------|--------------|
-| Alta disponibilidad | ✅ | ✅ |
-| Escalado automático | ❌ | ✅ |
-| VMs idénticas | ❌ | ✅ |
-| Gestión como un único recurso | ❌ | ✅ |
-| Balanceador de carga | Opcional | Habitual |
-| Uso típico | 2-3 VMs críticas | Decenas o cientos de VMs |
-
----
-
-# VMSS vs Availability Zones
-
-| VM Scale Set | Availability Zones |
-|---------------|--------------------|
-| Escala automáticamente | Protegen frente a la caída de una zona completa |
-| Puede utilizar Availability Zones | ✅ Sí |
-| Añade o elimina VMs automáticamente | ✅ |
-| Protege frente a la caída de un datacenter | Solo si utiliza Availability Zones |
-
-**No son tecnologías excluyentes.**
-
-Un VMSS puede desplegar sus instancias distribuidas entre varias **Availability Zones**.
-
----
-
-# Regla mnemotécnica
-
-Piensa en un restaurante.
-
-```text
-Pocos clientes
-
-↓
-
-3 camareros
-```
-
-```text
-Muchos clientes
-
-↓
-
-10 camareros
-```
-
-```text
-Pocos clientes otra vez
-
-↓
-
-3 camareros
-```
-
-Azure hace exactamente eso con un VMSS:
-
-Contrata o despide "camareros" (VMs) automáticamente en función de la carga.
-
----
-
-> [!IMPORTANT]
-> **Claves para el AZ-104**
->
-> - Un **Virtual Machine Scale Set (VMSS)** administra un conjunto de **máquinas virtuales idénticas**.
-> - Implementa **escalado horizontal (Scale Out / Scale In)**.
-> - Puede escalar **manual** o **automáticamente**.
-> - El autoscaling utiliza **métricas**, **umbrales**, **tiempo de evaluación** y **cooldown**.
-> - **Scale Out** → Añade VMs cuando la métrica supera el umbral.
-> - **Scale In** → Elimina VMs cuando la métrica cae por debajo del umbral.
-> - Un VMSS puede utilizar **Availability Zones** para mejorar la disponibilidad.
-> - Si necesitas VMs con configuraciones diferentes, debes utilizar **VMs independientes** o varios **VM Scale Sets**.
-
-## 3. Proximity Placement Group
-
-Un **Proximity Placement Group** intenta colocar los recursos de cómputo físicamente cerca unos de otros dentro de un datacenter para reducir la latencia de red.
-
-```text
-Sin PPG
-
-VM1 ───────────────────────── VM2
-        mayor latencia
-
-
-Con PPG
-
-VM1 ─── VM2 ─── VM3
-      baja latencia
-```
-
-El objetivo es reducir la latencia entre máquinas virtuales.
-
-```text
-Availability Set → separar
-PPG              → acercar
-```
-
-**Caso típico:**
-
-- Aplicaciones con mucha comunicación entre servidores.
-- Application Server y Database Server.
-- Clusters de alto rendimiento.
-- Workloads sensibles a latencia.
-
-> **PPG = acercar para reducir latencia.**
-
----
-
-## Comparación para AZ-104
-
-| Característica | Availability Set | VMSS | PPG |
-|---|---|---|---|
-| Alta disponibilidad | Sí | Sí | No |
-| Escalado automático | No | Sí | No |
-| Protege contra fallo de rack | Sí | Sí | No |
-| Reduce latencia | No | No | Sí |
-| VMs idénticas | No necesario | Normalmente sí | No |
-| Añade o elimina VMs automáticamente | No | Sí | No |
-| Objetivo principal | Disponibilidad | Escalabilidad | Rendimiento |
-
----
-
-## Regla mental para el examen
-
-```text
-Availability Set
-        ↓
-    separar VMs
-        ↓
- evitar fallo conjunto
-
-
-VM Scale Set
-        ↓
-   multiplicar VMs
-        ↓
- adaptarse a la carga
-
-
-Proximity Placement Group
-        ↓
-    acercar VMs
-        ↓
- reducir latencia
-```
-
----
-
-## Frase resumen
-
-```text
-Availability Set separa VMs para alta disponibilidad.
-VM Scale Set multiplica VMs para escalar automáticamente.
-Proximity Placement Group acerca VMs para reducir latencia.
-```
-
----
-
-## Importante
-
-Estos servicios no son necesariamente excluyentes.
-
-Por ejemplo, un **VM Scale Set** puede asociarse a un **Proximity Placement Group** si necesitas muchas VMs escalables y, además, baja latencia entre ellas.
+# Fault Domains vs Update Domains
+
+| Característica | Fault Domain | Update Domain |
+|----------------|--------------|---------------|
+| Protege frente a fallos físicos | ✅ | ❌ |
+| Protege frente a mantenimiento planificado | ❌ | ✅ |
+| Ejemplo | Falla un rack o un host físico | Azure instala actualizaciones |
+| ¿Quién los utiliza? | Availability Set y VMSS | Availability Set y VMSS |
