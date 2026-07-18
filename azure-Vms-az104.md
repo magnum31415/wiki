@@ -7,7 +7,7 @@
 - [Azure Desired State Configuration (DSC)](#azure-desired-state-configuration-dsc---az-104)
 - [Azure vCPU Quotas (AZ-104)](#azure-vcpu-quotas-az-104)
 - [Azure Availability Set vs VM Scale Set vs Proximity Placement Group](#azure-availability-set-vs-vm-scale-set-vs-proximity-placement-group)
-
+- [→ Azure Virtual Machine Scale Sets (VMSS) (AZ-104)](#azure-virtual-machine-scale-sets-vmss-az-104)
 ---
 
 # Azure VM Redeploy y Scheduled Maintenance (AZ-104)
@@ -1259,6 +1259,454 @@ El objetivo principal es **escalar horizontalmente**.
 > **VMSS = crear y eliminar VMs según la demanda.**
 
 ---
+
+# Azure Virtual Machine Scale Sets (VMSS) (AZ-104)
+
+Los **Azure Virtual Machine Scale Sets (VMSS)** permiten crear y administrar un conjunto de **máquinas virtuales idénticas** que pueden aumentar o disminuir automáticamente en función de la carga.
+
+Su objetivo principal es proporcionar:
+
+- Alta disponibilidad.
+- Escalado automático.
+- Administración simplificada de grandes grupos de VMs.
+
+---
+
+# Conceptos clave
+
+Un **Virtual Machine Scale Set (VMSS)** está diseñado para administrar un conjunto de **máquinas virtuales idénticas**.
+
+Sus dos características fundamentales son:
+
+- ✅ Las VMs son **idénticas**.
+- ✅ Implementa **escalado horizontal (Horizontal Scaling)**.
+
+---
+
+# Arquitectura
+
+```text
+                Load Balancer
+
+                      │
+
+      ┌───────────────┼───────────────┐
+
+      ▼               ▼               ▼
+
+     VM1             VM2             VM3
+
+            Virtual Machine Scale Set
+```
+
+Todas las VMs:
+
+- Se crean desde la misma imagen.
+- Tienen la misma configuración.
+- Se administran como un único recurso.
+
+---
+
+# ¿Las VMs tienen que ser idénticas?
+
+**Sí.**
+
+Todas las instancias del VMSS se crean a partir de la misma configuración.
+
+Comparten:
+
+- Imagen del sistema operativo.
+- Tamaño de la VM (SKU).
+- Configuración.
+- Extensiones.
+- Aplicaciones instaladas (si forman parte de la imagen).
+
+Ejemplo:
+
+```text
+VM Scale Set
+
+├── VM1 (Windows Server 2022 + IIS)
+├── VM2 (Windows Server 2022 + IIS)
+├── VM3 (Windows Server 2022 + IIS)
+└── VM4 (Windows Server 2022 + IIS)
+```
+
+No sería un VMSS válido si cada VM fuera diferente:
+
+```text
+VM1 → Windows
+
+VM2 → Ubuntu
+
+VM3 → SQL Server
+
+VM4 → Domain Controller
+```
+
+En ese caso habría que utilizar VMs independientes o varios VM Scale Sets.
+
+---
+
+# ¿Qué tipo de escalado utiliza?
+
+Un **VMSS realiza escalado horizontal** (**Scale Out / Scale In**).
+
+Es decir:
+
+```text
+Más carga
+
+↓
+
+Más máquinas virtuales
+```
+
+Ejemplo:
+
+```text
+3 VMs
+
+↓
+
+6 VMs
+
+↓
+
+10 VMs
+```
+
+Cuando disminuye la carga:
+
+```text
+10 VMs
+
+↓
+
+6 VMs
+
+↓
+
+3 VMs
+```
+
+---
+
+# Escalado horizontal vs vertical
+
+| Tipo | ¿Qué hace? | Ejemplo |
+|------|------------|----------|
+| **Horizontal (Scale Out / Scale In)** | Añade o elimina VMs. | Pasar de 3 VMs a 6 VMs. |
+| **Vertical (Scale Up / Scale Down)** | Cambia el tamaño de una VM existente. | Pasar de una **Standard_D2s_v5** a una **Standard_D4s_v5**. |
+
+> Un **VMSS únicamente implementa escalado horizontal**.
+
+---
+
+# ¿Cuándo utilizar un VMSS?
+
+Ejemplos:
+
+- Servidores Web IIS.
+- APIs REST.
+- Frontends.
+- Microservicios.
+- Render Farms.
+- Aplicaciones con mucha variación de carga.
+
+---
+
+# Características principales
+
+| Característica | VM Scale Set |
+|----------------|--------------|
+| Escalado automático | ✅ |
+| Escalado manual | ✅ |
+| Balanceador de carga | ✅ |
+| VMs idénticas | ✅ |
+| Alta disponibilidad | ✅ |
+| Availability Zones | ✅ |
+| Actualizaciones automáticas | ✅ |
+
+---
+
+# Escalado (Scaling)
+
+Existen dos formas de escalar un VMSS.
+
+## Escalado manual
+
+El administrador indica el número de instancias.
+
+Ejemplo:
+
+```text
+3 VMs
+
+↓
+
+6 VMs
+```
+
+---
+
+## Escalado automático (Autoscale)
+
+Azure aumenta o reduce automáticamente el número de VMs.
+
+Se basa en reglas.
+
+Ejemplo:
+
+```text
+CPU > 75%
+
+↓
+
+Añadir 1 VM
+```
+
+o
+
+```text
+CPU < 25%
+
+↓
+
+Eliminar 1 VM
+```
+
+---
+
+# Elementos de una regla de Autoscale
+
+Una regla siempre tiene:
+
+| Parámetro | Ejemplo |
+|------------|----------|
+| Métrica | Percentage CPU |
+| Operador | Greater than |
+| Umbral (Threshold) | 75% |
+| Acción | Increase count by 1 |
+| Tiempo de evaluación | 10 minutos |
+| Cooldown | 5 minutos |
+
+---
+
+# Scale Out
+
+Añade máquinas virtuales.
+
+Ejemplo:
+
+```text
+CPU > 75%
+
+↓
+
++1 VM
+```
+
+---
+
+# Scale In
+
+Elimina máquinas virtuales.
+
+Ejemplo:
+
+```text
+CPU < 25%
+
+↓
+
+-1 VM
+```
+
+---
+
+# Regla importante del AZ-104
+
+El **Threshold** se interpreta de forma distinta según la acción.
+
+## Scale Out
+
+```text
+CPU >= Threshold
+
+↓
+
+Añadir VMs
+```
+
+Ejemplo:
+
+```text
+Threshold = 75%
+
+CPU = 80%
+
+↓
+
+Scale Out
+```
+
+---
+
+## Scale In
+
+```text
+CPU <= Threshold
+
+↓
+
+Eliminar VMs
+```
+
+Ejemplo:
+
+```text
+Threshold = 25%
+
+CPU = 15%
+
+↓
+
+Scale In
+```
+
+---
+
+# Capacidad
+
+Siempre existen tres valores.
+
+| Parámetro | Significado |
+|------------|-------------|
+| **Minimum** | Número mínimo de VMs. |
+| **Default** | Número inicial de VMs cuando se crea el Scale Set. |
+| **Maximum** | Número máximo de VMs. |
+
+Ejemplo:
+
+```text
+Minimum = 2
+
+Default = 3
+
+Maximum = 10
+```
+
+---
+
+# Escenario típico del AZ-104
+
+```text
+Minimum = 1
+
+Maximum = 10
+
+Default = 3
+
+Scale Out
+
+CPU > 75%
+
++1 VM
+
+Scale In
+
+CPU < 25%
+
+-1 VM
+```
+
+El examen suele preguntar:
+
+> ¿Cuántas VMs habrá después de X minutos?
+
+Hay que tener en cuenta:
+
+- Tiempo de evaluación.
+- Cooldown.
+- Mínimo.
+- Máximo.
+
+---
+
+# VMSS vs Availability Set
+
+| Característica | Availability Set | VM Scale Set |
+|----------------|------------------|--------------|
+| Alta disponibilidad | ✅ | ✅ |
+| Escalado automático | ❌ | ✅ |
+| VMs idénticas | ❌ | ✅ |
+| Gestión como un único recurso | ❌ | ✅ |
+| Balanceador de carga | Opcional | Habitual |
+| Uso típico | 2-3 VMs críticas | Decenas o cientos de VMs |
+
+---
+
+# VMSS vs Availability Zones
+
+| VM Scale Set | Availability Zones |
+|---------------|--------------------|
+| Escala automáticamente | Protegen frente a la caída de una zona completa |
+| Puede utilizar Availability Zones | ✅ Sí |
+| Añade o elimina VMs automáticamente | ✅ |
+| Protege frente a la caída de un datacenter | Solo si utiliza Availability Zones |
+
+**No son tecnologías excluyentes.**
+
+Un VMSS puede desplegar sus instancias distribuidas entre varias **Availability Zones**.
+
+---
+
+# Regla mnemotécnica
+
+Piensa en un restaurante.
+
+```text
+Pocos clientes
+
+↓
+
+3 camareros
+```
+
+```text
+Muchos clientes
+
+↓
+
+10 camareros
+```
+
+```text
+Pocos clientes otra vez
+
+↓
+
+3 camareros
+```
+
+Azure hace exactamente eso con un VMSS:
+
+Contrata o despide "camareros" (VMs) automáticamente en función de la carga.
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - Un **Virtual Machine Scale Set (VMSS)** administra un conjunto de **máquinas virtuales idénticas**.
+> - Implementa **escalado horizontal (Scale Out / Scale In)**.
+> - Puede escalar **manual** o **automáticamente**.
+> - El autoscaling utiliza **métricas**, **umbrales**, **tiempo de evaluación** y **cooldown**.
+> - **Scale Out** → Añade VMs cuando la métrica supera el umbral.
+> - **Scale In** → Elimina VMs cuando la métrica cae por debajo del umbral.
+> - Un VMSS puede utilizar **Availability Zones** para mejorar la disponibilidad.
+> - Si necesitas VMs con configuraciones diferentes, debes utilizar **VMs independientes** o varios **VM Scale Sets**.
 
 ## 3. Proximity Placement Group
 
