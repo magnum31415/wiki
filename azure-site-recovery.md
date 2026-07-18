@@ -1,7 +1,7 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
-
-[→ Azure Site Recovery (ASR) - Migración de VMware On-Premises a Azure (AZ-104)](#azure-site-recovery-asr---migración-de-vmware-on-premises-a-azure-az-104)
+- [→ Azure Site Recovery (ASR) - Replicación de Azure a Azure (AZ-104)](#azure-site-recovery-asr---replicación-de-azure-a-azure-az-104)
+- [→ Azure Site Recovery (ASR) - Migración de VMware On-Premises a Azure (AZ-104)](#azure-site-recovery-asr---migración-de-vmware-on-premises-a-azure-az-104)
 
 
 # Azure Site Recovery 
@@ -17,8 +17,13 @@ Es un servicio de Disaster Recovery (DR) que replica máquinas (VMs o físicas) 
 
 -🔹 **No está diseñado para replicación entre Availability Zones**.
 
+## Azure Site Recovery "ASR": Azure a Azure
 
-![azure-site-recovery](./img/azure/azure-site-recovery.png)
+![azure-site-recovery-azure-a-azure](./img/azure/azure-site-recovery-azure-a-azure.png)
+
+## Azure Site Recovery "ASR": OnPrem a Azure
+
+![azure-site-recovery-oprem-a-azure](./img/azure/azure-site-recovery.png)
 
   
 
@@ -201,6 +206,266 @@ RA-GRS adds the benefit of read access to the replicated data in the secondary r
 
 ![geo replication](./img/azure/azure-sql-database-geo-replication.png)
 
+---
+# Azure Site Recovery (ASR) - Replicación de Azure a Azure (AZ-104)
+
+Cuando utilizas **Azure Site Recovery (ASR)** para proteger máquinas virtuales **de Azure hacia otra región de Azure**, la arquitectura es mucho más sencilla que en un escenario **VMware → Azure**, ya que ambas máquinas se encuentran dentro de Azure.
+
+No es necesario desplegar servidores intermedios como **Configuration Server**, **Process Server** o **Mobility Service**.
+
+---
+
+# Arquitectura
+
+```text
+┌────────────────────── Azure (Región de origen) ──────────────────────┐
+
+VM1 ─┐
+VM2 ─┼──► Azure Site Recovery Extension (Agent)
+VM3 ─┘
+                │
+                ▼
+        Recovery Services Vault
+                │
+                ▼
+     Azure Storage (Replication Data)
+                │
+                ▼
+
+┌────────────────────── Azure (Región de destino) ─────────────────────┐
+
+Azure Virtual Network
+        │
+        ▼
+Azure Virtual Machines (Réplica)
+```
+
+---
+
+# Pasos de implementación
+
+## Paso 1. Crear un Recovery Services Vault
+
+Crear un:
+
+```text
+Recovery Services Vault
+```
+
+Será el punto central desde donde se administrará la replicación y el failover.
+
+---
+
+## Paso 2. Crear la infraestructura de destino
+
+Crear en la región de destino:
+
+- Virtual Network
+- Subnets
+- (Opcional) NSGs
+- Resource Groups
+
+Las VMs replicadas se crearán en esta infraestructura durante el failover.
+
+---
+
+## Paso 3. Habilitar la replicación
+
+Desde el **Recovery Services Vault**:
+
+```text
+Replicate
+```
+
+Seleccionar:
+
+- Azure
+- Azure Virtual Machine
+
+---
+
+## Paso 4. Seleccionar las máquinas virtuales
+
+Elegir:
+
+- VM(s)
+- Región de destino
+- Resource Group destino
+- Virtual Network destino
+- Subnet
+- Availability Zone (si aplica)
+- Managed Disks
+
+---
+
+## Paso 5. Instalar Azure Site Recovery Extension
+
+Cuando se habilita la replicación, Azure instala automáticamente en cada VM la extensión:
+
+```text
+Azure Site Recovery Extension
+```
+
+No es necesario instalar ningún agente manualmente.
+
+Funciones:
+
+- Detectar cambios en los discos.
+- Enviar los cambios al servicio Azure Site Recovery.
+
+---
+
+## Paso 6. Replicación inicial
+
+Azure realiza la primera copia completa de los discos.
+
+Posteriormente solo replica los bloques modificados (replicación incremental).
+
+---
+
+## Paso 7. Replicación continua
+
+La VM permanece protegida.
+
+Azure replica continuamente los cambios hacia la región secundaria.
+
+---
+
+## Paso 8. Test Failover
+
+Ejecutar:
+
+```text
+Test Failover
+```
+
+Azure crea una VM temporal en la región secundaria.
+
+Permite validar:
+
+- Arranque
+- Red
+- Aplicación
+- Servicios
+
+Sin afectar la VM de producción.
+
+---
+
+## Paso 9. Planned Failover
+
+Cuando se desea cambiar definitivamente a la región secundaria:
+
+```text
+Planned Failover
+```
+
+Azure crea la VM en la región de destino utilizando los datos replicados.
+
+---
+
+## Paso 10. Failback (Opcional)
+
+Cuando la región primaria vuelve a estar disponible:
+
+```text
+Failback
+```
+
+Permite regresar la carga de trabajo a la región original.
+
+---
+
+# Componentes utilizados
+
+| Componente | Tipo | ¿Dónde se instala? | Función |
+|------------|------|--------------------|---------|
+| **Recovery Services Vault** | Servicio Azure (PaaS) | Azure | Administra la replicación, el failover y el failback. |
+| **Azure Site Recovery Extension** | **Agente (VM Extension)** | Automáticamente en cada VM de Azure | Detecta cambios en los discos y replica los datos. |
+| **Azure Storage** | Servicio Azure (PaaS) | Azure | Almacena temporalmente los datos replicados. |
+| **Azure Virtual Network** | Servicio Azure | Región de destino | Red donde se crearán las VMs durante el failover. |
+
+---
+
+# Componentes que **NO** existen
+
+En un escenario **Azure → Azure** **NO** se utilizan:
+
+- ❌ Mobility Service
+- ❌ Configuration Server
+- ❌ Process Server
+- ❌ Master Target Server
+
+Todos esos componentes solo son necesarios cuando el origen está **fuera de Azure** (VMware, Hyper-V o servidores físicos).
+
+---
+
+# Flujo completo
+
+```text
+1. Recovery Services Vault
+
+↓
+
+2. Crear Azure Virtual Network de destino
+
+↓
+
+3. Enable Replication
+
+↓
+
+4. Azure instala automáticamente la Azure Site Recovery Extension
+
+↓
+
+5. Replicación inicial
+
+↓
+
+6. Replicación incremental continua
+
+↓
+
+7. Test Failover
+
+↓
+
+8. Planned Failover
+
+↓
+
+9. Failback (opcional)
+```
+
+---
+
+# Comparación con VMware → Azure
+
+| Característica | VMware → Azure | Azure → Azure |
+|----------------|:--------------:|:-------------:|
+| Recovery Services Vault | ✅ | ✅ |
+| Azure Site Recovery Extension | ❌ | ✅ |
+| Mobility Service | ✅ | ❌ |
+| Configuration Server | ✅ | ❌ |
+| Process Server | ✅ | ❌ |
+| Master Target Server | Según escenario | ❌ |
+| Instalación manual de agentes | ✅ | ❌ |
+| Replicación continua | ✅ | ✅ |
+| Test Failover | ✅ | ✅ |
+| Planned Failover | ✅ | ✅ |
+| Failback | ✅ | ✅ |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - En **Azure → Azure** **no existen** los componentes on-premises (**Mobility Service**, **Configuration Server** y **Process Server**).
+> - Azure instala automáticamente la **Azure Site Recovery Extension** cuando habilitas la replicación.
+> - El **Recovery Services Vault** sigue siendo el recurso central que administra la protección, la replicación y el failover.
+> - Antes de habilitar la replicación debe existir la **Virtual Network** de destino en la región secundaria.
+> - Tras la replicación inicial, Azure Site Recovery realiza **replicación continua (incremental)** de los discos.
 ---
 
 # Azure Site Recovery (ASR) - Migración de VMware On-Premises a Azure (AZ-104)
