@@ -98,7 +98,6 @@ Es el **servicio PaaS** completo para alojar aplicaciones web.
 ````
 # 🌳 Árbol completo – Creación y estructura de Azure App Service
 
-````
 Azure App Service
 │
 ├── App Service Plan (CÓMPUTO / INFRAESTRUCTURA)
