@@ -1,17 +1,26 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+
+[→ Azure Site Recovery (ASR) - Migración de VMware On-Premises a Azure (AZ-104)](#azure-site-recovery-asr---migración-de-vmware-on-premises-a-azure-az-104)
+
+
 # Azure Site Recovery 
 
 Es un servicio de Disaster Recovery (DR) que replica máquinas (VMs o físicas) a otra ubicación para poder arrancarlas allí si el sitio principal falla.
 
 - 👉 No es backup.
 - 👉 No es alta disponibilidad local.
-  
+
 -🔹 Es **recuperación ante desastre completo.**
 
 -🔹 ASR es principalmente para **replicación entre regiones**.
 
 -🔹 **No está diseñado para replicación entre Availability Zones**.
+
+
+![azure-site-recovery](./img/azure/azure-site-recovery.png)
+
+  
 
 
 **Resumen mental rápido**
@@ -191,3 +200,294 @@ GRS provides data replication to a secondary geographic location, ensuring data 
 RA-GRS adds the benefit of read access to the replicated data in the secondary region, ensuring data availability even if the primary region is compromised. Both features satisfy the requirement of storing the unstructured data in another region.
 
 ![geo replication](./img/azure/azure-sql-database-geo-replication.png)
+
+---
+
+# Azure Site Recovery (ASR) - Migración de VMware On-Premises a Azure (AZ-104)
+
+Cuando utilizas **Azure Site Recovery (ASR)** para migrar máquinas virtuales desde un entorno **VMware on-premises** a **Azure**, el proceso sigue siempre el mismo flujo.
+
+---
+
+# Arquitectura
+
+```text
+┌─────────────────────────────── On-Premises ───────────────────────────────┐
+
+VM1 ─┐
+VM2 ─┼──► Mobility Service (Agent)
+VM3 ─┘
+
+            │
+            ▼
+
+   Configuration Server
+            │
+            ▼
+      Process Server
+            │
+            ▼
+      HTTPS (TCP 443)
+            │
+            ▼
+
+┌────────────────────────────── Microsoft Azure ────────────────────────────┐
+
+Recovery Services Vault
+        │
+        ▼
+Azure Storage (replicación)
+        │
+        ▼
+Azure Virtual Network
+        │
+        ▼
+Azure Virtual Machines
+```
+
+---
+
+# Pasos de implementación
+
+## Paso 1. Crear un Recovery Services Vault
+
+Crear un:
+
+```text
+Recovery Services Vault
+```
+
+Será el punto central desde donde se administrará la replicación y el failover.
+
+---
+
+## Paso 2. Crear la infraestructura de destino en Azure
+
+Crear:
+
+- Virtual Network
+- Subnets
+- (Opcional) NSGs
+- Resource Groups
+
+Las máquinas virtuales migradas se desplegarán en esta VNet.
+
+---
+
+## Paso 3. Preparar el entorno VMware
+
+Disponer de:
+
+- VMware vCenter
+- Hosts ESXi
+- Máquinas virtuales
+
+---
+
+## Paso 4. Implementar el Configuration Server
+
+Desplegar un servidor Windows que actuará como:
+
+```text
+Configuration Server
+```
+
+Funciones:
+
+- Registrar el entorno VMware.
+- Comunicarse con Azure.
+- Administrar la replicación.
+
+---
+
+## Paso 5. Configurar el Process Server
+
+El **Process Server** normalmente forma parte del Configuration Server.
+
+Funciones:
+
+- Recibir los datos replicados.
+- Comprimirlos.
+- Cifrarlos.
+- Enviarlos a Azure.
+
+---
+
+## Paso 6. Instalar el Mobility Service
+
+Instalar el agente:
+
+```text
+Azure Site Recovery Mobility Service
+```
+
+en **cada máquina virtual** que se quiera migrar.
+
+Funciones:
+
+- Detectar cambios en los discos.
+- Enviar los cambios al Process Server.
+
+---
+
+## Paso 7. Registrar el entorno en Azure
+
+Desde el **Recovery Services Vault**:
+
+- Registrar el Configuration Server.
+- Detectar VMware.
+- Detectar las VMs.
+
+---
+
+## Paso 8. Configurar la replicación
+
+Seleccionar:
+
+- VM(s)
+- Disco(s)
+- Resource Group destino
+- Virtual Network destino
+- Subnet
+- Tipo de almacenamiento
+
+Y habilitar:
+
+```text
+Enable Replication
+```
+
+---
+
+## Paso 9. Replicación inicial
+
+Azure realiza la primera copia completa de los discos.
+
+Después solo replica los cambios (replicación incremental).
+
+---
+
+## Paso 10. Test Failover
+
+Ejecutar:
+
+```text
+Test Failover
+```
+
+Azure crea una VM temporal sin afectar a producción.
+
+Permite validar:
+
+- Arranque
+- Red
+- Aplicación
+- Servicios
+
+---
+
+## Paso 11. Planned Failover / Migration
+
+Cuando todo está validado:
+
+```text
+Planned Failover
+```
+
+o
+
+```text
+Migration
+```
+
+La VM se crea definitivamente en Azure.
+
+---
+
+## Paso 12. Complete Migration
+
+Una vez verificado que todo funciona:
+
+```text
+Complete Migration
+```
+
+Se elimina la replicación.
+
+La VM pasa a ejecutarse únicamente en Azure.
+
+---
+
+# Componentes utilizados
+
+| Componente | Tipo | ¿Dónde se instala? | Función |
+|------------|------|--------------------|---------|
+| **Recovery Services Vault** | Servicio Azure | Azure | Administra la replicación y el failover. |
+| **Azure Site Recovery Mobility Service** | **Agente** | En cada VM on-premises | Detecta cambios y replica los discos. |
+| **Configuration Server** | **Servidor** | On-premises | Coordina toda la replicación con Azure. |
+| **Process Server** | **Servidor** | On-premises | Comprime, cifra y envía los datos a Azure. |
+| **Azure Virtual Network** | Servicio Azure | Azure | Red donde se desplegarán las VMs migradas. |
+
+---
+
+# Flujo completo
+
+```text
+1. Recovery Services Vault
+
+↓
+
+2. Azure Virtual Network
+
+↓
+
+3. Configuration Server
+
+↓
+
+4. Process Server
+
+↓
+
+5. Instalar Mobility Service en cada VM
+
+↓
+
+6. Registrar VMware
+
+↓
+
+7. Enable Replication
+
+↓
+
+8. Replicación inicial
+
+↓
+
+9. Replicación incremental
+
+↓
+
+10. Test Failover
+
+↓
+
+11. Planned Failover / Migration
+
+↓
+
+12. Complete Migration
+```
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - El **Recovery Services Vault** es el primer recurso que se crea.
+> - Antes de migrar, debe existir la **Virtual Network** de destino en Azure.
+> - Cada VM on-premises debe tener instalado el **Azure Site Recovery Mobility Service**.
+> - El **Configuration Server** coordina la replicación.
+> - El **Process Server** comprime, cifra y envía los datos a Azure.
+> - Tras la replicación inicial, ASR realiza **replicación continua (incremental)**, no copias de seguridad tradicionales.
