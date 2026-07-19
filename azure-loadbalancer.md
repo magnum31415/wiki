@@ -68,7 +68,7 @@
 | **Backend típico** | VMs heredadas | Aplicaciones públicas o privadas (VMs, VMSS, SQL, AD, APIs, etc.) | Web Apps / APIs | Aplicaciones Web Multi-región | Endpoints regionales | Firewalls, IDS/IPS, NVAs |
 | **Accesible desde Internet** | ✅ Si el Frontend es público | ✅ Frontend público / ❌ Frontend privado | ✅ Si el Frontend es público | ✅ | ✅ | ❌ |
 | **IP Frontend** | Pública o privada | Pública o privada | Pública o privada | Pública Global | DNS | Privada |
-| **Availability Zones** | ❌ | ✅ | ✅ (v2) | Servicio Global | N/A | ✅ |
+| **Availability Zones** | ❌ | ✅ | ✅ (Standard_v2 / WAF_v2) | Servicio Global | N/A | ✅ |
 | **Secure by default** | ❌ | ✅ (requiere reglas NSG) | ✅ | ✅ | N/A | ✅ |
 | **SLA** | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Limitaciones** | **SKU retirado.** Sin SLA ni Availability Zones. Las VMs del Backend Pool deben pertenecer al mismo **Availability Set** o **VM Scale Set**. | Solo balanceo **L4**. No soporta **WAF**, **TLS/SSL Offload**, **URL Routing**, **Path Routing** ni **Host Routing**. | Solo balancea tráfico **HTTP/HTTPS (L7)**. No balancea TCP/UDP. Es un servicio regional. | Solo soporta **HTTP/HTTPS**. No balancea protocolos TCP/UDP. Algunas funcionalidades (Private Link) requieren SKU Premium. | Solo responde consultas **DNS**. No inspecciona ni transporta tráfico. Depende del TTL DNS para el failover. | Diseñado exclusivamente para insertar **NVAs** de forma transparente. No publica aplicaciones ni balancea tráfico de usuarios finales. |
