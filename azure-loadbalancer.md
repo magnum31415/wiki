@@ -38,41 +38,41 @@
 > **Leyenda**
 >
 > - **Basic LB** = Azure Load Balancer (Basic)
-> - **Std Public LB** = Azure Load Balancer (Standard - Public)
-> - **Std ILB** = Azure Load Balancer (Standard - Internal Load Balancer)
-> - **App GW** = Application Gateway
+> - **Standard LB** = Azure Load Balancer (Standard)
+>   - Puede ser **Public Load Balancer** (Frontend IP pública) o **Internal Load Balancer - ILB** (Frontend IP privada).
+> - **App GW** = Azure Application Gateway
 > - **Front Door** = Azure Front Door
-> - **Traffic Mgr** = Traffic Manager
-> - **GW LB** = Gateway Load Balancer
+> - **Traffic Mgr** = Azure Traffic Manager
+> - **GW LB** = Azure Gateway Load Balancer
 
 
 
-| Característica | **Basic LB** | **Std Public LB** | **Std ILB** | **App GW** | **Front Door** | **Traffic Mgr** | **GW LB** |
-|----------------|:------------:|:-----------------:|:-----------:|:----------:|:--------------:|:---------------:|:---------:|
-|---|---|---|---|---|---|---|---|
-| **Capa OSI** | L4 (TCP/UDP) | L4 (TCP/UDP) | L4 (TCP/UDP) | L7 (HTTP/HTTPS) | L7 global (HTTP/HTTPS) | DNS | L3/L4 |
-| **Ámbito** | Regional | Regional | Regional | Regional | Global | Global | Regional |
-| **Público / Interno** | Público o interno | Público | Interno | Público o interno | Público | Público mediante DNS | Interno / transparente |
-| **Port forwarding (Inbound NAT Rule)** | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **HTTPS health probe** | ❌ (solo TCP/HTTP) | ✅ | ✅ | ✅ | ✅ | ✅ (HTTP/HTTPS/TCP según monitorización) | ❌ |
-| **URL-based routing** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
-| **Path-based routing** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
-| **Host-based routing** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
-| **WAF** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
-| **TLS/SSL termination** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
-| **Global failover** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
-| **Multi-region routing** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
-| **Backend pool** | VMs del mismo **Availability Set** o del mismo **VMSS** | VMs / VMSS mediante NIC o IP, dentro de una misma VNet | VMs / VMSS mediante NIC o IP, dentro de una misma VNet | NICs, VMs, VMSS, IPs, FQDN y App Service | Origin Groups: App Service, Storage, Azure u orígenes personalizados | Endpoints DNS: Azure, externos o anidados | VMs o VMSS que ejecutan NVAs, dentro de una VNet |
-| **Protección SQL Injection** | ❌ | ❌ | ❌ | ✅ (WAF) | ✅ (WAF) | ❌ | ❌ |
-| **Escalado automático** | ❌ El LB no escala las VMs | ⚠️ Se integra con VMSS/autoscale | ⚠️ Se integra con VMSS/autoscale | ✅ En SKU v2 | ✅ Servicio global gestionado | ❌ No escala endpoints; solo enruta DNS | ⚠️ Se integra con VMSS/NVAs escalables |
-| **CDN / Edge caching** | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| **Backend típico** | VMs heredadas en Availability Set o VMSS | VMs / VMSS publicados en Internet | Aplicaciones privadas y servicios internos | Web Apps / APIs HTTP(S) | Aplicaciones web multi-región | Endpoints regionales o externos | Firewalls, IDS/IPS y otras NVAs |
-| **Accesible desde Internet** | ✅ si es público | ✅ | ❌ | ✅ si tiene frontend público | ✅ | ✅ mediante resolución DNS | ❌ directamente |
-| **IP Frontend** | Pública o privada | Solo pública | Solo privada | Pública o privada | Pública global | Nombre DNS | IP privada |
-| **Availability Zones** | ❌ | ✅ | ✅ | ✅ en SKU v2 | Servicio global distribuido | N/A | ✅ |
-| **Secure by default** | ❌ | ✅; requiere NSG para permitir tráfico | ✅; requiere NSG para permitir tráfico | ✅ | ✅ | N/A | ✅ |
-| **SLA** | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Limitaciones** | SKU retirado. Sin Availability Zones ni SLA. El backend debe pertenecer al mismo Availability Set o VMSS. | Solo L4; no interpreta URL, host o path. Sin WAF ni TLS termination. | Solo acceso privado. No aporta salida a Internet por sí mismo; requiere NAT Gateway, Public IP u otra salida explícita. Solo L4. | Solo HTTP/HTTPS. Regional. No balancea protocolos TCP/UDP arbitrarios. | Solo HTTP/HTTPS. Los orígenes deben ser accesibles desde Front Door; Private Link requiere Premium en escenarios compatibles. | Solo decide qué endpoint devolver mediante DNS. No inspecciona, proxifica ni transporta el tráfico. Depende del TTL y caché DNS. | Diseñado para insertar NVAs transparentemente. Solo reglas HA Ports y tráfico VXLAN; no publica aplicaciones directamente. |
+| Característica | **Basic LB** | **Standard LB** | **App GW** | **Front Door** | **Traffic Mgr** | **GW LB** |
+|----------------|:------------:|:---------------:|:----------:|:--------------:|:---------------:|:---------:|
+| **Capa OSI** | L4 (TCP/UDP) | L4 (TCP/UDP) | L7 (HTTP/HTTPS) | L7 Global (HTTP/HTTPS) | DNS | L3/L4 |
+| **Ámbito** | Regional | Regional | Regional | Global | Global | Regional |
+| **Público / Interno** | Público o interno | Público o interno (según el Frontend IP) | Público o interno | Público | Público (DNS) | Interno / Transparente |
+| **Port forwarding (Inbound NAT Rule)** | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **HTTPS Health Probe** | ❌ (solo TCP/HTTP) | ✅ (TCP/HTTP/HTTPS) | ✅ | ✅ | ✅ | ❌ |
+| **URL-based routing** | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **Path-based routing** | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **Host-based routing** | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **WAF** | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **TLS / SSL Termination** | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **Global Failover** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| **Multi-region Routing** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| **Backend Pool** | VMs del mismo **Availability Set** o **VM Scale Set** | VMs, VMSS, Availability Sets o IPs (misma VNet) | NICs, VMs, VMSS, IPs, FQDN, App Service | Origin Groups (App Service, Storage, AKS, VMs, etc.) | Endpoints DNS | NVAs (Firewalls, IDS/IPS, Appliances) |
+| **Protección SQL Injection** | ❌ | ❌ | ✅ (WAF) | ✅ (WAF) | ❌ | ❌ |
+| **Escalado automático** | ❌ (el LB no escala VMs) | ⚠️ Se integra con VMSS / Autoscale | ✅ (SKU v2) | ✅ | ❌ | ⚠️ Se integra con VMSS |
+| **CDN / Edge Caching** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| **Backend típico** | VMs heredadas | Aplicaciones públicas o privadas (VMs, VMSS, SQL, AD, APIs, etc.) | Web Apps / APIs | Aplicaciones Web Multi-región | Endpoints regionales | Firewalls, IDS/IPS, NVAs |
+| **Accesible desde Internet** | ✅ Si el Frontend es público | ✅ Frontend público / ❌ Frontend privado | ✅ Si el Frontend es público | ✅ | ✅ | ❌ |
+| **IP Frontend** | Pública o privada | Pública o privada | Pública o privada | Pública Global | DNS | Privada |
+| **Availability Zones** | ❌ | ✅ | ✅ (v2) | Servicio Global | N/A | ✅ |
+| **Secure by default** | ❌ | ✅ (requiere reglas NSG) | ✅ | ✅ | N/A | ✅ |
+| **SLA** | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Limitaciones** | **SKU retirado.** Sin SLA ni Availability Zones. Las VMs del Backend Pool deben pertenecer al mismo **Availability Set** o **VM Scale Set**. | Solo balanceo **L4**. No soporta **WAF**, **TLS/SSL Offload**, **URL Routing**, **Path Routing** ni **Host Routing**. | Solo balancea tráfico **HTTP/HTTPS (L7)**. No balancea TCP/UDP. Es un servicio regional. | Solo soporta **HTTP/HTTPS**. No balancea protocolos TCP/UDP. Algunas funcionalidades (Private Link) requieren SKU Premium. | Solo responde consultas **DNS**. No inspecciona ni transporta tráfico. Depende del TTL DNS para el failover. | Diseñado exclusivamente para insertar **NVAs** de forma transparente. No publica aplicaciones ni balancea tráfico de usuarios finales. |
+
 
 ## Inbound NAT Rule vs Load Balancing Rule
 
