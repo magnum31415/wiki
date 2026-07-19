@@ -23,6 +23,7 @@
 - [Azure Backup Diagnostic Settings (AZ-104)](#azure-backup-diagnostic-settings-az-104)
 - [Azure Backup Ecosystem - Componentes y Dependencias (AZ-104)](#azure-backup-ecosystem---componentes-y-dependencias-az-104)
 - [Azure Backup Vault vs Recovery Services Vault (AZ-104)](#azure-backup-vault-vs-recovery-services-vault-az-104)
+- [⬅️ Volver a: Azure Backup Policies por región y tipo de recurso (AZ-104)](#azure-backup-policies-por-región-y-tipo-de-recurso-az-104)
   
 # Recovery Services Vault
 
@@ -2446,3 +2447,243 @@ Actualmente, la mayoría de preguntas del **AZ-104** siguen utilizando **Recover
 - SAP HANA en Azure VM
 
 Es el tipo de vault que debes conocer mejor para el examen.
+
+---
+
+# Azure Backup Policies por región y tipo de recurso (AZ-104)
+
+En Azure Backup, una **Backup Policy** define:
+
+- La frecuencia de las copias de seguridad.
+- La retención de los backups.
+- El horario de ejecución.
+
+Una **Backup Policy** tiene dos limitaciones importantes:
+
+- Solo protege **un único tipo de recurso**.
+- Solo puede utilizarse para recursos de **la misma región**.
+
+---
+
+# Recursos del caso de estudio
+
+## Máquinas virtuales
+
+| VM | Región |
+|----|---------|
+| VM1 | West US |
+| VM2 | West US |
+| VM3 | Central US |
+| VM4 | West US |
+| VM5 | East US |
+
+Las VMs están distribuidas en:
+
+- West US
+- Central US
+- East US
+
+**Total: 3 regiones**
+
+---
+
+## Azure File Shares
+
+| Storage Account | Región | File Share |
+|-----------------|---------|------------|
+| storage1 | West US | sharea |
+| storage2 | East US | shareb, sharec |
+| storage4 | Central US | shared |
+
+Los Azure File Shares también están distribuidos en:
+
+- West US
+- Central US
+- East US
+
+**Total: 3 regiones**
+
+---
+
+# ¿Cuántas Backup Policies son necesarias?
+
+## Para las máquinas virtuales
+
+Se necesita **una política por región**.
+
+```text
+West US
+    ↓
+VM Backup Policy
+
+Central US
+    ↓
+VM Backup Policy
+
+East US
+    ↓
+VM Backup Policy
+```
+
+Total:
+
+```text
+3 VM Backup Policies
+```
+
+---
+
+## Para Azure File Shares
+
+También se necesita **una política por región**.
+
+```text
+West US
+    ↓
+File Share Backup Policy
+
+Central US
+    ↓
+File Share Backup Policy
+
+East US
+    ↓
+File Share Backup Policy
+```
+
+Total:
+
+```text
+3 File Share Backup Policies
+```
+
+---
+
+# Total
+
+```text
+3 VM Policies
+
++
+
+3 File Share Policies
+
+=
+
+6 Backup Policies
+```
+
+---
+
+# ¿Por qué no basta con una sola política?
+
+Porque una misma Backup Policy **no puede proteger distintos tipos de recursos**.
+
+Por ejemplo:
+
+```text
+VM Backup Policy
+
+↓
+
+Solo protege Virtual Machines
+```
+
+No puede utilizarse para:
+
+```text
+Azure File Shares
+```
+
+---
+
+# ¿Por qué no bastan tres políticas?
+
+Porque aunque existan únicamente tres regiones, hay **dos tipos de recursos diferentes**.
+
+Necesitas:
+
+- Una política para las VMs.
+- Otra política para los Azure File Shares.
+
+En cada región.
+
+---
+
+# Arquitectura resultante
+
+```text
+West US
+├── VM Backup Policy
+└── File Share Backup Policy
+
+Central US
+├── VM Backup Policy
+└── File Share Backup Policy
+
+East US
+├── VM Backup Policy
+└── File Share Backup Policy
+```
+
+---
+
+# Fórmula para el AZ-104
+
+```text
+Número de Backup Policies
+
+=
+
+Número de regiones
+
+×
+
+Número de tipos de recurso
+```
+
+En este caso:
+
+```text
+3 regiones
+
+×
+
+2 tipos de recurso
+(Virtual Machines + Azure File Shares)
+
+=
+
+6 Backup Policies
+```
+
+---
+
+## Resumen
+
+| Tipo de recurso | West US | Central US | East US | Total |
+|-----------------|:-------:|:----------:|:-------:|------:|
+| Virtual Machines | 1 | 1 | 1 | **3** |
+| Azure File Shares | 1 | 1 | 1 | **3** |
+| **Total** | **2** | **2** | **2** | **6** |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - Una **Backup Policy** solo protege **un tipo de recurso** (por ejemplo, Virtual Machines o Azure File Shares).
+> - Las **Backup Policies son regionales** y solo pueden aplicarse a recursos de la misma región.
+> - Si tienes recursos de distintos tipos en varias regiones, necesitas una política para **cada combinación de región y tipo de recurso**.
+> - **Regla rápida del examen:**
+>
+> ```text
+> Nº de Backup Policies =
+> Nº de regiones × Nº de tipos de recurso
+> ```
+>
+> En este escenario:
+>
+> ```text
+> 3 regiones × 2 tipos de recurso = 6 Backup Policies
+> ```
