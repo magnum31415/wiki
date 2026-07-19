@@ -24,6 +24,7 @@
 - [Azure Backup Ecosystem - Componentes y Dependencias (AZ-104)](#azure-backup-ecosystem---componentes-y-dependencias-az-104)
 - [Azure Backup Vault vs Recovery Services Vault (AZ-104)](#azure-backup-vault-vs-recovery-services-vault-az-104)
 - [⬅️ Volver a: Azure Backup Policies por región y tipo de recurso (AZ-104)](#azure-backup-policies-por-región-y-tipo-de-recurso-az-104)
+- [⬅️ Volver a: Multi-User Authorization (MAU) y Resource Guard (AZ-104)](#multi-user-authorization-mau-y-resource-guard-az-104)
   
 # Recovery Services Vault
 
@@ -2687,3 +2688,216 @@ En este caso:
 > ```text
 > 3 regiones × 2 tipos de recurso = 6 Backup Policies
 > ```
+
+---
+
+# Multi-User Authorization (MAU) y Resource Guard (AZ-104)
+
+**Multi-User Authorization (MAU)** es una característica de seguridad de Azure Backup que protege las operaciones críticas realizadas sobre un **Recovery Services Vault**.
+
+Su objetivo es evitar que un único administrador pueda realizar acciones potencialmente destructivas sin una autorización adicional.
+
+Para habilitar **MAU**, es obligatorio crear un **Resource Guard**.
+
+---
+
+# ¿Qué es un Resource Guard?
+
+Un **Resource Guard** es un recurso de Azure que protege operaciones críticas sobre uno o varios **Recovery Services Vaults**.
+
+Cuando una operación protegida requiere MAU, el Resource Guard exige una autorización adicional por parte de usuarios o grupos designados.
+
+---
+
+# Arquitectura
+
+```text
+Administrador
+
+        │
+
+        ▼
+
+Recovery Services Vault
+
+        │
+
+        ▼
+
+Operación protegida
+
+        │
+
+        ▼
+
+Resource Guard
+
+        │
+
+        ▼
+
+Aprobación adicional
+
+        │
+
+        ▼
+
+Operación permitida
+```
+
+---
+
+# ¿Qué protege?
+
+Algunas de las operaciones que pueden protegerse son:
+
+- Deshabilitar **Soft Delete**.
+- Detener la protección de una copia de seguridad (**Stop Backup**).
+- Eliminar puntos de recuperación.
+- Modificar configuraciones críticas del Recovery Services Vault.
+
+Sin **Resource Guard**, un administrador con permisos suficientes podría ejecutar estas operaciones directamente.
+
+---
+
+# ¿Cómo funciona?
+
+Cuando un administrador intenta realizar una operación protegida:
+
+```text
+Deshabilitar Soft Delete
+
+↓
+
+Recovery Services Vault
+
+↓
+
+Resource Guard
+
+↓
+
+¿Existe autorización adicional?
+
+↓
+
+Sí → Operación permitida
+
+No → Operación denegada
+```
+
+---
+
+# ¿Quién puede aprobar?
+
+El **Resource Guard** puede configurarse para requerir la aprobación de:
+
+- Usuarios específicos.
+- Grupos de Microsoft Entra ID.
+
+Esto implementa un modelo de **doble autorización** para operaciones críticas.
+
+---
+
+# Relación entre MAU y Resource Guard
+
+| Elemento | Función |
+|----------|---------|
+| **Recovery Services Vault** | Contiene y administra las copias de seguridad. |
+| **Multi-User Authorization (MAU)** | Requiere una autorización adicional para operaciones críticas. |
+| **Resource Guard** | Recurso que implementa y hace cumplir la MAU. |
+
+---
+
+# Flujo de funcionamiento
+
+```text
+Administrador
+
+↓
+
+Recovery Services Vault
+
+↓
+
+Operación crítica
+
+↓
+
+Resource Guard
+
+↓
+
+Aprobación adicional
+
+↓
+
+Operación ejecutada
+```
+
+---
+
+# Ejemplo
+
+Un administrador intenta:
+
+```text
+Disable Soft Delete
+```
+
+Sin MAU:
+
+```text
+Administrador
+
+↓
+
+Disable Soft Delete
+
+↓
+
+✔ Ejecutado
+```
+
+Con MAU:
+
+```text
+Administrador
+
+↓
+
+Disable Soft Delete
+
+↓
+
+Resource Guard
+
+↓
+
+Aprobación requerida
+
+↓
+
+✔ Ejecutado
+```
+
+---
+
+# Comparación
+
+| Sin MAU | Con MAU |
+|----------|---------|
+| Un administrador puede ejecutar operaciones críticas directamente. | Se requiere una segunda autorización. |
+| Mayor riesgo ante errores o ataques. | Mayor protección frente a eliminaciones accidentales o maliciosas. |
+| No utiliza Resource Guard. | Requiere un Resource Guard. |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **Multi-User Authorization (MAU)** protege las operaciones críticas de **Azure Backup**.
+> - Para habilitar **MAU** es obligatorio crear un **Resource Guard**.
+> - El **Resource Guard** exige una autorización adicional antes de permitir operaciones sensibles.
+> - MAU ayuda a proteger acciones como **Disable Soft Delete** o **Stop Backup**.
+> - El objetivo es evitar que un único administrador pueda realizar cambios críticos sin una aprobación adicional.
