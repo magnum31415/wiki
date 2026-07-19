@@ -24,7 +24,8 @@
 - [Azure Storage Immutability (AZ-104)](#azure-storage-immutability-az-104)
 - [Pregunta típica del AZ-104: "Access Policy"](#pregunta-típica-del-az-104-access-policy)
 - [Stored Access Policy vs Shared Access Signature (SAS)](#stored-access-policy-vs-shared-access-signature-sas)
-
+- [⬅️ Volver a: Azure Blob Storage - Tipos de Blob (AZ-104)](#azure-blob-storage---tipos-de-blob-az-104)
+  
 ---
 
 # Métodos de autenticación y autorización para Azure Storage Account (AZ-104)
@@ -1214,3 +1215,215 @@ Shared Access Signature (SAS) = Token
 
 Immutability Policy = Protección WORM
 ```
+
+---
+
+# Azure Blob Storage - Tipos de Blob (AZ-104)
+
+Azure Blob Storage admite **tres tipos de blobs**, cada uno diseñado para un escenario diferente.
+
+| Tipo de Blob | Uso principal | ¿Permite modificaciones? | Tamaño máximo | Casos de uso |
+|---------------|--------------|-------------------------|--------------|--------------|
+| **Block Blob** | Almacenamiento general de archivos | ✅ Sí (se reemplazan bloques) | Hasta **190,7 TiB** | Imágenes, vídeos, documentos, backups |
+| **Append Blob** | Escritura secuencial (append) | ✅ Solo añadir al final | Hasta **195 GiB** | Logs, auditorías, telemetría |
+| **Page Blob** | Escritura aleatoria por páginas | ✅ Sí (lectura/escritura aleatoria) | Hasta **8 TiB** | Discos administrados (VHD), bases de datos |
+
+---
+
+# 1. Block Blob
+
+Es el tipo de blob **más utilizado**.
+
+Los datos se almacenan en **bloques** independientes.
+
+```text
+Archivo
+
+↓
+
+Bloque 1
+Bloque 2
+Bloque 3
+Bloque 4
+```
+
+Si modificas un archivo, Azure solo vuelve a subir los bloques que cambian.
+
+### Casos de uso
+
+- Documentos
+- Imágenes
+- PDFs
+- Vídeos
+- Backups
+- Archivos ZIP
+
+> **Es el tipo por defecto cuando subes un archivo a Blob Storage.**
+
+---
+
+# 2. Append Blob
+
+Está diseñado para datos que **solo crecen**.
+
+Solo permite:
+
+```text
+Añadir datos
+
+↓
+
+Final del archivo
+```
+
+Nunca modifica información existente.
+
+Ejemplo:
+
+```text
+LOG
+
+Error 1
+Error 2
+Error 3
+
+↓
+
+Append
+
+Error 4
+```
+
+No puede modificar:
+
+```text
+Error 2
+```
+
+Solo puede añadir:
+
+```text
+Error 5
+```
+
+### Casos de uso
+
+- Logs
+- Auditorías
+- Eventos
+- Telemetría
+
+---
+
+# 3. Page Blob
+
+Los datos se almacenan en **páginas de 512 bytes**.
+
+Permite acceder directamente a cualquier posición del archivo.
+
+```text
+Página 0
+
+Página 1
+
+Página 2
+
+Página 3
+```
+
+Puede modificarse cualquier página sin reescribir el resto.
+
+### Casos de uso
+
+- Virtual Hard Disks (VHD)
+- Azure Managed Disks (internamente)
+- Bases de datos
+- Aplicaciones que realizan muchas escrituras aleatorias
+
+---
+
+# Comparación
+
+| Característica | Block Blob | Append Blob | Page Blob |
+|----------------|------------|-------------|-----------|
+| Tipo más utilizado | ✅ | ❌ | ❌ |
+| Permite modificar datos existentes | ✅ | ❌ | ✅ |
+| Solo añadir al final | ❌ | ✅ | ❌ |
+| Escritura aleatoria | ❌ | ❌ | ✅ |
+| Optimizado para archivos | ✅ | ❌ | ❌ |
+| Optimizado para logs | ❌ | ✅ | ❌ |
+| Optimizado para discos VHD | ❌ | ❌ | ✅ |
+
+---
+
+# Regla mnemotécnica
+
+## Block Blob
+
+Piensa en un documento de Word.
+
+```text
+Documento
+
+↓
+
+Bloques
+```
+
+---
+
+## Append Blob
+
+Piensa en un archivo de log.
+
+```text
+LOG
+
+↓
+
+Añadir líneas
+
+↓
+
+Nunca modificar
+```
+
+---
+
+## Page Blob
+
+Piensa en un disco duro.
+
+```text
+Disco
+
+↓
+
+Páginas
+
+↓
+
+Acceso aleatorio
+```
+
+---
+
+# ¿Cuál aparece más en el AZ-104?
+
+| Escenario | Blob correcto |
+|------------|---------------|
+| Subir un PDF | **Block Blob** |
+| Subir una imagen | **Block Blob** |
+| Copia de seguridad | **Block Blob** |
+| Almacenar logs | **Append Blob** |
+| Azure Managed Disk (VHD) | **Page Blob** |
+| Escrituras aleatorias | **Page Blob** |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **Block Blob** es el tipo de blob más utilizado y el predeterminado para almacenar archivos.
+> - **Append Blob** solo permite añadir datos al final del blob y está diseñado para **logs**.
+> - **Page Blob** permite acceso aleatorio a páginas de **512 bytes** y se utiliza para **discos virtuales (VHD)** y cargas de trabajo con muchas escrituras aleatorias.
