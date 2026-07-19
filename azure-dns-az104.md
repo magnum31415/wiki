@@ -349,7 +349,6 @@ Private DNS Zone linking requires permissions on both the DNS zone and the VNet.
 ```
 
 ---
-
 # Virtual Network Link (AZ-104)
 
 Un **Virtual Network Link** **NO transporta tráfico de red**.
@@ -360,23 +359,46 @@ Su única función es:
 
 ---
 
-## Arquitectura
+# ¿Qué es una Private DNS Zone?
+
+Una **Private DNS Zone** es un servicio de Azure que permite resolver **nombres DNS privados** únicamente desde las **Virtual Networks** vinculadas a ella.
+
+A diferencia de una zona DNS pública:
+
+- No es accesible desde Internet.
+- Solo las VNets enlazadas mediante un **Virtual Network Link** pueden utilizarla.
+
+Ejemplo de una zona privada:
 
 ```text
-Private DNS Zone
+acmedomain.priv
+```
 
+o la utilizada por los Private Endpoints:
+
+```text
 privatelink.blob.core.windows.net
-           │
-           │
- Virtual Network Link
-           │
-           ▼
-         VNET1
 ```
 
 ---
 
-## Ejemplo
+## Arquitectura
+
+```text
+             Private DNS Zone
+
+      privatelink.blob.core.windows.net
+                    │
+                    │
+         Virtual Network Link
+                    │
+                    ▼
+                 VNET1
+```
+
+---
+
+## Ejemplo 1 - Private Endpoint
 
 Gracias al **Virtual Network Link**, una máquina virtual de **VNET1** puede resolver el nombre DNS privado:
 
@@ -392,7 +414,97 @@ obteniendo la dirección IP privada:
 
 ---
 
-## ¿Qué ocurre si no existe el Virtual Network Link?
+## Ejemplo 2 - Nombres privados para las VMs
+
+También puedes crear una zona DNS privada propia:
+
+```text
+acmedomain.priv
+```
+
+y vincularla a una VNet.
+
+```text
+Private DNS Zone
+
+acmedomain.priv
+        │
+Virtual Network Link
+        │
+        ▼
+      VNET1
+```
+
+Ahora las máquinas virtuales podrán utilizar nombres como:
+
+```text
+VM1.acmedomain.priv
+
+VM2.acmedomain.priv
+```
+
+---
+
+# Auto-registration
+
+Al crear un **Virtual Network Link** existe una opción denominada:
+
+```text
+Auto-registration
+```
+
+Puede estar:
+
+- Enabled
+- Disabled
+
+---
+
+## Auto-registration = Enabled
+
+Cuando se crea una nueva máquina virtual en la VNet:
+
+```text
+VM1
+```
+
+Azure registra automáticamente:
+
+```text
+VM1.acmedomain.priv
+
+↓
+
+10.0.1.4
+```
+
+No es necesario crear manualmente el registro DNS.
+
+---
+
+## Auto-registration = Disabled
+
+La máquina virtual se crea normalmente:
+
+```text
+VM1
+```
+
+pero **Azure NO crea automáticamente** el registro DNS.
+
+Será necesario crear manualmente un registro A:
+
+```text
+VM1.acmedomain.priv
+
+↓
+
+10.0.1.4
+```
+
+---
+
+# ¿Qué ocurre si no existe el Virtual Network Link?
 
 Si la VNet **no está vinculada** a la **Private DNS Zone**, la resolución DNS falla.
 
@@ -410,14 +522,27 @@ Aunque el **Private Endpoint** exista, la VM no podrá resolver automáticamente
 
 ---
 
+# Comparación
+
+| Función | Virtual Network Link |
+|----------|----------------------|
+| Conecta una VNet con una Private DNS Zone | ✅ |
+| Permite resolver nombres DNS privados | ✅ |
+| Transporta tráfico IP | ❌ |
+| Conecta dos VNets | ❌ |
+| Registra automáticamente las VMs | ⚠️ Solo si **Auto-registration = Enabled** |
+
+---
+
 > [!IMPORTANT]
 > **Claves para el AZ-104**
 >
 > - Un **Virtual Network Link** conecta una **Virtual Network** con una **Private DNS Zone**.
 > - **No proporciona conectividad IP** entre VNets.
 > - Su única función es permitir la **resolución de nombres DNS privados**.
+> - Una **Private DNS Zone** solo es accesible desde las VNets vinculadas mediante un **Virtual Network Link**.
+> - Si el **Virtual Network Link** tiene **Auto-registration = Enabled**, Azure registra automáticamente las máquinas virtuales de esa VNet en la zona DNS privada (por ejemplo, **VM1.acmedomain.priv**).
 > - Es un componente imprescindible cuando se utilizan **Private Endpoints** con **Private DNS Zones**.
-
 ---
 
 # Verificación de un dominio personalizado en Azure App Service (AZ-104)
