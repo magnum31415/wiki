@@ -35,7 +35,20 @@
 
 ## 🔷 Comparativa Load Balancing en Azure (Referencia AZ-305)
 
-| Característica | Azure Load Balancer (**Basic - retirado**) | Azure Load Balancer (Standard)<br>**Public Load Balancer (L4)** | Azure Load Balancer (Standard)<br>**Internal Load Balancer - ILB (L4)** | Application Gateway (L7) | Azure Front Door | Traffic Manager | Gateway Load Balancer |
+> **Leyenda**
+>
+> - **Basic LB** = Azure Load Balancer (Basic)
+> - **Std Public LB** = Azure Load Balancer (Standard - Public)
+> - **Std ILB** = Azure Load Balancer (Standard - Internal Load Balancer)
+> - **App GW** = Application Gateway
+> - **Front Door** = Azure Front Door
+> - **Traffic Mgr** = Traffic Manager
+> - **GW LB** = Gateway Load Balancer
+
+
+
+| Característica | **Basic LB** | **Std Public LB** | **Std ILB** | **App GW** | **Front Door** | **Traffic Mgr** | **GW LB** |
+|----------------|:------------:|:-----------------:|:-----------:|:----------:|:--------------:|:---------------:|:---------:|
 |---|---|---|---|---|---|---|---|
 | **Capa OSI** | L4 (TCP/UDP) | L4 (TCP/UDP) | L4 (TCP/UDP) | L7 (HTTP/HTTPS) | L7 global (HTTP/HTTPS) | DNS | L3/L4 |
 | **Ámbito** | Regional | Regional | Regional | Regional | Global | Global | Regional |
