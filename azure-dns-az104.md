@@ -5,7 +5,8 @@
 
 - [🔎 Concepto clave: Verificación de dominio en Microsoft Entra ID](#-concepto-clave-verificación-de-dominio-en-microsoft-entra-id)
 - [Azure DNS Roles importantes para AZ-104](#azure-dns-roles-importantes-para-az-104)
-
+- [⬅️ Volver a: Virtual Network Link (AZ-104)](#virtual-network-link-az-104)
+- [⬅️ Volver a: Verificación de un dominio personalizado en Azure App Service (AZ-104)](#verificación-de-un-dominio-personalizado-en-azure-app-service-az-104)
   ---
   
 
@@ -344,3 +345,213 @@ Network Contributor provides virtualNetworks/join/action.
 ```text
 Private DNS Zone linking requires permissions on both the DNS zone and the VNet.
 ```
+
+---
+
+# Virtual Network Link (AZ-104)
+
+Un **Virtual Network Link** **NO transporta tráfico de red**.
+
+Su única función es:
+
+> Permitir que una **Virtual Network** utilice una **Private DNS Zone** para resolver nombres DNS privados.
+
+---
+
+## Arquitectura
+
+```text
+Private DNS Zone
+
+privatelink.blob.core.windows.net
+           │
+           │
+ Virtual Network Link
+           │
+           ▼
+         VNET1
+```
+
+---
+
+## Ejemplo
+
+Gracias al **Virtual Network Link**, una máquina virtual de **VNET1** puede resolver el nombre DNS privado:
+
+```text
+mystorage.privatelink.blob.core.windows.net
+```
+
+obteniendo la dirección IP privada:
+
+```text
+10.0.1.5
+```
+
+---
+
+## ¿Qué ocurre si no existe el Virtual Network Link?
+
+Si la VNet **no está vinculada** a la **Private DNS Zone**, la resolución DNS falla.
+
+Por ejemplo:
+
+```text
+nslookup mystorage.privatelink.blob.core.windows.net
+
+↓
+
+No encuentra el registro DNS privado
+```
+
+Aunque el **Private Endpoint** exista, la VM no podrá resolver automáticamente su nombre DNS privado.
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - Un **Virtual Network Link** conecta una **Virtual Network** con una **Private DNS Zone**.
+> - **No proporciona conectividad IP** entre VNets.
+> - Su única función es permitir la **resolución de nombres DNS privados**.
+> - Es un componente imprescindible cuando se utilizan **Private Endpoints** con **Private DNS Zones**.
+
+---
+
+# Verificación de un dominio personalizado en Azure App Service (AZ-104)
+
+Cuando se quiere asociar un **dominio personalizado (Custom Domain)** a un **Azure App Service**, Microsoft primero debe comprobar que eres el propietario del dominio.
+
+Para ello se utiliza un **registro DNS de tipo TXT**.
+
+---
+
+# ¿Qué es `asuid`?
+
+**ASUID** significa:
+
+> **App Service Unique ID**
+
+Es un identificador único generado por **Azure App Service** para verificar la propiedad del dominio.
+
+**No es un estándar de DNS**, sino una convención utilizada por Azure App Service.
+
+---
+
+# Ejemplo
+
+Supongamos que quieres asociar el dominio:
+
+```text
+app.bluerock.com
+```
+
+a un Azure App Service.
+
+Azure genera un identificador único, por ejemplo:
+
+```text
+3F7A9C8D123456789ABCDEF
+```
+
+Y solicita crear el siguiente registro DNS:
+
+| Tipo | Nombre (Host) | Valor |
+|------|---------------|-------|
+| **TXT** | **asuid.app** | **3F7A9C8D123456789ABCDEF** |
+
+---
+
+# ¿Qué hace Azure?
+
+Azure consulta el DNS público.
+
+```text
+Azure App Service
+
+        │
+
+Busca:
+
+TXT asuid.app.bluerock.com
+
+        │
+
+¿Existe?
+
+        │
+
+Sí
+
+        ▼
+
+Dominio verificado
+```
+
+Una vez verificado el dominio, ya puede asociarse al App Service.
+
+---
+
+# ¿Por qué el nombre es `asuid.app`?
+
+Porque:
+
+- **asuid** → Indica que es un registro de verificación de **Azure App Service**.
+- **app** → Es el subdominio que se desea verificar.
+
+Por ejemplo:
+
+| Dominio | Registro TXT |
+|----------|--------------|
+| `app.bluerock.com` | `asuid.app` |
+| `api.bluerock.com` | `asuid.api` |
+| `portal.contoso.com` | `asuid.portal` |
+
+Si se verifica el dominio raíz:
+
+```text
+contoso.com
+```
+
+normalmente el registro será:
+
+| Tipo | Nombre |
+|------|--------|
+| TXT | **asuid** |
+
+---
+
+# ¿Sirve para dirigir el tráfico?
+
+**No.**
+
+El registro **TXT** únicamente demuestra que eres el propietario del dominio.
+
+No redirige tráfico hacia la aplicación.
+
+Después de la verificación, normalmente también se configura:
+
+- **CNAME** → Para subdominios (`app.contoso.com`)
+- **A Record** → Para el dominio raíz (`contoso.com`)
+
+---
+
+# Resumen
+
+| Registro DNS | Función |
+|--------------|---------|
+| **TXT (`asuid.<subdominio>`)** | Verificar la propiedad del dominio. |
+| **CNAME** | Asociar un subdominio al Azure App Service. |
+| **A Record** | Asociar el dominio raíz a una dirección IP. |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - Para verificar un **Custom Domain** en **Azure App Service** se utiliza un **registro TXT**.
+> - **ASUID** significa **App Service Unique ID**.
+> - El registro suele tener el formato **`asuid.<subdominio>`**.
+> - El valor del registro es un identificador único generado por Azure.
+> - El registro **TXT** solo sirve para **verificar la propiedad del dominio**; no dirige el tráfico hacia la aplicación.
+> - Una vez verificado el dominio, normalmente se configura también un **CNAME** (subdominios) o un **A Record** (dominio raíz).
