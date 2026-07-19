@@ -209,6 +209,16 @@ Permite almacenar distintos tipos de datos según el escenario.
 - 🔎 La migración en vivo (Live Migration) a ZRS/GZRS solo está soportada inicialmente para cuentas con **LRS o GRS**
 
 ---
+## Tabla Nº de copias por region
+
+| Redundancia | Nº de copias | Región primaria | Región secundaria | ¿Entre Availability Zones? | Lectura desde secundaria |
+|-------------|-------------:|-----------------|-------------------|----------------------------|--------------------------|
+| **LRS (Locally Redundant Storage)** | **3** | 3 copias en **un único datacenter** (no entre AZ) | ❌ | ❌ No | ❌ |
+| **ZRS (Zone-Redundant Storage)** | **3** | 1 copia en **cada una de 3 Availability Zones** | ❌ | ✅ Sí | ❌ |
+| **GRS (Geo-Redundant Storage)** | **6** | 3 copias LRS en **un único datacenter** | 3 copias LRS en **un único datacenter** de la región emparejada | ❌ No | ❌ |
+| **RA-GRS (Read-Access Geo-Redundant Storage)** | **6** | 3 copias LRS en **un único datacenter** | 3 copias LRS en **un único datacenter** de la región emparejada | ❌ No | ✅ Sí |
+| **GZRS (Geo-Zone-Redundant Storage)** | **6** | 1 copia en **cada una de 3 Availability Zones** | 3 copias LRS en **un único datacenter** | ✅ Solo en la región primaria | ❌ |
+| **RA-GZRS (Read-Access Geo-Zone-Redundant Storage)** | **6** | 1 copia en **cada una de 3 Availability Zones** | 3 copias LRS en **un único datacenter** | ✅ Solo en la región primaria | ✅ Sí |
 
 ## 🔄 Tabla de conversiones entre replicaciones
 
