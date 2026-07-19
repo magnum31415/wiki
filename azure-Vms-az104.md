@@ -7,7 +7,7 @@
 - [Azure Desired State Configuration (DSC)](#azure-desired-state-configuration-dsc---az-104)
 - [Azure vCPU Quotas (AZ-104)](#azure-vcpu-quotas-az-104)
 - [Azure Availability Set vs VM Scale Set vs Proximity Placement Group](#azure-availability-set-vs-vm-scale-set-vs-proximity-placement-group)
-- [→ Azure Virtual Machine Scale Sets (VMSS) (AZ-104)](#azure-virtual-machine-scale-sets-vmss-az-104)
+- [→ Azure Virtual Machine Scale Sets (VMSS) Distribución automática en Fault Domains y Update Domains](#azure-virtual-machine-scale-sets-vmss-distribución-automática-en-fault-domains-y-update-domains)
 ---
 
 # Azure VM Redeploy y Scheduled Maintenance (AZ-104)
@@ -1260,7 +1260,7 @@ El objetivo principal es **escalar horizontalmente**.
 
 ---
 
-# Distribución automática en Fault Domains y Update Domains
+# Azure Virtual Machine Scale Sets (VMSS) Distribución automática en Fault Domains y Update Domains
 
 Los **Azure Virtual Machine Scale Sets (VMSS)** distribuyen automáticamente las máquinas virtuales entre **Fault Domains (FD)** y **Update Domains (UD)** para proporcionar alta disponibilidad.
 
