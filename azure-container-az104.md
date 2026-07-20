@@ -5,6 +5,7 @@
 
 # Índice
 - [Azure Containers: soporte Windows vs Linux](#azure-containers-soporte-windows-vs-linux-az-104)
+- [⬅️ Volver a: Azure Container Registry - Admin User (AZ-104)](#azure-container-registry---admin-user-az-104)
 - [Azure Container Registry (ACR) y Azure Container Instances (ACI) - Resumen AZ-104](#azure-container-registry-acr-y-azure-container-instances-aci---resumen-az-104)
 - [Azure Container Registry (ACR)](#azure-container-registry-acr)
 - [Azure Container Instances (ACI)](#azure-container-instances-aci)
@@ -30,7 +31,212 @@ En el examen AZ-104, si una imagen está basada en **Windows Server**, debes com
 | Azure Container Apps | ✅ | ❌ |
 | Azure App Service | ✅ | ✅ |
 
+---
+# Azure Container Registry - Admin User (AZ-104)
 
+Azure Container Registry (ACR) permite habilitar un usuario administrador denominado **Admin User**.
+
+Este usuario proporciona una forma sencilla de autenticarse utilizando un **usuario y contraseña**, sin necesidad de Microsoft Entra ID.
+
+---
+
+# ¿Qué ocurre al habilitar el Admin User?
+
+Cuando habilitas:
+
+```text
+Admin User = Enabled
+```
+
+Azure genera automáticamente:
+
+- Un **nombre de usuario**.
+- Dos **contraseñas** (Password1 y Password2).
+
+Ejemplo:
+
+```text
+Registry
+
+ShireenReg1
+
+↓
+
+Username
+
+ShireenReg1
+
+↓
+
+Password1
+
+xxxxxxxx
+
+↓
+
+Password2
+
+yyyyyyyy
+```
+
+---
+
+# ¿Cuál es el nombre de usuario?
+
+El nombre de usuario **NO es**:
+
+- admin
+- administrator
+- root
+
+El nombre de usuario es **exactamente el nombre del Container Registry**.
+
+En este caso:
+
+```text
+Container Registry
+
+ShireenReg1
+```
+
+↓
+
+Username:
+
+```text
+ShireenReg1
+```
+
+Por eso la respuesta correcta es:
+
+✅ **ShireenReg1**
+
+---
+
+# ¿Cómo iniciar sesión?
+
+Con Docker:
+
+```bash
+docker login shireenreg1.azurecr.io
+```
+
+Docker solicitará:
+
+```text
+Username:
+```
+
+Debes escribir:
+
+```text
+ShireenReg1
+```
+
+Y como contraseña:
+
+```text
+Password1
+```
+
+o
+
+```text
+Password2
+```
+
+---
+
+# ¿Por qué existen dos contraseñas?
+
+Azure crea dos contraseñas para permitir la **rotación de credenciales sin interrumpir el servicio**.
+
+Ejemplo:
+
+```text
+Password1
+
+↓
+
+Se renueva
+
+↓
+
+Las aplicaciones siguen usando Password2
+
+↓
+
+Después se actualiza Password2
+```
+
+---
+
+# ¿Qué permisos tiene?
+
+El **Admin User** tiene acceso completo al Container Registry.
+
+Puede:
+
+- Push de imágenes.
+- Pull de imágenes.
+- Eliminar imágenes.
+- Administrar repositorios.
+
+---
+
+# ¿Cuándo se recomienda utilizarlo?
+
+Principalmente para:
+
+- Laboratorios.
+- Desarrollo.
+- Scripts sencillos.
+- Compatibilidad con herramientas antiguas.
+
+Microsoft recomienda utilizar **Microsoft Entra ID + Azure RBAC** en producción.
+
+---
+
+# Comparación
+
+| Método | Usuario | Contraseña | Recomendado |
+|---------|----------|------------|:-----------:|
+| **Admin User** | Nombre del Registry | Password1 o Password2 | ⚠️ Solo desarrollo/laboratorios |
+| **Microsoft Entra ID** | Usuario de Entra ID | Token | ✅ Producción |
+| **Managed Identity** | No aplica | No aplica | ✅ Producción |
+
+---
+
+# Regla para el AZ-104
+
+Si el examen pregunta:
+
+> **¿Cuál es el username del Admin User de un Azure Container Registry?**
+
+La respuesta siempre es:
+
+```text
+El nombre del Container Registry
+```
+
+Ejemplo:
+
+| Container Registry | Username |
+|--------------------|----------|
+| contosoreg | contosoreg |
+| myregistry | myregistry |
+| ShireenReg1 | **ShireenReg1** |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - Al habilitar el **Admin User** de un Azure Container Registry, Azure crea **un usuario y dos contraseñas**.
+> - El **nombre de usuario es exactamente el nombre del Container Registry**.
+> - Las dos contraseñas permiten la **rotación de credenciales** sin interrumpir el servicio.
+> - Para entornos de producción, Microsoft recomienda autenticarse mediante **Microsoft Entra ID** o **Managed Identity**, en lugar del Admin User.
+---
 
 # Azure Container Registry (ACR)
 
