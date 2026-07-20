@@ -26,6 +26,7 @@
 - [Stored Access Policy vs Shared Access Signature (SAS)](#stored-access-policy-vs-shared-access-signature-sas)
 - [⬅️ Volver a: Azure Blob Storage - Tipos de Blob (AZ-104)](#azure-blob-storage---tipos-de-blob-az-104)
 - [⬅️ Volver a: Azure Storage - Account Kind (AZ-104)](#azure-storage---account-kind-az-104)
+- [⬅️ Volver a: Azure Storage - User Delegation SAS vs Service SAS vs Account SAS (AZ-104)](#azure-storage---user-delegation-sas-vs-service-sas-vs-account-sas-az-104)
   
 ---
 
@@ -1588,3 +1589,336 @@ porque es:
 > - **StorageV2 (General Purpose v2)** es la opción recomendada por Microsoft.
 > - **StorageV2** soporta Blob, Azure Files, Queue y Table, además de las funcionalidades modernas como **Blob Versioning**, **Lifecycle Management** y **Object Replication**.
 > - Los tipos **GPv1** y **BlobStorage** son heredados y normalmente no deben utilizarse en nuevos despliegues.
+>
+
+---
+
+# Azure Storage - User Delegation SAS vs Service SAS vs Account SAS (AZ-104)
+
+La pregunta gira alrededor de esta configuración del Storage Account:
+
+```text
+Allow storage account key access = Disabled
+```
+
+Esta opción tiene una consecuencia muy importante:
+
+> **Cualquier SAS firmado con la Storage Account Key deja de funcionar.**
+
+---
+
+# Tipos de SAS
+
+Existen tres tipos de Shared Access Signature (SAS).
+
+| Tipo de SAS | ¿Cómo se firma? | ¿Usa Storage Account Key? | ¿Funciona si "Allow storage account key access = Disabled"? |
+|--------------|----------------|:-------------------------:|:-----------------------------------------------------------:|
+| **User Delegation SAS** | Microsoft Entra ID | ❌ | ✅ Sí |
+| **Service SAS** | Storage Account Key | ✅ | ❌ No |
+| **Account SAS** | Storage Account Key | ✅ | ❌ No |
+
+---
+
+# Configuración del Storage Account
+
+La pregunta indica:
+
+```text
+Allow storage account key access
+
+↓
+
+Disabled
+```
+
+Por tanto:
+
+```text
+Storage Account Keys
+
+↓
+
+No pueden utilizarse
+```
+
+---
+
+# User1
+
+User1 dispone de:
+
+```text
+User Delegation SAS
+```
+
+Este tipo de SAS funciona así:
+
+```text
+Usuario
+
+↓
+
+Microsoft Entra ID
+
+↓
+
+User Delegation Key
+
+↓
+
+User Delegation SAS
+
+↓
+
+Blob Storage
+```
+
+Observa que:
+
+```text
+Storage Account Key
+
+↓
+
+NO participa
+```
+
+Por tanto:
+
+```text
+Allow storage account key access = Disabled
+
+↓
+
+No afecta
+```
+
+User1 puede acceder.
+
+✅ **Respuesta correcta: TRUE**
+
+---
+
+# ¿Por qué?
+
+Porque el User Delegation SAS se firma mediante:
+
+```text
+Microsoft Entra ID
+```
+
+No mediante:
+
+```text
+Storage Account Key
+```
+
+---
+
+# ¿Qué ocurriría con un Service SAS?
+
+```text
+Service SAS
+
+↓
+
+Storage Account Key
+
+↓
+
+Blob Storage
+```
+
+Pero:
+
+```text
+Storage Account Key
+
+↓
+
+Disabled
+```
+
+Resultado:
+
+```text
+Authentication Failed
+```
+
+---
+
+# ¿Y con un Account SAS?
+
+Exactamente igual.
+
+```text
+Account SAS
+
+↓
+
+Storage Account Key
+
+↓
+
+Disabled
+
+↓
+
+No funciona
+```
+
+---
+
+# Flujo
+
+## User Delegation SAS
+
+```text
+Usuario
+
+↓
+
+Microsoft Entra ID
+
+↓
+
+User Delegation Key
+
+↓
+
+SAS
+
+↓
+
+Blob Storage
+```
+
+✅ Funciona.
+
+---
+
+## Service SAS
+
+```text
+Storage Account Key
+
+↓
+
+SAS
+
+↓
+
+Blob Storage
+```
+
+❌ No funciona si:
+
+```text
+Allow storage account key access = Disabled
+```
+
+---
+
+## Account SAS
+
+```text
+Storage Account Key
+
+↓
+
+Account SAS
+
+↓
+
+Blob Storage
+```
+
+❌ Tampoco funciona.
+
+---
+
+# HTTPS
+
+La explicación también menciona:
+
+```text
+Secure transfer required = Enabled
+```
+
+Esto significa:
+
+```text
+Solo HTTPS
+```
+
+Pero no influye en la respuesta.
+
+Simplemente obliga a utilizar:
+
+```text
+https://
+```
+
+en lugar de:
+
+```text
+http://
+```
+
+No tiene relación con el tipo de SAS.
+
+---
+
+# Resumen
+
+| Tipo de SAS | ¿Usa Microsoft Entra ID? | ¿Usa Storage Account Key? | ¿Funciona si las Keys están deshabilitadas? |
+|--------------|:-----------------------:|:-------------------------:|:-------------------------------------------:|
+| **User Delegation SAS** | ✅ | ❌ | ✅ |
+| **Service SAS** | ❌ | ✅ | ❌ |
+| **Account SAS** | ❌ | ✅ | ❌ |
+
+---
+
+# Regla para el AZ-104
+
+Si el examen muestra:
+
+```text
+Allow storage account key access = Disabled
+```
+
+piensa inmediatamente:
+
+```text
+User Delegation SAS
+
+↓
+
+Sí funciona
+```
+
+```text
+Service SAS
+
+↓
+
+No funciona
+```
+
+```text
+Account SAS
+
+↓
+
+No funciona
+```
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **User Delegation SAS** se firma mediante **Microsoft Entra ID**, por lo que **no depende de las Storage Account Keys**.
+> - **Service SAS** y **Account SAS** se firman con la **Storage Account Key**.
+> - Si **Allow storage account key access = Disabled**, únicamente seguirá funcionando el **User Delegation SAS**.
+> - La opción **Secure transfer required** solo obliga a utilizar **HTTPS** y no afecta al tipo de SAS utilizado.
