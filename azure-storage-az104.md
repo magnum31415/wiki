@@ -1617,6 +1617,19 @@ Existen tres tipos de Shared Access Signature (SAS).
 | **Service SAS** | Storage Account Key | ✅ | ❌ No |
 | **Account SAS** | Storage Account Key | ✅ | ❌ No |
 
+Tipos de SAS (AZ-104)
+
+Una **Shared Access Signature (SAS)** es una URL firmada que concede acceso limitado a los recursos de Azure Storage sin compartir la Storage Account Key.
+
+## Existen tres tipos de SAS.
+
+| Tipo | ¿Qué puede acceder? | ¿Cómo se firma? | Caso de uso |
+|-------|---------------------|-----------------|-------------|
+| **User Delegation SAS** | Blob y Data Lake | Microsoft Entra ID | Acceso temporal para usuarios |
+| **Service SAS** | Un único servicio (Blob, File, Queue o Table) | Storage Account Key | Compartir un blob, un file share, etc. |
+| **Account SAS** | Varios servicios de la cuenta | Storage Account Key | Operaciones a nivel de Storage Account |
+
+
 ---
 
 # Configuración del Storage Account
