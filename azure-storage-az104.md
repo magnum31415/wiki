@@ -3,7 +3,7 @@
 
 # 📑 Índice – Azure Storage AZ-104
 
-- [⬅️ Volver a: Azure Storage - Roles de Data Plane por servicio (AZ-104)](#azure-storage---roles-de-data-plane-por-servicio-az-104)
+- [⬅️ Volver a: Azure Storage - Roles de Management Plane vs Data Plane (AZ-104)](#azure-storage---roles-de-management-plane-vs-data-plane-az-104)
 - [Métodos de autenticación y autorización para Azure Storage Account (AZ-104)](#métodos-de-autenticación-y-autorización-para-azure-storage-account-az-104)
 - [📦 Azure Storage – Resumen ampliado para AZ-104](#-azure-storage--resumen-ampliado-para-az-104)
 - [🧱 Servicios principales de Azure Storage](#-servicios-principales-de-azure-storage)
@@ -30,110 +30,321 @@
 - [⬅️ Volver a: Azure Storage - User Delegation SAS vs Service SAS vs Account SAS (AZ-104)](#azure-storage---user-delegation-sas-vs-service-sas-vs-account-sas-az-104)
   
 ---
-# Azure Storage - Roles de Data Plane por servicio (AZ-104)
+# Azure Storage - Roles de Management Plane vs Data Plane (AZ-104)
 
-| Servicio | Reader | Contributor | Owner |
-|----------|--------|-------------|-------|
-| **Blob Storage** | Storage Blob Data Reader | Storage Blob Data Contributor | Storage Blob Data Owner |
-| **Azure Files (SMB)** | Storage File Data SMB Share Reader | Storage File Data SMB Share Contributor | Storage File Data SMB Share Elevated Contributor |
-| **Queue Storage** | ❌ No existe un Reader específico | Storage Queue Data Contributor | ❌ No existe |
-| **Table Storage** | ❌ No existe un Reader específico | Storage Table Data Contributor | ❌ No existe |
+En Azure Storage existen dos grandes categorías de roles:
 
----
+1. **Management Plane** → Administran el recurso (**Storage Account**).
+2. **Data Plane** → Acceden a los datos (**Blobs, Files, Queues y Tables**).
 
-# Blob Storage
-
-| Rol | Función |
-|------|---------|
-| Storage Blob Data Reader | Leer blobs. |
-| Storage Blob Data Contributor | Leer, escribir y eliminar blobs. |
-| Storage Blob Data Owner | Igual que Contributor y además administrar ACL. |
+La mayoría de preguntas del AZ-104 consisten en distinguir entre ambos.
 
 ---
 
-# Azure Files
+# 1. Management Plane
 
-| Rol | Función |
-|------|---------|
-| Storage File Data SMB Share Reader | Leer archivos. |
-| Storage File Data SMB Share Contributor | Leer y modificar archivos. |
-| Storage File Data SMB Share Elevated Contributor | Igual que Contributor y además modificar permisos NTFS (ACL). |
+Estos roles permiten administrar el **Storage Account**, pero **NO acceder al contenido** (salvo que posteriormente utilicen una Access Key, SAS o se asignen un rol de Data Plane).
+
+| Rol | ¿Qué administra? | ¿Puede leer datos? | Ejemplo |
+|------|------------------|:------------------:|----------|
+| **Reader** | Ver la configuración del Storage Account | ❌ | Ver el tipo de replicación o las reglas del firewall. |
+| **Contributor** | Administrar el Storage Account y casi cualquier recurso de Azure | ❌ | Crear un Storage Account o cambiar su configuración. |
+| **Storage Account Contributor** | Administrar exclusivamente Storage Accounts | ❌ | Crear un File Share o habilitar Soft Delete. |
+| **Owner** | Administración completa + asignar RBAC | ❌* | Crear Storage Accounts y asignar permisos a otros usuarios. |
+| **User Access Administrator** | Gestionar asignaciones RBAC | ❌ | Asignar el rol **Storage Blob Data Reader** a un usuario. |
+
+> **\*** El rol **Owner** tampoco puede leer los datos directamente; únicamente puede asignarse a sí mismo un rol de **Data Plane**.
 
 ---
 
-# Queue Storage
+# 2. Data Plane (Blob Storage)
 
-Solo existe un rol principal:
+Permiten acceder a los **Blob Containers** y a los blobs.
 
-| Rol | Función |
-|------|---------|
-| Storage Queue Data Contributor | Leer, insertar, actualizar y eliminar mensajes de las colas. |
+| Rol | Leer | Escribir | Eliminar | Ejemplo |
+|------|:----:|:--------:|:--------:|----------|
+| **Storage Blob Data Reader** | ✅ | ❌ | ❌ | Descargar un blob. |
+| **Storage Blob Data Contributor** | ✅ | ✅ | ✅ | Subir y eliminar blobs. |
+| **Storage Blob Data Owner** | ✅ | ✅ | ✅ | Administrar blobs y sus ACL. |
 
 Ejemplo:
 
 ```text
-Queue
+container1
 
-Orders
-
-↓
-
-Insert Message
-
-↓
-
-Read Message
-
-↓
-
-Delete Message
+├── foto.jpg
+├── informe.pdf
+└── backup.zip
 ```
+
+- **Reader** → Descargar `foto.jpg`.
+- **Contributor** → Subir `nuevo.pdf`.
+- **Owner** → Cambiar permisos y administrar el contenido.
 
 ---
 
-# Table Storage
+# 3. Data Plane (Azure Files)
 
-Solo existe un rol principal:
+Permiten acceder a **Azure File Shares** mediante SMB.
 
-| Rol | Función |
-|------|---------|
-| Storage Table Data Contributor | Leer, insertar, actualizar y eliminar entidades de las tablas. |
+| Rol | Leer | Escribir | Modificar ACL NTFS | Ejemplo |
+|------|:----:|:--------:|:------------------:|----------|
+| **Storage File Data SMB Share Reader** | ✅ | ❌ | ❌ | Abrir un archivo. |
+| **Storage File Data SMB Share Contributor** | ✅ | ✅ | ❌ | Crear o borrar archivos. |
+| **Storage File Data SMB Share Elevated Contributor** | ✅ | ✅ | ✅ | Cambiar permisos NTFS de carpetas y archivos. |
+
+Ejemplo:
+
+```text
+share1
+
+├── Informe.docx
+└── Datos.xlsx
+```
+
+- **Reader** → Leer `Informe.docx`.
+- **Contributor** → Crear `Nuevo.docx`.
+- **Elevated Contributor** → Modificar permisos NTFS de `Datos.xlsx`.
+
+---
+
+# 4. Data Plane (Queue Storage)
+
+Permiten acceder a **Azure Queue Storage** y administrar los mensajes de las colas.
+
+Actualmente Azure proporciona un único rol de Data Plane.
+
+| Rol | Leer | Insertar | Actualizar | Eliminar | Ejemplo |
+|------|:----:|:--------:|:-----------:|:--------:|----------|
+| **Storage Queue Data Contributor** | ✅ | ✅ | ✅ | ✅ | Leer, insertar y eliminar mensajes de una cola. |
+
+Ejemplo:
+
+```text
+queue1
+
+├── Mensaje 1
+├── Mensaje 2
+└── Mensaje 3
+```
+
+- **Contributor** → Leer, insertar, actualizar y eliminar mensajes.
+
+> **No existe un rol específico `Storage Queue Data Reader`.**
+
+---
+
+# 5. Data Plane (Table Storage)
+
+Permiten acceder a **Azure Table Storage** y administrar las entidades de una tabla.
+
+Actualmente Azure proporciona un único rol de Data Plane.
+
+| Rol | Leer | Insertar | Actualizar | Eliminar | Ejemplo |
+|------|:----:|:--------:|:-----------:|:--------:|----------|
+| **Storage Table Data Contributor** | ✅ | ✅ | ✅ | ✅ | Leer y administrar entidades de una tabla. |
 
 Ejemplo:
 
 ```text
 Customers
 
-PartitionKey
+├── RowKey = 1001
+├── RowKey = 1002
+└── RowKey = 1003
+```
 
-RowKey
+- **Contributor** → Leer, crear, modificar y eliminar entidades.
 
-↓
+> **No existe un rol específico `Storage Table Data Reader`.**
 
-CRUD de entidades
+---
+
+# ¿Qué rol necesito?
+
+## Quiero crear un Storage Account
+
+```text
+Storage Account Contributor
 ```
 
 ---
 
-# Comparativa
+## Quiero cambiar la replicación
 
-| Servicio | Roles más utilizados |
-|-----------|----------------------|
-| Blob | Reader, Contributor, Owner |
-| Azure Files | Reader, Contributor, Elevated Contributor |
-| Queue | Contributor |
-| Table | Contributor |
+```text
+Storage Account Contributor
+```
+
+---
+
+## Quiero configurar el Firewall del Storage
+
+```text
+Storage Account Contributor
+```
+
+---
+
+## Quiero crear un Blob Container
+
+```text
+Storage Account Contributor
+```
+
+---
+
+## Quiero leer un Blob
+
+```text
+Storage Blob Data Reader
+```
+
+---
+
+## Quiero subir un Blob
+
+```text
+Storage Blob Data Contributor
+```
+
+---
+
+## Quiero administrar completamente un Blob Container
+
+```text
+Storage Blob Data Owner
+```
+
+---
+
+## Quiero leer un Azure File Share
+
+```text
+Storage File Data SMB Share Reader
+```
+
+---
+
+## Quiero escribir en un Azure File Share
+
+```text
+Storage File Data SMB Share Contributor
+```
+
+---
+
+## Quiero modificar permisos NTFS
+
+```text
+Storage File Data SMB Share Elevated Contributor
+```
+
+---
+
+## Quiero leer o procesar mensajes de una Queue
+
+```text
+Storage Queue Data Contributor
+```
+
+---
+
+## Quiero leer o modificar entidades de una Table
+
+```text
+Storage Table Data Contributor
+```
+
+---
+
+# Comparación rápida
+
+| Acción | Rol necesario |
+|----------|----------------|
+| Crear un Storage Account | Storage Account Contributor |
+| Configurar Networking | Storage Account Contributor |
+| Configurar Replicación | Storage Account Contributor |
+| Crear un Blob Container | Storage Account Contributor |
+| Descargar un Blob | Storage Blob Data Reader |
+| Subir un Blob | Storage Blob Data Contributor |
+| Administrar ACL de Blobs | Storage Blob Data Owner |
+| Leer un Azure File | Storage File Data SMB Share Reader |
+| Crear archivos en Azure Files | Storage File Data SMB Share Contributor |
+| Cambiar ACL NTFS | Storage File Data SMB Share Elevated Contributor |
+| Leer o procesar mensajes de una Queue | Storage Queue Data Contributor |
+| Leer o modificar entidades de una Table | Storage Table Data Contributor |
+| Asignar roles RBAC | Owner o User Access Administrator |
+
+---
+
+# Comparación por servicio
+
+| Servicio | Reader | Contributor | Owner / Elevated |
+|----------|--------|-------------|------------------|
+| **Blob Storage** | Storage Blob Data Reader | Storage Blob Data Contributor | Storage Blob Data Owner |
+| **Azure Files** | Storage File Data SMB Share Reader | Storage File Data SMB Share Contributor | Storage File Data SMB Share Elevated Contributor |
+| **Queue Storage** | ❌ No existe | Storage Queue Data Contributor | ❌ No existe |
+| **Table Storage** | ❌ No existe | Storage Table Data Contributor | ❌ No existe |
+
+---
+
+# Regla mnemotécnica
+
+```text
+Storage Account...
+
+↓
+
+Administra el Storage
+```
+
+```text
+Storage Blob Data...
+
+↓
+
+Accede a los Blobs
+```
+
+```text
+Storage File Data...
+
+↓
+
+Accede a Azure Files
+```
+
+```text
+Storage Queue Data...
+
+↓
+
+Accede a las Queues
+```
+
+```text
+Storage Table Data...
+
+↓
+
+Accede a las Tables
+```
 
 ---
 
 > [!IMPORTANT]
 > **Claves para el AZ-104**
 >
-> - **Blob Storage** dispone de tres roles de Data Plane: **Reader**, **Contributor** y **Owner**.
-> - **Azure Files** dispone de tres roles de Data Plane: **Reader**, **Contributor** y **Elevated Contributor**.
-> - **Queue Storage** solo dispone del rol **Storage Queue Data Contributor**.
-> - **Table Storage** solo dispone del rol **Storage Table Data Contributor**.
-> - Las preguntas del AZ-104 se centran casi siempre en **Blob Storage** y **Azure Files**; los roles de Queue y Table aparecen con mucha menos frecuencia.
+> - Los roles **Management Plane** administran el **Storage Account**, pero **no permiten acceder a los datos**.
+> - Los roles **Data Plane** permiten acceder al contenido almacenado (**Blobs, Azure Files, Queues y Tables**).
+> - **Storage Account Contributor** puede crear un Blob Container o un File Share, pero **no leer su contenido**.
+> - Para leer un Blob necesitas **Storage Blob Data Reader**.
+> - Para leer un Azure File Share necesitas **Storage File Data SMB Share Reader**.
+> - Para trabajar con **Queue Storage** se utiliza **Storage Queue Data Contributor**.
+> - Para trabajar con **Table Storage** se utiliza **Storage Table Data Contributor**.
+> - Si el nombre del rol contiene **"Data"**, casi siempre pertenece al **Data Plane**.
+> - Si el nombre del rol contiene **"Storage Account"**, normalmente pertenece al **Management Plane**.
 ---
 # Métodos de autenticación y autorización para Azure Storage Account (AZ-104)
 
