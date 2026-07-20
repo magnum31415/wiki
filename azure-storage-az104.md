@@ -25,6 +25,7 @@
 - [Pregunta típica del AZ-104: "Access Policy"](#pregunta-típica-del-az-104-access-policy)
 - [Stored Access Policy vs Shared Access Signature (SAS)](#stored-access-policy-vs-shared-access-signature-sas)
 - [⬅️ Volver a: Azure Blob Storage - Tipos de Blob (AZ-104)](#azure-blob-storage---tipos-de-blob-az-104)
+- [⬅️ Volver a: Azure Storage - Account Kind (AZ-104)](#azure-storage---account-kind-az-104)
   
 ---
 
@@ -1427,3 +1428,163 @@ Acceso aleatorio
 > - **Block Blob** es el tipo de blob más utilizado y el predeterminado para almacenar archivos.
 > - **Append Blob** solo permite añadir datos al final del blob y está diseñado para **logs**.
 > - **Page Blob** permite acceso aleatorio a páginas de **512 bytes** y se utiliza para **discos virtuales (VHD)** y cargas de trabajo con muchas escrituras aleatorias.
+>
+
+---
+
+# Azure Storage - Account Kind (AZ-104)
+
+El **Account Kind** define el tipo de cuenta de almacenamiento de Azure y determina:
+
+- Qué servicios puede almacenar.
+- Qué características están disponibles.
+- Qué funcionalidades modernas soporta.
+
+---
+
+# Tipos de Account Kind
+
+| Account Kind | Estado | Servicios soportados | ¿Recomendado? |
+|---------------|--------|----------------------|:-------------:|
+| **StorageV2 (General Purpose v2)** | Actual | Blob, File, Queue, Table | ✅ Sí |
+| **Storage (General Purpose v1)** | Legado | Blob, File, Queue, Table | ❌ No |
+| **BlobStorage** | Legado | Solo Blob | ❌ No |
+| **BlockBlobStorage** | Especializado | Solo Block Blobs (Premium) | ⚠️ Casos específicos |
+| **FileStorage** | Especializado | Solo Azure Files (Premium) | ⚠️ Casos específicos |
+
+---
+
+# StorageV2 (General Purpose v2)
+
+Es el tipo de cuenta recomendado por Microsoft.
+
+Soporta:
+
+- Blob Storage
+- Azure Files
+- Queues
+- Tables
+
+Además incorpora prácticamente todas las funcionalidades modernas:
+
+- Lifecycle Management
+- Blob Versioning
+- Soft Delete
+- Change Feed
+- Object Replication
+- Static Website
+- Event Grid
+- Azure Data Lake Storage Gen2 (HNS)
+
+Es la opción que debes elegir salvo que tengas un requisito muy específico.
+
+---
+
+# Storage (General Purpose v1)
+
+Es la versión antigua.
+
+También soporta:
+
+- Blob
+- Files
+- Queue
+- Table
+
+Pero **no incluye muchas funcionalidades modernas**.
+
+Microsoft recomienda utilizar **StorageV2**.
+
+---
+
+# BlobStorage
+
+Solo permite:
+
+```text
+Blob Storage
+```
+
+No admite:
+
+- Azure Files
+- Queues
+- Tables
+
+Actualmente casi siempre se sustituye por **StorageV2**.
+
+---
+
+# BlockBlobStorage
+
+Cuenta Premium optimizada para:
+
+```text
+Block Blobs
+```
+
+Se utiliza cuando se necesitan:
+
+- Alto rendimiento
+- Baja latencia
+
+No soporta Azure Files.
+
+---
+
+# FileStorage
+
+Cuenta Premium destinada exclusivamente a:
+
+```text
+Azure Files
+```
+
+Ideal para:
+
+- SMB
+- Alto rendimiento
+- Baja latencia
+
+---
+
+# Comparación
+
+| Característica | StorageV2 | GPv1 | BlobStorage | BlockBlobStorage | FileStorage |
+|----------------|:---------:|:----:|:-----------:|:----------------:|:-----------:|
+| Blob | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Azure Files | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Queue | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Table | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Premium | Opcional (según servicio) | ❌ | ❌ | ✅ | ✅ |
+| Funcionalidades modernas | ✅ | ❌ | Limitadas | Limitadas | Limitadas |
+
+---
+
+# Regla para el AZ-104
+
+Si el examen pregunta:
+
+> **¿Qué Account Kind debes elegir?**
+
+La respuesta casi siempre será:
+
+```text
+StorageV2 (General Purpose v2)
+```
+
+porque es:
+
+- El tipo recomendado.
+- El más completo.
+- El que soporta prácticamente todas las funcionalidades actuales.
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **Account Kind** define el tipo de cuenta de almacenamiento.
+> - **StorageV2 (General Purpose v2)** es la opción recomendada por Microsoft.
+> - **StorageV2** soporta Blob, Azure Files, Queue y Table, además de las funcionalidades modernas como **Blob Versioning**, **Lifecycle Management** y **Object Replication**.
+> - Los tipos **GPv1** y **BlobStorage** son heredados y normalmente no deben utilizarse en nuevos despliegues.
