@@ -4,6 +4,7 @@
 
 
 # Índice
+- [⬅️ Volver a: Subred mínima requerida por servicio (AZ-104)](#subred-mínima-requerida-por-servicio-az-104)
 - [Azure Containers: soporte Windows vs Linux](#azure-containers-soporte-windows-vs-linux-az-104)
 - [⬅️ Volver a: Azure Container Registry - Admin User (AZ-104)](#azure-container-registry---admin-user-az-104)
 - [Azure Container Registry (ACR) y Azure Container Instances (ACI) - Resumen AZ-104](#azure-container-registry-acr-y-azure-container-instances-aci---resumen-az-104)
@@ -15,6 +16,39 @@
 - [Container Group - CPU Requests vs CPU Limits](#container-group---cpu-requests-vs-cpu-limits)
 - [Azure Container Services - Windows vs Linux Containers](#azure-container-services---windows-vs-linux-containers)
   
+---
+# Subred mínima requerida por servicio (AZ-104)
+
+| Servicio | ¿Requiere subnet dedicada? | Subnet mínima | Delegación requerida | Observaciones |
+|----------|:--------------------------:|:-------------:|----------------------|---------------|
+| **Azure Container Instances (ACI)** | ✅ Sí | **/28** (recomendado; evitar `/29`) | `Microsoft.ContainerInstance/containerGroups` | La subnet debe estar delegada. Para salida a Internet desde una VNet se requiere **NAT Gateway**. |
+| **Azure Container Apps Environment (ACA)** | ✅ Sí | **/27** (Workload Profiles)<br>**/23** (Consumption-only legacy) | `Microsoft.App/environments` | La subnet debe ser exclusiva para el Container Apps Environment. |
+| **Azure App Service** *(Regional VNet Integration)* | ❌ No | **Sin mínimo específico** | Ninguna | La integración con VNet utiliza una subnet existente dedicada a la integración. Microsoft recomienda dejar suficiente espacio (por ejemplo `/26` o mayor) para soportar el escalado. |
+| **Azure App Service Environment (ASE v3)** | ✅ Sí | **/24** | `Microsoft.Web/hostingEnvironments` | El ASE se despliega dentro de una VNet y requiere una subnet dedicada de al menos `/24`. |
+| **Azure Container Registry (ACR)** | ❌ No | N/A | Ninguna | ACR no se despliega dentro de una VNet. Si utilizas **Private Endpoint**, este se crea en una subnet cualquiera; ACR no exige un tamaño mínimo de subnet. |
+
+---
+
+## Regla rápida para el AZ-104
+
+| Servicio | Tamaño a memorizar |
+|----------|-------------------:|
+| **Azure Container Instances (ACI)** | **/28** |
+| **Azure Container Apps Environment (ACA)** | **/27** |
+| **Azure App Service (VNet Integration)** | **Sin mínimo** |
+| **Azure App Service Environment (ASE v3)** | **/24** |
+| **Azure Container Registry (ACR)** | **No aplica** |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **ACI** requiere una **subnet delegada** de al menos **/28**.
+> - **Azure Container Apps** requiere una **subnet dedicada** de al menos **/27** (o **/23** si el examen especifica un entorno **Consumption-only** heredado).
+> - **App Service** con **Regional VNet Integration** no tiene un tamaño mínimo obligatorio, pero la subnet debe estar **dedicada a la integración** y dimensionarse para el escalado.
+> - **App Service Environment (ASE v3)** requiere una **subnet dedicada /24**.
+> - **Azure Container Registry (ACR)** no se despliega dentro de una VNet; únicamente el **Private Endpoint** utiliza una subnet.
 ---
 
 # Azure Containers: soporte Windows vs Linux (AZ-104)
