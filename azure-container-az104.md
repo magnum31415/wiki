@@ -10,6 +10,7 @@
 - [Azure Container Registry (ACR) y Azure Container Instances (ACI) - Resumen AZ-104](#azure-container-registry-acr-y-azure-container-instances-aci---resumen-az-104)
 - [Azure Container Registry (ACR)](#azure-container-registry-acr)
 - [Azure Container Instances (ACI)](#azure-container-instances-aci)
+- [⬅️ Volver a: Azure Container Apps (ACA)](#azure-container-apps-aca)
 - [Cómo funciona ACI con ACR](#cómo-funciona-aci-con-acr)
 - [ACR Tasks](#acr-tasks)
 - [Qué es Admin User](#qué-es-admin-user)
@@ -1984,6 +1985,240 @@ Azure Container Apps ejecuta contenedores basados en Linux.
 No soporta contenedores Windows.
 
 Azure Container Apps parece similar a Azure Container Instances, pero no tiene el mismo soporte de sistema operativo.
+
+Azure Container Apps admite dos modelos de entorno (**Environment**):
+
+1. **Consumption-only** (modelo heredado)
+2. **Workload Profiles** (modelo actual y recomendado)
+
+La principal diferencia es cómo se asignan los recursos, cómo escala la aplicación y el tamaño mínimo de la subred cuando se integra con una Virtual Network.
+
+---
+
+# Comparativa
+
+| Característica | Consumption-only (Legacy) | Workload Profiles (Actual) |
+|----------------|---------------------------|----------------------------|
+| Estado | ⚠️ Heredado | ✅ Recomendado por Microsoft |
+| Modelo de ejecución | Solo Consumption | Consumption + Dedicated |
+| Escalado | Automático (KEDA) | Automático (KEDA) + perfiles dedicados |
+| Workload Profiles | ❌ No | ✅ Sí |
+| SKU dedicadas | ❌ No | ✅ Sí |
+| CPU/Memoria dedicada | ❌ No | ✅ Sí |
+| Coste | Solo por consumo | Consumo o recursos dedicados |
+| Integración con VNet | ✅ | ✅ |
+| **Subnet mínima** | **/23** | **/27** |
+| Direcciones IP mínimas | 512 | 32 |
+| Uso recomendado | Entornos antiguos | Nuevos despliegues |
+
+---
+
+# 1. Consumption-only
+
+Es el modelo original de Azure Container Apps.
+
+Las aplicaciones:
+
+- Escalan automáticamente.
+- Solo pagas por el consumo.
+- No existen nodos dedicados.
+
+Visualmente:
+
+```text
+Usuarios
+    │
+    ▼
+Azure Container Apps
+    │
+Escalado automático
+    │
+Infraestructura compartida
+```
+
+Al utilizar VNet requería una subred grande:
+
+```text
+/23
+
+↓
+
+512 direcciones IP
+```
+
+Actualmente solo se mantiene por compatibilidad con despliegues existentes.
+
+---
+
+# 2. Workload Profiles
+
+Es el modelo actual.
+
+Permite ejecutar distintos perfiles de carga dentro del mismo entorno.
+
+Ejemplo:
+
+```text
+Environment
+
+├── Consumption Profile
+├── D4 Profile
+├── E8 Profile
+└── GPU Profile
+```
+
+Cada aplicación puede ejecutarse en el perfil más adecuado.
+
+Ejemplo:
+
+```text
+Web API
+
+↓
+
+Consumption
+```
+
+```text
+Machine Learning
+
+↓
+
+Dedicated Profile
+```
+
+Visualmente:
+
+```text
+Usuarios
+      │
+      ▼
+Container Apps Environment
+      │
+ ┌───────────────┐
+ │ Consumption   │
+ ├───────────────┤
+ │ Dedicated D4  │
+ ├───────────────┤
+ │ Dedicated E8  │
+ └───────────────┘
+```
+
+Gracias a la nueva arquitectura solo necesita:
+
+```text
+/27
+
+↓
+
+32 direcciones IP
+```
+
+---
+
+# ¿Qué es un Workload Profile?
+
+Un **Workload Profile** define:
+
+- Tipo de infraestructura.
+- CPU.
+- Memoria.
+- Escalado.
+- Coste.
+
+Es parecido a elegir un tamaño de VM.
+
+Ejemplo:
+
+```text
+Profile A
+
+2 vCPU
+4 GB RAM
+```
+
+```text
+Profile B
+
+8 vCPU
+32 GB RAM
+```
+
+Las aplicaciones se asignan al perfil que necesiten.
+
+---
+
+# ¿Por qué cambió la subnet mínima?
+
+En el modelo antiguo Microsoft necesitaba reservar muchas direcciones IP para la infraestructura del entorno.
+
+```text
+Consumption-only
+
+↓
+
+/23
+
+↓
+
+512 IPs
+```
+
+Con Workload Profiles la arquitectura cambió y la infraestructura consume muchas menos IPs.
+
+```text
+Workload Profiles
+
+↓
+
+/27
+
+↓
+
+32 IPs
+```
+
+---
+
+# ¿Qué aparece en el AZ-104?
+
+Aquí es donde suele haber confusión.
+
+Muchos bancos de preguntas fueron creados cuando solo existía:
+
+```text
+Consumption-only
+
+↓
+
+/23
+```
+
+La documentación oficial actual utiliza:
+
+```text
+Workload Profiles
+
+↓
+
+/27
+```
+
+Por ello puedes encontrar preguntas donde la respuesta correcta sea **/23**, aunque Microsoft actualmente recomiende **/27**.
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **Consumption-only** es el modelo **heredado** de Azure Container Apps.
+> - **Workload Profiles** es el modelo **actual y recomendado** por Microsoft.
+> - Ambos permiten el escalado automático mediante **KEDA**.
+> - La diferencia más preguntada en el examen es el **tamaño mínimo de la subnet**:
+>   - **Consumption-only → /23**
+>   - **Workload Profiles → /27**
+> - Muchos simuladores antiguos siguen considerando **/23** como la respuesta correcta.
+
 
 | Servicio | Trampa |
 |---|---|
