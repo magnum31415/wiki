@@ -64,7 +64,8 @@
       52.<a href="https://github.com/magnum31415/wiki/blob/main/azure-razure-resource-manager-az104.md">Azure Resource Manager</a><br>      
       56.<a href="https://github.com/magnum31415/wiki/blob/main/azure-bastion.md">Azure Bastion</a><br>   
       57.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vpn.md">Azure VPN</a><br>      
-      58.<a href="https://github.com/magnum31415/wiki/blob/main/azure-powershell-az104.md">Azure Powershell</a><br>    
+      58.<a href="https://github.com/magnum31415/wiki/blob/main/azure-powershell-az104.md">Azure Powershell</a><br>
+      59.<a href="https://github.com/magnum31415/wiki/blob/main/azure-rg-az104.md">Azure ResourceGroup</a><br>
       100.<a href="https://github.com/magnum31415/wiki/blob/main/azure-vwan.md">Azure vWAN</a><br>     
     </td>
     <td>
