@@ -1,5 +1,11 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+
+- [⬅️ Volver a: Azure PowerShell - Cmdlets más importantes para el AZ-104](#azure-powershell---cmdlets-más-importantes-para-el-az-104)
+- [⬅️ Volver a: ARM Templates - ¿Qué cmdlet utilizar para desplegar? (AZ-104)](#arm-templates---qué-cmdlet-utilizar-para-desplegar-az-104)
+
+---
+
 # Azure PowerShell - Cmdlets más importantes para el AZ-104
 
 En el AZ-104 aparecen principalmente cmdlets relacionados con:
@@ -240,3 +246,280 @@ Los recursos
 >   - **Set-** → Modificar.
 >   - **Remove-** → Eliminar.
 >   - **Start / Stop / Restart** → Operaciones sobre recursos existentes.
+>  
+
+---
+
+# ARM Templates - ¿Qué cmdlet utilizar para desplegar? (AZ-104)
+
+## Escenario
+
+Quieres desplegar una **máquina virtual** utilizando un **ARM Template** desde Azure Cloud Shell.
+
+El comando aparece incompleto:
+
+```powershell
+$adminPassword = Read-Host -Prompt "Enter the administrator password" -AsSecureString
+
+____________
+
+-TemplateUri "https://..."
+-adminUsername LocalAdministrator
+-adminPassword $adminPassword
+```
+
+La pregunta es:
+
+> **¿Qué cmdlet debe ir al principio?**
+
+La respuesta correcta es:
+
+```powershell
+New-AzResourceGroupDeployment
+```
+
+---
+
+# ¿Por qué?
+
+Porque un **ARM Template no despliega directamente una VM**.
+
+Un ARM Template siempre se despliega en un **scope** (ámbito).
+
+Azure admite cuatro scopes:
+
+```text
+Tenant
+    │
+Management Group
+    │
+Subscription
+    │
+Resource Group
+```
+
+Cada uno tiene su propio cmdlet.
+
+---
+
+# En esta pregunta
+
+El recurso que quieres desplegar es:
+
+```text
+Virtual Machine
+```
+
+Las máquinas virtuales son recursos que siempre pertenecen a un:
+
+```text
+Resource Group
+```
+
+Por tanto el despliegue debe hacerse sobre:
+
+```text
+RG1
+```
+
+Y el cmdlet correcto es:
+
+```powershell
+New-AzResourceGroupDeployment
+```
+
+---
+
+# Esquema
+
+```text
+Azure
+
+Tenant
+│
+├── Management Group
+│
+├── Subscription
+│
+└── Resource Group (RG1)
+      │
+      ├── VM
+      ├── Storage
+      ├── NIC
+      └── NSG
+```
+
+El ARM Template crea recursos dentro de:
+
+```text
+RG1
+```
+
+---
+
+# ¿Por qué las demás respuestas son incorrectas?
+
+## New-AzVM
+
+```powershell
+New-AzVM
+```
+
+Este cmdlet:
+
+- Crea una VM directamente.
+- NO utiliza un ARM Template.
+
+Por tanto:
+
+❌ Incorrecto.
+
+---
+
+## New-AzResource
+
+```powershell
+New-AzResource
+```
+
+Sirve para crear un recurso genérico mediante Azure Resource Manager.
+
+No despliega un ARM Template.
+
+❌ Incorrecto.
+
+---
+
+## New-AzTemplateSpec
+
+Un **Template Spec** es un recurso donde se almacenan ARM Templates.
+
+```text
+ARM Template
+
+↓
+
+Template Spec
+
+↓
+
+Repositorio de plantillas
+```
+
+No despliega la plantilla.
+
+❌ Incorrecto.
+
+---
+
+# ¿Cómo sería el comando?
+
+```powershell
+New-AzResourceGroupDeployment `
+   -ResourceGroupName RG1 `
+   -TemplateUri https://... `
+   -adminUsername LocalAdministrator `
+   -adminPassword $adminPassword
+```
+
+---
+
+# ¿Cómo saber qué cmdlet usar?
+
+Depende del ámbito donde despliegas.
+
+| Scope | Cmdlet |
+|---------|---------|
+| Resource Group | **New-AzResourceGroupDeployment** |
+| Subscription | **New-AzSubscriptionDeployment** |
+| Management Group | **New-AzManagementGroupDeployment** |
+| Tenant | **New-AzTenantDeployment** |
+
+---
+
+# Regla visual
+
+```text
+¿Dónde va el recurso?
+```
+
+## Una VM
+
+```text
+VM
+
+↓
+
+Siempre dentro de un Resource Group
+
+↓
+
+New-AzResourceGroupDeployment
+```
+
+---
+
+## Un nuevo Resource Group
+
+```text
+Resource Group
+
+↓
+
+Pertenece a una Subscription
+
+↓
+
+New-AzSubscriptionDeployment
+```
+
+---
+
+## Una Policy para varias suscripciones
+
+```text
+Management Group
+
+↓
+
+New-AzManagementGroupDeployment
+```
+
+---
+
+## Un nuevo Management Group
+
+```text
+Tenant
+
+↓
+
+New-AzTenantDeployment
+```
+
+---
+
+# Regla mnemotécnica
+
+```text
+VM
+
+↓
+
+Resource Group
+
+↓
+
+New-AzResourceGroupDeployment
+```
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - Los **ARM Templates** siempre se despliegan sobre un **scope** (Tenant, Management Group, Subscription o Resource Group).
+> - Una **Virtual Machine** siempre pertenece a un **Resource Group**.
+> - Para desplegar recursos mediante un ARM Template dentro de un Resource Group se utiliza **New-AzResourceGroupDeployment**.
+> - **New-AzVM** crea una VM directamente, pero **no despliega una plantilla ARM**.
+> - **New-AzTemplateSpec** administra plantillas almacenadas, pero **no ejecuta el despliegue**.
