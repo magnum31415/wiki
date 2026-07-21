@@ -3,6 +3,7 @@
 
 - [⬅️ Volver a: Azure PowerShell - Cmdlets más importantes para el AZ-104](#azure-powershell---cmdlets-más-importantes-para-el-az-104)
 - [⬅️ Volver a: ARM Templates - ¿Qué cmdlet utilizar para desplegar? (AZ-104)](#arm-templates---qué-cmdlet-utilizar-para-desplegar-az-104)
+- [⬅️ Volver a: ARM Templates - ¿Por qué se utiliza -ResourceGroupName? (AZ-104)](#arm-templates---por-qué-se-utiliza--resourcegroupname-az-104)
 
 ---
 
@@ -523,3 +524,267 @@ New-AzResourceGroupDeployment
 > - Para desplegar recursos mediante un ARM Template dentro de un Resource Group se utiliza **New-AzResourceGroupDeployment**.
 > - **New-AzVM** crea una VM directamente, pero **no despliega una plantilla ARM**.
 > - **New-AzTemplateSpec** administra plantillas almacenadas, pero **no ejecuta el despliegue**.
+>
+
+---
+
+# ARM Templates - ¿Por qué se utiliza -ResourceGroupName? (AZ-104)
+
+## Escenario
+
+Ya sabemos que el cmdlet correcto es:
+
+```powershell
+New-AzResourceGroupDeployment
+```
+
+Ahora falta completar el siguiente parámetro:
+
+```powershell
+New-AzResourceGroupDeployment
+__________________________
+-TemplateUri ...
+```
+
+La respuesta correcta es:
+
+```powershell
+-ResourceGroupName RG1
+```
+
+---
+
+# ¿Por qué?
+
+El cmdlet:
+
+```powershell
+New-AzResourceGroupDeployment
+```
+
+significa literalmente:
+
+> **Despliega un ARM Template dentro de un Resource Group.**
+
+Por tanto, Azure necesita saber:
+
+> **¿En qué Resource Group quieres desplegar los recursos?**
+
+Y esa información se proporciona mediante:
+
+```powershell
+-ResourceGroupName
+```
+
+---
+
+# Esquema
+
+```text
+Azure Subscription
+│
+├── RG1
+│     │
+│     ├── VM
+│     ├── NIC
+│     ├── Disk
+│     └── NSG
+│
+└── RG2
+      │
+      └── Otros recursos
+```
+
+Cuando ejecutas:
+
+```powershell
+New-AzResourceGroupDeployment
+```
+
+Azure necesita saber si debe desplegar en:
+
+```text
+RG1
+
+o
+
+RG2
+```
+
+Por eso debes indicar:
+
+```powershell
+-ResourceGroupName RG1
+```
+
+---
+
+# ¿Cómo queda el comando?
+
+```powershell
+New-AzResourceGroupDeployment `
+    -ResourceGroupName RG1 `
+    -TemplateUri "https://..." `
+    -adminUsername LocalAdministrator `
+    -adminPassword $adminPassword
+```
+
+---
+
+# ¿Por qué las demás respuestas son incorrectas?
+
+## Opción 1
+
+```powershell
+-Tag Tag1
+```
+
+Una etiqueta:
+
+```text
+Tag1
+```
+
+No indica dónde desplegar.
+
+Solo añade metadatos.
+
+Ejemplo:
+
+```text
+Environment=Production
+```
+
+No sirve para indicar el Resource Group.
+
+❌ Incorrecto.
+
+---
+
+## Opción 2
+
+```powershell
+-GroupName ManagementGroup1
+```
+
+Los Management Groups no contienen recursos.
+
+Su función es organizar:
+
+```text
+Tenant
+│
+Management Group
+│
+Subscription
+│
+Resource Group
+│
+VM
+```
+
+Una VM nunca se despliega directamente en un Management Group.
+
+❌ Incorrecto.
+
+---
+
+## Opción 3
+
+```powershell
+-SubscriptionId 5e7...
+```
+
+La suscripción tampoco es suficiente.
+
+Dentro de una misma suscripción puede haber muchos Resource Groups.
+
+Ejemplo:
+
+```text
+Subscription
+
+├── RG1
+├── RG2
+├── RG3
+└── RG4
+```
+
+Azure necesita conocer exactamente:
+
+```text
+RG1
+```
+
+No basta con indicar la suscripción.
+
+❌ Incorrecto.
+
+---
+
+# Regla visual
+
+```text
+ARM Template
+       │
+       ▼
+¿Dónde despliego?
+       │
+       ▼
+Resource Group
+       │
+       ▼
+-ResourceGroupName
+```
+
+---
+
+# Relación entre el cmdlet y sus parámetros
+
+| Cmdlet | Parámetro obligatorio |
+|---------|-----------------------|
+| **New-AzResourceGroupDeployment** | **-ResourceGroupName** |
+| **New-AzSubscriptionDeployment** | **-Location** |
+| **New-AzManagementGroupDeployment** | **-ManagementGroupId** |
+| **New-AzTenantDeployment** | **-Location** |
+
+Observa que cada cmdlet necesita el parámetro que identifica su **scope**.
+
+---
+
+# Regla mnemotécnica
+
+```text
+ResourceGroupDeployment
+
+↓
+
+ResourceGroupName
+```
+
+```text
+SubscriptionDeployment
+
+↓
+
+Subscription
+```
+
+```text
+ManagementGroupDeployment
+
+↓
+
+ManagementGroupId
+```
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **New-AzResourceGroupDeployment** despliega recursos dentro de un **Resource Group**.
+> - Por ello, el parámetro imprescindible es **-ResourceGroupName**.
+> - Una **Tag** solo añade metadatos; no determina el destino del despliegue.
+> - Un **Management Group** organiza suscripciones, pero **no contiene recursos**.
+> - Una **Subscription** puede contener muchos Resource Groups; por eso Azure necesita saber el **Resource Group** concreto donde desplegar.
