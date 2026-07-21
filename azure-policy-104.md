@@ -10,6 +10,7 @@
 - [Azure Service Endpoint Policy (AZ-104)](#azure-service-endpoint-policy-az-104)
 - [Azure Policy Effects](#azure-policy-effects)
 - [Recursos y conceptos de Azure que contienen "Policy" (AZ-104)](#recursos-y-conceptos-de-azure-que-contienen-policy-az-104)
+- [⬅️ Volver a: Azure Policy - Enforcement y Effects (AZ-104)](#azure-policy---enforcement-y-effects-az-104)
 ---
 ## Where Policy definitions can be assigned?
 
@@ -539,3 +540,280 @@ La política únicamente informa de que no existe una protección de backup.
 > - **Storage Management Policy** → Automatiza el ciclo de vida de los **Blob Storage**.
 > - **Immutable Storage Policy (WORM)** → Protege los blobs para que no puedan modificarse ni eliminarse.
 > - **Stored Access Policy** → Gestiona y revoca permisos de uno o varios **Service SAS** asociados a un contenedor o file share.
+>
+
+---
+
+# Azure Policy - Enforcement y Effects (AZ-104)
+
+En Azure Policy hay **dos conceptos distintos** que suelen confundirse:
+
+1. **Policy Enforcement** → Indica si la política está activa.
+2. **Policy Effect** → Indica qué acción realiza la política.
+
+---
+
+# 1. Policy Enforcement
+
+Solo existen dos valores posibles.
+
+| Enforcement | ¿La Policy se evalúa? | ¿Se aplica el efecto? | Ejemplo |
+|-------------|:---------------------:|:---------------------:|----------|
+| **Enabled** | ✅ | ✅ Sí | Una Policy **Deny** bloquea la creación de una Public IP. |
+| **Disabled** | ✅ | ❌ No | La Policy sigue evaluándose, pero no bloquea ni modifica recursos. Ideal para pruebas. |
+
+---
+
+# 2. Policy Effects
+
+| Effect | ¿Qué hace? | ¿Afecta a recursos nuevos? | ¿Afecta a recursos existentes? | Ejemplo |
+|--------|------------|:--------------------------:|:------------------------------:|----------|
+| **Deny** | Bloquea la operación. | ✅ | ❌ | Impedir crear una VM con Public IP. |
+| **Audit** | Marca el recurso como **Non-compliant**. | ✅ | ✅ | Detectar VMs sin la tag `Environment`. |
+| **AuditIfNotExists** | Comprueba si falta un recurso relacionado. | ✅ | ✅ | Detectar VMs sin Azure Monitor Agent. |
+| **Append** | Añade propiedades durante la creación o modificación. | ✅ | ❌ | Añadir automáticamente una propiedad al crear un recurso. |
+| **Modify** | Modifica el recurso durante la creación o actualización. También puede corregir recursos existentes mediante **Remediation Task**. | ✅ | ✅* | Añadir automáticamente una tag `CostCenter`. |
+| **DeployIfNotExists (DINE)** | Despliega automáticamente un recurso relacionado si falta. | ✅ | ✅* | Instalar Azure Monitor Agent en una VM. |
+| **Disabled** | Desactiva completamente el efecto de la Policy. | ❌ | ❌ | La Policy existe, pero no actúa. |
+
+> **\*** Para recursos existentes normalmente es necesario ejecutar una **Remediation Task**.
+
+---
+
+# ¿Qué ocurre con un recurso que YA EXISTE?
+
+## Caso 1 - Deny
+
+Policy:
+
+```text
+Deny Public IP
+```
+
+Antes de crear la Policy:
+
+```text
+VM1
+└── Public IP
+```
+
+Después de asignar la Policy:
+
+```text
+VM1
+
+↓
+
+Sigue funcionando
+```
+
+Pero si intentas crear:
+
+```text
+VM2
+└── Public IP
+```
+
+Resultado:
+
+```text
+❌ Deployment denied
+```
+
+---
+
+## Caso 2 - Audit
+
+Policy:
+
+```text
+Todas las VMs deben tener la tag Environment
+```
+
+VM existente:
+
+```text
+VM1
+
+↓
+
+Sin tag
+```
+
+Resultado:
+
+```text
+Compliance
+
+↓
+
+Non-compliant
+```
+
+La VM no cambia.
+
+Simplemente aparece como incumpliendo la Policy.
+
+---
+
+## Caso 3 - DeployIfNotExists
+
+Policy:
+
+```text
+Todas las VMs deben tener Azure Monitor Agent
+```
+
+VM existente:
+
+```text
+VM1
+
+↓
+
+No tiene AMA
+```
+
+Ejecutas:
+
+```text
+Remediation Task
+```
+
+Resultado:
+
+```text
+VM1
+
+↓
+
+Azure instala automáticamente AMA.
+```
+
+---
+
+## Caso 4 - Modify
+
+Policy:
+
+```text
+Todas las VMs deben tener:
+
+Environment=Production
+```
+
+VM existente:
+
+```text
+VM1
+
+↓
+
+Sin tag
+```
+
+Tras ejecutar la remediación:
+
+```text
+VM1
+
+↓
+
+Environment=Production
+```
+
+---
+
+# Resumen visual
+
+| Effect | Nuevo recurso | Recurso existente |
+|--------|:-------------:|:-----------------:|
+| **Deny** | 🚫 Bloquea | ➖ No cambia |
+| **Audit** | ✅ Evalúa | ✅ Marca Non-compliant |
+| **AuditIfNotExists** | ✅ Evalúa | ✅ Marca Non-compliant |
+| **Append** | ✅ Añade propiedades | ❌ No cambia |
+| **Modify** | ✅ Modifica | ✅ Mediante Remediation |
+| **DeployIfNotExists** | ✅ Despliega recurso auxiliar | ✅ Mediante Remediation |
+| **Disabled** | ❌ No actúa | ❌ No actúa |
+
+---
+
+# Regla mnemotécnica
+
+```text
+Enforcement
+
+↓
+
+¿La Policy está activa?
+```
+
+```text
+Enabled
+
+↓
+
+Sí
+```
+
+```text
+Disabled
+
+↓
+
+No
+```
+
+---
+
+```text
+Effect
+
+↓
+
+¿Qué hace la Policy?
+```
+
+```text
+Deny
+
+↓
+
+Bloquear
+```
+
+```text
+Audit
+
+↓
+
+Informar
+```
+
+```text
+Modify
+
+↓
+
+Modificar
+```
+
+```text
+DeployIfNotExists
+
+↓
+
+Desplegar
+```
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **Policy Enforcement** solo tiene dos valores: **Enabled** y **Disabled**.
+> - **Enabled** activa la Policy y permite aplicar su **Effect**.
+> - **Deny** **no modifica ni elimina** recursos existentes; únicamente bloquea nuevas creaciones o modificaciones.
+> - **Audit** y **AuditIfNotExists** también evalúan recursos existentes y los marcan como **Non-compliant**.
+> - **Modify** y **DeployIfNotExists** pueden corregir recursos existentes mediante una **Remediation Task**.
+> - Si una pregunta menciona **Policy enforcement is enabled**, todavía debes fijarte en el **Effect**, ya que es éste el que determina el comportamiento de la Policy.
