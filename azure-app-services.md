@@ -39,6 +39,7 @@
 17. [Flujo completo de funcionamiento](#-flujo-completo-de-funcionamiento)
 
 18. [Backups personalizados de Azure App Service](#backups-personalizados-de-azure-app-service)
+19. [⬅️ Volver a: Azure Autoscale - Interpretación de los parámetros (AZ-104)](#azure-autoscale---interpretación-de-los-parámetros-az-104)
 
 # Azure App Service
 
@@ -654,4 +655,390 @@ Es fácil pensar: ``Backup → Recovery Services Vault``  **Pero eso no siempre 
 | Azure App Service | **Azure Storage account**   |
 | Azure Blobs       | Backup vault                |
 
+---
 
+# Azure Autoscale - Interpretación de los parámetros (AZ-104)
+
+Cuando una pregunta del AZ-104 habla de **Autoscale**, normalmente debes interpretar estos parámetros.
+
+---
+
+# Parámetros de Scale Out / Scale In
+
+| Parámetro | ¿Qué significa? | Ejemplo |
+|-----------|-----------------|----------|
+| **Metric** | Métrica utilizada para decidir el escalado. | CPU Percentage |
+| **Time aggregation** | Cómo se agregan los valores de la métrica durante el periodo de evaluación. | Maximum, Average, Minimum |
+| **Operator** | Comparación que debe cumplirse. | `>` 70 %, `<` 30 % |
+| **Threshold** | Valor límite que activa la regla. | CPU > 70 % |
+| **Duration** | Ventana temporal sobre la que se evalúa la condición. | Los **últimos 10 minutos** |
+| **Time grain** | Frecuencia con la que Azure almacena la métrica. | 1 minuto |
+| **Time grain statistic** | Cómo resume cada muestra del Time Grain. | Average |
+| **Operation** | Acción que realizará Azure. | Increase count by 1 |
+| **Instance count** | Número de instancias que añade o elimina. | +1 ó -1 |
+| **Cooldown** | Tiempo mínimo antes de ejecutar otra acción de escalado. | 5 minutos |
+
+---
+
+# Ejemplo completo de Scale Out
+
+Configuración:
+
+| Parámetro | Valor |
+|-----------|------:|
+| Metric | CPU Percentage |
+| Operator | Greater Than |
+| Threshold | 70 % |
+| Duration | 10 min |
+| Operation | Increase count by |
+| Instance Count | 1 |
+| Cooldown | 5 min |
+
+Interpretación:
+
+```text
+Si la CPU media de los últimos 10 minutos
+
+>
+
+70 %
+
+↓
+
+Añadir 1 instancia
+
+↓
+
+Esperar 5 minutos antes de volver a escalar.
+```
+
+---
+
+# Ejemplo completo de Scale In
+
+Configuración:
+
+| Parámetro | Valor |
+|-----------|------:|
+| Metric | CPU Percentage |
+| Operator | Less Than |
+| Threshold | 30 % |
+| Duration | 5 min |
+| Operation | Decrease count by |
+| Instance Count | 1 |
+| Cooldown | 5 min |
+
+Interpretación:
+
+```text
+Si la CPU media de los últimos 5 minutos
+
+<
+
+30 %
+
+↓
+
+Eliminar 1 instancia
+
+↓
+
+Esperar 5 minutos antes de volver a reducir.
+```
+
+---
+
+# ¿Qué significa cada parámetro?
+
+## 1. Metric
+
+La métrica que Azure monitoriza.
+
+Ejemplos:
+
+```text
+CPU Percentage
+```
+
+```text
+Memory Percentage
+```
+
+```text
+Http Queue Length
+```
+
+---
+
+## 2. Time Aggregation
+
+Cómo Azure resume todos los valores del periodo.
+
+| Valor | Significado | Ejemplo |
+|--------|-------------|----------|
+| Maximum | Usa el valor máximo | Pico de CPU |
+| Average | Usa la media | CPU media |
+| Minimum | Usa el mínimo | CPU mínima |
+
+Ejemplo:
+
+```text
+CPU
+
+50
+60
+80
+70
+```
+
+Maximum
+
+↓
+
+```text
+80 %
+```
+
+Average
+
+↓
+
+```text
+65 %
+```
+
+---
+
+## 3. Operator
+
+La condición.
+
+Ejemplo:
+
+```text
+Greater Than
+```
+
+↓
+
+```text
+CPU > 70 %
+```
+
+---
+
+## 4. Threshold
+
+El valor límite.
+
+Ejemplo:
+
+```text
+70 %
+```
+
+---
+
+## 5. Duration
+
+Es la **ventana temporal** que Azure analiza.
+
+Ejemplo:
+
+```text
+Duration = 10 minutos
+```
+
+Azure consulta:
+
+```text
+Últimos 10 minutos
+```
+
+No significa esperar 10 minutos nuevos tras un escalado.
+
+---
+
+## 6. Time Grain
+
+Cada cuánto Azure guarda una muestra.
+
+Ejemplo:
+
+```text
+1 minuto
+```
+
+Durante una Duration de 10 minutos habrá aproximadamente:
+
+```text
+10 muestras
+```
+
+---
+
+## 7. Time Grain Statistic
+
+Cómo resume cada muestra.
+
+Ejemplo:
+
+```text
+Average
+```
+
+Cada minuto calcula:
+
+```text
+CPU media de ese minuto
+```
+
+---
+
+## 8. Operation
+
+La acción.
+
+Puede ser:
+
+```text
+Increase count by
+```
+
+o
+
+```text
+Decrease count by
+```
+
+---
+
+## 9. Instance Count
+
+Número de instancias que modifica.
+
+Ejemplo:
+
+```text
+Increase by
+
+1
+```
+
+Significa:
+
+```text
+2
+
+↓
+
+3 instancias
+```
+
+---
+
+## 10. Cooldown
+
+Es probablemente el parámetro que más preguntas genera.
+
+Significa:
+
+```text
+Tiempo mínimo antes de ejecutar otra acción.
+```
+
+Ejemplo:
+
+```text
+Cooldown = 5 minutos
+```
+
+Interpretación:
+
+```text
+Scale Out
+
+↓
+
+Esperar 5 minutos
+
+↓
+
+Volver a evaluar
+```
+
+Si la condición sigue cumpliéndose:
+
+```text
+↓
+
+Nuevo Scale Out
+```
+
+---
+
+# Ejemplo de línea temporal
+
+Configuración:
+
+- CPU >70 %
+- Duration = 10 min
+- Cooldown = 5 min
+
+```text
+Tiempo
+
+0---------10---------15---------20---------25
+
+CPU
+
+████████████████████████████████████████
+
+Instancias
+
+1---------2----------3----------4
+
+          ↑          ↑          ↑
+
+      Scale Out  Scale Out  Scale Out
+
+Cooldown
+
+          █████      █████
+```
+
+Azure:
+
+- Evalúa continuamente una **ventana móvil de 10 minutos**.
+- Después de cada escalado espera **5 minutos**.
+- Si la ventana de los últimos 10 minutos sigue cumpliendo la condición, vuelve a escalar.
+
+---
+
+# Regla mnemotécnica
+
+| Parámetro | Pregunta que debes hacerte |
+|-----------|----------------------------|
+| Metric | ¿Qué estoy midiendo? |
+| Threshold | ¿Cuál es el límite? |
+| Operator | ¿Mayor o menor? |
+| Duration | ¿Qué periodo analiza Azure? |
+| Time Aggregation | ¿Máximo, media o mínimo? |
+| Time Grain | ¿Cada cuánto se toma una muestra? |
+| Operation | ¿Añade o elimina instancias? |
+| Instance Count | ¿Cuántas modifica? |
+| Cooldown | ¿Cuánto debe esperar antes de volver a escalar? |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **Metric** → Qué mide Azure.
+> - **Threshold** → Valor que dispara la regla.
+> - **Duration** → Ventana temporal analizada (por ejemplo, los últimos 10 minutos).
+> - **Time Aggregation** → Cómo se resume esa ventana (Average, Maximum, Minimum).
+> - **Operation** → Añadir o eliminar instancias.
+> - **Instance Count** → Número de instancias que cambia.
+> - **Cooldown** → Tiempo mínimo antes de ejecutar otra acción de escalado.
+> - En las preguntas del AZ-104, Azure utiliza una **ventana móvil (sliding window)** para evaluar la duración, por lo que tras finalizar el **Cooldown** puede volver a escalar inmediatamente si la condición sigue cumpliéndose.
