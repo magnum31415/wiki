@@ -3,6 +3,15 @@
 
 # Azure - ¿Todos los recursos pertenecen a un Resource Group? (AZ-104)
 
+Un **Resource Group** siempre pertenece directamente a **una única Subscription**.
+
+No puede contener:
+
+- Otro Resource Group.
+- Otra Subscription.
+- Un Management Group.
+
+
 ## Regla general
 
 La mayoría de los recursos de Azure pertenecen a un **Resource Group**.
