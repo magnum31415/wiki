@@ -40,6 +40,7 @@
 
 18. [Backups personalizados de Azure App Service](#backups-personalizados-de-azure-app-service)
 19. [⬅️ Volver a: Azure Autoscale - Interpretación de los parámetros (AZ-104)](#azure-autoscale---interpretación-de-los-parámetros-az-104)
+20. [⬅️ Volver a: Azure App Service - ¿Puede protegerse con un NSG? (AZ-104)](#azure-app-service---puede-protegerse-con-un-nsg-az-104)
 
 # Azure App Service
 
@@ -1042,3 +1043,245 @@ Azure:
 > - **Instance Count** → Número de instancias que cambia.
 > - **Cooldown** → Tiempo mínimo antes de ejecutar otra acción de escalado.
 > - En las preguntas del AZ-104, Azure utiliza una **ventana móvil (sliding window)** para evaluar la duración, por lo que tras finalizar el **Cooldown** puede volver a escalar inmediatamente si la condición sigue cumpliéndose.
+>
+
+---
+
+# Azure App Service - ¿Puede protegerse con un NSG? (AZ-104)
+
+La respuesta es:
+
+> **Sí, pero no directamente.**
+
+Depende de cómo esté desplegado el App Service.
+
+---
+
+# App Service con VNet Integration
+
+Un App Service con **VNet Integration** **NO recibe el tráfico de entrada a través de la VNet**.
+
+El flujo es:
+
+```text
+Internet
+    │
+    ▼
+Azure App Service Front-End
+    │
+    ▼
+WebApp1
+```
+
+Por tanto:
+
+```text
+NSG
+
+↓
+
+NO filtra el tráfico entrante.
+```
+
+La VNet Integration solo se utiliza para el tráfico **saliente**.
+
+```text
+WebApp1
+    │
+    ▼
+VNet
+    │
+    ▼
+SQL
+Storage
+VM
+Private Endpoint
+```
+
+---
+
+# ¿Cómo se protege entonces WebApp1?
+
+| Mecanismo | Protege el tráfico entrante | AZ-104 |
+|-----------|:--------------------------:|:------:|
+| **Access Restrictions (IP Restrictions)** | ✅ | ⭐⭐⭐⭐ |
+| **Private Endpoint** | ✅ | ⭐⭐⭐⭐ |
+| **Application Gateway + WAF** | ✅ | ⭐⭐⭐ |
+| **Azure Front Door + WAF** | ✅ | ⭐⭐⭐ |
+| **NSG** | ❌ Directamente | ⭐⭐⭐⭐ |
+
+---
+
+# 1. Access Restrictions
+
+Permite limitar quién puede acceder al App Service.
+
+Ejemplos:
+
+```text
+Solo permitir
+
+10.0.0.0/24
+```
+
+o
+
+```text
+Solo permitir
+
+Azure Front Door
+```
+
+---
+
+# 2. Private Endpoint
+
+El App Service deja de ser accesible públicamente.
+
+```text
+Cliente
+    │
+    ▼
+VNet
+    │
+    ▼
+Private Endpoint
+    │
+    ▼
+WebApp1
+```
+
+En este escenario el acceso se realiza desde la VNet.
+
+---
+
+# 3. Application Gateway + WAF
+
+Arquitectura típica en producción.
+
+```text
+Internet
+      │
+      ▼
+Application Gateway (WAF)
+      │
+      ▼
+WebApp1
+```
+
+Permite:
+
+- WAF
+- SSL
+- Balanceo
+- Protección L7
+
+---
+
+# 4. Azure Front Door + WAF
+
+```text
+Internet
+      │
+      ▼
+Azure Front Door
+      │
+      ▼
+WebApp1
+```
+
+Protege aplicaciones distribuidas globalmente.
+
+---
+
+# ¿Dónde interviene el NSG?
+
+El NSG solo filtra tráfico que circula por una **subnet**.
+
+Con VNet Integration:
+
+```text
+WebApp1
+    │
+    ▼
+VNet
+    │
+    ▼
+SQL / Storage / VM
+```
+
+Aquí el NSG puede afectar al **tráfico saliente** hacia recursos privados.
+
+No puede filtrar:
+
+```text
+Internet
+
+↓
+
+WebApp1
+```
+
+---
+
+# Comparación
+
+| Servicio | ¿El NSG protege el tráfico entrante? |
+|----------|:------------------------------------:|
+| Virtual Machine | ✅ Sí |
+| Azure Container Instance | ✅ Sí |
+| App Service + VNet Integration | ❌ No |
+| App Service Environment (ASE) | ✅ Sí |
+| App Service + Private Endpoint | ✅ Sí (el acceso pasa por la VNet) |
+
+---
+
+# Regla mnemotécnica
+
+## VNet Integration
+
+```text
+Yo salgo hacia la VNet
+
+↓
+
+Solo Outbound
+```
+
+---
+
+## Private Endpoint
+
+```text
+La VNet entra hacia mí
+
+↓
+
+Inbound privado
+```
+
+---
+
+## App Service Environment (ASE)
+
+```text
+Vivo dentro de la VNet
+
+↓
+
+Inbound y Outbound pasan por la VNet
+```
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **VNet Integration** solo afecta al **tráfico saliente (Outbound)**.
+> - Un **NSG no puede proteger directamente el tráfico entrante** de un App Service con VNet Integration.
+> - Para proteger el acceso a un App Service se utilizan normalmente:
+>   - **Access Restrictions**
+>   - **Private Endpoint**
+>   - **Application Gateway + WAF**
+>   - **Azure Front Door + WAF**
+> - Un **App Service Environment (ASE)** sí está desplegado dentro de una VNet, por lo que el **NSG de la subnet sí puede controlar el tráfico**.
