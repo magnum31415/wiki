@@ -3263,7 +3263,11 @@ Resultado:
 | Complejidad | Baja | Alta |
 | Uso principal | Administración de recursos | Control de acceso granular a datos |
 | Muy usado en Azure | ✅ Sí | ⚠️ Solo en algunos servicios (principalmente Azure Storage) |
-
+| Se aplica sobre | Usuarios, grupos, Service Principals y Managed Identities | Usuarios, Service Principals y Managed Identities (❌ no grupos) |
+| ¿Utiliza grupos? | ✅ Sí | ❌ No |
+| ¿Utiliza atributos personalizados (Custom Security Attributes)? | ❌ No | ✅ Sí |
+| ¿Utiliza condiciones? | ❌ No | ✅ Sí |
+| ¿Puede restringir el acceso a recursos concretos dentro del mismo rol? | ❌ No | ✅ Sí |
 ---
 
 # RBAC (Role-Based Access Control)
