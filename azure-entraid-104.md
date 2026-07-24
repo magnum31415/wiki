@@ -21,7 +21,7 @@
 - [Microsoft Entra Custom Security Attributes (AZ-104)](#microsoft-entra-custom-security-attributes-az-104)
 - [Microsoft Entra ID Groups (AZ-104)](#microsoft-entra-id-groups-az-104)
 - [Microsoft Entra Entitlement Management (AZ-104)](#microsoft-entra-entitlement-management-az-104)
-
+- [RBAC vs ABAC (Azure)](#rbac-vs-abac-azure)
 
 ---
 
@@ -3249,3 +3249,391 @@ Resultado:
 > - **Connected Organization** → **Quién puede solicitar** el Access Package.
 > - **Access Package** → **Qué recursos recibe** el usuario.
 > - **Lifecycle Settings** → **Qué ocurre cuando finaliza** el acceso del usuario.
+
+---
+# RBAC vs ABAC (Azure)
+
+## Resumen
+
+| Característica | RBAC (Role-Based Access Control) | ABAC (Attribute-Based Access Control) |
+|----------------|----------------------------------|---------------------------------------|
+| ¿En qué se basa? | Roles | Atributos + condiciones |
+| Pregunta que responde | **¿Qué rol tiene?** | **¿Qué características tiene?** |
+| Flexibilidad | Media | Muy alta |
+| Complejidad | Baja | Alta |
+| Uso principal | Administración de recursos | Control de acceso granular a datos |
+| Muy usado en Azure | ✅ Sí | ⚠️ Solo en algunos servicios (principalmente Azure Storage) |
+
+---
+
+# RBAC (Role-Based Access Control)
+
+El acceso se concede en función del **rol** asignado.
+
+## Ejemplo
+
+Juan tiene el rol:
+
+```text
+Storage Blob Data Reader
+```
+
+Resultado:
+
+```text
+Puede leer TODOS los blobs
+```
+
+No importa:
+
+- Departamento
+- Proyecto
+- Clasificación
+- País
+
+Solo importa el rol.
+
+---
+
+## Otro ejemplo
+
+```text
+Juan
+
+↓
+
+Contributor
+
+↓
+
+Storage Account
+```
+
+Resultado:
+
+Juan puede administrar la Storage Account porque tiene el rol **Contributor**.
+
+---
+
+# ABAC (Attribute-Based Access Control)
+
+El acceso depende de los **atributos** del usuario, del recurso y de una condición.
+
+No basta con tener el rol.
+
+---
+
+## Ejemplo 1
+
+Usuario:
+
+```text
+Nombre = Juan
+
+Department = Finance
+```
+
+Blob:
+
+```text
+Department = Finance
+```
+
+Condición:
+
+```text
+Permitir acceso
+
+SI
+
+Usuario.Department == Blob.Department
+```
+
+Resultado
+
+✅ Juan puede acceder.
+
+---
+
+## Ejemplo 2
+
+Usuario:
+
+```text
+Department = HR
+```
+
+Blob:
+
+```text
+Department = Finance
+```
+
+Condición:
+
+```text
+HR == Finance
+```
+
+Resultado
+
+❌ Acceso denegado.
+
+---
+
+# RBAC solo
+
+```text
+Juan
+│
+├── Rol:
+│       Storage Blob Data Reader
+│
+▼
+Storage Account
+│
+└── Blob1
+```
+
+Resultado:
+
+Puede leer **todos** los blobs.
+
+---
+
+# RBAC + ABAC
+
+```text
+Juan
+│
+├── Rol:
+│       Storage Blob Data Reader
+│
+├── Department = Finance
+│
+▼
+Storage Account
+│
+├── Blob1
+│      Department = Finance
+│
+└── Blob2
+       Department = HR
+```
+
+Resultado:
+
+Blob1 → ✅
+
+Blob2 → ❌
+
+Aunque tenga el mismo rol.
+
+---
+
+# Ejemplo real en Azure Storage
+
+Supongamos una empresa con documentos de varios departamentos.
+
+```text
+Storage
+
+├── Contrato1.pdf
+│      Department = HR
+│
+├── Nóminas.xlsx
+│      Department = Finance
+│
+└── Proyecto.docx
+       Department = IT
+```
+
+Todos los empleados tienen:
+
+```text
+Storage Blob Data Reader
+```
+
+Con RBAC únicamente:
+
+Todos pueden leer todos los documentos.
+
+Con ABAC:
+
+Cada empleado solo puede leer los documentos cuyo atributo coincida.
+
+---
+
+# Ejemplo de condición ABAC
+
+```text
+Permitir acceso
+
+SI
+
+@Resource[Microsoft.Storage/storageAccounts/blobServices/containers/blobs:Department]
+==
+@Principal[Department]
+```
+
+Traducción:
+
+> Permitir acceso únicamente si el atributo **Department** del blob coincide con el atributo **Department** del usuario.
+
+---
+
+# ¿Qué atributos pueden utilizarse?
+
+## Del usuario
+
+- Department
+- Country
+- EmployeeID
+- JobTitle
+- Custom Security Attributes
+
+---
+
+## Del recurso
+
+Por ejemplo, en Blob Storage:
+
+- Blob Index Tags
+- Nombre del contenedor
+- Ruta
+- Tipo de recurso
+
+---
+
+## Del entorno
+
+También pueden utilizarse datos del contexto como:
+
+- Fecha
+- Hora
+- Dirección IP
+- Tipo de autenticación
+
+(según el servicio y la característica utilizada).
+
+---
+
+# ¿Se sustituyen RBAC y ABAC?
+
+No.
+
+Se complementan.
+
+Azure primero comprueba:
+
+```text
+¿Tiene el rol?
+```
+
+Si la respuesta es NO
+
+↓
+
+Acceso denegado.
+
+Si la respuesta es SÍ
+
+↓
+
+Comprueba la condición ABAC.
+
+---
+
+# Flujo completo
+
+```text
+Usuario
+
+        │
+        ▼
+
+¿Tiene RBAC?
+
+        │
+
+   NO ─────────► Acceso denegado
+
+        │
+
+       SÍ
+
+        ▼
+
+¿Cumple condición ABAC?
+
+        │
+
+ NO ───────────► Acceso denegado
+
+        │
+
+       SÍ
+
+        ▼
+
+Acceso permitido
+```
+
+---
+
+# Comparativa rápida
+
+| Escenario | RBAC | ABAC |
+|-----------|:----:|:----:|
+| Dar permisos a administradores | ✅ | ❌ |
+| Limitar acceso por departamento | ❌ | ✅ |
+| Limitar acceso por proyecto | ❌ | ✅ |
+| Limitar acceso por clasificación | ❌ | ✅ |
+| Limitar acceso por etiquetas del blob | ❌ | ✅ |
+| Permisos sencillos | ✅ | ❌ |
+| Permisos muy granulares | ❌ | ✅ |
+
+---
+
+# Regla mnemotécnica
+
+### RBAC
+
+> **¿Qué eres?**
+
+```text
+Reader
+
+Contributor
+
+Owner
+```
+
+---
+
+### ABAC
+
+> **¿Qué características tienes?**
+
+```text
+Department = HR
+
+Project = Phoenix
+
+Classification = Secret
+
+Country = Spain
+```
+
+---
+
+# Para el AZ-104
+
+En Azure, **ABAC no sustituye a RBAC**.
+
+La secuencia siempre es:
+
+1. **RBAC** determina si el principal tiene el rol necesario para acceder al recurso.
+2. **ABAC** (si existe una condición configurada) aplica restricciones adicionales basadas en atributos.
+
+Una condición ABAC **nunca concede acceso por sí sola**; únicamente puede **restringir** el acceso que ya permitiría el rol RBAC.
