@@ -2,6 +2,15 @@
 
 # Azure Storage Services y Replicación (AZ-104)
 
+# Tipos de Azure Storage Accounts
+
+| Account Type | Blob | Azure Files | Queue | Table | Uso principal |
+|--------------|:----:|:-----------:|:-----:|:-----:|---------------|
+| **StorageV2 (General-purpose v2)** | ✅ | ✅ | ✅ | ✅ | La opción recomendada para casi todos los escenarios. |
+| **BlobStorage** (Legacy) | ✅ | ❌ | ❌ | ❌ | Solo Blob Storage. Ya casi no se utiliza. |
+| **FileStorage** | ❌ | ✅ (Premium) | ❌ | ❌ | Azure Files Premium (SMB/NFS). |
+| **BlockBlobStorage** | ✅ (Premium Block Blob) | ❌ | ❌ | ❌ | Cargas de trabajo con Block Blobs de alto rendimiento. |
+| **PremiumV2** *(nuevo)* | ✅ | ✅ | ✅ | ✅ | General Purpose Premium (SSD). Sustituye progresivamente varios tipos Premium. |
 
 # Azure Storage Account Types y Object Replication (AZ-104)
 
