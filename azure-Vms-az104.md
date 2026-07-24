@@ -2,14 +2,237 @@
 
 
 # Índice
-
+- [Azure Virtual Machines - Roles RBAC más comunes](#azure-virtual-machines---roles-rbac-más-comunes)
 - [Azure VM Redeploy y Scheduled Maintenance (AZ-104)](#azure-vm-redeploy-y-scheduled-maintenance-az-104)
 - [Azure Desired State Configuration (DSC)](#azure-desired-state-configuration-dsc---az-104)
 - [Azure vCPU Quotas (AZ-104)](#azure-vcpu-quotas-az-104)
 - [Azure Availability Set vs VM Scale Set vs Proximity Placement Group](#azure-availability-set-vs-vm-scale-set-vs-proximity-placement-group)
 - [→ Azure Virtual Machine Scale Sets (VMSS) Distribución automática en Fault Domains y Update Domains](#azure-virtual-machine-scale-sets-vmss-distribución-automática-en-fault-domains-y-update-domains)
 ---
+# Azure Virtual Machines - Roles RBAC más comunes
 
+## Resumen
+
+| Rol RBAC | Administrar VM | Iniciar/Detener | Administrar discos | Acceso por Login | Administrar Backup | Administrar Snapshot | Administrar permisos (IAM) |
+|----------|:--------------:|:---------------:|:------------------:|:----------------:|:------------------:|:--------------------:|:--------------------------:|
+| **Owner** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Contributor** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| **Virtual Machine Contributor** | ✅ | ✅ | ⚠️ Adjuntar/Quitar | ❌ | ❌ | ❌ | ❌ |
+| **Virtual Machine Administrator Login** | ❌ | ❌ | ❌ | ✅ Administrador | ❌ | ❌ | ❌ |
+| **Virtual Machine User Login** | ❌ | ❌ | ❌ | ✅ Usuario | ❌ | ❌ | ❌ |
+| **Disk Contributor** | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Disk Snapshot Contributor** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **Backup Contributor** | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| **Reader** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+
+---
+
+# Descripción de los roles principales
+
+## Owner
+
+Control total sobre la máquina virtual.
+
+### Puede
+
+- Crear y eliminar VMs
+- Iniciar, detener y reiniciar
+- Cambiar tamaño (Resize)
+- Administrar discos
+- Administrar redes
+- Configurar extensiones
+- Administrar Backup
+- Administrar Snapshots
+- Asignar roles RBAC
+
+---
+
+## Contributor
+
+Puede administrar completamente la VM excepto los permisos IAM.
+
+### Puede
+
+- Crear y eliminar VMs
+- Iniciar y detener
+- Reiniciar
+- Redimensionar
+- Cambiar discos
+- Configurar NIC
+- Administrar extensiones
+
+### No puede
+
+- Asignar roles RBAC
+
+---
+
+## Virtual Machine Contributor
+
+Rol específico para administrar máquinas virtuales.
+
+### Puede
+
+- Crear VMs
+- Eliminar VMs
+- Start / Stop
+- Restart
+- Redeploy
+- Resize
+- Administrar extensiones
+- Adjuntar y desacoplar discos
+
+### No puede
+
+- Administrar redes
+- Administrar Storage Accounts
+- Administrar permisos IAM
+
+---
+
+## Virtual Machine Administrator Login
+
+Permite iniciar sesión mediante Microsoft Entra ID como **Administrador**.
+
+### Puede
+
+- Login RDP
+- Login SSH
+- Privilegios de administrador del sistema operativo
+
+### No puede
+
+- Administrar el recurso Azure VM
+
+---
+
+## Virtual Machine User Login
+
+Permite iniciar sesión mediante Microsoft Entra ID como usuario estándar.
+
+### Puede
+
+- Login RDP
+- Login SSH
+
+### No puede
+
+- Obtener privilegios de administrador
+- Administrar la VM
+
+---
+
+## Disk Contributor
+
+Especializado en discos administrados.
+
+### Puede
+
+- Crear discos
+- Eliminar discos
+- Adjuntar discos
+- Desacoplar discos
+- Cambiar SKU
+- Administrar discos administrados
+
+### No puede
+
+- Administrar la VM
+
+---
+
+## Disk Snapshot Contributor
+
+Especializado en snapshots.
+
+### Puede
+
+- Crear snapshots
+- Eliminar snapshots
+- Restaurar snapshots
+- Administrar snapshots
+
+### No puede
+
+- Administrar discos
+- Administrar VMs
+
+---
+
+## Backup Contributor
+
+Especializado en Azure Backup.
+
+### Puede
+
+- Configurar Backup
+- Restaurar VMs
+- Administrar Recovery Services Vault
+- Ejecutar backups manuales
+
+### No puede
+
+- Administrar la VM
+
+---
+
+## Reader
+
+Solo lectura.
+
+Puede consultar:
+
+- Configuración
+- Estado
+- Métricas
+- Diagnósticos
+
+No puede modificar ningún recurso.
+
+---
+
+# Roles más importantes para el examen AZ-104
+
+| Rol | Importancia |
+|------|:-----------:|
+| **Owner** | ⭐⭐⭐⭐⭐ |
+| **Contributor** | ⭐⭐⭐⭐⭐ |
+| **Virtual Machine Contributor** | ⭐⭐⭐⭐⭐ |
+| **Virtual Machine Administrator Login** | ⭐⭐⭐⭐⭐ |
+| **Virtual Machine User Login** | ⭐⭐⭐⭐⭐ |
+| **Disk Contributor** | ⭐⭐⭐⭐☆ |
+| **Disk Snapshot Contributor** | ⭐⭐⭐⭐☆ |
+| **Backup Contributor** | ⭐⭐⭐☆☆ |
+| **Reader** | ⭐⭐⭐⭐⭐ |
+
+---
+
+# Regla mnemotécnica
+
+| Rol | Regla |
+|------|--------|
+| **Owner** | Todo, incluidos los permisos (IAM). |
+| **Contributor** | Todo excepto IAM. |
+| **Virtual Machine Contributor** | Administra la VM, pero no otros recursos relacionados. |
+| **Virtual Machine Administrator Login** | Solo permite iniciar sesión como administrador mediante Microsoft Entra ID. |
+| **Virtual Machine User Login** | Solo permite iniciar sesión como usuario estándar mediante Microsoft Entra ID. |
+| **Disk Contributor** | Administra discos administrados. |
+| **Disk Snapshot Contributor** | Administra snapshots de discos. |
+| **Backup Contributor** | Administra Azure Backup y Recovery Services Vault. |
+| **Reader** | Solo lectura. |
+
+---
+
+# Diferencia importante (muy preguntada en AZ-104)
+
+| Rol | Administra la VM | Permite iniciar sesión (Entra ID) |
+|------|:----------------:|:---------------------------------:|
+| **Virtual Machine Contributor** | ✅ | ❌ |
+| **Virtual Machine Administrator Login** | ❌ | ✅ Administrador |
+| **Virtual Machine User Login** | ❌ | ✅ Usuario |
+
+> **Regla de examen:** Los roles **Virtual Machine Administrator Login** y **Virtual Machine User Login** **no permiten administrar la máquina virtual**. Únicamente conceden permisos para iniciar sesión mediante **Microsoft Entra ID** (RDP en Windows o SSH en Linux). Para administrar el recurso de Azure necesitas un rol como **Virtual Machine Contributor** o **Contributor**.
+---
 # Azure VM Redeploy y Scheduled Maintenance (AZ-104)
 
 ## Scheduled Maintenance
