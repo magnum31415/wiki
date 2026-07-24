@@ -2,7 +2,7 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # 📑 Índice – Azure Storage AZ-104
-
+- [Azure Blob Storage - Características de protección de datos](#azure-blob-storage---características-de-protección-de-datos)
 - [⬅️ Volver a: Azure Storage - Roles de Management Plane vs Data Plane (AZ-104)](#azure-storage---roles-de-management-plane-vs-data-plane-az-104)
 - [Métodos de autenticación y autorización para Azure Storage Account (AZ-104)](#métodos-de-autenticación-y-autorización-para-azure-storage-account-az-104)
 - [📦 Azure Storage – Resumen ampliado para AZ-104](#-azure-storage--resumen-ampliado-para-az-104)
@@ -29,6 +29,18 @@
 - [⬅️ Volver a: Azure Storage - Account Kind (AZ-104)](#azure-storage---account-kind-az-104)
 - [⬅️ Volver a: Azure Storage - User Delegation SAS vs Service SAS vs Account SAS (AZ-104)](#azure-storage---user-delegation-sas-vs-service-sas-vs-account-sas-az-104)
   
+---
+# Azure Blob Storage - Características de protección de datos
+
+| Característica | ¿Qué protege? | ¿Recupera datos? | Uso principal |
+|----------------|---------------|------------------|---------------|
+| **Blob Versioning** | Sobrescrituras y eliminaciones | ✅ Sí | Mantener versiones anteriores de un blob. |
+| **Soft Delete** | Eliminaciones accidentales | ✅ Sí | Recuperar blobs eliminados. |
+| **Blob Snapshots** | Estado puntual del blob | ✅ Sí | Crear copias puntuales antes de modificar un blob. |
+| **Object Replication** | Desastres regionales | ❌ No (replica) | Replicar automáticamente blobs entre Storage Accounts. |
+| **Change Feed** | Historial de cambios | ❌ No | Registrar todas las operaciones realizadas sobre los blobs. |
+| **Lifecycle Management** | Coste de almacenamiento | ❌ No | Mover o eliminar blobs automáticamente según reglas. |
+
 ---
 # Azure Storage - Roles de Management Plane vs Data Plane (AZ-104)
 
