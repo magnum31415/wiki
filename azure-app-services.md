@@ -5,42 +5,26 @@
 # 📑 Índice
 
 1. [Azure App Service](#azure-app-service)
-
-2. [Resumen comparativo](#-resumen-comparativo)
-
-3. [Claves examen rápidas](#-claves-examen-rápidas)
-
-4. [Árbol completo – Creación y estructura de Azure App Service](#-árbol-completo--creación-y-estructura-de-azure-app-service)
-
-5. [¿Qué es Azure App Service?](#-qué-es-azure-app-service)
-
-6. [Qué te proporciona](#-qué-te-proporciona)
-
-7. [Cómo funciona](#-cómo-funciona)
-
-8. [Tipos principales](#-tipos-principales)
-
-9. [Diferencia con otros servicios](#-diferencia-con-otros-servicios)
-
-10. [Cuándo usarlo](#-cuándo-usarlo)
-
-11. [App Service Plan (ASP)](#-1️⃣-app-service-plan-asp)
-
-12. [App Service Environment (ASE)](#-2️⃣-app-service-environment-ase)
-
-13. [Deployment Slots](#-3️⃣-deployment-slots)
-
-14. [Deployment Stack](#-4️⃣-deployment-stack)
-
-15. [Mapa mental AZ-305](#-mapa-mental-az-305)
-
-16. [Cómo funciona Azure App Service (Arquitectura interna)](#-cómo-funciona-azure-app-service)
-
-17. [Flujo completo de funcionamiento](#-flujo-completo-de-funcionamiento)
-
-18. [Backups personalizados de Azure App Service](#backups-personalizados-de-azure-app-service)
-19. [⬅️ Volver a: Azure Autoscale - Interpretación de los parámetros (AZ-104)](#azure-autoscale---interpretación-de-los-parámetros-az-104)
-20. [⬅️ Volver a: Azure App Service - ¿Puede protegerse con un NSG? (AZ-104)](#azure-app-service---puede-protegerse-con-un-nsg-az-104)
+2. [Azure App Service - Roles RBAC más comunes](#azure-app-service---roles-rbac-más-comunes)
+3. [Resumen comparativo](#-resumen-comparativo)
+4. [Claves examen rápidas](#-claves-examen-rápidas)
+5. [Árbol completo – Creación y estructura de Azure App Service](#-árbol-completo--creación-y-estructura-de-azure-app-service)
+6. [¿Qué es Azure App Service?](#-qué-es-azure-app-service)
+7. [Qué te proporciona](#-qué-te-proporciona)
+8. [Cómo funciona](#-cómo-funciona)
+9. [Tipos principales](#-tipos-principales)
+10. [Diferencia con otros servicios](#-diferencia-con-otros-servicios)
+11. [Cuándo usarlo](#-cuándo-usarlo)
+12. [App Service Plan (ASP)](#-1️⃣-app-service-plan-asp)
+13. [App Service Environment (ASE)](#-2️⃣-app-service-environment-ase)
+14. [Deployment Slots](#-3️⃣-deployment-slots)
+15. [Deployment Stack](#-4️⃣-deployment-stack)
+16. [Mapa mental AZ-305](#-mapa-mental-az-305)
+17. [Cómo funciona Azure App Service (Arquitectura interna)](#-cómo-funciona-azure-app-service)
+18. [Flujo completo de funcionamiento](#-flujo-completo-de-funcionamiento)
+19. [Backups personalizados de Azure App Service](#backups-personalizados-de-azure-app-service)
+20. [⬅️ Volver a: Azure Autoscale - Interpretación de los parámetros (AZ-104)](#azure-autoscale---interpretación-de-los-parámetros-az-104)
+21. [⬅️ Volver a: Azure App Service - ¿Puede protegerse con un NSG? (AZ-104)](#azure-app-service---puede-protegerse-con-un-nsg-az-104)
 
 # Azure App Service
 
@@ -71,6 +55,141 @@ Es el **servicio PaaS** completo para alojar aplicaciones web.
 
 ![Azure-App-Service-Plan-Windows](./img/azure/Azure-App-Service-Plan-Windows.png)
 
+---
+
+# Azure App Service - Roles RBAC más comunes
+
+## Resumen
+
+| Rol RBAC | Administrar App Service | Desplegar código | Cambiar configuración | Administrar permisos (IAM) |
+|----------|:-----------------------:|:----------------:|:---------------------:|:--------------------------:|
+| **Owner** | ✅ | ✅ | ✅ | ✅ |
+| **Contributor** | ✅ | ✅ | ✅ | ❌ |
+| **Website Contributor** | ✅ (solo App Service) | ✅ | ✅ | ❌ |
+| **Reader** | ❌ | ❌ | ❌ | ❌ |
+| **Web Plan Contributor** | Solo App Service Plan | ❌ | Solo App Service Plan | ❌ |
+| **Monitoring Contributor** | ❌ | ❌ | Solo monitorización | ❌ |
+
+
+# Descripción de cada rol
+
+## Owner
+
+Permite administrar completamente el recurso.
+
+### Puede
+
+- Crear y eliminar App Services
+- Desplegar aplicaciones
+- Cambiar la configuración
+- Administrar Networking
+- Configurar Authentication
+- Gestionar certificados
+- Crear Deployment Slots
+- Reiniciar el servicio
+- Escalar el App Service
+- Asignar roles RBAC (IAM)
+
+## Contributor
+
+Es el rol más utilizado por administradores de aplicaciones.
+
+### Puede
+
+- Crear y eliminar App Services
+- Desplegar aplicaciones
+- Cambiar App Settings
+- Configurar Authentication
+- Configurar Networking
+- Reiniciar
+- Escalar el servicio
+- Gestionar Deployment Slots
+
+### No puede
+
+- Asignar roles RBAC
+- Modificar permisos IAM
+
+
+## Website Contributor
+
+Rol específico para Azure App Service.
+
+### Puede
+
+- Crear Web Apps
+- Eliminar Web Apps
+- Publicar aplicaciones
+- Modificar App Settings
+- Gestionar Deployment Slots
+- Reiniciar el servicio
+
+### No puede
+
+- Administrar otros recursos de Azure
+- Administrar permisos IAM
+
+## Reader
+
+Rol de solo lectura.
+
+### Puede
+
+- Ver la configuración
+- Consultar el estado
+- Revisar diagnósticos
+- Consultar métricas y logs
+
+### No puede
+
+- Modificar ningún recurso
+
+## Web Plan Contributor
+
+Administra únicamente el **App Service Plan**.
+
+### Puede
+
+- Cambiar el SKU
+- Escalar verticalmente (Scale Up)
+- Escalar horizontalmente (Scale Out)
+- Crear y eliminar App Service Plans
+
+### No puede
+
+- Administrar las Web Apps alojadas en el plan
+
+## Monitoring Contributor
+
+Especializado en monitorización.
+
+### Puede
+
+- Crear Alert Rules
+- Configurar Azure Monitor
+- Configurar Diagnostic Settings
+- Gestionar Action Groups
+- Configurar Log Analytics
+
+### No puede
+
+- Modificar la aplicación
+- Desplegar código
+
+# Regla mnemotécnica
+
+| Rol | Regla |
+|------|--------|
+| **Owner** | Todo, incluidos los permisos (IAM). |
+| **Contributor** | Todo excepto IAM. |
+| **Website Contributor** | Solo administra las Web Apps. |
+| **Web Plan Contributor** | Solo administra el App Service Plan. |
+| **Reader** | Solo lectura. |
+| **Monitoring Contributor** | Solo monitorización. |
+
+
+
+---
 
 # 📊 Resumen comparativo
 
