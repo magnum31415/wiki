@@ -1,7 +1,256 @@
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 # Networking
 
-## Virtual network peering 
+- [Virtual network peering](#virtual-network-peering)
+- [Azure - Tamaño mínimo recomendado de subredes para servicios administrados](#azure---tamaño-mínimo-recomendado-de-subredes-para-servicios-administrados)
+
+---
+
+# Azure - Tamaño mínimo recomendado de subredes para servicios administrados
+
+## Resumen
+
+| Servicio | Recomendado | Obligatorio | Comentario |
+|----------|:-----------:|:-----------:|------------|
+| Azure Container Apps (Workload Profiles) | /23 | ✅ /23 | Necesita muchas IP para revisiones, escalado e infraestructura administrada. |
+| Azure Firewall | /26 | ✅ /26 | Requiere una subred dedicada llamada `AzureFirewallSubnet`. |
+| Azure Firewall Management | /26 | ✅ /26 | Solo si utilizas Forced Tunneling. Debe llamarse `AzureFirewallManagementSubnet`. |
+| Azure Bastion | /26 | ✅ /26 | Desde noviembre de 2021 Microsoft exige /26 para permitir el escalado del servicio. |
+| VPN Gateway | /27 o mayor | ✅ /27 | Debe desplegarse en una subred llamada `GatewaySubnet`. |
+| ExpressRoute Gateway | /27 o mayor | ✅ /27 | Comparte el mismo requisito que VPN Gateway. |
+| Azure Route Server | /26 | ✅ /26 | Debe desplegarse en una subred llamada `RouteServerSubnet`. |
+| Azure DNS Private Resolver | /28 | ✅ /28 | Requiere dos subredes dedicadas (Inbound y Outbound). |
+| Application Gateway v2 | /24 | ❌ No | Microsoft recomienda /24 para facilitar el escalado automático. |
+| App Service Environment v3 (ASE) | /23 | ❌ No | /24 puede ser suficiente, pero /23 es recomendable para entornos grandes. |
+| Azure Kubernetes Service (AKS) | Depende | ❌ No | El tamaño depende del número de nodos, pods y del plugin de red utilizado. |
+| Azure Container Instances (ACI) | Depende | ❌ No | Sin requisito específico; depende del número de contenedores. |
+| Private Endpoints | /24 compartida | ❌ No | Pueden compartir subred con otros Private Endpoints. El tamaño depende del crecimiento esperado. |
+
+---
+
+# Detalle de cada servicio
+
+## Azure Container Apps (ACA)
+
+- **Subred mínima:** `/23`
+- **Obligatoria:** Sí
+- **Subred dedicada:** Sí
+
+### ¿Por qué?
+
+Azure reserva un gran número de direcciones IP para:
+
+- Réplicas
+- Escalado automático
+- Revisiones (Revisions)
+- Infraestructura administrada
+
+Por ello Microsoft exige una subred relativamente grande.
+
+---
+
+## Azure Firewall
+
+- **Subred mínima:** `/26`
+- **Obligatoria:** Sí
+- **Nombre obligatorio:** `AzureFirewallSubnet`
+
+### ¿Por qué?
+
+El Firewall necesita reservar IPs para:
+
+- Alta disponibilidad
+- Escalado
+- Instancias internas
+
+---
+
+## Azure Firewall Management
+
+- **Subred mínima:** `/26`
+- **Obligatoria:** Sí (solo si se usa Forced Tunneling)
+- **Nombre obligatorio:** `AzureFirewallManagementSubnet`
+
+Esta subred aloja la interfaz de administración del firewall.
+
+---
+
+## Azure Bastion
+
+- **Subred mínima:** `/26`
+- **Obligatoria:** Sí
+- **Nombre obligatorio:** `AzureBastionSubnet`
+
+### Antes
+
+Microsoft permitía `/27`.
+
+### Actualmente
+
+El mínimo es `/26` para permitir:
+
+- Escalado
+- Nuevas funcionalidades
+- Alta disponibilidad
+
+---
+
+## VPN Gateway
+
+- **Subred mínima:** `/27`
+- **Obligatoria:** Sí
+- **Nombre obligatorio:** `GatewaySubnet`
+
+Puede utilizarse para:
+
+- Site-to-Site VPN
+- Point-to-Site VPN
+- VNet-to-VNet
+
+Aunque `/27` es el mínimo, muchos arquitectos utilizan `/26` para dejar margen de crecimiento.
+
+---
+
+## ExpressRoute Gateway
+
+- **Subred mínima:** `/27`
+- **Obligatoria:** Sí
+- **Nombre obligatorio:** `GatewaySubnet`
+
+Comparte exactamente el mismo requisito que VPN Gateway.
+
+---
+
+## Azure Route Server
+
+- **Subred mínima:** `/26`
+- **Obligatoria:** Sí
+- **Nombre obligatorio:** `RouteServerSubnet`
+
+Permite intercambiar rutas dinámicamente mediante BGP con:
+
+- NVA
+- SD-WAN
+- Firewalls virtuales
+
+---
+
+## Azure DNS Private Resolver
+
+- **Subred mínima:** `/28`
+- **Obligatoria:** Sí
+
+Requiere dos subredes independientes:
+
+- Inbound Endpoint
+- Outbound Endpoint
+
+Cada una debe ser como mínimo `/28`.
+
+---
+
+## Application Gateway v2
+
+- **Subred mínima:** No existe
+- **Recomendado:** `/24`
+
+¿Por qué?
+
+El servicio puede escalar automáticamente creando numerosas instancias.
+
+Con un `/24` normalmente nunca tendrás problemas de falta de IPs.
+
+---
+
+## App Service Environment v3
+
+- **Subred mínima:** Variable
+- **Recomendado:** `/23`
+
+En entornos pequeños un `/24` suele ser suficiente.
+
+Si esperas un gran crecimiento Microsoft recomienda `/23`.
+
+---
+
+## Azure Kubernetes Service (AKS)
+
+No existe un tamaño fijo.
+
+Depende de:
+
+- Azure CNI
+- Azure CNI Overlay
+- Kubenet
+- Número de nodos
+- Máximo de Pods por nodo
+
+Es uno de los servicios donde más conviene planificar previamente el direccionamiento IP.
+
+---
+
+## Azure Container Instances (ACI)
+
+No tiene una subred mínima.
+
+El tamaño dependerá únicamente del número de contenedores que vayas a desplegar.
+
+---
+
+## Private Endpoints
+
+No existe un mínimo.
+
+Lo habitual es crear una subred compartida para todos los Private Endpoints.
+
+Muchas empresas utilizan:
+
+- `/24`
+- `/25`
+
+para evitar quedarse sin direcciones en el futuro.
+
+---
+
+# Regla mnemotécnica
+
+| CIDR | Servicios típicos |
+|------|-------------------|
+| **/23** | Container Apps, ASE grande |
+| **/24** | Application Gateway, Private Endpoints |
+| **/26** | Firewall, Bastion, Route Server |
+| **/27** | VPN Gateway, ExpressRoute Gateway |
+| **/28** | DNS Private Resolver |
+
+---
+
+# Servicios con nombre obligatorio de subred
+
+| Servicio | Nombre requerido |
+|----------|------------------|
+| Azure Firewall | `AzureFirewallSubnet` |
+| Azure Firewall Management | `AzureFirewallManagementSubnet` |
+| Azure Bastion | `AzureBastionSubnet` |
+| VPN Gateway | `GatewaySubnet` |
+| ExpressRoute Gateway | `GatewaySubnet` |
+| Azure Route Server | `RouteServerSubnet` |
+
+---
+
+# Consejos para el examen AZ-104
+
+✅ Memoriza estos cuatro valores:
+
+- **Container Apps → /23**
+- **Firewall → /26**
+- **Bastion → /26**
+- **VPN Gateway → /27**
+
+Conocer estos requisitos suele ser suficiente para responder la mayoría de las preguntas del examen relacionadas con el direccionamiento de subredes para servicios administrados de Azure.
+
+--- 
+
+# Virtual network peering 
 
 ![azure-vnet-peering](./img/azure/azure-vnet-peering.png)
 
