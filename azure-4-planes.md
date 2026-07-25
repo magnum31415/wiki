@@ -14,8 +14,8 @@ Cada uno responde a una pregunta diferente y cada uno tiene su punto de entrada
 |--------|------------------|
 | **Identity Plane** | `graph.microsoft.com` y `login.microsoftonline.com` |
 | **Control Plane** | `management.azure.com` (ARM) |
-| **Data Plane** | Un endpoint específico para cada servicio (`blob.core.windows.net`, `vault.azure.net`, etc.) |
-| **Billing Plane** | APIs de Billing y Cost Management, generalmente bajo `management.azure.com` |
+| **Data Plane** | Un endpoint específico para cada servicio (`blob.core.windows.net`, `vault.azure.net`, `database.windows.net`,`documents.azure.com`,etc.) |
+| **Billing Plane** | `Microsoft.Billing`,`Microsoft.CostManagement`,`Microsoft.Consumption` generalmente bajo `management.azure.com`, |
 
 ----
 
