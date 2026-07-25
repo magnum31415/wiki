@@ -1,12 +1,148 @@
 
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
+- [RBAC - Role Definition vs Role Assignment](#rbac---role-definition-vs-role-assignment)
 - [📚 Roles en Azure](#-roles-en-azure)
 - [User Administrator vs Global Administrator vs Authentication Administrator vs User Access Administrator (AZ-104)](#user-administrator-vs-global-administrator-vs-authentication-administrator-vs-user-access-administrator-az-104)
 - [Los cuatro planos principales de Azure](#los-cuatro-planos-principales-de-azure)
 
   
+# RBAC - Role Definition vs Role Assignment
+
+| Concepto | ¿Qué es? | Contiene | Ejemplo |
+|----------|----------|----------|---------|
+| **Role Definition** | Define **qué permisos existen**. Es reutilizable. | Nombre del rol, descripción, `Actions`, `NotActions`, `DataActions`, `NotDataActions`. | **Storage Blob Data Reader** permite leer blobs. No indica quién puede usarlo ni dónde. |
+| **Role Assignment** | Asigna un rol a un principal en un ámbito determinado. | Principal (usuario, grupo, Service Principal o Managed Identity), **Role Definition**, Scope y, opcionalmente, una **Condition "ABAC"  (Attribute-Based Access Control)**. | Asignar el rol **Storage Blob Data Reader** a **User1** sobre **storage1**, con la condición "solo el contenedor `cont1`". |
+
+---
+
+# Relación entre ambos
+
+```text
+Role Definition
+│
+├── Nombre:
+│      Storage Blob Data Reader
+│
+├── Permisos:
+│      DataActions:
+│      └── blobs/read
+│
+└─────────────────────────────┐
+                              │
+                              ▼
+                    Role Assignment
+                    │
+                    ├── Principal:
+                    │      User1
+                    │
+                    ├── Scope:
+                    │      storage1
+                    │
+                    └── Condition:
+                           Container == cont1
+```
+
+La **Role Definition** nunca cambia.
+
+Lo que cambia es la **Role Assignment**.
+
+---
+
+# Ejemplo práctico
+
+## Paso 1 - Existe un rol
+
+```text
+Role Definition
+
+Storage Blob Data Reader
+```
+
+Permite:
+
+- Leer blobs.
+
+Nada más.
+
+---
+
+## Paso 2 - Se asigna el rol
+
+```text
+Principal
+
+User1
+```
+
+↓
+
+```text
+Role Assignment
+
+Role:
+Storage Blob Data Reader
+
+Scope:
+storage1
+```
+
+Resultado:
+
+User1 puede leer todos los blobs de `storage1`.
+
+---
+
+## Paso 3 - Se añade una condición ABAC
+
+```text
+Role Assignment
+
+Role:
+Storage Blob Data Reader
+
+Scope:
+storage1
+
+Condition:
+Container == cont1
+```
+
+Resultado:
+
+User1 solo puede leer los blobs del contenedor **cont1**.
+
+El rol sigue siendo exactamente el mismo.
+
+---
+
+# Comparación con Azure Policy
+
+| Azure Policy | Azure RBAC |
+|---------------|------------|
+| **Policy Definition** | **Role Definition** |
+| Define la regla | Define los permisos |
+| **Policy Assignment** | **Role Assignment** |
+| Indica dónde se aplica | Indica quién recibe el rol y en qué ámbito |
+| Puede tener parámetros | Puede tener una condición (ABAC) |
+
+---
+
+# Regla mnemotécnica
+
+| Definición | Asignación |
+|------------|------------|
+| **Qué** hace | **Quién**, **dónde** y **bajo qué condiciones** lo hace |
+
+En otras palabras:
+
+- **Role Definition** → *Qué permisos existen.*
+- **Role Assignment** → *Quién recibe esos permisos, sobre qué recursos (Scope) y, opcionalmente, con qué condición ABAC.*
+
+---
+
 # 📚 roles en Azure
+
 
 ## Planes
 
