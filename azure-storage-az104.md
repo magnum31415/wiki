@@ -28,6 +28,7 @@
 - [⬅️ Volver a: Azure Blob Storage - Tipos de Blob (AZ-104)](#azure-blob-storage---tipos-de-blob-az-104)
 - [⬅️ Volver a: Azure Storage - Account Kind (AZ-104)](#azure-storage---account-kind-az-104)
 - [⬅️ Volver a: Azure Storage - User Delegation SAS vs Service SAS vs Account SAS (AZ-104)](#azure-storage---user-delegation-sas-vs-service-sas-vs-account-sas-az-104)
+- [Azure Blob Inventory Rules](#azure-blob-inventory-rules)
   
 ---
 # Azure Blob Storage - Características de protección de datos
@@ -2263,3 +2264,296 @@ No funciona
 > - **Service SAS** y **Account SAS** se firman con la **Storage Account Key**.
 > - Si **Allow storage account key access = Disabled**, únicamente seguirá funcionando el **User Delegation SAS**.
 > - La opción **Secure transfer required** solo obliga a utilizar **HTTPS** y no afecta al tipo de SAS utilizado.
+
+---
+
+# Azure Blob Inventory Rules
+
+Una **Blob Inventory Rule** es una configuración del **Blob Service** de una Azure Storage Account que genera automáticamente un inventario de los blobs y/o contenedores existentes.
+
+El resultado se almacena como un archivo **CSV** o **Parquet** dentro de un contenedor Blob.
+
+Su objetivo es facilitar tareas de:
+
+- Auditoría
+- Gobierno de datos
+- Cumplimiento (Compliance)
+- Gestión del ciclo de vida
+- Inventariado masivo
+
+---
+
+# ¿Para qué sirve?
+
+Blob Inventory permite obtener automáticamente una lista de los blobs existentes sin tener que recorrer todo el almacenamiento mediante código.
+
+Casos de uso habituales:
+
+- Inventariar millones de blobs.
+- Buscar blobs antiguos.
+- Conocer el tamaño ocupado.
+- Identificar blobs sin acceso reciente.
+- Preparar reglas de Lifecycle Management.
+- Auditorías y cumplimiento normativo.
+- Exportar información para Power BI o Excel.
+
+---
+
+# Arquitectura
+
+```text
+Storage Account
+│
+├── Blob Service
+│
+│   └── Inventory Rules
+│
+│         ├── Rule 1
+│         ├── Rule 2
+│         └── Rule 3
+│
+├── Container images
+├── Container backups
+└── Container reports
+```
+
+Las **Inventory Rules** pertenecen al **Blob Service** de la Storage Account.
+
+---
+
+# ¿Dónde se configura?
+
+## Azure Portal
+
+```text
+Storage Account
+
+↓
+
+Data Management
+
+↓
+
+Blob Inventory
+```
+
+Desde esta opción se pueden crear, modificar o eliminar reglas.
+
+También puede configurarse mediante:
+
+- Azure CLI
+- ARM Templates
+- Bicep
+- REST API
+- SDK
+
+---
+
+# ¿Dónde vive la configuración?
+
+La configuración pertenece a la **Storage Account**.
+
+No pertenece al contenedor.
+
+```text
+Storage Account
+│
+├── Blob Service
+│      │
+│      └── Inventory Rule
+│
+├── Container A
+├── Container B
+└── Container C
+```
+
+---
+
+# ¿Dónde se guarda el inventario?
+
+Aunque la regla pertenece a la Storage Account, el resultado se almacena como un Blob dentro de un contenedor.
+
+Por ejemplo:
+
+```text
+Storage Account
+
+│
+
+├── Blob Service
+
+│      │
+
+│      └── Inventory Rule
+
+│
+
+└── Container reports
+
+        │
+
+        ├── inventory-2026-07-25.csv
+
+        └── inventory-2026-07-26.csv
+```
+
+---
+
+# ¿Qué puede configurar una Inventory Rule?
+
+Una regla permite definir:
+
+| Configuración | Descripción |
+|---------------|-------------|
+| **Nombre** | Nombre de la regla. |
+| **Enabled** | Activar o desactivar la regla. |
+| **Schedule** | Frecuencia de generación (Daily o Weekly). |
+| **Format** | CSV o Parquet. |
+| **Object Type** | Blob, Container o ambos. |
+| **Blob Type** | Block Blob, Append Blob, etc. |
+| **Container** | Contenedores que se inventariarán. |
+| **Prefix Match** | Solo blobs cuyo nombre empiece por un determinado prefijo. |
+| **Destination Container** | Contenedor donde se almacenará el inventario. |
+
+---
+
+# Ejemplo
+
+Supongamos la siguiente Storage Account:
+
+```text
+Storage Account
+
+├── images
+
+│      finance001.jpg
+
+│      finance002.jpg
+
+│      holiday001.jpg
+
+│
+
+└── reports
+```
+
+Configuración:
+
+```text
+Rule Name
+
+inventoryRule1
+```
+
+```text
+Schedule
+
+Daily
+```
+
+```text
+Format
+
+CSV
+```
+
+```text
+Prefix
+
+finance
+```
+
+```text
+Destination
+
+reports
+```
+
+Resultado:
+
+Cada día Azure generará:
+
+```text
+reports
+
+│
+
+└── inventory-2026-07-25.csv
+```
+
+El CSV únicamente contendrá:
+
+```text
+finance001.jpg
+
+finance002.jpg
+```
+
+---
+
+# Ejemplo de contenido del CSV
+
+| Blob Name | Container | Size | Last Modified |
+|-----------|-----------|------|---------------|
+| finance001.jpg | images | 2 MB | 2026-07-20 |
+| finance002.jpg | images | 5 MB | 2026-07-22 |
+
+---
+
+# ¿Qué ventajas tiene?
+
+- No requiere desarrollar scripts.
+- Escala a millones de blobs.
+- Generación automática.
+- Puede consumirse desde Excel o Power BI.
+- Facilita auditorías.
+- Facilita Lifecycle Management.
+- Reduce el tiempo necesario para inventariar el almacenamiento.
+
+---
+
+# Blob Inventory vs Lifecycle Management
+
+| Blob Inventory | Lifecycle Management |
+|----------------|----------------------|
+| Genera un inventario | Ejecuta acciones automáticas |
+| Produce un CSV o Parquet | Mueve o elimina blobs |
+| Solo informa | Modifica el almacenamiento |
+| Útil para auditoría | Útil para optimizar costes |
+
+---
+
+# Resumen
+
+| Concepto | Descripción |
+|----------|-------------|
+| ¿Qué es? | Una regla que genera automáticamente un inventario de blobs o contenedores. |
+| ¿Dónde se configura? | **Storage Account → Blob Service → Blob Inventory** |
+| ¿Dónde vive? | En la **Storage Account**, dentro del Blob Service. |
+| ¿Dónde se guarda el resultado? | En un **Blob Container** como archivo CSV o Parquet. |
+| ¿Frecuencia? | Diaria o semanal. |
+| ¿Formato? | CSV o Parquet. |
+| ¿Permite filtrar? | Sí, por contenedor, tipo de blob y prefijo (Prefix Match). |
+| ¿Caso de uso principal? | Auditoría, gobierno de datos, cumplimiento y análisis del almacenamiento. |
+
+---
+
+# Regla mnemotécnica
+
+```text
+Inventory Rule
+
+↓
+
+Escanea el Blob Storage
+
+↓
+
+Genera un inventario
+
+↓
+
+Lo guarda como CSV o Parquet
+```
+
+La **Inventory Rule** **no modifica los blobs**; únicamente genera un informe con información sobre ellos.
