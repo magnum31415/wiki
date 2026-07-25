@@ -7,7 +7,15 @@ Azure puede entenderse como cuatro grandes planos funcionales:
 3. [**Data Plane**](#3-data-plane) : ¿Qué datos puedes utilizar?
 4. [**Billing Plane (Commerce Plane)**](#4-billing-plane-commerce-plane) : ¿Cuánto cuesta?
 
-Cada uno responde a una pregunta diferente.
+Cada uno responde a una pregunta diferente y cada uno tiene su punto de entrada
+
+**Punto de entrada**
+| Plano | Punto de entrada |
+|--------|------------------|
+| **Identity Plane** | `graph.microsoft.com` y `login.microsoftonline.com` |
+| **Control Plane** | `management.azure.com` (ARM) |
+| **Data Plane** | Un endpoint específico para cada servicio (`blob.core.windows.net`, `vault.azure.net`, etc.) |
+| **Billing Plane** | APIs de Billing y Cost Management, generalmente bajo `management.azure.com` |
 
 ----
 
@@ -45,11 +53,66 @@ Su misión es responder:
 - MFA
 - Obtener un Access Token
 
+## API
+
+También dispone de APIs REST.
+
+Las dos más importantes son:
+
+### Microsoft Graph API
+
+```text
+https://graph.microsoft.com
+```
+
+Permite administrar:
+
+- Usuarios
+- Grupos
+- Aplicaciones
+- Service Principals
+- Dispositivos
+- Roles
+- Licencias
+
+Ejemplo:
+
+```http
+GET https://graph.microsoft.com/v1.0/users
+```
+
+---
+
+### Microsoft Entra ID (OAuth2)
+
+```text
+https://login.microsoftonline.com
+```
+
+Se utiliza para:
+
+- Autenticación
+- Obtener Access Tokens
+- OAuth2
+- OpenID Connect
+
+Ejemplo:
+
+```http
+POST https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token
+```
+
+Devuelve un **JWT (Access Token)**.
+
 ---
 
 # 2. Control Plane (Management Plane)
 
 ## Arquitectura general
+
+Existe un único punto de entrada. Tiene una API REST única: ``https://management.azure.com``
+
+Ejemplo: ``PUT https://management.azure.com/subscriptions/{id}/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1``
 
 ![Diagrama arm](./img/azure/azure-arm.png)
 
@@ -430,6 +493,60 @@ Su misión es responder:
 - Ejecutar una consulta SQL
 - Publicar un mensaje en Service Bus
 
+## API 
+
+
+No existe una API única.
+
+Cada servicio expone su propio endpoint.
+
+## Azure Blob Storage
+
+```text
+https://mystorage.blob.core.windows.net
+```
+
+Ejemplo:
+
+```http
+GET https://mystorage.blob.core.windows.net/images/photo.jpg
+```
+
+---
+
+## Azure Key Vault
+
+```text
+https://myvault.vault.azure.net
+```
+
+Ejemplo:
+
+```http
+GET https://myvault.vault.azure.net/secrets/dbPassword
+```
+
+---
+
+## Azure SQL Database
+
+```text
+myserver.database.windows.net
+```
+
+Utiliza el protocolo **TDS (Tabular Data Stream)** para las conexiones SQL, no una API REST para ejecutar consultas.
+
+---
+
+## Azure Cosmos DB
+
+```text
+https://mycosmos.documents.azure.com
+```
+
+Cada servicio del Data Plane tiene su propia API.
+
+
 ---
 
 # 4. Billing Plane (Commerce Plane)
@@ -456,47 +573,6 @@ Su misión es responder:
 > **¿Cuánto cuesta?**
 
 ---
-
-## Arquitectura
-
-```text
-Clientes
-
-Portal
-
-REST API
-
-Power BI
-
-Azure CLI
-
-        │
-
-        ▼
-
-Billing
-
-Cost Management
-
-Consumption
-
-Commerce
-
-        │
-
-        ▼
-
-Facturas
-
-Budgets
-
-Reservations
-
-Cost Analysis
-```
-
----
-
 ## Ejemplos
 
 - Consultar la factura mensual
@@ -504,6 +580,55 @@ Cost Analysis
 - Analizar costes
 - Consultar consumo
 - Administrar Reservations
+
+## API
+
+También dispone de APIs REST.
+
+Aunque conceptualmente es un plano independiente, muchas de sus APIs utilizan el mismo dominio que ARM:
+
+```text
+management.azure.com
+```
+
+pero dirigidas a Resource Providers específicos como:
+
+- Microsoft.Billing
+- Microsoft.Consumption
+- Microsoft.CostManagement
+
+
+Las principales son:
+
+## Cost Management
+
+```text
+https://management.azure.com/providers/Microsoft.CostManagement
+```
+
+---
+
+## Consumption API
+
+```text
+https://management.azure.com/providers/Microsoft.Consumption
+```
+
+---
+
+## Billing API
+
+```text
+https://management.azure.com/providers/Microsoft.Billing
+```
+
+Permiten consultar:
+
+- Costes
+- Facturas
+- Consumo
+- Budgets
+- Reservations
 
 ---
 
