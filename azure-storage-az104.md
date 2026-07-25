@@ -29,6 +29,8 @@
 - [⬅️ Volver a: Azure Storage - Account Kind (AZ-104)](#azure-storage---account-kind-az-104)
 - [⬅️ Volver a: Azure Storage - User Delegation SAS vs Service SAS vs Account SAS (AZ-104)](#azure-storage---user-delegation-sas-vs-service-sas-vs-account-sas-az-104)
 - [Azure Blob Inventory Rules](#azure-blob-inventory-rules)
+- [Azure Blob Storage - Encryption Scope](#azure-blob-storage---encryption-scope)
+
   
 ---
 # Azure Blob Storage - Características de protección de datos
@@ -2557,3 +2559,286 @@ Lo guarda como CSV o Parquet
 ```
 
 La **Inventory Rule** **no modifica los blobs**; únicamente genera un informe con información sobre ellos.
+
+---
+# Azure Blob Storage - Encryption Scope
+
+Un **Encryption Scope** es una característica de **Azure Blob Storage** que permite definir **qué clave de cifrado se utilizará para cifrar determinados blobs** dentro de una misma Storage Account.
+
+De forma predeterminada, todos los blobs de una Storage Account utilizan la misma clave de cifrado. Con un **Encryption Scope**, distintos blobs pueden utilizar **claves diferentes**, sin necesidad de crear varias Storage Accounts.
+
+---
+
+# ¿Para qué sirve?
+
+Los Encryption Scopes permiten:
+
+- Utilizar distintas claves de cifrado dentro de una misma Storage Account.
+- Separar datos de distintos departamentos (Finanzas, RRHH, Marketing...).
+- Cumplir requisitos de seguridad y normativas.
+- Utilizar claves administradas por Microsoft (MMK) o por el cliente (CMK).
+
+---
+
+# Sin Encryption Scope
+
+Todos los blobs utilizan la misma clave.
+
+```text
+Storage Account
+
+│
+
+├── Blob1
+
+├── Blob2
+
+├── Blob3
+
+│
+
+└── Clave de cifrado A
+```
+
+---
+
+# Con Encryption Scope
+
+Cada grupo de blobs puede utilizar una clave distinta.
+
+```text
+Storage Account
+
+│
+
+├── Encryption Scope: Finance
+│         │
+│         └── Clave A
+│
+├── Encryption Scope: HR
+│         │
+│         └── Clave B
+│
+├── Blob1 → Finance
+├── Blob2 → Finance
+└── Blob3 → HR
+```
+
+---
+
+# ¿De dónde provienen las claves?
+
+## Microsoft-managed keys (MMK)
+
+Azure administra automáticamente la clave.
+
+```text
+Blob
+
+↓
+
+Encryption Scope
+
+↓
+
+Microsoft Managed Key
+```
+
+---
+
+## Customer-managed keys (CMK)
+
+La clave se almacena en Azure Key Vault.
+
+```text
+Blob
+
+↓
+
+Encryption Scope
+
+↓
+
+Azure Key Vault
+
+↓
+
+Customer Managed Key
+```
+
+Este es el escenario más habitual en entornos empresariales.
+
+---
+
+# ¿Dónde se crea?
+
+Un Encryption Scope se crea **a nivel de Storage Account**.
+
+No pertenece a un contenedor.
+
+Jerarquía:
+
+```text
+Storage Account
+
+│
+
+├── Encryption Scope A
+
+├── Encryption Scope B
+
+│
+
+├── Container images
+
+├── Container backups
+
+└── Container finance
+```
+
+---
+
+# ¿Cómo se utiliza?
+
+Una vez creado, puede:
+
+- Seleccionarse al subir un blob.
+- Configurarse como **Encryption Scope predeterminado** de un contenedor.
+
+---
+
+# Ejemplo
+
+Supongamos la Storage Account:
+
+```text
+storage2
+```
+
+Se crea:
+
+```text
+Encryption Scope
+
+FinanceScope
+```
+
+Utilizando la clave:
+
+```text
+Key Vault
+
+↓
+
+Key-Finance
+```
+
+Cuando se sube el blob:
+
+```text
+invoice.pdf
+```
+
+Se indica:
+
+```text
+Encryption Scope
+
+FinanceScope
+```
+
+Resultado:
+
+```text
+invoice.pdf
+
+↓
+
+FinanceScope
+
+↓
+
+Key-Finance
+
+↓
+
+Blob cifrado
+```
+
+Otros blobs de la misma Storage Account podrían utilizar otro Encryption Scope y otra clave distinta.
+
+---
+
+# ¿Dónde se configura?
+
+## Azure Portal
+
+```text
+Storage Account
+
+↓
+
+Security + networking
+
+↓
+
+Encryption
+
+↓
+
+Encryption scopes
+```
+
+También puede configurarse mediante:
+
+- Azure CLI
+- PowerShell
+- ARM Templates
+- Bicep
+- REST API
+- SDK
+
+---
+
+# Comparación
+
+| Característica | Storage Account Encryption | Encryption Scope |
+|----------------|----------------------------|------------------|
+| Ámbito | Toda la Storage Account | Un conjunto específico de blobs |
+| Número de claves | Normalmente una | Varias dentro de la misma Storage Account |
+| Tipo de claves | MMK o CMK | MMK o CMK |
+| Granularidad | Toda la Storage Account | Blob individual o contenedor (como valor predeterminado) |
+| Caso de uso | Cifrado general | Separación de datos con diferentes claves de cifrado |
+
+---
+
+# Resumen
+
+| Concepto | Descripción |
+|----------|-------------|
+| ¿Qué es? | Un perfil de cifrado que define qué clave utilizar para cifrar blobs. |
+| ¿Dónde se crea? | En la **Storage Account**. |
+| ¿Dónde se aplica? | A blobs individuales o como valor predeterminado de un contenedor. |
+| ¿Puede utilizar varias claves? | ✅ Sí. |
+| ¿Admite CMK? | ✅ Sí (Azure Key Vault). |
+| ¿Admite MMK? | ✅ Sí. |
+
+---
+
+# Regla mnemotécnica
+
+```text
+Blob
+
+↓
+
+Encryption Scope
+
+↓
+
+Clave de cifrado
+```
+
+Piensa en un **Encryption Scope** como un **perfil de cifrado**.
+
+Una misma Storage Account puede contener varios Encryption Scopes, permitiendo que distintos blobs utilicen diferentes claves de cifrado sin necesidad de crear varias Storage Accounts.
