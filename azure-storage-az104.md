@@ -1,4 +1,3 @@
-<img width="531" height="834" alt="image" src="https://github.com/user-attachments/assets/13aff949-f072-4c51-8570-6ddae23b7aa9" />
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # 📑 Índice – Azure Storage AZ-104
@@ -2859,33 +2858,7 @@ Si cualquiera de estos pasos falla, el acceso será denegado.
 
 # Arquitectura general
 
-```text
-Usuario / Aplicación / VM
-
-        │
-
-        ▼
-
-1. Red (Networking)
-
-        │
-
-        ▼
-
-2. Autenticación
-
-        │
-
-        ▼
-
-3. Autorización
-
-        │
-
-        ▼
-
-Storage Account
-```
+![azure-sql.png](./img/azure/azure-acceso-storage.png)
 
 ---
 
