@@ -1,4 +1,4 @@
-
+<img width="531" height="834" alt="image" src="https://github.com/user-attachments/assets/13aff949-f072-4c51-8570-6ddae23b7aa9" />
 [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
 
 # 📑 Índice – Azure Storage AZ-104
@@ -30,6 +30,7 @@
 - [⬅️ Volver a: Azure Storage - User Delegation SAS vs Service SAS vs Account SAS (AZ-104)](#azure-storage---user-delegation-sas-vs-service-sas-vs-account-sas-az-104)
 - [Azure Blob Inventory Rules](#azure-blob-inventory-rules)
 - [Azure Blob Storage - Encryption Scope](#azure-blob-storage---encryption-scope)
+- [Acceso a una Azure Storage Account](#acceso-a-una-azure-storage-account)
 
   
 ---
@@ -2842,3 +2843,495 @@ Clave de cifrado
 Piensa en un **Encryption Scope** como un **perfil de cifrado**.
 
 Una misma Storage Account puede contener varios Encryption Scopes, permitiendo que distintos blobs utilicen diferentes claves de cifrado sin necesidad de crear varias Storage Accounts.
+
+---
+# Acceso a una Azure Storage Account
+
+Para que un usuario, una aplicación o una máquina virtual pueda acceder a una **Azure Storage Account**, deben cumplirse **tres requisitos**:
+
+1. **La red debe permitir el acceso.**
+2. **La identidad debe autenticarse (si aplica).**
+3. **La identidad debe estar autorizada para realizar la operación.**
+
+Si cualquiera de estos pasos falla, el acceso será denegado.
+
+---
+
+# Arquitectura general
+
+```text
+Usuario / Aplicación / VM
+
+        │
+
+        ▼
+
+1. Red (Networking)
+
+        │
+
+        ▼
+
+2. Autenticación
+
+        │
+
+        ▼
+
+3. Autorización
+
+        │
+
+        ▼
+
+Storage Account
+```
+
+---
+
+# Paso 1. La red debe permitir el acceso
+
+Antes de comprobar los permisos, la petición debe poder llegar a la Storage Account.
+
+Existen varios mecanismos.
+
+---
+
+## Opción 1. Public Network Access
+
+La Storage Account está accesible desde Internet.
+
+```text
+Cliente
+
+↓
+
+Internet
+
+↓
+
+Storage Account
+```
+
+Puede configurarse como:
+
+- Enabled from all networks
+- Enabled from selected virtual networks and IP addresses
+- Disabled
+
+---
+
+## Opción 2. Firewall (IP Rules)
+
+Permite únicamente determinadas direcciones IP públicas.
+
+```text
+Storage Account
+
+↓
+
+Firewall
+
+↓
+
+131.107.10.10 ✅
+
+150.120.10.10 ✅
+
+203.0.113.5 ❌
+```
+
+Uso típico:
+
+- Usuarios desde oficinas
+- Datacenter On-Premises
+
+---
+
+## Opción 3. Virtual Network Rules (Service Endpoints)
+
+Permite únicamente determinadas subredes de Azure.
+
+```text
+VM
+
+↓
+
+Subnet
+
+↓
+
+Service Endpoint
+
+↓
+
+Storage Account
+```
+
+En este caso:
+
+- No importa la IP pública.
+- El tráfico viaja por la red de Azure.
+
+---
+
+## Opción 4. Private Endpoint (Private Link)
+
+La Storage Account dispone de una IP privada dentro de una VNet.
+
+```text
+VM
+
+↓
+
+Private Endpoint
+
+↓
+
+Storage Account
+```
+
+Características:
+
+- Sin acceso público.
+- Todo el tráfico permanece en la red privada.
+
+Es la opción más segura.
+
+---
+
+## Comparación
+
+| Método | Acceso desde Internet | Usa IP privada | Recomendado |
+|---------|----------------------|---------------|-------------|
+| Public Access | ✅ | ❌ | Solo entornos sencillos |
+| Firewall (IP Rules) | ✅ (IPs permitidas) | ❌ | Bueno |
+| Service Endpoint | ❌ (desde la VNet) | ❌ (el recurso sigue teniendo endpoint público, aunque el tráfico usa la red de Azure) | Muy bueno |
+| Private Endpoint | ❌ | ✅ | ⭐ Recomendado |
+
+---
+
+# Paso 2. Autenticación
+
+Una vez que la red permite el acceso, Azure debe identificar quién realiza la petición.
+
+Existen varios métodos.
+
+---
+
+## Microsoft Entra ID
+
+El método recomendado.
+
+Puede utilizarse mediante:
+
+- Usuario
+- Grupo
+- Service Principal
+- Managed Identity
+
+```text
+Aplicación
+
+↓
+
+Microsoft Entra ID
+
+↓
+
+Token JWT
+```
+
+---
+
+## Shared Access Signature (SAS)
+
+Proporciona un acceso temporal y limitado.
+
+```text
+Blob URL
+
++
+
+SAS Token
+```
+
+Permite limitar:
+
+- Tiempo
+- Permisos
+- Recursos
+
+---
+
+## Access Keys
+
+La Storage Account dispone de dos claves.
+
+```text
+Key1
+
+Key2
+```
+
+Proporcionan acceso completo.
+
+No se recomienda su uso en aplicaciones modernas.
+
+---
+
+# Comparación
+
+| Método | Recomendado | Comentario |
+|---------|:-----------:|------------|
+| Microsoft Entra ID | ✅ | Método recomendado. |
+| SAS | ✅ | Acceso temporal y limitado. |
+| Access Keys | ⚠️ | Acceso completo. Utilizar solo cuando sea necesario. |
+
+---
+
+# Paso 3. Autorización
+
+Una vez autenticado, Azure verifica si la identidad tiene permisos suficientes.
+
+---
+
+## Azure RBAC
+
+Es el mecanismo recomendado.
+
+Ejemplos:
+
+- Storage Blob Data Reader
+- Storage Blob Data Contributor
+- Storage Blob Data Owner
+
+```text
+Usuario
+
+↓
+
+RBAC
+
+↓
+
+Storage Blob Data Reader
+```
+
+---
+
+## Azure ABAC
+
+Añade condiciones a RBAC.
+
+Ejemplo:
+
+```text
+Solo puede leer blobs
+
+del contenedor
+
+finance
+```
+
+---
+
+## SAS
+
+Además de autenticar, una SAS también define los permisos.
+
+Ejemplo:
+
+```text
+Read
+
+Write
+
+Delete
+```
+
+---
+
+## Access Keys
+
+Las Access Keys conceden acceso completo.
+
+No utilizan RBAC.
+
+---
+
+# Flujo completo
+
+```text
+Usuario
+
+        │
+
+        ▼
+
+¿La red permite el acceso?
+
+        │
+
+   Sí / No
+
+        │
+
+        ▼
+
+¿Puede autenticarse?
+
+        │
+
+   Sí / No
+
+        │
+
+        ▼
+
+¿Tiene permisos?
+
+        │
+
+   Sí / No
+
+        │
+
+        ▼
+
+Acceso concedido
+```
+
+---
+
+# Ejemplos
+
+## Caso 1
+
+```text
+VM
+
+↓
+
+VNet permitida ✅
+
+↓
+
+Managed Identity ✅
+
+↓
+
+Storage Blob Data Reader ✅
+
+↓
+
+Acceso permitido
+```
+
+---
+
+## Caso 2
+
+```text
+VM
+
+↓
+
+Firewall ❌
+
+↓
+
+RBAC ✅
+
+↓
+
+Acceso denegado
+```
+
+Aunque tenga permisos RBAC, la red bloquea el acceso.
+
+---
+
+## Caso 3
+
+```text
+VM
+
+↓
+
+Firewall ✅
+
+↓
+
+Sin RBAC ❌
+
+↓
+
+Acceso denegado
+```
+
+La red permite llegar, pero no existen permisos.
+
+---
+
+## Caso 4
+
+```text
+Aplicación
+
+↓
+
+SAS válida
+
+↓
+
+Acceso permitido
+```
+
+No necesita RBAC porque la SAS ya concede permisos.
+
+---
+
+# Resumen
+
+| Paso | ¿Qué comprueba Azure? | Opciones |
+|------|------------------------|----------|
+| **1. Red** | ¿Puede llegar la petición? | Public Access, Firewall, Service Endpoint, Private Endpoint |
+| **2. Autenticación** | ¿Quién eres? | Microsoft Entra ID, SAS, Access Keys |
+| **3. Autorización** | ¿Qué puedes hacer? | RBAC, ABAC, SAS, Access Keys |
+
+---
+
+# Regla mnemotécnica
+
+```text
+Storage Account
+
+↓
+
+1. Networking
+
+↓
+
+2. Authentication
+
+↓
+
+3. Authorization
+
+↓
+
+Acceso
+```
+
+O, de forma aún más simple:
+
+```text
+Acceso = Red + Identidad + Permisos
+```
+
+Si cualquiera de estos tres elementos falla:
+
+```text
+Acceso = DENEGADO
+```
