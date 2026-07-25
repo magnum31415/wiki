@@ -1,3 +1,5 @@
+[Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
+
 # Los cuatro planos (Planes) de Azure
 
 Azure puede entenderse como cuatro grandes planos funcionales:
