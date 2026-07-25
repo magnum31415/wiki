@@ -5,7 +5,7 @@
 - [📚 Roles en Azure](#-roles-en-azure)
 - [User Administrator vs Global Administrator vs Authentication Administrator vs User Access Administrator (AZ-104)](#user-administrator-vs-global-administrator-vs-authentication-administrator-vs-user-access-administrator-az-104)
 - [Los cuatro planos principales de Azure](#los-cuatro-planos-principales-de-azure)
-
+- [Azure RBAC Conditions (ABAC) - Roles que soportan Conditions](#azure-rbac-conditions-abac---roles-que-soportan-conditions)
   
 # RBAC - Role Definition vs Role Assignment
 
@@ -984,3 +984,208 @@ No confundas:
 > - **Owner** → Root del **Azure RBAC Control Plane** (sobre el ámbito donde está asignado).
 >
 > Un **Global Administrator** no administra automáticamente todos los recursos Azure. Si necesita hacerlo, debe utilizar **Elevate access**, que le asigna el rol **User Access Administrator** sobre el **Root Management Group**, desde donde podrá asignarse el rol **Owner** sobre cualquier Management Group, Subscription, Resource Group o Resource.
+
+
+---
+
+# Azure RBAC Conditions (ABAC) - Roles que soportan Conditions
+
+En Azure, **ABAC (Attribute-Based Access Control)** **no sustituye a RBAC**, sino que **lo extiende**.
+
+Las **Conditions** (condiciones ABAC) solo pueden aplicarse a determinados roles RBAC que soportan esta funcionalidad.
+
+Actualmente, esta característica está enfocada principalmente al **Data Plane de Azure Storage (Blob Storage)**.
+
+---
+
+# Roles que soportan Conditions
+
+Los principales roles compatibles son:
+
+| Rol | ¿Soporta Conditions (ABAC)? | Comentario |
+|------|:---------------------------:|------------|
+| **Storage Blob Data Reader** | ✅ | Permite restringir el acceso de lectura mediante condiciones. |
+| **Storage Blob Data Contributor** | ✅ | Permite restringir operaciones de lectura, escritura y borrado. |
+| **Storage Blob Data Owner** | ✅ | Permite aplicar condiciones incluso con control total sobre los blobs. |
+| **Storage Blob Delegator** | ✅ | Compatible con condiciones en los escenarios soportados. |
+
+---
+
+# Roles que NO soportan Conditions
+
+Los roles del **Management Plane** no admiten Conditions ABAC.
+
+| Rol | ¿Soporta Conditions? |
+|------|:--------------------:|
+| Owner | ❌ |
+| Contributor | ❌ |
+| Reader | ❌ |
+| Storage Account Contributor | ❌ |
+| Virtual Machine Contributor | ❌ |
+| Network Contributor | ❌ |
+| Key Vault Contributor | ❌ |
+
+---
+
+# ¿Por qué?
+
+Las Conditions están diseñadas para controlar el acceso al **Data Plane**, es decir, al contenido de los recursos (blobs, archivos, etc.), no a la administración de los recursos de Azure.
+
+---
+
+# Management Plane
+
+En el plano de administración solo se utiliza RBAC.
+
+Ejemplos:
+
+```text
+Crear una Storage Account
+
+Eliminar una VM
+
+Modificar una VNet
+
+Crear un Key Vault
+```
+
+Modelo de permisos:
+
+```text
+RBAC
+```
+
+---
+
+# Data Plane
+
+En el plano de datos sí puede utilizarse:
+
+```text
+RBAC
+
++
+
+Conditions (ABAC)
+```
+
+Ejemplos:
+
+```text
+Leer un Blob
+
+Escribir un Blob
+
+Eliminar un Blob
+```
+
+---
+
+# Ejemplo sin ABAC
+
+```text
+Usuario
+
+↓
+
+Storage Blob Data Reader
+
+↓
+
+Puede leer TODOS los blobs
+```
+
+---
+
+# Ejemplo con ABAC
+
+```text
+Usuario
+
+↓
+
+Storage Blob Data Reader
+
++
+
+Container == finance
+
+↓
+
+Solo puede leer los blobs del contenedor finance
+```
+
+---
+
+# ¿Qué tipo de condiciones pueden utilizarse?
+
+Las Conditions de Azure Storage suelen basarse en atributos como:
+
+- Nombre del contenedor.
+- Ruta del blob.
+- Blob Index Tags.
+- Tipo de operación (Read, Write, Delete...).
+- Atributos del principal (usuario, aplicación, etc.).
+
+Ejemplo:
+
+```text
+Container == finance
+```
+
+o
+
+```text
+@Resource[Microsoft.Storage/storageAccounts/blobServices/containers:name]
+```
+
+> **Nota:** Aunque algunos textos mencionan restricciones por hora o dirección IP, esas limitaciones normalmente se implementan mediante **Firewall**, **Private Endpoint** o **SAS**, no mediante Azure Storage ABAC.
+
+---
+
+# Resumen
+
+| Plano | ¿Soporta Conditions (ABAC)? |
+|--------|:---------------------------:|
+| **Management Plane** | ❌ No |
+| **Data Plane (Azure Blob Storage)** | ✅ Sí |
+
+---
+
+# Regla mnemotécnica
+
+```text
+Management Plane
+
+↓
+
+Solo RBAC
+```
+
+```text
+Data Plane (Blob Storage)
+
+↓
+
+RBAC
+
++
+
+Conditions (ABAC)
+```
+
+O, de forma aún más sencilla:
+
+```text
+ABAC en Azure
+
+=
+
+RBAC
+
++
+
+Condiciones
+
+(solo en determinados roles del Data Plane)
+```
