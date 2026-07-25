@@ -2,13 +2,14 @@
 
 Azure puede entenderse como cuatro grandes planos funcionales:
 
-1. **Identity Plane**
-2. **Control Plane (Management Plane)**
-3. **Data Plane**
-4. **Billing Plane (Commerce Plane)**
+1. [**Identity Plane**](#1-identity-plane) : ¿Quién eres?
+2. [**Control Plane (Management Plane)**](#2-control-plane-management-plane) : ¿Qué recursos puedes administrar?
+3. [**Data Plane**](#3-data-plane) : ¿Qué datos puedes utilizar?
+4. [**Billing Plane (Commerce Plane)**](#4-billing-plane-commerce-plane) : ¿Cuánto cuesta?
 
 Cada uno responde a una pregunta diferente.
 
+----
 
 # Arquitectura general
 
@@ -35,54 +36,6 @@ Su componente principal es:
 Su misión es responder:
 
 > **¿Quién eres?**
-
----
-
-## Arquitectura
-
-```text
-Clientes
-
-Portal
-
-Azure CLI
-
-PowerShell
-
-Aplicaciones
-
-Usuarios
-
-        │
-
-        ▼
-
-Microsoft Entra ID
-
-        │
-
-        ├── Autenticación
-
-        ├── MFA
-
-        ├── OAuth2
-
-        ├── OpenID Connect
-
-        ├── Conditional Access
-
-        ├── PIM
-
-        └── Identity Protection
-
-        │
-
-        ▼
-
-Token JWT
-```
-
----
 
 ## Ejemplos
 
