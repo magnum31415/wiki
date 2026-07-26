@@ -3655,6 +3655,281 @@ Una condición ABAC **nunca concede acceso por sí sola**; únicamente puede **r
 | Mail-enabled Security Group | ❌ No | ❌ No | ❌ No | ❌ No | Correo + seguridad |
 | Distribution List | ❌ No | ❌ No | ❌ No | ❌ No | Distribución de correo |
 
+
+# Diferencia entre Azure RBAC y los Roles de Microsoft Entra ID (AZ-104)
+
+## Azure RBAC
+
+Azure RBAC (**Role-Based Access Control**) controla **qué puedes hacer sobre los recursos de Azure**.
+
+Ejemplos de recursos:
+
+- Virtual Machines
+- Storage Accounts
+- Virtual Networks
+- Resource Groups
+- Suscripciones
+- Management Groups
+
+Ejemplos de roles:
+
+- Owner
+- Contributor
+- Reader
+- Network Contributor
+- Virtual Machine Contributor
+- Storage Blob Data Contributor
+
+Ejemplo:
+
+```text
+RG1
+ │
+ └── Contributor
+      │
+      ▼
+User1
+```
+
+User1 puede:
+
+- Crear una VM
+- Eliminar una Storage Account
+- Crear una VNet
+
+pero **no administra Microsoft Entra ID**.
+
+---
+
+## Roles de Microsoft Entra ID
+
+Los roles de Microsoft Entra controlan **la administración del directorio (tenant)**.
+
+No controlan recursos de Azure.
+
+Ejemplos:
+
+- Global Administrator
+- User Administrator
+- Groups Administrator
+- Authentication Administrator
+- Privileged Role Administrator
+- Global Reader
+
+Ejemplo:
+
+```text
+Global Administrator
+        │
+        ▼
+User1
+```
+
+User1 puede:
+
+- Crear usuarios
+- Resetear contraseñas
+- Crear grupos
+- Configurar MFA
+- Administrar aplicaciones empresariales
+
+pero **no puede crear una VM**, salvo que además tenga un rol Azure RBAC.
+
+---
+
+# Comparación
+
+| Característica | Azure RBAC | Roles de Microsoft Entra |
+|----------------|------------|--------------------------|
+| Administra recursos de Azure | ✅ | ❌ |
+| Administra usuarios | ❌ | ✅ |
+| Administra grupos | ❌ | ✅ |
+| Administra Microsoft Entra | ❌ | ✅ |
+| Administra Resource Groups | ✅ | ❌ |
+| Administra VMs | ✅ | ❌ |
+| Administra VNets | ✅ | ❌ |
+| Administra Storage Accounts | ✅ | ❌ |
+
+---
+
+# Ejemplo real
+
+Supongamos:
+
+```text
+Subscription
+      │
+      ▼
+Contributor
+      │
+      ▼
+User1
+```
+
+User1 puede:
+
+- Crear VMs
+- Crear VNets
+- Crear Storage Accounts
+
+Pero intenta crear un usuario nuevo.
+
+Resultado:
+
+```
+Access Denied
+```
+
+Porque necesita un rol de Microsoft Entra.
+
+---
+
+Ahora:
+
+```text
+Global Administrator
+      │
+      ▼
+User2
+```
+
+User2 puede:
+
+- Crear usuarios
+- Cambiar contraseñas
+- Configurar MFA
+
+Pero intenta crear una VM.
+
+Resultado:
+
+```
+Access Denied
+```
+
+Porque necesita Azure RBAC.
+
+---
+
+# ¿Y si un usuario tiene ambos?
+
+```text
+Contributor (Azure RBAC)
+
++
+
+User Administrator (Entra)
+```
+
+Entonces podrá:
+
+- Crear recursos Azure.
+- Administrar usuarios del tenant.
+
+---
+
+# ¿Qué pasa con los grupos anidados?
+
+## Azure RBAC
+
+```
+Group1
+   │
+   ▼
+Group2
+   │
+   ▼
+User
+```
+
+Si Group1 tiene el rol **Owner** sobre un Resource Group:
+
+```
+User hereda el Owner.
+```
+
+✅ Azure RBAC utiliza pertenencia transitiva.
+
+---
+
+## Roles de Microsoft Entra
+
+```
+Global Reader
+      │
+      ▼
+Group1
+      │
+      ▼
+Group2
+      │
+      ▼
+User
+```
+
+El usuario **NO hereda** el rol mediante el grupo anidado.
+
+❌ Los roles de Microsoft Entra no utilizan pertenencia transitiva.
+
+---
+
+# Regla mnemotécnica
+
+## Azure RBAC
+
+Piensa:
+
+> **"¿Qué puedo hacer sobre los recursos de Azure?"**
+
+Ejemplos:
+
+- VM
+- Storage
+- VNet
+- Resource Group
+
+---
+
+## Microsoft Entra Roles
+
+Piensa:
+
+> **"¿Qué puedo administrar del directorio?"**
+
+Ejemplos:
+
+- Usuarios
+- Grupos
+- MFA
+- Aplicaciones
+- Roles
+- Identidades
+
+---
+
+# Truco para el AZ-104
+
+Si la pregunta habla de:
+
+- Virtual Machine
+- Storage Account
+- Resource Group
+- Subscription
+- VNet
+
+➡️ Piensa en **Azure RBAC**.
+
+Si habla de:
+
+- Usuarios
+- Grupos
+- Contraseñas
+- MFA
+- Roles
+- Microsoft Entra ID
+
+➡️ Piensa en **Roles de Microsoft Entra ID**.
+
 ---
 
 # Azure RBAC y grupos anidados
