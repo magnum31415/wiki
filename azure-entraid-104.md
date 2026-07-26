@@ -22,7 +22,7 @@
 - [Microsoft Entra ID Groups (AZ-104)](#microsoft-entra-id-groups-az-104)
 - [Microsoft Entra Entitlement Management (AZ-104)](#microsoft-entra-entitlement-management-az-104)
 - [RBAC vs ABAC (Azure)](#rbac-vs-abac-azure)
-
+- [Microsoft Entra ID - Grupos anidados (Nested Groups) (AZ-104)](#microsoft-entra-id---grupos-anidados-nested-groups-az-104)
 ---
 
 # Microsoft Active Directory (On-Premises) vs Microsoft Entra ID
@@ -3641,3 +3641,234 @@ La secuencia siempre es:
 2. **ABAC** (si existe una condición configurada) aplica restricciones adicionales basadas en atributos.
 
 Una condición ABAC **nunca concede acceso por sí sola**; únicamente puede **restringir** el acceso que ya permitiría el rol RBAC.
+
+---
+
+# Microsoft Entra ID - Grupos anidados (Nested Groups) (AZ-104)
+
+## Tipos de grupos
+
+| Tipo | Se puede anidar | Hereda Azure RBAC | Hereda roles de Entra | Hereda licencias | Uso principal |
+|-------|:---------------:|:-----------------:|:---------------------:|:----------------:|--------------|
+| Security Group | ✅ Sí | ✅ Sí | ❌ No | ❌ No | Seguridad y permisos |
+| Microsoft 365 Group | ❌ No | N/A | N/A | N/A | Colaboración (Teams, Outlook, SharePoint) |
+| Mail-enabled Security Group | ❌ No | ❌ No | ❌ No | ❌ No | Correo + seguridad |
+| Distribution List | ❌ No | ❌ No | ❌ No | ❌ No | Distribución de correo |
+
+---
+
+# Azure RBAC y grupos anidados
+
+Supongamos:
+
+```text
+RG1
+ │
+ └── Owner
+      │
+      ▼
+Group1
+      │
+      ▼
+Group2
+      │
+      ▼
+User2
+```
+
+Si:
+
+- Group1 tiene el rol **Owner** sobre RG1.
+- Group2 es miembro de Group1.
+
+Entonces:
+
+```
+User2 hereda el rol Owner.
+```
+
+Esta es exactamente la situación de la pregunta del examen.
+
+Por eso la respuesta es:
+
+> **True**
+
+---
+
+# ¿Por qué funciona?
+
+Porque:
+
+- Group1 es un **Security Group**.
+- Group2 también es un **Security Group**.
+- Ambos son **Role-Assignable Groups**.
+
+Azure RBAC evalúa la pertenencia transitiva de estos grupos.
+
+---
+
+# Lo que NO se hereda
+
+No todo utiliza la pertenencia transitiva.
+
+## Licencias
+
+```text
+Group1
+    │
+    ▼
+Group2
+    │
+    ▼
+User2
+```
+
+Si asignas una licencia a Group1:
+
+```
+User2 NO recibe la licencia.
+```
+
+Las licencias solo se aplican a miembros **directos**.
+
+---
+
+## Roles de Microsoft Entra
+
+Si asignas un rol de Entra (por ejemplo, Global Reader) a Group1:
+
+```text
+Global Reader
+      │
+      ▼
+Group1
+      │
+      ▼
+Group2
+      │
+      ▼
+User2
+```
+
+User2 **NO hereda** el rol mediante el grupo anidado.
+
+Los roles de Entra no utilizan pertenencia transitiva.
+
+---
+
+## Microsoft 365 Groups
+
+No admiten grupos anidados.
+
+No puedes hacer:
+
+```text
+Microsoft365Group1
+      │
+      ▼
+Microsoft365Group2
+```
+
+ni:
+
+```text
+Microsoft365Group
+      │
+      ▼
+Security Group
+```
+
+---
+
+# Regla para el AZ-104
+
+## Azure RBAC
+
+```
+Security Group
+      │
+      ▼
+Security Group
+      │
+      ▼
+Usuario
+
+✅ Sí hereda permisos RBAC
+```
+
+---
+
+## Licencias
+
+```
+Security Group
+      │
+      ▼
+Security Group
+      │
+      ▼
+Usuario
+
+❌ No hereda licencias
+```
+
+---
+
+## Roles de Entra
+
+```
+Security Group
+      │
+      ▼
+Security Group
+      │
+      ▼
+Usuario
+
+❌ No hereda roles de Entra
+```
+
+---
+
+# Resumen
+
+| Característica | ¿Admite grupos anidados? | ¿Se hereda? |
+|----------------|:------------------------:|:-----------:|
+| Azure RBAC | ✅ | ✅ |
+| Microsoft Entra Roles | ✅ (el grupo puede recibir el rol) | ❌ Mediante grupos anidados |
+| Group-Based Licensing | ✅ (el grupo puede tener licencias) | ❌ Solo miembros directos |
+| Microsoft 365 Groups | ❌ | N/A |
+
+---
+
+# Regla mnemotécnica
+
+**Azure RBAC sí sigue la cadena de grupos.**
+
+```text
+RG
+ │
+Owner
+ │
+Group A
+ │
+Group B
+ │
+User
+
+✅ User es Owner
+```
+
+**Microsoft Entra (roles y licencias) NO sigue la cadena de grupos.**
+
+```text
+Licencia
+ │
+Group A
+ │
+Group B
+ │
+User
+
+❌ User NO recibe la licencia
+```
