@@ -549,6 +549,19 @@ También protege:
 - SAP HANA
 - Azure VM
 
+
+| Característica           | Recovery Services Vault | Backup Vault              |
+| ------------------------ | ----------------------- | ------------------------- |
+| Servicio                 | Clásico                 | Nuevo                     |
+| Uso principal            | Azure Backup            | Data Protection Backup    |
+| Máquinas Virtuales Azure | ✅ Sí                    | ✅ Sí (algunos escenarios) |
+| Azure Files              | ✅ Sí                    | ❌ No                      |
+| SQL Server en Azure VM   | ✅ Sí                    | ❌ No                      |
+| SAP HANA en Azure VM     | ✅ Sí                    | ❌ No                      |
+| Azure Blobs              | ❌ No                    | ✅ Sí (Operational Backup) |
+| Azure Disks              | ❌ No                    | ✅ Sí                      |
+| Estado en AZ-104         | ⭐ Muy importante        | Poco preguntado           |
+
 ---
 
 # 65. Tipos de restauración
