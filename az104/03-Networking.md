@@ -99,15 +99,11 @@ Ejemplo:
 Azure reserva:
 
 ```
-.0
-
-.1
-
-.2
-
-.3
-
-.255
+.0    → Dirección de red (Network Address)
+.1    → Gateway predeterminado de Azure
+.2    → Servidor DNS de Azure
+.3    → Reservada para uso interno de Azure
+.255  → Última dirección de la subred (reservada por Azure)
 ```
 
 Estas direcciones no pueden asignarse a recursos.
