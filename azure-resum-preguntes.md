@@ -1,10 +1,668 @@
 
 # Test 1
+# Parte 1A
+
+### **1. Website Contributor**
+
+El rol **Website Contributor** permite administrar y desplegar aplicaciones en **Azure App Service** utilizando autenticación de **Microsoft Entra ID**, sin conceder permisos administrativos completos.
+
+Es el rol recomendado cuando los desarrolladores solo necesitan publicar aplicaciones mediante **Web Deploy**, ya que sigue el principio de **mínimo privilegio**. 
+
+
+### **2. Azure RBAC Conditions - Lectura de Blobs**
+
+Las **Azure RBAC Conditions** permiten restringir un rol mediante condiciones adicionales, como el nombre del **Container**, la ruta del **Blob** o el tipo de operación.
+
+Aunque un usuario tenga el rol **Storage Blob Data Reader**, solo podrá acceder a los blobs que cumplan la condición definida en la asignación del rol.
+
+
+### **3. Azure RBAC Conditions - Escritura de Blobs**
+
+Las **Azure RBAC Conditions** también pueden limitar operaciones de escritura (**Write**) realizadas por roles como **Storage Blob Data Owner**.
+
+Las condiciones se evalúan en cada solicitud y pueden permitir o denegar el acceso según atributos como el nombre del blob, la ruta o el contenedor. 
+
+
+### **4. Azure RBAC Conditions**
+
+Las **Conditions** son un filtro adicional aplicado sobre un rol de **Azure RBAC**. Primero el usuario debe tener el rol y, además, la condición debe evaluarse como **True**.
+
+Si la condición devuelve **False**, la operación se deniega aunque el usuario tenga asignado el rol correspondiente.
+
+
+### **5. Virtual Machine Redeploy**
+
+La operación **Redeploy** mueve una **Virtual Machine** a un **nuevo host físico** dentro de la misma región de Azure.
+
+Se utiliza principalmente para resolver problemas relacionados con el host físico o para evitar una **Planned Maintenance**. 
+
+### **6. Mover una VM entre Resource Groups**
+
+Mover una **Virtual Machine** entre **Resource Groups** es únicamente una operación de **Azure Resource Manager**.
+
+Este movimiento **no cambia el host físico** donde se ejecuta la VM y, por tanto, **no sirve** para evitar una tarea de mantenimiento de Azure. 
+
+
+### **7. Updates de una Virtual Machine**
+
+Habilitar **Updates** o **Automatic Guest Patching** administra las actualizaciones del sistema operativo invitado.
+
+Esta configuración **no mueve** la máquina virtual a otro servidor físico y **no evita** una operación de mantenimiento de la plataforma Azure. 
+
+### **8. Azure Virtual Machine Redeploy + Reapply**
+
+La opción **Redeploy + Reapply** reprovisiona la máquina virtual sobre un **nuevo host físico** manteniendo la configuración de Azure.
+
+Es la acción correcta cuando el objetivo es cambiar inmediatamente de servidor físico sin modificar la configuración de la VM. 
+
+
+
+### **9. Azure Virtual Machine Scale Set - Scale Out**
+
+Cuando la utilización de **CPU** supera el umbral configurado durante el tiempo especificado, un **Virtual Machine Scale Set** ejecuta automáticamente un **Scale Out**.
+
+El número de instancias añadidas depende de la configuración de la regla de escalado automático. 
+
+
+### **10. Azure Virtual Machine Scale Set - Scale In**
+
+Si la utilización de **CPU** permanece por debajo del umbral de **Scale In**, Azure reduce progresivamente el número de instancias hasta alcanzar el valor mínimo configurado.
+
+El escalado nunca reducirá las instancias por debajo del parámetro **Minimum instance count** definido en el Scale Set. 
+
+
+### **11. Azure Container Registry Tasks**
+
+**ACR Tasks** permite compilar, probar y publicar automáticamente imágenes de contenedor directamente en **Azure Container Registry**.
+
+Es una característica disponible en los tres SKUs (**Basic**, **Standard** y **Premium**). Lo que cambia entre ellos son los límites de capacidad y las funcionalidades avanzadas, no la disponibilidad de ACR Tasks.
+
+
+
+### **12. Private Endpoints en Azure Container Registry**
+
+Los **Private Endpoints** para **Azure Container Registry (ACR)** solo están disponibles en el **SKU Premium**.
+
+Si un escenario requiere acceder al registro mediante **Private Link**, primero será necesario actualizar el registro al SKU **Premium**.
+
+
+
+### **13. Dedicated Data Endpoint en ACR**
+
+Para habilitar un **Dedicated Data Endpoint** en un **Azure Container Registry**, primero debe utilizarse el **SKU Premium**.
+
+Después se habilita el endpoint desde **Properties** y, posteriormente, se configura la conectividad mediante **Networking** y **Private Endpoints** si es necesario.
+
+
+
+### **14. External Collaboration Restrictions**
+
+Las **External Collaboration Settings** de **Microsoft Entra ID** permiten restringir qué dominios externos pueden ser invitados al tenant.
+
+La configuración **Collaboration restrictions** controla los dominios permitidos o bloqueados para usuarios invitados, aumentando la seguridad de la colaboración B2B.
+
+
+
+### **15. Cambiar el tamaño de una Virtual Machine**
+
+Si una **Virtual Machine** no puede cambiar de tamaño por falta de capacidad en el clúster actual, el primer paso es **Deallocate** la máquina.
+
+Al quedar desasignada, Azure puede moverla a otro clúster con capacidad disponible y permitir el cambio de tamaño.
+
+
+
+### **16. Public IP y Network Interface**
+
+Una **Public IP** siempre se asocia a una **Network Interface (NIC)** o al **Frontend** de un **Load Balancer**.
+
+Nunca se asigna directamente a una **Virtual Machine**; la VM accede a ella a través de la NIC.
+
+
+
+### **17. Service Chaining**
+
+**Service Chaining** permite redirigir tráfico entre redes mediante una **User Defined Route (UDR)** hacia una **Network Virtual Appliance (NVA)** o un dispositivo de red.
+
+Es una solución habitual para hacer que varias VNets compartan un firewall o una conexión hacia una red **on-premises**.
+
+
+
+### **18. Rotación de Access Keys**
+
+La rotación automática de las **Access Keys** de un **Storage Account** se implementa utilizando **Azure Key Vault** junto con procesos automatizados.
+
+Ni **Recovery Services Vault**, ni **Backup Vault**, ni **Lifecycle Management** gestionan la renovación de claves.
+
+
+
+### **19. Storage Blob Data Roles**
+
+Los roles **Storage Blob Data Contributor** y **Storage Blob Data Owner** permiten acceder directamente a los **Blob Data** y admiten **Azure RBAC Conditions**.
+
+Los roles administrativos del **Storage Account** permiten administrar el recurso, pero no acceder al contenido de los blobs.
+
+
+
+### **20. Dynamic User Groups**
+
+Los **Dynamic User Groups** agregan o eliminan usuarios automáticamente según reglas basadas en atributos como **Department**, **City** o **Job Title**.
+
+Son especialmente útiles para automatizar la asignación de licencias, aplicaciones y permisos sin necesidad de administrar manualmente la pertenencia a los grupos.
+
+# Parte 1C
+
+### **21. Geo-replication en Azure Container Registry**
+
+La **Geo-replication** permite que un **Azure Container Registry (ACR)** replique automáticamente las imágenes en varias regiones, mejorando la disponibilidad y reduciendo la latencia.
+
+Esta funcionalidad **solo está disponible en el SKU Premium**, por lo que el primer paso siempre será actualizar el registro desde **Basic** o **Standard** a **Premium**. 
+
+### **22. SAS Expiry Recommendation**
+
+Un **Storage Account** puede advertir cuando un usuario crea una **Shared Access Signature (SAS)** con una duración superior a la recomendada.
+
+La opción **Allow recommended upper limit for shared access signature (SAS) expiry interval** **no bloquea** la creación de la SAS; únicamente muestra una advertencia para fomentar buenas prácticas de seguridad. 
+
+### **23. Azure Files + Active Directory Domain Services**
+
+Cuando un **Azure File Share** utiliza **Active Directory Domain Services (AD DS)** para la autenticación, los usuarios deben existir en dicho dominio.
+
+Los usuarios **cloud-only** de **Microsoft Entra ID** no pueden autenticarse mediante AD DS, ya que no disponen de una identidad en el dominio local sincronizado. 
+
+### **24. Azure Files + Usuarios sincronizados**
+
+Un usuario sincronizado desde **Active Directory** mediante **Microsoft Entra Connect** puede acceder a un **Azure File Share** integrado con AD DS si dispone de los permisos adecuados.
+
+La autenticación la realiza **AD DS**, mientras que la autorización se controla mediante **Azure RBAC** y los permisos del recurso compartido. 
+
+### **25. Identity-based Access en Storage Accounts**
+
+La configuración de **Identity-based Access** es independiente para cada **Storage Account**.
+
+Configurar un Storage Account para utilizar **AD DS** no implica que el resto de Storage Accounts del tenant adopten automáticamente la misma configuración. 
+
+### **26. Eliminar usuarios con licencias**
+
+Un usuario de **Microsoft Entra ID** puede eliminarse aunque tenga licencias asignadas, ya sean directas o heredadas mediante grupos.
+
+Al eliminar el usuario, las licencias quedan automáticamente disponibles para volver a asignarlas a otros usuarios. 
+
+### **27. Eliminar grupos con licencias**
+
+Un grupo que tenga **licencias asignadas directamente** no puede eliminarse hasta retirar previamente dichas licencias.
+
+Esta restricción evita dejar asignaciones de licencias huérfanas dentro del tenant. 
+
+### **28. Azure Backup Reports + Storage Account**
+
+Si **Azure Backup Reports** exporta información a un **Storage Account**, éste debe encontrarse en la **misma región** que el **Recovery Services Vault**.
+
+Este requisito solo aplica al Storage Account utilizado para almacenar los informes exportados. 
+
+### **29. Azure Backup Reports + Log Analytics**
+
+El **Log Analytics Workspace** utilizado por **Azure Backup Reports** puede encontrarse en una región distinta al **Recovery Services Vault**.
+
+A diferencia del **Storage Account**, **no existe un requisito de coincidencia de región** entre ambos recursos. 
+
+### **30. Connection Monitor**
+
+**Connection Monitor** supervisa la conectividad entre recursos de Azure y permite detectar problemas de red mediante pruebas periódicas.
+
+Las máquinas virtuales supervisadas deben pertenecer a la **misma región**, por lo que si existen VMs en varias regiones será necesario crear **un Connection Monitor por cada región**. 
+
+# Parte 2A
+
+### **31. Reglas predeterminadas de un NSG**
+
+Un **Network Security Group (NSG)** con únicamente las **reglas predeterminadas** **no permite** conexiones **RDP (TCP 3389)** desde Internet. La regla **DenyAllInbound (65500)** bloquea todo el tráfico entrante que no haya sido permitido explícitamente.
+
+Para publicar una máquina virtual mediante **Remote Desktop**, es obligatorio crear una regla **Allow** con una prioridad superior a **65500**. 
+
+### **32. NSG asociado a una Network Interface**
+
+Un **NSG** puede asociarse tanto a una **Subnet** como a una **Network Interface (NIC)**. Si existe una regla **Allow TCP 3389** en el NSG de la NIC, la máquina virtual podrá aceptar conexiones RDP siempre que ninguna otra regla lo impida.
+
+En el examen recuerda que **las reglas del NSG de la Subnet y de la NIC se evalúan conjuntamente**, y el tráfico solo se permite si **ninguna** de ellas lo bloquea. 
+
+### **33. Comunicación entre máquinas virtuales de una misma VNet**
+
+Las máquinas virtuales situadas en una **misma Virtual Network** pueden comunicarse mediante sus **Private IPs** gracias a la regla predeterminada **AllowVNetInBound**.
+
+Esta comunicación solo dejará de funcionar si un **NSG**, una **User Defined Route (UDR)** o un **Firewall** bloquean explícitamente el tráfico. 
+
+### **34. Overlapping de Address Spaces**
+
+Dos **Virtual Networks** únicamente pueden establecer un **VNet Peering** si sus **Address Spaces no se solapan (CIDR Overlap)**.
+
+Si ambos utilizan el mismo rango de direcciones, primero deberá modificarse el **Address Space** de una de las VNets antes de crear el peering. 
+
+### **35. Internal Load Balancer**
+
+Un **Internal Load Balancer (ILB)** distribuye tráfico utilizando una **Private IP**, por lo que solo puede ser utilizado desde la red privada (VNet, VPN o ExpressRoute).
+
+Es la solución recomendada para balancear tráfico entre capas internas de una aplicación, por ejemplo entre la **Web Tier** y la **Application Tier**. 
+---
+
+### **36. Azure Application Gateway WAF**
+
+Si el objetivo es proteger una aplicación web frente a ataques como **SQL Injection**, **Cross-Site Scripting (XSS)** o **OWASP Top 10**, debe utilizarse un **Web Application Firewall (WAF)**.
+
+Ni un **Load Balancer** ni un **Network Security Group** inspeccionan el contenido HTTP/HTTPS de las peticiones. 
 
 ---
-# Test 2
 
-# Parte 1
+### **37. Address Spaces en una Virtual Network**
+
+Una **Virtual Network** puede contener **varios Address Spaces**. Esto permite ampliar la red sin necesidad de crear una nueva VNet.
+
+Antes de crear una **Subnet** utilizando un nuevo rango IP, dicho rango debe añadirse previamente como **Address Space** de la VNet. 
+
+---
+
+### **38. Crear una nueva Subnet**
+
+Si el rango IP ya pertenece al **Address Space** de la **Virtual Network**, únicamente será necesario crear una nueva **Subnet** utilizando ese rango.
+
+No es necesario modificar el **Address Space** siempre que el nuevo CIDR esté incluido dentro de él y no se solape con otras subredes. 
+
+---
+
+### **39. SSPR para administradores**
+
+Los usuarios que poseen **roles administrativos** en **Microsoft Entra ID** siguen una política especial de **Self-Service Password Reset (SSPR)**.
+
+Por motivos de seguridad, **no pueden utilizar preguntas de seguridad** como método de autenticación durante el restablecimiento de la contraseña. 
+
+---
+
+### **40. Métodos de autenticación para administradores**
+
+Los administradores de **Microsoft Entra ID** deben utilizar **dos métodos de autenticación** para realizar un **Self-Service Password Reset**.
+
+Los métodos admitidos incluyen, por ejemplo, **Microsoft Authenticator**, **SMS**, **llamada telefónica** o **correo alternativo**, pero **nunca** las **preguntas de seguridad**.
+---
+# Parte 2B
+
+### **41. SSPR para usuarios estándar**
+
+Los **usuarios que no tienen un rol administrativo** siguen la política estándar de **Self-Service Password Reset (SSPR)**. Si las **preguntas de seguridad** están habilitadas, Azure puede solicitar cualquiera de las preguntas configuradas como método de autenticación.
+
+La diferencia importante respecto a los administradores es que **los usuarios normales sí pueden utilizar preguntas de seguridad**, mientras que los administradores no. 
+
+### **42. Data Collection Rule (DCR) - Data Sources**
+
+Una **Data Collection Rule (DCR)** define **qué datos se recopilan**, **desde dónde** y **a dónde se envían**. Como origen (**Data Source**) solo admite recursos compatibles, siendo las **Virtual Machines** el caso más habitual.
+
+Ni un **Storage Account**, ni un **Log Analytics Workspace**, ni una **Azure SQL Database** pueden configurarse como **Data Sources** de una DCR. 
+
+### **43. Data Collection Rule (DCR) - Destinations**
+
+Los datos recopilados por una **Data Collection Rule** pueden enviarse a destinos compatibles como un **Log Analytics Workspace**, **Azure Monitor Metrics** o **Event Hubs**, dependiendo del escenario.
+
+Un **Storage Account** o una **Azure SQL Database** no son destinos directos de una DCR estándar para Azure Monitor. 
+
+### **44. Azure Backup - File Recovery**
+
+Cuando una **Azure Virtual Machine** está protegida mediante **Azure Backup**, es posible recuperar únicamente archivos o carpetas sin restaurar toda la máquina.
+
+Azure monta temporalmente el **Recovery Point** como una unidad en un equipo Windows, permitiendo copiar los archivos deseados mediante el Explorador de archivos. 
+
+### **45. Azure Backup Retention**
+
+Si un mismo **Recovery Point** coincide con varias reglas de retención (**diaria**, **semanal**, **mensual** o **anual**), Azure siempre conserva la **retención más larga**.
+
+Por ejemplo, si una copia coincide con la retención mensual y anual, permanecerá almacenada durante el período anual configurado.
+
+### **46. Prioridad entre reglas de retención**
+
+Las políticas de retención de **Azure Backup** son acumulativas. Un mismo punto de recuperación puede pertenecer a varias categorías de retención simultáneamente.
+
+En caso de coincidencia, **siempre prevalece el período de retención más largo**, evitando eliminar copias que aún deban conservarse. 
+
+### **47. Recovery Services Vault**
+
+Las copias de seguridad de las **Azure Virtual Machines** siempre se administran desde un **Recovery Services Vault**.
+
+No es posible almacenar directamente los backups de una VM en un **Storage Account**, un **Blob Container** o un **Azure File Share**. :
+
+### **48. Backup Policy**
+
+Una **Backup Policy** define **cuándo** se realizan las copias de seguridad y **cuánto tiempo** se conservan los distintos **Recovery Points**.
+
+La política puede incluir retenciones **diarias**, **semanales**, **mensuales** y **anuales**, todas gestionadas automáticamente por Azure Backup. 
+
+
+### **49. Azure Monitor Private Link Scope (AMPLS)**
+
+Para que **Azure Monitor** sea accesible únicamente mediante **red privada**, primero debe crearse un **Azure Monitor Private Link Scope (AMPLS)**.
+
+Después se crea un **Private Endpoint** asociado al AMPLS, evitando que las comunicaciones con Azure Monitor utilicen la red pública. 
+
+
+
+### **50. ARM Template - copy**
+
+La función **copy** de un **ARM Template** permite crear múltiples instancias de un mismo recurso o propiedad utilizando un único bloque de definición.
+
+Normalmente se utiliza para desplegar varios **Data Disks**, **NICs** u otros recursos repetitivos, combinándola con **copyIndex()** para generar valores únicos en cada iteración. 
+
+
+### **51. ARM Template - copyIndex()**
+
+La función **copyIndex()** devuelve el índice de cada iteración de un bloque **copy** dentro de un **ARM Template**. Se utiliza para generar valores únicos, como el **LUN** de un disco, el nombre de un recurso o un número secuencial.
+
+Normalmente se combina con **copy** para desplegar varios recursos similares sin repetir código.
+
+
+
+### **52. Private Endpoint para Azure Storage**
+
+Si el requisito es que todo el tráfico entre una **Virtual Machine** y un **Storage Account** permanezca dentro de la red privada de Azure, debe utilizarse un **Private Endpoint**.
+
+Los **Service Endpoints** siguen accediendo al servicio mediante su **IP pública**, mientras que **Private Endpoint** asigna una **Private IP** dentro de la VNet.
+
+
+
+### **53. Acceso a Blob Storage con mínimo privilegio**
+
+Para cargar archivos desde el **Azure Portal** a un **Blob Container**, el usuario necesita permisos tanto sobre el recurso como sobre los datos.
+
+La combinación habitual es **Reader** (para visualizar el Storage Account) y **Storage Blob Data Contributor** (para leer y escribir blobs), siguiendo el principio de **mínimo privilegio**.
+
+
+
+### **54. Inmutabilidad de Blob Storage**
+
+Si un blob no debe modificarse ni eliminarse durante un período determinado, debe configurarse una **Time-based Retention Policy** o una **Legal Hold**.
+
+Los permisos **IAM**, los **Access Keys** o el **Access Tier** no proporcionan protección frente a modificaciones o eliminaciones accidentales.
+
+
+
+### **55. Ámbito de una Alert Rule**
+
+Una **Alert Rule** cuyo ámbito es una **Subscription** o **todas las Resource Groups** supervisará también los recursos que se creen en el futuro dentro de ese ámbito.
+
+No es necesario modificar la alerta cada vez que se crea una nueva **Resource Group** o un nuevo recurso.
+
+
+
+### **56. Alert Processing Rule**
+
+Una **Alert Processing Rule** permite modificar el tratamiento de una alerta después de que ésta se haya generado.
+
+Por ejemplo, una regla de tipo **Suppress notifications** evita el envío de correos o SMS, pero **la alerta sigue generándose y registrándose** en Azure Monitor.
+
+
+
+### **57. Alertas administrativas**
+
+Las operaciones administrativas, como **crear**, **eliminar** o **añadir un Tag** a un recurso, pueden generar alertas si existe una **Alert Rule** basada en **Administrative Activity**.
+
+Estas alertas se basan en el **Activity Log**, no en métricas ni en registros de Log Analytics.
+
+
+
+### **58. Recovery Services Vault con ZRS**
+
+Si el requisito indica que las copias de seguridad deben almacenarse en **Availability Zones**, el **Recovery Services Vault** debe configurarse con **Zone-Redundant Storage (ZRS)** antes de habilitar el backup.
+
+Una vez que el Vault contiene elementos protegidos, **no es posible cambiar posteriormente el tipo de redundancia**.
+
+
+### **59. Group-Based Licensing**
+
+Cuando una licencia se asigna mediante un **grupo**, el usuario la recibe automáticamente mientras pertenezca a ese grupo.
+
+No puede eliminarse la licencia directamente del usuario; para retirarla es necesario **quitar al usuario del grupo** o **eliminar la licencia del grupo**.
+
+
+
+### **60. Prioridad del Group-Based Licensing**
+
+El **Group-Based Licensing** se administra automáticamente por **Microsoft Entra ID** y vuelve a aplicar la licencia si el usuario continúa perteneciendo al grupo.
+
+Por ello, quitar manualmente la licencia al usuario **no tiene efecto permanente**, ya que la heredará de nuevo mientras siga siendo miembro del grupo.
+
+
+
+### **61. Group-Based Licensing y grupos anidados**
+
+El **Group-Based Licensing** de **Microsoft Entra ID** **no admite grupos anidados**. Si un grupo con una licencia asignada contiene otro grupo, los miembros del grupo interno **no heredarán la licencia**.
+
+Para que un usuario reciba una licencia mediante este mecanismo, debe ser **miembro directo** del grupo al que se ha asignado la licencia
+
+### **62. Cuotas de vCPU en Azure**
+
+Azure controla el número máximo de **vCPUs** que pueden desplegarse en cada región mediante las **vCPU Quotas**. Estas cuotas se aplican tanto a una familia de máquinas virtuales como al total regional.
+
+Antes de crear una nueva VM, Azure comprueba que ambas cuotas dispongan de capacidad suficiente.
+
+### **63. Máquinas virtuales Deallocated y cuotas**
+
+Una **Virtual Machine** en estado **Stopped (Deallocated)** deja de consumir recursos de proceso, pero **sigue contando para la cuota de vCPUs** de la suscripción.
+
+Si se supera la cuota regional, Azure impedirá crear nuevas máquinas virtuales aunque algunas estén desasignadas
+
+
+### **64. Total Regional vCPU Quota**
+
+La **Total Regional vCPU Quota** representa el número máximo de vCPUs que una suscripción puede tener aprovisionadas en una región determinada.
+
+Para desplegar una nueva VM es necesario cumplir tanto la **cuota regional** como la **cuota de la familia** de máquinas virtuales elegida.
+
+
+### **65. Dynamic User Groups**
+
+Un **Dynamic User Group** agrega y elimina usuarios automáticamente según reglas basadas en atributos como **Department**, **Country** o **Job Title**.
+
+La pertenencia al grupo depende exclusivamente de la **Membership Rule**, no de las licencias asignadas al usuario.
+
+
+
+### **66. Pertenencia a varios Dynamic Groups**
+
+Un usuario puede pertenecer simultáneamente a varios **Dynamic User Groups** siempre que cumpla las reglas de cada uno.
+
+Cada grupo evalúa sus reglas de forma independiente, por lo que un cambio en los atributos del usuario puede modificar automáticamente su pertenencia.
+
+
+### **67. Virtual Machine Extensions**
+
+Las **Virtual Machine Extensions** permiten instalar software o ejecutar tareas de configuración después del despliegue de una VM.
+
+En un **ARM Template**, las extensiones se implementan mediante el recurso **Microsoft.Compute/virtualMachines/extensions**, que es un recurso hijo de la máquina virtual.
+
+
+### **68. Protected Settings**
+
+Las **Virtual Machine Extensions** disponen de dos bloques de configuración: **Settings** y **ProtectedSettings**.
+
+Toda la información confidencial, como **contraseñas**, **claves** o **tokens**, debe almacenarse en **ProtectedSettings**, ya que Azure la cifra automáticamente.
+
+
+
+### **69. Publicar aplicaciones solo para redes privadas**
+
+Si una aplicación únicamente debe ser accesible desde una **VPN** o mediante **ExpressRoute**, debe utilizarse un **Internal Load Balancer** o un **Application Gateway interno**.
+
+Ambas soluciones utilizan una **Private IP**, evitando exponer el servicio a Internet.
+
+---
+
+### **70. Rol Contributor**
+
+El rol **Contributor** permite crear, modificar y eliminar prácticamente todos los recursos de Azure, como **Virtual Machines**, **Virtual Networks** o **Storage Accounts**.
+
+Sin embargo, **no puede asignar permisos RBAC** ni administrar el acceso de otros usuarios; para ello se requiere **Owner** o **User Access Administrator**.
+
+
+# Parte 3B
+
+### **71. Azure Policy - Efecto Deny**
+
+Una **Azure Policy** con efecto **Deny** impide la creación o modificación de recursos que no cumplan la política definida.
+
+El bloqueo se aplica independientemente del método utilizado (**Portal**, **Azure CLI**, **PowerShell**, **ARM Templates** o **Terraform**), ya que la validación se realiza en Azure Resource Manager.
+
+---
+
+### **72. Resource Locks**
+
+Los **Resource Locks** protegen un recurso frente a modificaciones o eliminaciones accidentales. Existen dos tipos: **CanNotDelete** y **ReadOnly**.
+
+Un bloqueo **no controla permisos RBAC**; simplemente impide determinadas operaciones incluso a usuarios con permisos elevados.
+
+---
+
+### **73. Mover recursos y Resource Locks**
+
+Los **Resource Locks** no están diseñados para controlar el movimiento de recursos entre **Resource Groups** o **Subscriptions**.
+
+Su función es impedir modificaciones o eliminaciones, por lo que no deben confundirse con mecanismos de control de acceso como **Azure RBAC**.
+
+---
+
+### **74. Archive Tier**
+
+El **Archive Tier** es el nivel de almacenamiento de menor coste para datos que apenas se consultan y pueden permanecer archivados durante largos periodos.
+
+Solo está disponible para **Azure Blob Storage** y requiere una rehidratación antes de poder acceder nuevamente a los datos.
+
+---
+
+### **75. Azure Table Storage**
+
+**Azure Table Storage** es un servicio **NoSQL** orientado al almacenamiento de grandes volúmenes de datos estructurados mediante **Partition Key** y **Row Key**.
+
+No está pensado para almacenar archivos, imágenes o documentos, sino información estructurada de alta escalabilidad.
+
+---
+
+### **76. Azure File Storage**
+
+**Azure File Storage** proporciona recursos compartidos compatibles con el protocolo **SMB** y **NFS**, permitiendo montar unidades de red desde Windows y Linux.
+
+A diferencia de **Blob Storage**, **no admite el Archive Tier**, por lo que no debe utilizarse para archivado de datos.
+
+---
+
+### **77. Azure Storage Explorer**
+
+**Azure Storage Explorer** es la herramienta gráfica recomendada para administrar **Storage Accounts**, **Blob Containers**, **File Shares**, **Queues** y **Tables**.
+
+Permite cargar, descargar y administrar datos de forma sencilla sin necesidad de utilizar comandos como **AzCopy**.
+
+---
+
+### **78. Recovery Services Vault**
+
+Antes de proteger una **Virtual Machine** con **Azure Backup**, es obligatorio crear un **Recovery Services Vault**.
+
+Después se configura una **Backup Policy** y, finalmente, se habilita la protección de la máquina virtual.
+
+---
+
+### **79. Access Control (IAM)**
+
+Los permisos sobre una **Subscription**, **Resource Group** o **Resource** se administran desde **Access Control (IAM)** mediante **Azure RBAC**.
+
+Los roles se heredan desde el ámbito donde se asignan, simplificando la administración de permisos en Azure.
+
+---
+
+### **80. NSG y HTTPS**
+
+Para publicar una aplicación web mediante **HTTPS**, el **Network Security Group (NSG)** debe permitir tráfico **Inbound TCP 443** desde el origen correspondiente.
+
+Si no existe una regla **Allow** con mayor prioridad que la regla **DenyAllInbound**, Azure bloqueará las conexiones HTTPS.
+
+
+# Parte 3C
+
+### **81. Azure Resource Tags**
+
+Los **Tags** permiten clasificar y organizar los recursos mediante pares **Nombre = Valor**, facilitando la administración, el filtrado y el control de costes.
+
+Pueden aplicarse a **Subscriptions**, **Resource Groups** y **Resources**, pero **no** a los **Management Groups**.
+
+---
+
+### **82. Azure Management Groups**
+
+Los **Management Groups** permiten organizar varias **Subscriptions** en una jerarquía para administrar de forma centralizada **Azure Policy** y **Azure RBAC**.
+
+Las políticas y permisos asignados a un **Management Group** se heredan automáticamente por todas las suscripciones y recursos descendientes.
+
+---
+
+### **83. Azure Policy vs Azure RBAC**
+
+**Azure RBAC** controla **quién** puede realizar una acción sobre un recurso, mientras que **Azure Policy** controla **qué configuraciones están permitidas**.
+
+Ambos servicios son complementarios: un usuario puede tener permisos RBAC y, aun así, una **Azure Policy** impedir la operación.
+
+---
+
+### **84. Service Endpoint**
+
+Un **Service Endpoint** mantiene el acceso a un servicio PaaS mediante su **IP pública**, pero el tráfico viaja por la **red troncal de Microsoft**.
+
+No asigna una **Private IP** al servicio; para ello debe utilizarse un **Private Endpoint**.
+
+---
+
+### **85. Private Endpoint**
+
+Un **Private Endpoint** asigna una **Private IP** de la **Virtual Network** a un servicio PaaS de Azure mediante **Azure Private Link**.
+
+Desde la VNet, el servicio se consume como si fuera un recurso interno, eliminando la necesidad de acceder a su dirección pública.
+
+---
+
+### **86. Service Endpoint Policy**
+
+Una **Service Endpoint Policy** permite restringir el acceso desde una **Subnet** únicamente a determinados **Storage Accounts** cuando se utilizan **Service Endpoints**.
+
+Si un Storage Account no está incluido en la política, el acceso quedará bloqueado aunque pertenezca al servicio **Microsoft.Storage**.
+
+---
+
+### **87. Private DNS Zone**
+
+Una **Private DNS Zone** permite resolver automáticamente el nombre DNS de un **Private Endpoint** hacia su **Private IP**.
+
+Sin esta resolución DNS, las aplicaciones podrían seguir intentando acceder al servicio mediante su dirección pública.
+
+---
+
+### **88. Recovery Services Vault**
+
+Un **Recovery Services Vault** no puede eliminarse mientras contenga **Protected Items**, **Recovery Points** o copias de seguridad activas.
+
+Antes de eliminar el Vault o el **Resource Group** que lo contiene, es necesario **detener la protección** y eliminar todos los elementos protegidos.
+
+---
+
+### **89. App Service Plan**
+
+Un **App Service Plan** define el **SKU**, el **sistema operativo**, la **región** y los recursos de proceso (**CPU** y **memoria**) que compartirán todas las **Web Apps** hospedadas en él.
+
+Varias aplicaciones pueden compartir el mismo App Service Plan, compartiendo también sus recursos.
+
+---
+
+### **90. Web App**
+
+Una **Azure Web App** siempre debe ejecutarse dentro de un **App Service Plan** compatible con su **región** y **sistema operativo**.
+
+Por ejemplo, una aplicación **.NET 8** puede ejecutarse tanto en **Windows** como en **Linux**, siempre que el **App Service Plan** sea compatible.
+
+
+------------------------
+
+# Test 2
 
 **1.** Un **Storage Account Firewall** permite el acceso si la solicitud procede de una **IP pública permitida** o de una **Subnet autorizada** mediante **Virtual Network Rules**.
 Si se cumplen ambos requisitos, cualquiera de ellos es suficiente para acceder al Storage Account.
