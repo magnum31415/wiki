@@ -6,7 +6,184 @@
 
 ---
 # Test 3
+**1.** **Azure Bastion** permite conectarse a máquinas virtuales de la **misma VNet** o de **VNets directamente peered**, pero **no** a través de **peerings transitivos**.
 
+**2.** Una **Network Interface (NIC)** debe crearse siempre en la **misma región** que la **Virtual Network** a la que se conecta.
+
+**3.** Un **VNet Peering** permite la comunicación directa únicamente entre las **VNets** que están **directamente peered**.
+
+**4.** Sin **Gateway Transit**, un **VNet Peering** **no** permite utilizar una VNet como red de tránsito hacia otra VNet.
+
+**5.** **Azure Bastion** requiere una **Standard Public IP**, **IPv4**, **Static** y de tipo **Regional**.
+
+**6.** Toda VNet que aloje **Azure Bastion** debe contener una subnet llamada exactamente **AzureBastionSubnet**.
+
+**7.** La **AzureBastionSubnet** debe tener un tamaño mínimo de **/26**.
+
+**8.** Para utilizar el **Native Client** de **Azure Bastion** es necesario disponer del **SKU Standard** y habilitar la característica **Native Client Support**.
+
+**9.** La **Auto-registration** de una **Private DNS Zone** solo registra automáticamente las VMs pertenecientes a la **Registration Virtual Network**.
+
+**10.** Una VM solo puede resolver nombres de una **Private DNS Zone** si su **VNet** está vinculada a dicha zona como **Resolution Virtual Network**.
+
+**11.** La **Registration Virtual Network** también actúa como **Resolution Virtual Network** para la **Private DNS Zone**.
+
+**12.** La **Auto-registration** de una **Private DNS Zone** únicamente crea registros **A** con la **Private IP** de las máquinas virtuales.
+
+**13.** El **DNS suffix** configurado en una VM **no influye** en la **Auto-registration** de una **Private DNS Zone**; únicamente importa la **VNet**.
+
+**14.** **Azure Container Instances**, **Azure App Service** y **Azure Kubernetes Service (AKS)** soportan **contenedores Windows**, mientras que **Azure Container Apps** solo admite **contenedores Linux**.
+
+**15.** Los **contenedores Linux** pueden ejecutarse en **Azure Container Instances**, **Azure Container Apps**, **Azure Kubernetes Service (AKS)** y **Azure App Service**.
+
+**16.** La configuración de **Self-Service Password Reset (SSPR)** solo puede ser administrada por los roles **Global Administrator** y **Authentication Policy Administrator**.
+
+**17.** **SSPR** puede habilitarse para **Security Groups** y **Microsoft 365 Groups**, pero **no** para **Mail-enabled Security Groups**.
+
+**18.** Para garantizar que solo se utilicen imágenes firmadas en un **Azure Container Registry**, debe habilitarse **Content Trust**.
+
+**19.** Si un **Blob Container** necesita utilizar una clave distinta para el cifrado en reposo, debe configurarse un **Encryption Scope**.
+
+**20.** Un **Blob Container** admite un máximo de **5 Stored Access Policies**.
+
+**21.** Un **Blob Container** admite un máximo de **2 Immutable Blob Storage Policies**.
+
+**22.** Para copiar un directorio local completo a un **Blob Container**, el comando recomendado es **`azcopy copy --recursive`**.
+
+**23.** Una **Shared Access Signature (SAS)** solo concede acceso si se cumplen simultáneamente las restricciones de **IP**, **fecha**, **protocolo** y **permisos**.
+
+**24.** Una **SAS** configurada para el servicio **File** no concede acceso a otros servicios del **Storage Account**.
+
+**25.** Las **Stored Access Policies** solo pueden asociarse a **Blob Containers**, **File Shares**, **Queues** y **Tables**, **no** al **Storage Account**.
+
+**26.** Una **Service SAS** hereda las restricciones definidas en la **Stored Access Policy** asociada.
+
+**27.** Un **User Delegation SAS** requiere autenticación mediante **Microsoft Entra ID** y solo está disponible para el servicio **Blob**.
+
+**28.** Una **Account SAS** puede conceder acceso a varios servicios del **Storage Account** mediante un único token.
+
+**29.** Solo los roles **Global Administrator** y **Authentication Administrator** pueden modificar las **preguntas de seguridad** de **SSPR**.
+
+**30.** Los roles administrativos de **Microsoft Entra ID** se asignan desde **Directory Roles**, no mediante **Licencias** ni **Grupos**.
+**31.** Una asignación de **Azure Policy** puede realizarse sobre un **Management Group**, **Subscription**, **Resource Group** o **Resource** individual.
+
+**32.** Las **Exclusions** de una **Azure Policy** pueden configurarse sobre **Management Groups**, **Subscriptions**, **Resource Groups** y **Resources**, pero **no** sobre el **Tenant Root Group**.
+
+**33.** Para que **Azure Bastion** sea accesible desde Internet, el **NSG** debe permitir tráfico **HTTPS (TCP 443)** hacia el host de Bastion.
+
+**34.** Una **Shared Access Signature (SAS)** solo permite acceder a los **servicios** (Blob, File, Queue o Table) para los que fue creada, independientemente de los roles **RBAC** del usuario.
+
+**35.** Las **Access Keys** de un **Storage Account** conceden acceso completo a **todos los servicios** del almacenamiento, sin depender de **Azure RBAC**.
+
+**36.** Un **Inbound NAT Rule** dirige el tráfico hacia una **VM concreta**, mientras que una **Load Balancing Rule** distribuye el tráfico entre varias VMs.
+
+**37.** Un **Azure Firewall** solo puede desplegarse en una **VNet** ubicada en la **misma región** y en el **mismo Resource Group** que el Firewall.
+
+**38.** **Azure Bastion** solo protege y proporciona acceso **RDP/SSH** a **máquinas virtuales**, no a **App Services** ni a **Microsoft Entra Domain Services**.
+
+**39.** Un rol **Contributor** asignado a un **Management Group** se hereda automáticamente por todas las **Subscriptions**, **Resource Groups** y **Resources** descendientes.
+
+**40.** El rol **Storage Account Contributor** permite administrar el **Storage Account**, pero **no** acceder a los **datos** almacenados.
+
+**41.** El rol **User Access Administrator** permite crear y administrar **Role Assignments**, pero **no** administrar los recursos.
+
+**42.** Los permisos de **Azure RBAC** siempre se **heredan** desde el ámbito superior hacia los recursos descendientes.
+
+**43.** Un rol asignado directamente sobre un **Resource** solo concede permisos sobre ese recurso, no sobre el resto del **Resource Group**.
+
+**44.** Un **Deny Assignment** tiene prioridad sobre cualquier permiso concedido mediante **Azure RBAC**.
+
+**45.** El rol **Owner** incluye todos los permisos de **Contributor** y además puede administrar el acceso mediante **Azure RBAC**.
+
+**46.** El rol **Contributor** puede administrar recursos, pero **no** puede crear ni modificar **Role Assignments**.
+
+**47.** El rol **Reader** únicamente permite visualizar recursos y configuraciones, sin realizar modificaciones.
+
+**48.** Para administrar los **datos** de un **Storage Account** deben utilizarse los roles **Storage Blob/File/Queue/Table Data**.
+
+**49.** Los roles **Storage Data** controlan el acceso al **contenido** del almacenamiento, mientras que los roles de administración controlan el **Storage Account**.
+
+**50.** Un **Storage Blob Data Contributor** permite leer, escribir y eliminar blobs, pero **no** administrar el **Storage Account**.
+
+**51.** Una **Account SAS** puede conceder acceso simultáneo a varios servicios del **Storage Account**.
+
+**52.** Una **Service SAS** únicamente concede acceso al servicio específico para el que fue creada.
+
+**53.** Un **User Delegation SAS** requiere autenticación mediante **Microsoft Entra ID** y solo está disponible para **Blob Storage**.
+
+**54.** Una **Stored Access Policy** permite modificar o revocar una **Service SAS** sin necesidad de regenerar el token.
+
+**55.** Las **Stored Access Policies** solo pueden configurarse sobre **Blob Containers**, **File Shares**, **Queues** y **Tables**.
+
+**56.** Una **Azure Policy** puede asignarse incluso a un **Resource** individual utilizando **Azure CLI** o **PowerShell**.
+
+**57.** El **Tenant Root Group** **no** puede utilizarse como **Exclusion** de una **Azure Policy**.
+
+**58.** **Azure Bastion** utiliza **HTTPS (TCP 443)** para encapsular las conexiones **RDP** y **SSH**, por lo que no es necesario abrir los puertos **3389** ni **22** hacia Internet.
+
+**59.** Una **SAS** solo concede acceso a los recursos incluidos en su **Scope** y con los **Permisos** especificados, aunque el usuario tenga más permisos mediante **RBAC**.
+
+**60.** Las **Access Keys** ignoran las restricciones de **Azure RBAC** y proporcionan acceso completo a todos los servicios del **Storage Account**.
+
+**61.** Un **App Service Plan** debe estar en la **misma región** que la **Web App** que hospeda, aunque puede alojar varias aplicaciones.
+
+**62.** Una **Web App** solo puede moverse entre **App Service Plans** compatibles que estén en la **misma región**.
+
+**63.** Una máquina virtual solo puede utilizar una **Private IP** perteneciente al **Address Space** de la **VNet** y de la **Subnet** donde está conectada.
+
+**64.** Las primeras **4 direcciones IP** y la **última** dirección de cada **Subnet** están reservadas por **Azure** y no pueden asignarse a recursos.
+
+**65.** Todo **VPN Gateway** requiere una **GatewaySubnet** dedicada dentro de la **VNet**.
+
+**66.** La **GatewaySubnet** no puede contener máquinas virtuales ni otros recursos; está reservada exclusivamente para el **Gateway**.
+
+**67.** Un **ExpressRoute Gateway** también requiere una **GatewaySubnet** dedicada.
+
+**68.** Una **Public IP** solo puede asociarse a recursos compatibles como **NICs**, **Load Balancers**, **VPN Gateways**, **Azure Bastion** o **Azure Firewall**.
+
+**69.** El rol **Logic App Contributor** permite crear y administrar **Logic Apps**, pero no concede permisos sobre otros recursos del **Resource Group**.
+
+**70.** Para redirigir **todo el tráfico** de una **VNet** mediante una **UDR**, el **Address Prefix** debe ser el **Address Space** completo de la VNet.
+
+**71.** Una **User Defined Route (UDR)** puede enviar tráfico hacia una **Virtual Appliance**, un **VPN Gateway**, **Internet** o **None**.
+
+**72.** Una **Virtual Appliance (NVA)** debe tener habilitado el **IP Forwarding** para poder enrutar tráfico de otras máquinas.
+
+**73.** Una **Route Table** únicamente afecta a las **Subnets** a las que está asociada.
+
+**74.** Una **UDR** tiene prioridad sobre las **System Routes**, excepto en determinadas rutas internas administradas por Azure.
+
+**75.** Un **Custom DNS Server** debe ser accesible mediante conectividad IP para que las máquinas virtuales puedan resolver nombres.
+
+**76.** Para que varias **VNets** utilicen un **DNS Server** ubicado en otra VNet, debe existir conectividad mediante **VNet Peering** o **VPN**.
+
+**77.** **Connection Troubleshoot** verifica la **conectividad extremo a extremo** entre un origen y un destino.
+
+**78.** **IP Flow Verify** determina si un paquete será **Allowed** o **Denied** por las reglas de un **NSG**.
+
+**79.** **Next Hop** muestra la ruta efectiva que seguirá un paquete según la tabla de rutas.
+
+**80.** Los **NSG Flow Logs** registran el tráfico permitido y denegado que atraviesa un **NSG**.
+
+**81.** **Traffic Analytics** analiza los **NSG Flow Logs** para detectar patrones de tráfico y posibles problemas de seguridad.
+
+**82.** Una conexión **Site-to-Site VPN** requiere un **VPN Gateway** en Azure y un dispositivo **VPN** compatible en el entorno local.
+
+**83.** Una conexión **VNet-to-VNet VPN** requiere un **VPN Gateway** en **cada VNet**.
+
+**84.** Una conexión **Site-to-Site VPN** solo puede crearse si existe una **GatewaySubnet** con espacio de direcciones suficiente.
+
+**85.** Dos **VNets** pueden configurarse mediante **VNet Peering** aunque estén en distintas **regiones** o **suscripciones**, siempre que sus **Address Spaces** no se solapen.
+
+**86.** El requisito imprescindible para crear un **VNet Peering** es que los **CIDR** de ambas **VNets** no tengan **overlapping**.
+
+**87.** En un **Standard Public Load Balancer**, la **Public IP** debe estar asociada al **Frontend** del Load Balancer y no a las VMs del **Backend Pool**.
+
+**88.** Un **Health Probe** determina automáticamente qué instancias del **Backend Pool** están disponibles para recibir tráfico.
+
+**89.** Una **Inbound NAT Rule** publica un puerto hacia una única VM, mientras que una **Load Balancing Rule** distribuye el tráfico entre varias VMs.
+
+**90.** Para registrar y analizar el tráfico permitido y denegado de una red virtual deben habilitarse los **NSG Flow Logs** sobre el **Network Security Group**.
 ---
 # Test 4
 
