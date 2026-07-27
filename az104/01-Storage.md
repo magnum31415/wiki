@@ -78,14 +78,17 @@ Premium se utiliza principalmente para:
 
 # 4. Redundancia
 
-| Tipo | Protección | Lectura secundaria |
-|------|------------|-------------------|
-| LRS | Un datacenter | ❌ |
-| ZRS | Availability Zones | ❌ |
-| GRS | Región secundaria | ❌ |
-| RA-GRS | Región secundaria | ✅ |
-| GZRS | Zonas + Región | ❌ |
-| RA-GZRS | Zonas + Región | ✅ |
+
+| Tipo | Nº de copias | Distribución | Lectura región secundaria |
+|------|:------------:|--------------|:-------------------------:|
+| **LRS** | **3** | 3 copias en un único datacenter | ❌ |
+| **ZRS** | **3** | 1 copia en cada Availability Zone de la misma región | ❌ |
+| **GRS** | **6** | 3 copias (LRS) en la región primaria + 3 copias (LRS) en la región secundaria | ❌ |
+| **RA-GRS** | **6** | Igual que GRS, pero la región secundaria también es legible | ✅ |
+| **GZRS** | **6** | 3 copias distribuidas entre Availability Zones de la región primaria + 3 copias (LRS) en la región secundaria | ❌ |
+| **RA-GZRS** | **6** | Igual que GZRS, pero la región secundaria también es legible | ✅ |
+
+---
 
 ### Regla para el examen
 
