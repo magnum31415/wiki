@@ -1,3 +1,5 @@
+[AZ104-INDEX](./readme.md)
+
 # 01 - Azure Storage (AZ-104)
 
 # Parte 5 - Protección de datos, Replicación y Preguntas Trampa
