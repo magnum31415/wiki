@@ -440,3 +440,234 @@ Lectura desde la región secundaria.
 # Fin del documento
 
 Con este documento se cubren prácticamente todos los conceptos de **Azure Storage** que aparecen de forma recurrente en los simulacros del examen **AZ-104**.
+
+# 62. ¿Cómo funciona Azure Backup?
+
+Azure Backup protege los recursos creando **Recovery Points**.
+
+Un **Recovery Point** es una copia del estado del recurso en un momento determinado.
+
+Todos los Recovery Points se administran desde un:
+
+**Recovery Services Vault**
+
+El funcionamiento habitual es:
+
+```
+
+Recurso
+
+↓
+
+Snapshot (rápido)
+
+↓
+
+Recovery Services Vault
+
+↓
+
+Recovery Points
+
+```
+
+Las restauraciones siempre se realizan desde un **Recovery Point**.
+
+---
+
+# 63. Tipos de Backup
+
+Azure Backup utiliza dos mecanismos.
+
+## Instant Restore (Snapshot)
+
+Azure crea inicialmente un **Snapshot** del disco.
+
+Ventajas:
+
+- restauración muy rápida
+- permanece en la misma región
+
+El Snapshot solo se conserva durante unos días (según la configuración).
+
+---
+
+## Vault Backup
+
+Posteriormente Azure copia el Snapshot al:
+
+**Recovery Services Vault**
+
+Ventajas:
+
+- retención a largo plazo
+- mayor protección
+- recuperación ante pérdida del Snapshot
+
+---
+
+# Flujo completo
+
+```
+
+VM
+
+↓
+
+Snapshot
+
+↓
+
+Recovery Services Vault
+
+↓
+
+Recovery Points
+
+```
+
+---
+
+# 64. Recovery Services Vault
+
+El **Recovery Services Vault** es el componente central de Azure Backup.
+
+Se encarga de:
+
+- almacenar Recovery Points
+- gestionar políticas
+- programar backups
+- realizar restauraciones
+- aplicar retención
+
+No almacena únicamente máquinas virtuales.
+
+También protege:
+
+- Azure Files
+- SQL Server
+- SAP HANA
+- Azure VM
+
+---
+
+# 65. Tipos de restauración
+
+Dependiendo del recurso pueden realizarse distintas restauraciones.
+
+## Virtual Machine
+
+- Restaurar la VM completa
+- Restaurar discos
+- Restaurar archivos
+
+---
+
+## Azure Files
+
+- Archivo individual
+- Carpeta
+- File Share completo
+
+---
+
+## SQL Server
+
+- Base de datos completa
+- Point-in-Time Restore
+
+---
+
+# 66. File Recovery
+
+Una de las preguntas más habituales del AZ-104.
+
+Cuando una VM está protegida mediante Azure Backup es posible restaurar únicamente determinados archivos.
+
+La recuperación puede realizarse desde:
+
+- la VM original
+- otra VM
+- **cualquier equipo Windows con conexión a Internet**
+
+No es necesario restaurar toda la máquina virtual.
+
+---
+
+# 67. Azure Backup Agent (MARS)
+
+El agente **MARS (Microsoft Azure Recovery Services Agent)** permite realizar copias de seguridad de:
+
+- archivos
+- carpetas
+
+No protege la VM completa.
+
+No realiza:
+
+- Bare Metal Recovery
+- System State
+- Restauración de discos completos
+
+Se utiliza principalmente para servidores físicos o máquinas donde solo interesa proteger determinados archivos.
+
+---
+
+# 68. Azure VM Backup vs MARS Agent
+
+| Azure VM Backup | MARS Agent |
+|-----------------|------------|
+| Protege la VM completa | Solo archivos y carpetas |
+| Snapshot + Vault | Directamente al Vault |
+| Permite restaurar discos | No |
+| Permite restaurar la VM | No |
+| Permite File Recovery | Sí | Sí |
+
+Microsoft recomienda **Azure VM Backup** para máquinas virtuales Azure.
+
+---
+
+# 69. Requisitos de Azure Backup
+
+Para proteger una VM Azure se necesita:
+
+- Recovery Services Vault
+- VM soportada
+- Managed Disks (recomendado)
+- Backup Policy
+
+No es necesario instalar ningún agente para proteger una VM Azure.
+
+---
+
+# 70. Backup Policy
+
+La **Backup Policy** define:
+
+- frecuencia del backup
+- hora
+- retención diaria
+- retención semanal
+- retención mensual
+- retención anual
+
+Varias VMs pueden compartir la misma política.
+
+---
+
+# 71. Preguntas trampa AZ-104
+
+✅ Azure Backup crea **Recovery Points**.
+
+✅ Primero crea un **Snapshot** y después lo copia al **Recovery Services Vault**.
+
+✅ El **Recovery Services Vault** administra los Recovery Points.
+
+✅ Azure VM Backup **no necesita instalar MARS Agent**.
+
+✅ El **MARS Agent** protege archivos y carpetas, no la VM completa.
+
+✅ **File Recovery** puede realizarse desde cualquier equipo Windows con conexión a Internet.
+
+✅ Azure Files también utiliza **Recovery Services Vault**.
+
