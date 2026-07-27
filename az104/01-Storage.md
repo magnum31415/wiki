@@ -1,4 +1,4 @@
-[AZ104](az104/readme.MD)
+[AZ104](az104/readme.md)
 
 # 01 - Azure Storage (AZ-104)
 
