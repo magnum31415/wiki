@@ -127,15 +127,16 @@ Se utiliza cuando un recurso necesita quedar temporal o permanentemente fuera de
 
 Los efectos más importantes son:
 
-| Effect | Función |
-|---------|---------|
-| **Deny** | Bloquea el despliegue |
-| **Audit** | Registra incumplimientos |
-| **Append** | Agrega propiedades |
-| **Modify** | Modifica el recurso |
-| **DeployIfNotExists** | Despliega recursos automáticamente |
-| **AuditIfNotExists** | Audita si falta un recurso |
-| **Disabled** | Desactiva la Policy |
+| Effect                | Función                            | ¿Qué ocurre si el recurso ya existía antes de asignar la Policy?                                                    |
+| --------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Deny**              | Bloquea el despliegue              | ✅ **No modifica el recurso existente.** Solo bloqueará futuras creaciones o modificaciones que incumplan la Policy. |
+| **Audit**             | Registra incumplimientos           | ✅ Marca el recurso como **Non-compliant**, pero no realiza ningún cambio.                                           |
+| **Append**            | Agrega propiedades                 | ⚠️ **No modifica recursos existentes.** Solo agrega propiedades durante nuevas creaciones o actualizaciones.        |
+| **Modify**            | Modifica el recurso                | ✅ Puede corregir recursos existentes cuando se ejecuta una **Remediation Task** (si la Policy lo permite).          |
+| **DeployIfNotExists** | Despliega recursos automáticamente | ✅ Puede desplegar el recurso que falta sobre recursos existentes mediante una **Remediation Task**.                 |
+| **AuditIfNotExists**  | Audita si falta un recurso         | ✅ Marca el recurso como **Non-compliant** si el recurso relacionado no existe. No realiza cambios.                  |
+| **Disabled**          | Desactiva la Policy                | ✅ No se evalúa ni afecta a recursos existentes o nuevos.                                                            |
+
 
 ---
 
