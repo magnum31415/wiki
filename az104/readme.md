@@ -1,6 +1,8 @@
-# AZ-104 - Índice de Teoría
+# AZ-104 - Manual de Estudio
 
-> Manual organizado por categorías para preparar el examen **Microsoft Azure Administrator (AZ-104)**.
+> Manual organizado por categorías basado en preguntas reales de simulacros del examen **Microsoft Azure Administrator (AZ-104)**.
+>
+> El objetivo es disponer de una referencia rápida para estudiar la teoría más preguntada, eliminando duplicados y agrupando todos los conceptos por tecnología.
 
 ---
 
@@ -8,67 +10,108 @@
 
 ## 1. Storage
 
-- [Storage Accounts](01-Storage.md)
+📄 **[01-Storage.md](01-Storage.md)**
+
+**Contenido**
+
+- Storage Accounts
+- Tipos de Storage
 - Blob Storage
 - Azure Files
-- Table Storage
 - Queue Storage
-- Redundancy (LRS, ZRS, GRS, RA-GRS, GZRS)
-- Lifecycle Management
+- Table Storage
+- Storage Explorer
+- Storage Browser
+- Storage Firewall
+- Shared Access Signature (SAS)
+- User Delegation SAS
+- Service SAS
+- Account SAS
+- Stored Access Policy
 - Blob Versioning
 - Soft Delete
+- Container Soft Delete
 - Change Feed
+- Snapshots
+- Lifecycle Management
+- Archive Tier
+- Cool Tier
+- Hot Tier
+- Replication (LRS, ZRS, GRS, RA-GRS, GZRS)
 - Encryption
-- Storage Firewall
-- SAS
-- Access Keys
+- Encryption Scope
+- Customer Managed Keys
+- Infrastructure Encryption
 - Private Endpoint
 - Service Endpoint
-- Replication
+- Routing Preference
+- Storage Networking
+- Storage Performance
+- AzCopy
 
 ---
 
 ## 2. Azure Backup
 
-- [Azure Backup](02-AzureBackup.md)
+📄 **[02-AzureBackup.md](02-AzureBackup.md)**
+
+**Contenido**
+
 - Recovery Services Vault
 - Backup Vault
 - Backup Policy
-- File Recovery
+- Recovery Points
+- Backup Retention
+- Instant Restore
 - Restore VM
-- Restore Files
+- Restore Disk
+- File Recovery
 - Azure Backup Reports
 - MARS Agent
-- Resource Guard (MAU)
+- Azure VM Backup
 - Soft Delete
+- Multi-User Authorization (MAU)
+- Resource Guard
 
 ---
 
 ## 3. Networking
 
-- [Networking](03-Networking.md)
-- Virtual Network (VNet)
-- Subnets
+📄 **[03-Networking.md](03-Networking.md)**
+
+**Contenido**
+
+- Virtual Network
 - Address Spaces
-- VNet Peering
-- Global VNet Peering
-- Service Chaining
-- User Defined Routes (UDR)
-- Route Tables
-- Network Interface (NIC)
+- Subnets
+- Reserved IPs
+- Network Interface
 - Public IP
 - Private IP
+- VNet Peering
+- Global VNet Peering
+- Gateway Transit
+- User Defined Routes
+- Route Tables
+- Service Chaining
+- IP Forwarding
 
 ---
 
 ## 4. Network Security Groups
 
-- [Network Security Groups (NSG)](04-NSG.md)
-- NSG Rules
-- Priorities
+📄 **[04-NSG.md](04-NSG.md)**
+
+**Contenido**
+
+- NSG
 - Default Rules
-- IP Flow Verify
+- Priorities
+- Inbound Rules
+- Outbound Rules
+- Application Security Groups
 - Effective Security Rules
+- IP Flow Verify
 - NSG Flow Logs
 - Traffic Analytics
 
@@ -76,114 +119,168 @@
 
 ## 5. Load Balancing
 
-- [Load Balancing](05-LoadBalancer.md)
+📄 **[05-LoadBalancer.md](05-LoadBalancer.md)**
+
+**Contenido**
+
 - Azure Load Balancer
+- Basic vs Standard
 - Internal Load Balancer
-- Standard Load Balancer
-- Basic Load Balancer
+- Public Load Balancer
+- Backend Pool
 - Health Probe
 - Load Balancing Rules
 - Inbound NAT Rules
+- Outbound Rules
 - Application Gateway
-- Web Application Firewall (WAF)
+- Web Application Firewall
 - Traffic Manager
 
 ---
 
 ## 6. Azure Bastion
 
-- [Azure Bastion](06-Bastion.md)
+📄 **[06-Bastion.md](06-Bastion.md)**
+
+**Contenido**
+
+- Azure Bastion
+- Bastion SKUs
 - AzureBastionSubnet
 - Native Client
 - Standard SKU
 - Public IP Requirements
+- VNet Peering
+- JIT
 
 ---
 
 ## 7. Azure Firewall
 
-- [Azure Firewall](07-Firewall.md)
-- AzureFirewallSubnet
+📄 **[07-Firewall.md](07-Firewall.md)**
+
+**Contenido**
+
+- Azure Firewall
 - Firewall Policy
 - DNAT
 - Network Rules
 - Application Rules
+- Threat Intelligence
+- AzureFirewallSubnet
+- Routing Intent
 
 ---
 
 ## 8. Azure Container Registry
 
-- [Azure Container Registry](08-ContainerRegistry.md)
-- ACR Tasks
-- Geo-replication
-- Private Endpoint
-- Dedicated Data Endpoint
-- Content Trust
-- Docker Push
-- Docker Tag
+📄 **[08-ContainerRegistry.md](08-ContainerRegistry.md)**
+
+**Contenido**
+
+- Azure Container Registry
+- Docker
 - Login Server
+- Docker Login
+- Docker Tag
+- Docker Push
+- Docker Pull
 - AcrPull
 - AcrPush
+- Content Trust
+- Tasks
+- Geo-Replication
+- Private Endpoint
 
 ---
 
 ## 9. Containers
 
-- [Containers](09-Containers.md)
+📄 **[09-Containers.md](09-Containers.md)**
+
+**Contenido**
+
 - Azure Container Instances
 - Azure Container Apps
-- Azure Kubernetes Service (AKS)
+- Azure Kubernetes Service
 - Windows Containers
 - Linux Containers
+- Container Groups
 
 ---
 
 ## 10. Microsoft Entra ID
 
-- [Microsoft Entra ID](10-EntraID.md)
+📄 **[10-EntraID.md](10-EntraID.md)**
+
+**Contenido**
+
 - Users
 - Groups
 - Dynamic Groups
-- Group-Based Licensing
-- SSPR
-- External Collaboration
+- Microsoft 365 Groups
+- Security Groups
+- Role Assignable Groups
 - Guest Users
+- Group-Based Licensing
+- Self-Service Password Reset
+- Authentication Methods
+- Administrative Units
 - Access Packages
 
 ---
 
 ## 11. Azure RBAC
 
-- [Azure RBAC](11-RBAC.md)
+📄 **[11-RBAC.md](11-RBAC.md)**
+
+**Contenido**
+
+- RBAC
 - Built-in Roles
-- Role Assignments
+- Custom Roles
 - Scope
 - Inheritance
-- RBAC Conditions
+- Role Assignments
+- Conditions
 - IAM
+- Least Privilege
 
 ---
 
 ## 12. Azure Policy
 
-- [Azure Policy](12-AzurePolicy.md)
+📄 **[12-AzurePolicy.md](12-AzurePolicy.md)**
+
+**Contenido**
+
+- Azure Policy
+- Initiative
+- Assignment
+- Exemption
 - Deny
 - Audit
 - Append
+- Modify
 - DeployIfNotExists
-- Exclusions
-- Assignments
 
 ---
 
 ## 13. ARM Templates
 
-- [ARM Templates](13-ARMTemplates.md)
-- resourceId()
+📄 **[13-ARMTemplates.md](13-ARMTemplates.md)**
+
+**Contenido**
+
+- ARM Templates
+- Parameters
+- Variables
+- Outputs
 - copy
-- copyIndex()
-- Incremental Mode
-- Complete Mode
+- copyIndex
+- resourceId
+- Incremental
+- Complete
 - Resource Group Deployment
 - Subscription Deployment
 
@@ -191,101 +288,143 @@
 
 ## 14. Virtual Machines
 
-- [Virtual Machines](14-VirtualMachines.md)
+📄 **[14-VirtualMachines.md](14-VirtualMachines.md)**
+
+**Contenido**
+
+- Virtual Machines
+- Availability Sets
+- Availability Zones
+- Resize
 - Redeploy
 - Reapply
-- Resize
-- Scale Sets
 - Extensions
-- Protected Settings
-- vCPU Quotas
-- Automatic Updates
+- Managed Disks
+- Encryption
+- Scale Sets
+- VM Backup
+- Quotas
 
 ---
 
 ## 15. Azure Monitor
 
-- [Azure Monitor](15-AzureMonitor.md)
+📄 **[15-AzureMonitor.md](15-AzureMonitor.md)**
+
+**Contenido**
+
+- Azure Monitor
 - Alerts
-- Action Groups
+- Alert Rules
 - Alert Processing Rules
-- Activity Log
 - Metrics
+- Activity Log
 - Log Analytics
-- DCR
 - Diagnostic Settings
+- Data Collection Rules
+- Action Groups
 - Connection Monitor
 - Network Insights
 
 ---
 
-## 16. App Service
+## 16. Azure App Service
 
-- [Azure App Service](16-AppService.md)
-- Web Apps
+📄 **[16-AppService.md](16-AppService.md)**
+
+**Contenido**
+
+- App Service
 - App Service Plan
+- Web Apps
+- Runtime Stack
 - Deployment Slots
-- Custom Domains
 - Autoscale
+- Custom Domains
+- Certificates
+- Backup
 
 ---
 
 ## 17. DNS
 
-- [DNS](17-DNS.md)
+📄 **[17-DNS.md](17-DNS.md)**
+
+**Contenido**
+
+- Azure DNS
 - Private DNS Zones
+- Public DNS Zones
 - Auto-registration
-- Custom DNS
+- Resolution VNets
+- Registration VNets
 - Azure-provided DNS
-- Name Resolution
+- Custom DNS
 
 ---
 
 ## 18. VPN y ExpressRoute
 
-- [VPN & ExpressRoute](18-VPN.md)
+📄 **[18-VPN.md](18-VPN.md)**
+
+**Contenido**
+
 - VPN Gateway
-- ExpressRoute Gateway
 - GatewaySubnet
 - Site-to-Site VPN
-- VNet-to-VNet VPN
 - Point-to-Site VPN
+- VNet-to-VNet VPN
+- ExpressRoute
+- Gateway Transit
+- BGP
 
 ---
 
 ## 19. Resource Management
 
-- [Resource Management](19-ResourceManagement.md)
+📄 **[19-ResourceManagement.md](19-ResourceManagement.md)**
+
+**Contenido**
+
 - Management Groups
+- Subscriptions
 - Resource Groups
+- Resources
 - Resource Locks
-- Resource Providers
 - Tags
+- Resource Providers
+- Azure Resource Manager
 
 ---
 
 ## 20. Storage Permissions
 
-- [Storage Permissions](20-StoragePermissions.md)
+📄 **[20-StoragePermissions.md](20-StoragePermissions.md)**
+
+**Contenido**
+
 - Storage Blob Data Reader
 - Storage Blob Data Contributor
 - Storage Blob Data Owner
-- Storage File Data SMB Share Contributor
 - Storage File Data SMB Share Reader
+- Storage File Data SMB Share Contributor
 - Storage File Data SMB Share Elevated Contributor
+- Reader
+- Contributor
+- Owner
 
 ---
 
-# Recomendación de estudio
+# Orden recomendado de estudio
 
-Orden recomendado para preparar el AZ-104:
+Se recomienda estudiar los temas en el siguiente orden:
 
 1. Storage
 2. Networking
 3. Virtual Machines
 4. Azure Backup
 5. RBAC
-6. Entra ID
+6. Microsoft Entra ID
 7. NSG
 8. Load Balancer
 9. Azure Monitor
@@ -293,10 +432,16 @@ Orden recomendado para preparar el AZ-104:
 11. Azure Policy
 12. ARM Templates
 13. Bastion
-14. Firewall
-15. Container Registry
+14. Azure Firewall
+15. Azure Container Registry
 16. Containers
 17. DNS
-18. VPN
+18. VPN y ExpressRoute
 19. Resource Management
 20. Storage Permissions
+
+---
+
+# Objetivo
+
+Este manual resume la teoría necesaria para responder correctamente a las preguntas más frecuentes del examen **AZ-104**, agrupando conceptos relacionados y eliminando duplicados presentes en los distintos simulacros.
