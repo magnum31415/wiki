@@ -336,6 +336,73 @@ Ideal para aplicaciones distribuidas globalmente.
 
 ---
 
+# 18. Azure Front Door
+
+Azure Front Door es un servicio global de **capa 7 (HTTP/HTTPS)** que proporciona:
+
+- Balanceo de carga global.
+- Aceleración del tráfico.
+- Alta disponibilidad.
+- Terminación SSL.
+- Web Application Firewall (WAF).
+- CDN integrada.
+
+Distribuye las solicitudes HTTP/HTTPS entre distintos backends utilizando políticas como:
+
+- Priority
+- Weighted
+- Latency
+- Session Affinity
+
+Ideal para aplicaciones web distribuidas globalmente.
+
+---
+
+# Azure Front Door vs Traffic Manager
+
+| Azure Front Door | Traffic Manager |
+|------------------|-----------------|
+| Capa 7 (HTTP/HTTPS) | DNS |
+| Proxy inverso | DNS Redirect |
+| Inspecciona el tráfico | No inspecciona tráfico |
+| Soporta WAF | No |
+| Soporta CDN | No |
+| SSL Termination | Sí | No |
+| Session Affinity | Sí | No |
+| Failover rápido | Sí | Depende del TTL DNS |
+
+---
+
+# Casos de uso
+
+Azure Front Door es la mejor opción cuando:
+
+- Se publican aplicaciones Web.
+- Se necesita WAF.
+- Se requiere aceleración global.
+- Se necesita balanceo HTTP/HTTPS entre regiones.
+- Se desea proteger aplicaciones frente a ataques web.
+
+---
+
+# Preguntas trampa del AZ-104
+
+✅ Azure Front Door funciona en la **capa 7 (HTTP/HTTPS)**.
+
+✅ Es un **proxy inverso global**.
+
+✅ Puede balancear tráfico entre distintas regiones.
+
+✅ Puede integrar **Web Application Firewall (WAF)**.
+
+✅ Puede realizar **SSL Offloading (Terminación SSL)**.
+
+✅ Traffic Manager realiza balanceo mediante **DNS**.
+
+✅ Front Door distribuye el tráfico **HTTP/HTTPS**, mientras que Traffic Manager solo responde consultas DNS.
+
+---
+
 # 18. Comparativa
 
 | Servicio | Nivel | Uso |
