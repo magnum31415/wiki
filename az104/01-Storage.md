@@ -1,3 +1,5 @@
+[AZ104](AZ104/README.md)
+
 # 01 - Azure Storage (AZ-104)
 
 > Este documento recopila toda la teoría relacionada con **Azure Storage** necesaria para el examen **AZ-104**. El contenido está consolidado a partir de múltiples simulacros, eliminando preguntas repetidas y destacando las trampas más frecuentes del examen.
