@@ -90,6 +90,8 @@ Requiere:
 - Dispositivo VPN compatible en On-Premises.
 - Dirección IP pública en el dispositivo local.
 
+![azure-vpn-site-to-site.png](../img/azure/azure-vpn-site-to-site.png)
+
 ---
 
 # 6. Point-to-Site (P2S)
