@@ -218,7 +218,112 @@ Características:
 - Balanceo mediante Azure Load Balancer.
 
 Muy utilizados para aplicaciones web.
+Los **Virtual Machine Scale Sets (VMSS)** permiten crear y administrar un conjunto de **máquinas virtuales idénticas**.
 
+Todas las instancias comparten la misma configuración (imagen, tamaño, discos, extensiones, etc.) y Azure puede aumentar o reducir automáticamente el número de VMs según la demanda.
+
+---
+
+## Características
+
+- Escalado automático (Autoscale).
+- Alta disponibilidad.
+- Balanceo mediante **Azure Load Balancer**.
+- Administración centralizada.
+- Muy utilizados para aplicaciones web y APIs.
+
+---
+
+## Funcionamiento
+
+```text
+Internet
+      │
+      ▼
+Azure Load Balancer
+      │
+ ┌────┼────┐
+ │    │    │
+VM1  VM2  VM3
+ (VM Scale Set)
+```
+
+El **Load Balancer** distribuye las conexiones entre las instancias del Scale Set.
+
+---
+
+## Escalado automático "Autoscale"
+
+Azure Monitor puede aumentar o disminuir el número de instancias según reglas configuradas.
+
+Ejemplos:
+
+- CPU > 75% durante 10 minutos → **+1 VM**
+- CPU < 25% durante 10 minutos → **-1 VM**
+
+También es posible escalar según:
+
+- Memoria (mediante Azure Monitor Agent)
+- Número de solicitudes HTTP
+- Cola de Azure Storage
+- Horario (Schedule)
+
+---
+
+## Modos de orquestación
+
+### Uniform (más utilizado)
+
+- Todas las VMs son idénticas.
+- Azure administra automáticamente las instancias.
+- Recomendado para aplicaciones escalables.
+
+### Flexible
+
+- Permite VMs con configuraciones diferentes.
+- Mayor flexibilidad para distintos tipos de cargas.
+
+---
+
+## Alta disponibilidad
+
+Las instancias pueden distribuirse entre:
+
+- Fault Domains
+- Update Domains
+- Availability Zones (según la configuración)
+
+Esto reduce el impacto de fallos de hardware o mantenimiento.
+
+---
+
+## Preguntas típicas del AZ-104
+
+✅ VMSS permite **escalar horizontalmente** (añadir o eliminar VMs).
+
+❌ No aumenta la CPU o la memoria de una VM existente (eso es **Resize**, es decir, escalado vertical).
+
+✅ Normalmente se utiliza junto con un **Azure Load Balancer**.
+
+✅ Azure Monitor puede desencadenar el escalado automático mediante reglas.
+
+---
+
+## Escalado horizontal vs vertical
+
+| Tipo | Acción |
+|-------|--------|
+| **Horizontal (Scale Out / In)** | Añadir o eliminar máquinas virtuales |
+| **Vertical (Scale Up / Down)** | Cambiar el tamaño (SKU) de una VM existente |
+
+---
+
+## Regla para el AZ-104
+
+- **VM Scale Sets = Escalado horizontal.**
+- **Resize de una VM = Escalado vertical.**
+- Los **VMSS** suelen utilizarse junto con un **Azure Load Balancer** y reglas de **Autoscale** para soportar aplicaciones con carga variable.
+  
 ---
 
 # 12. Autoscale
@@ -235,6 +340,59 @@ El escalado puede ser:
 - Horizontal (más VMs).
 - Automático.
 
+Los **VM Scale Sets** pueden escalar automáticamente mediante **Azure Monitor Autoscale**.
+
+El escalado se basa en reglas configurables, por ejemplo:
+
+- Uso de CPU.
+- Uso de memoria (requiere Azure Monitor Agent).
+- Número de solicitudes.
+- Longitud de una cola de Azure Storage.
+- Horarios programados (Schedule).
+
+Ejemplos:
+
+- CPU > 75% durante 10 minutos → **Añadir 1 VM (Scale Out)**.
+- CPU < 25% durante 10 minutos → **Eliminar 1 VM (Scale In)**.
+
+---
+
+## Tipos de escalado
+
+### Escalado horizontal (Scale Out / Scale In)
+
+Consiste en **añadir o eliminar máquinas virtuales**.
+
+Es el tipo de escalado utilizado por los **VM Scale Sets**.
+
+Ejemplo:
+
+```text
+3 VMs
+
+↓
+
+5 VMs
+```
+
+---
+
+### Escalado vertical (Scale Up / Scale Down)
+
+Consiste en **cambiar el tamaño (SKU) de una VM** para aumentar o disminuir:
+
+- vCPU
+- Memoria RAM
+
+No lo realiza un VM Scale Set; se hace mediante un **Resize** de la VM.
+
+---
+
+## Regla para el AZ-104
+
+- **VM Scale Sets** → Escalado **horizontal**.
+- **Autoscale** → Automatiza el escalado horizontal según métricas o horarios.
+- **Resize** → Escalado **vertical** (cambio de tamaño de una VM).
 ---
 
 # 13. Cuotas (Quotas)
