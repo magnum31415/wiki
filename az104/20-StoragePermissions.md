@@ -421,7 +421,7 @@ backups/full.zip
 - Son una forma de aplicar el principio de **Least Privilege**.
 - No todos los roles admiten Conditions.
 - No deben confundirse con **Azure Policy**.
-```
+
 
 ---
 
