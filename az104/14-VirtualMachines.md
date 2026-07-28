@@ -128,12 +128,19 @@ Si no está disponible, será necesario detener (**Stop/Deallocate**) la VM para
 
 # Stop vs Shutdown
 
+## Stop (Deallocate) vs Shutdown
+
 No es lo mismo apagar una VM desde el sistema operativo que detenerla desde Azure.
 
-| Acción | Libera el hardware | Se sigue facturando el cómputo |
-|--------|:------------------:|:------------------------------:|
-| Shutdown desde Windows/Linux | ❌ | ✅ Sí |
-| Stop (Deallocate) desde Azure | ✅ | ❌ No |
+| Acción | ¿Qué ocurre con el hardware? | ¿Se sigue pagando el cómputo? |
+|--------|-------------------------------|-------------------------------|
+| **Shutdown desde Windows/Linux** | La VM se apaga, pero **Azure mantiene reservado el servidor físico (host)** donde se ejecutaba. | **Sí.** Se sigue facturando el cómputo porque el hardware continúa reservado. |
+| **Stop (Deallocate) desde Azure** | Azure **libera el servidor físico (host)** y la VM deja de tener recursos de cómputo asignados. | **No.** Se deja de facturar el cómputo. Solo se sigue pagando el almacenamiento (discos, snapshots, etc.). |
+
+### Regla para el AZ-104
+
+- **Shutdown** → La VM está apagada, **pero el hardware sigue reservado** y **se sigue pagando el cómputo**.
+- **Stop (Deallocate)** → Azure **libera el hardware**, **no se paga el cómputo** y la VM podrá iniciarse posteriormente en el mismo o en otro host físico.
 
 ---
 
