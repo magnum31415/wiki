@@ -101,6 +101,8 @@ Si no está disponible, será necesario detener (**Stop/Deallocate**) la VM para
 |-----------|:-------------------:|:----------------------------:|
 | Cambiar el tamaño (Resize) dentro del mismo clúster | ✅ Sí | ❌ No (en algunos casos) |
 | Cambiar el tamaño a uno no disponible en el clúster | ✅ Sí | ✅ Sí |
+| **Aumentar o disminuir el número de vCPU** | ✅ Sí (Resize) | ✅ Puede ser necesario |
+| **Aumentar o disminuir la memoria RAM** | ✅ Sí (Resize) | ✅ Puede ser necesario |
 | Añadir un Data Disk | ❌ No* | ❌ No |
 | Quitar un Data Disk | ❌ No* | ❌ No |
 | Cambiar el tamaño del OS Disk | ✅ Sí | ✅ Sí |
@@ -114,6 +116,7 @@ Si no está disponible, será necesario detener (**Stop/Deallocate**) la VM para
 | Cambiar las Tags | ❌ No | ❌ No |
 | Habilitar Managed Identity | ❌ No | ❌ No |
 | Habilitar Boot Diagnostics | ❌ No | ❌ No |
+
 
 \* Si la VM y el sistema operativo soportan **Hot Add/Remove**.
 
