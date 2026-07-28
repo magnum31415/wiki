@@ -142,6 +142,24 @@ No es lo mismo apagar una VM desde el sistema operativo que detenerla desde Azur
 - **Shutdown** → La VM está apagada, **pero el hardware sigue reservado** y **se sigue pagando el cómputo**.
 - **Stop (Deallocate)** → Azure **libera el hardware**, **no se paga el cómputo** y la VM podrá iniciarse posteriormente en el mismo o en otro host físico.
 
+
+| Recurso                                    | ¿Se conserva tras Stop (Deallocate)? |
+| ------------------------------------------ | :----------------------------------: |
+| Máquina virtual (configuración)            |                 ✅ Sí                 |
+| Disco del sistema operativo (OS Disk)      |                 ✅ Sí                 |
+| Discos de datos (Data Disks)               |                 ✅ Sí                 |
+| Network Interface (NIC)                    |                 ✅ Sí                 |
+| NSG                                        |                 ✅ Sí                 |
+| Managed Identity                           |                 ✅ Sí                 |
+| Extensiones de la VM                       |                 ✅ Sí                 |
+| Tags                                       |                 ✅ Sí                 |
+| Dirección IP privada (dinámica)            |           ✅ Normalmente sí*          |
+| Dirección IP privada (estática)            |                 ✅ Sí                 |
+| Dirección IP pública (Standard SKU)        |                 ✅ Sí                 |
+| Dirección IP pública (Basic SKU, dinámica) |            ❌ Puede cambiar           |
+
+
+
 ---
 
 # Preguntas típicas del AZ-104
