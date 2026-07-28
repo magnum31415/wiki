@@ -245,38 +245,38 @@ En lugar de crear múltiples roles personalizados, es posible utilizar un rol ex
 
 Se asigna el rol:
 
-```text
+````text
 Storage Blob Data Contributor
-```
+````
 
 Sin condiciones:
 
-```
+````
 Puede:
 
 ✔ Leer blobs
 ✔ Crear blobs
 ✔ Modificar blobs
 ✔ Eliminar blobs
-```
+````
 
 Con una condición:
 
-```text
+````text
 Solo puede acceder a blobs cuyo nombre empiece por:
 
 documentos/
-```
+````
 
 Resultado:
 
-```
+````
 documentos/factura.pdf      ✔ Permitido
 documentos/contrato.pdf     ✔ Permitido
 
 imagenes/logo.png           ❌ Denegado
 backup.zip                  ❌ Denegado
-```
+````
 
 ---
 
@@ -284,23 +284,16 @@ backup.zip                  ❌ Denegado
 
 Azure evalúa:
 
-```
+````
 ¿Tiene el usuario el rol?
-
 ↓
-
 Sí
-
 ↓
-
 ¿Se cumple la condición?
-
 ↓
-
 Sí → Acceso permitido
-
 No → Acceso denegado
-```
+````
 
 ---
 
@@ -340,7 +333,7 @@ Ejemplos:
 
 Sin condición:
 
-```
+````
 Usuario
 
 ↓
@@ -350,7 +343,7 @@ Storage Blob Data Contributor
 ↓
 
 Container1
-```
+````
 
 Puede modificar cualquier blob.
 
@@ -358,7 +351,7 @@ Puede modificar cualquier blob.
 
 Con condición:
 
-```
+````
 Usuario
 
 ↓
@@ -374,21 +367,21 @@ Condición:
 ↓
 
 Container1
-```
+````
 
 Puede modificar:
 
-```
+````
 clientes/cliente1.pdf
 clientes/cliente2.pdf
-```
+````
 
 No puede modificar:
 
-```
+````
 imagenes/logo.png
 backups/full.zip
-```
+````
 
 ---
 
