@@ -8,6 +8,30 @@
 
 # Índice
 
+- [1. Storage](#1-storage)
+- [2. Azure Backup](#2-azure-backup)
+- [3. Networking](#3-networking)
+- [4. Network Security Groups](#4-network-security-groups)
+- [5. Load Balancing](#5-load-balancing)
+- [6. Azure Bastion](#6-azure-bastion)
+- [7. Azure Firewall](#7-azure-firewall)
+- [8. Azure Container Registry](#8-azure-container-registry)
+- [9. Containers](#9-containers)
+- [10. Microsoft Entra ID](#10-microsoft-entra-id)
+- [11. Azure RBAC](#11-azure-rbac)
+- [12. Azure Policy](#12-azure-policy)
+- [13. ARM Templates](#13-arm-templates)
+- [14. Virtual Machines](#14-virtual-machines)
+- [15. Azure Monitor](#15-azure-monitor)
+- [16. Azure App Service](#16-azure-app-service)
+- [17. DNS](#17-dns)
+- [18. VPN y ExpressRoute](#18-vpn-y-expressroute)
+- [19. Resource Management](#19-resource-management)
+- [20. Storage Permissions](#20-storage-permissions)
+- [Orden recomendado de estudio](#orden-recomendado-de-estudio)
+- [Objetivo](#objetivo)
+
+  
 ## 1. Storage
 
 📄 **[01-Storage.md](01-Storage.md)**
