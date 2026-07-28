@@ -87,12 +87,70 @@ Ventajas:
 
 # 6. Cambiar el tamaño de una VM (Resize)
 
-El tamaño de una VM puede modificarse posteriormente.
+El tamaño de una VM puede modificarse después de su creación.
 
-Algunas operaciones requieren detener previamente la máquina virtual.
+El nuevo tamaño debe estar disponible en la región y, en algunos casos, en el mismo clúster físico donde se encuentra la VM.
 
-El nuevo tamaño debe estar disponible en la región y en el clúster donde se encuentra la VM.
+Si no está disponible, será necesario detener (**Stop/Deallocate**) la VM para que Azure pueda moverla a otro clúster.
 
+---
+
+# Operaciones que requieren reinicio o parada
+
+| Operación | ¿Requiere reinicio? | ¿Requiere Stop (Deallocate)? |
+|-----------|:-------------------:|:----------------------------:|
+| Cambiar el tamaño (Resize) dentro del mismo clúster | ✅ Sí | ❌ No (en algunos casos) |
+| Cambiar el tamaño a uno no disponible en el clúster | ✅ Sí | ✅ Sí |
+| Añadir un Data Disk | ❌ No* | ❌ No |
+| Quitar un Data Disk | ❌ No* | ❌ No |
+| Cambiar el tamaño del OS Disk | ✅ Sí | ✅ Sí |
+| Cambiar el tamaño de un Data Disk | ❌ No** | ❌ No |
+| Cambiar la VNet | ❌ No posible | Debe recrearse la VM |
+| Cambiar la Subnet | ❌ No | ✅ Sí |
+| Cambiar la NIC principal | ❌ No posible | Debe recrearse la VM |
+| Añadir una NIC secundaria | ❌ No*** | ❌ No |
+| Eliminar una NIC secundaria | ❌ No | ✅ Sí |
+| Cambiar el NSG | ❌ No | ❌ No |
+| Cambiar las Tags | ❌ No | ❌ No |
+| Habilitar Managed Identity | ❌ No | ❌ No |
+| Habilitar Boot Diagnostics | ❌ No | ❌ No |
+
+\* Si la VM y el sistema operativo soportan **Hot Add/Remove**.
+
+\** Online Resize soportado para la mayoría de discos administrados.
+
+\*** Siempre que el tamaño de la VM soporte varias NICs.
+
+---
+
+# Stop vs Shutdown
+
+No es lo mismo apagar una VM desde el sistema operativo que detenerla desde Azure.
+
+| Acción | Libera el hardware | Se sigue facturando el cómputo |
+|--------|:------------------:|:------------------------------:|
+| Shutdown desde Windows/Linux | ❌ | ✅ Sí |
+| Stop (Deallocate) desde Azure | ✅ | ❌ No |
+
+---
+
+# Preguntas típicas del AZ-104
+
+✅ Una VM puede cambiar de tamaño después de su creación.
+
+✅ Si el nuevo tamaño no está disponible en el clúster actual, será necesario realizar un **Stop (Deallocate)**.
+
+✅ Cambiar el **NSG**, las **Tags** o habilitar una **Managed Identity** no requiere reiniciar la VM.
+
+✅ No es posible cambiar la **VNet** ni la **NIC principal** de una VM existente; hay que recrearla.
+
+---
+
+# Regla para el examen
+
+- **Resize** → Puede requerir **Stop (Deallocate)**.
+- **Cambios de configuración (NSG, Tags, Managed Identity...)** → No requieren reinicio.
+- **Cambiar VNet o NIC principal** → No es posible; hay que recrear la VM.
 ---
 
 # 7. Redeploy
