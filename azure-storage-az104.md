@@ -1360,9 +1360,10 @@ Access to Blob / Container
 |----------------------|-------------------------------|
 | Es una política almacenada en Azure Storage. | Es el token que se entrega al cliente. |
 | Define permisos y periodo de validez. | Se utiliza para acceder al recurso. |
-| Puede modificarse o eliminarse posteriormente. | Una vez emitida, contiene una referencia a la política o sus propios parámetros. |
-| Se crea sobre un Container, Queue, Table o File Share (según el servicio). | Puede ser Service SAS, Account SAS o User Delegation SAS. |
-| Permite revocar muchas SAS modificando una única política. | Se distribuye a usuarios o aplicaciones. |
+| Puede modificarse o eliminarse posteriormente. | Una vez emitida, contiene una referencia a la política (Service SAS) o sus propios parámetros. |
+| **Se crea sobre un Blob Container o un Azure File Share.** | Puede ser **Service SAS**, **Account SAS** o **User Delegation SAS**. |
+| **Solo puede utilizarse con Service SAS.** | **Service SAS** puede referenciar una Stored Access Policy; **Account SAS** y **User Delegation SAS** no. |
+| Permite revocar o modificar muchas **Service SAS** cambiando una única política. | Se distribuye a usuarios o aplicaciones para acceder temporalmente al recurso. |
 
 ---
 
