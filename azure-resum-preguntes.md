@@ -594,6 +594,7 @@ Para publicar una aplicación web mediante **HTTPS**, el **Network Security Grou
 
 Si no existe una regla **Allow** con mayor prioridad que la regla **DenyAllInbound**, Azure bloqueará las conexiones HTTPS.
 
+---
 
 # Parte 3C
 
