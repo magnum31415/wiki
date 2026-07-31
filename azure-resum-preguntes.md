@@ -1357,6 +1357,7 @@ Azure Monitor envía como máximo **1 SMS cada 5 minutos**, lo que equivale a un
 Un **Recovery Services Vault** únicamente puede proteger recursos que se encuentren en la **misma región** que el propio Vault.
 
 Antes de planificar una estrategia de backup, es importante comprobar que el **Vault** y los recursos protegidos comparten la misma región de Azure.
+
 ---
 ### **11. Azure Container Registry Tasks (ACR Tasks)**
 
