@@ -1094,6 +1094,7 @@ Para asignar un usuario como administrador de la suscripción deben utilizarse l
 **89.** Una **Inbound NAT Rule** publica un puerto hacia una única VM, mientras que una **Load Balancing Rule** distribuye el tráfico entre varias VMs.
 
 **90.** Para registrar y analizar el tráfico permitido y denegado de una red virtual deben habilitarse los **NSG Flow Logs** sobre el **Network Security Group**.
+
 ---
 # Test 4
 
