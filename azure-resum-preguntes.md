@@ -509,17 +509,24 @@ El bloqueo se aplica independientemente del método utilizado (**Portal**, **Azu
 
 ### **72. Resource Locks**
 
-Los **Resource Locks** protegen un recurso frente a modificaciones o eliminaciones accidentales. Existen dos tipos: **CanNotDelete** y **ReadOnly**.
+Los **Resource Locks** protegen un recurso frente a modificaciones o eliminaciones accidentales. Existen dos tipos:
 
-Un bloqueo **no controla permisos RBAC**; simplemente impide determinadas operaciones incluso a usuarios con permisos elevados.
+| Tipo de bloqueo | Impide |
+|-----------------|---------|
+| **CanNotDelete (Delete Lock)** | Impide eliminar el recurso. También impide mover recursos entre Resource Groups o Subscriptions, ya que el movimiento requiere operaciones internas de modificación. Permite modificar el recurso. |
+| **ReadOnly (Read-only Lock)** | Impide cualquier modificación del recurso, incluida su eliminación y su movimiento entre Resource Groups o Subscriptions. El recurso solo puede leerse. |
+
+Un **Resource Lock** no controla los permisos mediante **Azure RBAC**. Aunque un usuario tenga permisos de **Owner** o **Contributor**, el bloqueo seguirá aplicándose hasta que sea eliminado.
 
 ---
 
 ### **73. Mover recursos y Resource Locks**
 
-Los **Resource Locks** no están diseñados para controlar el movimiento de recursos entre **Resource Groups** o **Subscriptions**.
+Un recurso **no puede moverse** entre **Resource Groups** o **Subscriptions** si el propio recurso o el Resource Group de origen o destino tiene un **Resource Lock** (**CanNotDelete** o **ReadOnly**).
 
-Su función es impedir modificaciones o eliminaciones, por lo que no deben confundirse con mecanismos de control de acceso como **Azure RBAC**.
+Esto se debe a que la operación de movimiento requiere que Azure realice modificaciones internas sobre el recurso.
+
+Antes de mover un recurso, es necesario eliminar los **Resource Locks** y volver a aplicarlos una vez finalizado el movimiento.
 
 ---
 
