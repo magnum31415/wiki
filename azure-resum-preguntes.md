@@ -974,6 +974,7 @@ Para asignar un usuario como administrador de la suscripción deben utilizarse l
 **29.** Solo los roles **Global Administrator** y **Authentication Administrator** pueden modificar las **preguntas de seguridad** de **SSPR**.
 
 **30.** Los roles administrativos de **Microsoft Entra ID** se asignan desde **Directory Roles**, no mediante **Licencias** ni **Grupos**.
+
 **31.** Una asignación de **Azure Policy** puede realizarse sobre un **Management Group**, **Subscription**, **Resource Group** o **Resource** individual.
 
 **32.** Las **Exclusions** de una **Azure Policy** pueden configurarse sobre **Management Groups**, **Subscriptions**, **Resource Groups** y **Resources**, pero **no** sobre el **Tenant Root Group**.
