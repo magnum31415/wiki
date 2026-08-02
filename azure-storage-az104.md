@@ -375,6 +375,42 @@ Accede a las Tables
 | **Storage Account Access Keys (Shared Key)** | Claves maestras del Storage Account. Existen dos claves (Key1 y Key2). | Storage Account Key. | Acceso completo al Storage Account. | ⭐⭐ Baja | Compatibilidad con aplicaciones antiguas y scripts heredados. | Un script heredado utiliza la **Key1** para copiar blobs entre Storage Accounts. | ❌ Evitar cuando sea posible |
 | **Anonymous Public Access** | Acceso sin autenticación. | Ninguna. | Solo recursos públicos. | ⭐ Muy baja | Sitios web estáticos, contenido público. | Un contenedor Blob aloja imágenes públicas para una página web sin necesidad de autenticación. | ❌ Solo si el contenido debe ser público |
 
+## Comparativa entre **User Delegation SAS** vs  **Service SAS** vs **Account SAS**
+
+| Característica | **User Delegation SAS** | **Service SAS** | **Account SAS** |
+|----------------|-------------------------|-----------------|-----------------|
+| **Firmada con** | **User Delegation Key** | **Storage Account Key** | **Storage Account Key** |
+| **Requiere Microsoft Entra ID** | ✅ Sí | ❌ No | ❌ No |
+| **Requiere Storage Account Key** | ❌ No | ✅ Sí | ✅ Sí |
+| **Servicios compatibles** | **Solo Blob Storage (Blob y ADLS Gen2)** | Blob, Azure Files, Queue y Table (un único servicio por SAS) | Blob, Azure Files, Queue y Table (varios servicios en una única SAS) |
+| **Ámbito del acceso** | Blob o Container | Blob, Container, File Share, Queue o Table | Uno o varios servicios completos del Storage Account |
+| **Permite acceder a varios servicios con la misma SAS** | ❌ No | ❌ No | ✅ Sí |
+| **Permisos configurables** | Read, Write, Delete, List, Add, Create, etc. | Read, Write, Delete, List, Add, Create, etc. | Permisos sobre servicios completos (Read, Write, Delete, List, Service, Resource Types, etc.) |
+| **Más segura** | ✅ Sí | ⚠️ Menos | ⚠️ Menos |
+| **Recomendada por Microsoft para Blob Storage** | ✅ Sí | ❌ Solo cuando no puede usarse Entra ID | ❌ Casos administrativos específicos |
+| **Caso de uso típico** | Compartir temporalmente un blob usando identidades de Microsoft Entra ID. | Compartir temporalmente un recurso concreto sin usar Entra ID. | Delegar acceso temporal a varios servicios del Storage Account. |
+| **Ejemplo** | Una aplicación con **Managed Identity** genera una SAS de lectura válida 15 minutos para `container1/foto.jpg`. | Un administrador genera una SAS para que un proveedor suba un archivo a `container1` durante 24 horas. | Una aplicación de backup genera una única SAS para acceder temporalmente a **Blob + Queue + File Share** del mismo Storage Account. |
+
+- **User Delegation SAS**
+  - **Microsoft Entra ID** + **User Delegation Key**
+  - Solo para **Blob Storage** (Blob y ADLS Gen2).
+
+- **Service SAS**
+  - **Storage Account Key**
+  - Acceso a **un único recurso o servicio**:
+    - Blob
+    - Azure Files
+    - Queue
+    - Table
+
+- **Account SAS**
+  - **Storage Account Key**
+  - Acceso a **uno o varios servicios** del mismo **Storage Account**:
+    - Blob
+    - Azure Files
+    - Queue
+    - Table
+
 ## Proceso de generación de una User Delegation SAS
 
 ````
