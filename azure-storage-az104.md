@@ -76,11 +76,12 @@ Estos roles permiten administrar el **Storage Account**, pero **NO acceder al co
 
 Permiten acceder a los **Blob Containers** y a los blobs.
 
-| Rol | Leer | Escribir | Eliminar | Ejemplo |
-|------|:----:|:--------:|:--------:|----------|
-| **Storage Blob Data Reader** | ✅ | ❌ | ❌ | Descargar un blob. |
-| **Storage Blob Data Contributor** | ✅ | ✅ | ✅ | Subir y eliminar blobs. |
-| **Storage Blob Data Owner** | ✅ | ✅ | ✅ | Administrar blobs y sus ACL. |
+| Rol | Leer | Escribir | Eliminar | Crear User Delegation SAS | Ejemplo |
+|------|:----:|:--------:|:--------:|:--------------------------:|----------|
+| **Storage Blob Data Reader** | ✅ | ❌ | ❌ | ❌ | Descargar y listar blobs. |
+| **Storage Blob Data Contributor** | ✅ | ✅ | ✅ | ❌ | Subir, modificar y eliminar blobs. |
+| **Storage Blob Data Owner** | ✅ | ✅ | ✅ | ❌ | Administrar blobs, propietarios y ACL de ADLS Gen2. |
+| **Storage Blob Delegator** | ❌ | ❌ | ❌ | ✅ | Obtener una User Delegation Key para generar una User Delegation SAS. |
 
 Ejemplo:
 
@@ -105,8 +106,9 @@ Permiten acceder a **Azure File Shares** mediante SMB.
 | Rol | Leer | Escribir | Modificar ACL NTFS | Ejemplo |
 |------|:----:|:--------:|:------------------:|----------|
 | **Storage File Data SMB Share Reader** | ✅ | ❌ | ❌ | Abrir un archivo. |
-| **Storage File Data SMB Share Contributor** | ✅ | ✅ | ❌ | Crear o borrar archivos. |
+| **Storage File Data SMB Share Contributor** | ✅ | ✅ | ❌ | Crear, modificar o borrar archivos. |
 | **Storage File Data SMB Share Elevated Contributor** | ✅ | ✅ | ✅ | Cambiar permisos NTFS de carpetas y archivos. |
+| **Storage File Data SMB Share Owner** | ✅ | ✅ | ✅ *(incluye Take Ownership)* | Control total sobre el Azure File Share: administrar permisos NTFS y tomar posesión de archivos y carpetas. |
 
 Ejemplo:
 
