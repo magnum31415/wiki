@@ -375,6 +375,44 @@ Accede a las Tables
 | **Storage Account Access Keys (Shared Key)** | Claves maestras del Storage Account. Existen dos claves (Key1 y Key2). | Storage Account Key. | Acceso completo al Storage Account. | ⭐⭐ Baja | Compatibilidad con aplicaciones antiguas y scripts heredados. | Un script heredado utiliza la **Key1** para copiar blobs entre Storage Accounts. | ❌ Evitar cuando sea posible |
 | **Anonymous Public Access** | Acceso sin autenticación. | Ninguna. | Solo recursos públicos. | ⭐ Muy baja | Sitios web estáticos, contenido público. | Un contenedor Blob aloja imágenes públicas para una página web sin necesidad de autenticación. | ❌ Solo si el contenido debe ser público |
 
+## Proceso de generación de una User Delegation SAS
+
+````
+Microsoft Entra ID
+        │
+        ▼
+Storage Blob Delegator (RBAC)
+        │
+        ▼
+Solicita una User Delegation Key
+        │
+        ▼
+Azure genera la User Delegation Key 
+        │
+        ▼
+Con esa clave se genera una User Delegation SAS
+        │
+        ▼
+La SAS se entrega al cliente
+        │
+        ▼
+El cliente accede al Blob Storage
+````
+
+- **User Delegation Key**
+  - Es una **clave criptográfica temporal** que Azure entrega a una identidad autenticada mediante **Microsoft Entra ID**.
+  - Se utiliza para **firmar una User Delegation SAS**.
+  - No proporciona acceso directo a los datos.
+
+- **User Delegation SAS**
+  - Es un **token SAS** firmado con una **User Delegation Key**.
+  - Define el acceso temporal a uno o varios blobs mediante:
+    - Permisos (Read, Write, Delete, List, etc.).
+    - Recurso (blob o contenedor).
+    - Fecha y hora de inicio.
+    - Fecha y hora de expiración.
+    - Restricciones por dirección IP (opcional).
+    - Obligar el uso de HTTPS (opcional).
 ---
 
 ## Notas importantes para el AZ-104
