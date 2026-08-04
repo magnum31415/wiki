@@ -12,12 +12,23 @@ Azure puede entenderse como cuatro grandes planos funcionales:
 Cada uno responde a una pregunta diferente y cada uno tiene su punto de entrada
 
 **Punto de entrada**
-| Plano | Punto de entrada |
-|--------|------------------|
-| **Identity Plane** | `graph.microsoft.com` y `login.microsoftonline.com` |
-| **Control Plane** | `management.azure.com` (ARM) |
-| **Data Plane** | Un endpoint específico para cada servicio (`blob.core.windows.net`, `vault.azure.net`, `database.windows.net`,`documents.azure.com`,etc.) |
-| **Billing Plane** | `Microsoft.Billing`,`Microsoft.CostManagement`,`Microsoft.Consumption` generalmente bajo `management.azure.com`, |
+| Plano              | FQDN / Punto de entrada     | ¿Qué es?                                                        | ¿Expone API REST?                                                                                                               |
+| ------------------ | --------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Identity Plane** | `login.microsoftonline.com` | Servicio de autenticación de Microsoft Entra ID                 | ✅ Sí. Endpoints OAuth 2.0 / OpenID Connect para autenticación y emisión de tokens.                                              |
+|                    | `login.microsoft.com`       | Servicio de autenticación y redirecciones                       | ✅ Sí. Utilizado en determinados flujos de autenticación.                                                                        |
+|                    | `graph.microsoft.com`       | Microsoft Graph                                                 | ✅ Sí. API REST para gestionar usuarios, grupos, aplicaciones, dispositivos, etc.                                                |
+|                    | `entra.microsoft.com`       | Portal de administración de Microsoft Entra                     | ❌ No. Es una aplicación web que consume Microsoft Graph y otras APIs internamente.                                              |
+| **Control Plane**  | `management.azure.com`      | Azure Resource Manager (ARM)                                    | ✅ Sí. API REST para crear, modificar y administrar recursos de Azure.                                                           |
+|                    | `portal.azure.com`          | Portal de Azure                                                 | ❌ No. Es una aplicación web que consume `management.azure.com` y otras APIs.                                                    |
+| **Data Plane**     | `*.blob.core.windows.net`   | Azure Blob Storage                                              | ✅ Sí. API REST para acceder a blobs.                                                                                            |
+|                    | `*.file.core.windows.net`   | Azure Files                                                     | ✅ Sí. API REST (además de SMB para acceso a ficheros).                                                                          |
+|                    | `*.queue.core.windows.net`  | Azure Queue Storage                                             | ✅ Sí. API REST para colas.                                                                                                      |
+|                    | `*.table.core.windows.net`  | Azure Table Storage                                             | ✅ Sí. API REST para tablas.                                                                                                     |
+|                    | `*.vault.azure.net`         | Azure Key Vault                                                 | ✅ Sí. API REST para secretos, claves y certificados.                                                                            |
+|                    | `*.database.windows.net`    | Azure SQL Database                                              | ❌ No REST. Es el endpoint TDS utilizado por SQL Server.                                                                         |
+|                    | `*.documents.azure.com`     | Azure Cosmos DB                                                 | ✅ Sí. API REST (además de SDKs específicos).                                                                                    |
+| **Billing Plane**  | `management.azure.com`      | Azure Resource Manager (Billing, Cost Management y Consumption) | ✅ Sí. Los proveedores `Microsoft.Billing`, `Microsoft.CostManagement` y `Microsoft.Consumption` exponen sus APIs REST bajo ARM. |
+|                    | `portal.azure.com`          | Portal de Azure                                                 | ❌ No. Interfaz web que consume las APIs de Billing y Cost Management.                                                           |
 
 ----
 
