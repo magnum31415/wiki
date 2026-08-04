@@ -4,34 +4,48 @@
 
 # Fujo con CrowdStrike
 ````
-                 Azure VNet
-                    │
-                    ▼
-            Network Watcher
-                    │
-                    ▼
-          VNet Flow Logs (raw data)
-                    │
-                    ▼
-            Storage Account  
-                    │
-                    ▼
-            Traffic Analytics
-                    │
-                    ▼
-         Log Analytics Workspace
-                    │
-                    ▼
-           NTANetAnalytics table
-                    │
-                    ▼
-            Data Export Rule
-                    │
-                    ▼
-               Azure Event Hub
-                    │
-                    ▼
-         CrowdStrike Falcon Next-Gen SIEM
+    Azure Virtual Network / Subnet / NIC
+                  │
+                  ▼
+      Azure Network Watcher
+                  │
+                  ▼
+       Virtual Network Flow Log
+                  │
+                  ├────────► Storage Account
+                  │          Datos raw y retención
+                  │
+                  ▼
+          Traffic Analytics
+     Enriquecimiento cada 10 min
+            o cada 1 hora
+                  │
+                  ▼
+       Log Analytics Workspace
+                  │
+                  ▼
+         Tabla NTANetAnalytics
+                  │
+                  ▼
+      Log Analytics Data Export
+       Exportación sin filtros
+                  │
+                  ▼
+     Event Hubs Namespace Standard
+                  │
+                  ▼
+       Event Hub exclusivo
+                  │
+                  ▼
+  Consumer Group exclusivo CrowdStrike
+                  │
+                  ▼
+Microsoft Entra ID App / Service Principal
+Azure Event Hubs Data Receiver
+                  │
+                  ▼
+ CrowdStrike Falcon Next-Gen SIEM
+ Microsoft Virtual Network Flow Logs Connector      
 ````
 
 
