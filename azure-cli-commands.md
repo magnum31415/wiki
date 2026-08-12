@@ -21,14 +21,24 @@
   --query "[].{Role:roleDefinitionName,Scope:scope}" \
   -o table
   ````
-- ***List Changes**:
+- **List Changes**:
   ````
   az role assignment list-changelogs \
   --start-time "2026-08-10T00:00:00Z" \
   --end-time "2026-08-13T00:00:00Z" \
   -o json
   ````
-
+- **Role Assigment specifiying GUID**:
+  Microsoft admite az role assignment create para crear el assignment sobre un scope concreto y el parámetro --name permite establecer el GUID del Role Assignment.
+  ````
+   az role assignment create \
+  --name "BBBBBB-c003-5d4e-9889-BBBBBBBB" \
+  --assignee-object-id "AAAAAAA-019b-413c-ac88-AAAAAAA" \
+  --assignee-principal-type ServicePrincipal \
+  --role "Contributor" \
+  --scope "/subscriptions/#####-###-####-####-12345678/resourceGroups/rg-netlogs-prod-gwc-001/providers/Microsoft.Storage/storageAccounts/stnetlogsprodgwc001"
+  ````
+  
 ## Policies
 
 - **Force policy SCAN in a Resource Group**: ``az policy state trigger-scan   --resource-group "rg-alz-flowlogs-validation-gwc-002"``
