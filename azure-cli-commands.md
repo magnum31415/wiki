@@ -33,10 +33,18 @@
   ````
    az role assignment create \
   --name "BBBBBB-c003-5d4e-9889-BBBBBBBB" \
-  --assignee-object-id "AAAAAAA-019b-413c-ac88-AAAAAAA" \
+  --assignee-object-id "AAAAAAA-AAA-AAAA-AAAA-AAAAAAA" \
   --assignee-principal-type ServicePrincipal \
   --role "Contributor" \
   --scope "/subscriptions/#####-###-####-####-12345678/resourceGroups/rg-netlogs-prod-gwc-001/providers/Microsoft.Storage/storageAccounts/stnetlogsprodgwc001"
+  ````
+- **List the previously assigmed role**
+  ````
+  az role assignment list \
+  --assignee-object-id "AAAAAAA-AAA-AAAA-AAAA-AAAAAAA" \
+  --scope "/subscriptions/#####-###-####-####-12345678/resourceGroups/rg-netlogs-prod-gwc-001/providers/Microsoft.Storage/storageAccounts/stnetlogsprodgwc001" \
+  --query "[].{Name:name,Role:roleDefinitionName,PrincipalId:principalId,Scope:scope}" \
+  -o table
   ````
   
 ## Policies
