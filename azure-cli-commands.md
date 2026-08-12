@@ -5,7 +5,29 @@
 
 - **Account set**: ``az account set --subscription "sub-alz-validation"``
 - **Account show**: ``az account show``
+ ````az account show \
+  --query "{Name:name,SubscriptionId:id}" \
+  -o table
+````
+- 
+## Roles
 
+- **List role assigments**:
+  ````
+   az role assignment list \
+  --assignee "########-####-####-####-############" \
+  --scope "/subscriptions/#####-###-####-####-123456789/resourceGroups/NetworkWatcherRG" \
+  --include-inherited \
+  --query "[].{Role:roleDefinitionName,Scope:scope}" \
+  -o table
+  ````
+- ***List Changes**:
+  ````
+  az role assignment list-changelogs \
+  --start-time "2026-08-10T00:00:00Z" \
+  --end-time "2026-08-13T00:00:00Z" \
+  -o json
+  ````
 
 ## Policies
 
