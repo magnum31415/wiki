@@ -16,7 +16,7 @@
   ````
    az role assignment list \
   --assignee "########-####-####-####-############" \
-  --scope "/subscriptions/#####-###-####-####-123456789/resourceGroups/NetworkWatcherRG" \
+  --scope "/subscriptions/#####-###-####-####-#######9/resourceGroups/NetworkWatcherRG" \
   --include-inherited \
   --query "[].{Role:roleDefinitionName,Scope:scope}" \
   -o table
@@ -36,22 +36,31 @@
   --assignee-object-id "AAAAAAA-AAA-AAAA-AAAA-AAAAAAA" \
   --assignee-principal-type ServicePrincipal \
   --role "Contributor" \
-  --scope "/subscriptions/#####-###-####-####-12345678/resourceGroups/rg-netlogs-prod-gwc-001/providers/Microsoft.Storage/storageAccounts/stnetlogsprodgwc001"
+  --scope "/subscriptions/#####-###-####-####-#######/resourceGroups/rg-netlogs-prod-gwc-001/providers/Microsoft.Storage/storageAccounts/stnetlogsprodgwc001"
   ````
 - **List the previously assigmed role**
   ````
   az role assignment list \
   --assignee-object-id "AAAAAAA-AAA-AAAA-AAAA-AAAAAAA" \
-  --scope "/subscriptions/#####-###-####-####-12345678/resourceGroups/rg-netlogs-prod-gwc-001/providers/Microsoft.Storage/storageAccounts/stnetlogsprodgwc001" \
+  --scope "/subscriptions/#####-###-####-####-#######/resourceGroups/rg-netlogs-prod-gwc-001/providers/Microsoft.Storage/storageAccounts/stnetlogsprodgwc001" \
   --query "[].{Name:name,Role:roleDefinitionName,PrincipalId:principalId,Scope:scope}" \
   -o table
   ````
-  
+ - **Qué roles RBAC tiene la Managed Identity Deploy-VNFL-GWC sobre este Log Analytics Workspace, incluyendo permisos heredados**
+   ````
+   az role assignment list \
+   --assignee "IIIII-III-III-IIIIIIIIIIII" \
+   --scope "/subscriptions/SSSSS-SSSS-SSSS-SSSS-SSSSSSS/resourceGroups/rg-netlogs-prod-gwc-001/providers/Microsoft.OperationalInsights/workspaces/law-connectivity-prod-gwc-001" \
+   --include-inherited \
+   -o table
+   ````
 ## Policies
 
-- **Force policy SCAN in a Resource Group**: ``az policy state trigger-scan   --resource-group "rg-alz-flowlogs-validation-gwc-002"``
-  - solo fuerza una evaluación de compliance. Durante un evaluation cycle, una DINE detecta el recurso y lo marca Non-compliant, pero no ejecuta el deployment sobre ese recurso como consecuencia del scan.
-- **Policy definition show**: ``az policy definition show   --name "3e9965dc-cc13-47ca-8259-a4252fd0cf7b"``
+- **Force policy SCAN in a Resource Group**:solo fuerza una evaluación de compliance. Durante un evaluation cycle, una DINE detecta el recurso y lo marca Non-compliant, pero no ejecuta el deployment sobre ese recurso como consecuencia del scan.
+    ``az policy state trigger-scan   --resource-group "rg-alz-flowlogs-validation-gwc-002"``
+
+- **Policy definition show**:
+    ``az policy definition show   --name "3e9965dc-cc13-47ca-8259-a4252fd0cf7b"``
 
 ## Log Analytics Workspace
 
@@ -70,6 +79,15 @@
   --workspace-name law-connectivity-prod-gwc-001 \
   --name export-ntanetanalytics-crowdstrike-gwc \
   -o json
+  ````
+- **Resource ID completo del Log Analytics Workspace**
+  ````
+  az monitor log-analytics workspace show \
+  --resource-group rg-netlogs-prod-gwc-001 \
+  --workspace-name law-connectivity-prod-gwc-001 \
+  --subscription sub-connectivity \
+  --query id \
+  -o tsv
   ````
 
 ## Entra Id
