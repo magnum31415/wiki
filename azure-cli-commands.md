@@ -9,7 +9,43 @@
   --query "{Name:name,SubscriptionId:id}" \
   -o table
 ````
-- 
+- **Get Cloudshell IP**:
+  ````curl -s https://api.ipify.org````
+
+---
+## Storage Account
+
+````
+az storage account network-rule add \
+ --account-name stnetlogsprodswc001 \
+ --resource-group rg-netlogs-prod-swc-001 \
+ --ip-address X.Y.Z.K
+
+az storage account network-rule list \
+ --account-name stnetlogsprodswc001 \
+ --resource-group rg-netlogs-prod-swc-001
+
+az storage blob list \
+  --account-name stnetlogsprodswc001 \
+  --container-name insights-logs-flowlogflowevent \
+  --auth-mode login \
+  --output table
+
+az storage blob download \
+  --account-name stnetlogsprodswc001 \
+  --container-name insights-logs-flowlogflowevent \
+  --name "flowLogResourceID=/<subscription>_NETWORKWATCHERRG/NETWORKWATCHER_SWEDENCENTRAL_VNET-ALZ-VALIDATION-SWC-001-RG-ALZ-VALIDATION-NETWORK-SW-FLOWLOG/y=2026/m=08/d=05/h=14/m=00/macAddress=7CED8D2684E5/PT1H.json" \
+  --file flowlog.json \
+  --auth-mode login
+
+cat flowlog.json | jq .
+
+
+
+````
+
+---
+
 ## Roles
 
 - **List role assigments**:
@@ -61,6 +97,27 @@
 
 - **Policy definition show**:
     ``az policy definition show   --name "3e9965dc-cc13-47ca-8259-a4252fd0cf7b"``
+
+- **Consultar las Policy Assignments**:Muestra la Policy Assignment Deploy-VNFL-GWC del MG landingzones y devuelve su nombre, Principal ID de la Managed Identity y Tenant ID.
+  ````
+  az policy assignment show \
+  --name Deploy-VNFL-GWC \
+  --scope /providers/Microsoft.Management/managementGroups/landingzones \
+  --query "{Name:name,PrincipalId:identity.principalId,TenantId:identity.tenantId}" \
+  -o table
+  ````
+  ````
+  #verlas todas
+  for mg in landingzones sandbox; do
+  for policy in Deploy-VNFL-GWC Deploy-VNFL-SWC; do
+    az policy assignment show \
+      --name "$policy" \
+      --scope "/providers/Microsoft.Management/managementGroups/$mg" \
+      --query "{ManagementGroup:'$mg',Policy:name,PrincipalId:identity.principalId,TenantId:identity.tenantId}" \
+      -o table
+  done
+done
+  ````
 
 ## Log Analytics Workspace
 
