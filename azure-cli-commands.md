@@ -43,6 +43,17 @@ cat flowlog.json | jq .
 
 
 ````
+- **Tamaño del blob container en GB**:
+  ````
+  bytes=$(az storage blob list \
+  --account-name stnetlogsprodgwc001 \
+  --container-name insights-logs-flowlogflowevent \
+  --auth-mode login \
+  --query "sum([].properties.contentLength)" \
+  --output tsv)
+
+  awk -v b="$bytes" 'BEGIN {printf "%.6f GiB\n", b/1024/1024/1024}'
+  ````
 
 ---
 
