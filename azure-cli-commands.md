@@ -1,6 +1,8 @@
 
 # Commands
-
+## Misc
+- **Get Cloudshell IP**:
+  ````curl -s https://api.ipify.org````
 ## Account
 
 - **Account set**: ``az account set --subscription "sub-alz-validation"``
@@ -9,8 +11,52 @@
   --query "{Name:name,SubscriptionId:id}" \
   -o table
 ````
-- **Get Cloudshell IP**:
-  ````curl -s https://api.ipify.org````
+
+- **List Accounts**:
+  ````
+  az account list \
+  --query "[?contains(name, 'sub-ai-')].[name,id]" \
+  -o table
+  ````
+  
+---
+## Network Watcher
+- **Creare Network Watcher**:
+  ````
+  az resource create \
+    --subscription "sub-app1-dev" \
+    --resource-group "NetworkWatcherRG" \
+    --resource-type "Microsoft.Network/networkWatchers" \
+    --name "NetworkWatcher_germanywestcentral" \
+    --api-version "2025-07-01" \
+    --is-full-object \
+    --properties '{
+      "location": "germanywestcentral",
+      "tags": {
+        "Application": "APP!",
+        "Environment": "DEV",
+        "Owner": "perter@acme.com",
+        "CostCenter": "tbd"
+      },
+      "properties": {}
+    }'
+  ````
+- **List Network Watchers**:
+  ````
+  for sub in \
+    "sub-app1-dev" \
+    "sub-app1-prod" \
+    "sub-app2-dev" \
+    "sub-app2-prod"
+  do
+    echo "=== $sub ==="
+    az network watcher list \
+      --subscription "$sub" \
+      --query "[].{Name:name,Location:location}" \
+      -o table
+  done
+  ````
+
 
 ---
 ## Storage Account
