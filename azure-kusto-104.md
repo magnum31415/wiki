@@ -54,7 +54,134 @@ These queries are designed to:
 - Support **Landing Zone governance decisions**
 
 ---
+# Traffic analytics
 
+## Últimos registros recibidos
+````
+NTANetAnalytics
+| order by TimeGenerated desc
+| take 20
+````
+
+## Últimos registros con nombre de VNet
+````
+NTANetAnalytics
+| extend VNetName = tostring(split(TargetResourceId, "/")[-1])
+| order by TimeGenerated desc
+| take 20
+| project
+    TimeGenerated,
+    VNetName,
+    TargetResourceType,
+    SrcIp,
+    DestIp,
+    DestPort,
+    L4Protocol,
+    FlowStatus
+
+````
+
+## Qué VNets están enviando datos
+````
+NTANetAnalytics
+| extend VNetName = tostring(split(TargetResourceId, "/")[-1])
+| summarize
+    LastDataReceived = max(TimeGenerated),
+    Records = count()
+    by VNetName
+| order by LastDataReceived desc
+````
+
+## VNets activas recientemente
+````
+NTANetAnalytics
+| extend VNetName = tostring(split(TargetResourceId, "/")[-1])
+| where TimeGenerated > ago(30m)
+| summarize
+    LastDataReceived = max(TimeGenerated),
+    Records = count()
+    by VNetName
+| order by LastDataReceived desc
+````
+## Tráfico por VNet
+````
+NTANetAnalytics
+| where TimeGenerated > ago(24h)
+| extend VNetName = tostring(split(TargetResourceId, "/")[-1])
+| summarize Records = count() by VNetName
+| order by Records desc
+````
+
+## IPs origen con más tráfico
+````
+NTANetAnalytics
+| where TimeGenerated > ago(24h)
+| summarize Records = count() by SrcIp
+| top 20 by Records
+````
+
+## IPs destino principales
+
+````
+NTANetAnalytics
+| where TimeGenerated > ago(24h)
+| summarize Records = count() by DestIp
+| top 20 by Records
+````
+
+## Puertos destino más utilizados
+````
+NTANetAnalytics
+| where TimeGenerated > ago(24h)
+| summarize Records = count() by DestPort
+| top 20 by Records
+````
+
+## Puerto + protocolo
+````
+NTANetAnalytics
+| where TimeGenerated > ago(24h)
+| summarize Records = count() by DestPort, L4Protocol
+| top 20 by Records
+````
+## Tráfico permitido/denegado
+````
+NTANetAnalytics
+| summarize Records = count() by FlowStatus
+| order by Records desc
+````
+## Tráfico de una VNet concreta
+````
+NTANetAnalytics
+| extend VNetName = tostring(split(TargetResourceId, "/")[-1])
+| where VNetName == "NOMBRE-VNET"
+| order by TimeGenerated desc
+| take 100
+| project
+    TimeGenerated,
+    SrcIp,
+    DestIp,
+    DestPort,
+    L4Protocol,
+    FlowStatus
+````
+## Tráfico de una IP concreta
+````
+NTANetAnalytics
+| where SrcIp == "10.180.17.4"
+   or DestIp == "10.180.17.4"
+| order by TimeGenerated desc
+| take 100
+````
+## Conexiones entre origen y destino más frecuentes
+````
+NTANetAnalytics
+| where TimeGenerated > ago(24h)
+| summarize Records = count()
+    by SrcIp, DestIp, DestPort, L4Protocol
+| top 50 by Records
+````
+---
 # 🔐 Public IP Security Audit - Azure Resource Graph Queries
 
 ## 1. Public IP Inventory
