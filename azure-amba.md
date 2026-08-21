@@ -6,11 +6,169 @@
 
 Azure Monitor Baseline Alerts (AMBA) es una iniciativa oficial de Microsoft que proporciona un conjunto de alertas predefinidas y recomendadas para recursos Azure.
 
+AMBA (Azure Monitor Baseline Alerts) no es un sistema de monitorización distinto de Azure Monitor. Es un conjunto mantenido por Microsoft de policies, alert rules y configuración recomendada para desplegar una baseline de monitorización de forma consistente.
+
+
+
 Su objetivo es implementar una línea base de monitorización consistente en toda la organización, reduciendo el esfuerzo necesario para diseñar y mantener cientos de alertas manualmente.
 
 AMBA forma parte de las mejores prácticas de Azure Well-Architected Framework y está especialmente orientado a entornos Azure Landing Zones (ALZ).
 
 ![AMBA](./img/azure/azure-amba.png)
+
+## Qué hace AMBA realmente
+
+Simplificando mucho:
+
+````
+AMBA
+ │
+ │ Azure Policies
+ ▼
+Busca determinados recursos Azure
+ │
+ │ DeployIfNotExists
+ ▼
+Crea/configura Azure Monitor Alert Rules
+ │
+ ▼
+Action Group
+ │
+ ▼
+Email / Teams / Webhook / etc.
+````
+Por ejemplo, tienes un Azure Firewall:
+
+````
+Azure Firewall
+     │
+     │ métricas
+     ▼
+Azure Monitor
+     │
+     │
+AMBA Metric Alert
+     │
+     │ si se cumple condición
+     ▼
+Action Group
+     │
+     ▼
+groupit-cloud@synlab.com
+````
+
+**AMBA te evita tener que crear manualmente todas las alertas recomendadas para Firewall, ExpressRoute, VPN Gateway, etc.**
+
+
+## ¿Qué despliega AMBA mediante las Policies?
+
+AMBA proporciona Azure Policy Definitions / Initiatives que utilizan principalmente DeployIfNotExists.
+
+Conceptualmente:
+
+````
+Policy AMBA
+   │
+   │ encuentra
+   ▼
+Microsoft.Network/azureFirewalls
+   │
+   │ comprueba
+   ▼
+¿Existe la Metric Alert?
+   │
+ ┌─┴─┐
+Sí   No
+     │
+     ▼
+DeployIfNotExists
+     │
+     ▼
+Crea Metric Alert
+````
+
+Por ejemplo:
+````
+Azure Firewall
+     │
+     ├── Alert Firewall Health
+     ├── Alert SNAT Port Utilization
+     ├── Alert Throughput
+     └── Alert Latency
+````
+
+Por eso AMBA encaja tan bien con ALZ: **Azure Policy proporciona el mecanismo para desplegar automáticamente la monitorización**.
+
+## ¿Dónde entra el Action Group?
+
+Una Alert Rule necesita saber qué hacer cuando dispara.
+
+````
+Metric Alert
+     │
+     │ Trigger
+     ▼
+Action Group
+````
+
+Y el Action Group contiene los receptores/acciones:
+
+````
+Action Group
+│
+├── Email
+├── SMS
+├── Webhook
+├── Logic App
+├── Azure Function
+└── etc.
+````
+
+En vuestro caso inicial:
+
+````
+ag-platform
+     │
+     └── it-cloud@company.com
+````
+Por tanto:
+````
+Azure Firewall
+      │
+      ▼
+AMBA Alert
+      │
+      ▼
+ag-platform
+      │
+      ▼
+groupit-cloud@synlab.com
+````
+
+## 4. ¿Qué tiene que ver el Management Group?
+
+Mucho, porque **el scope del Policy Assignment determina dónde se aplicará AMBA.**
+
+Ahora quieres:
+
+````
+Tenant Root
+│
+├── Platform MG       ← AMBA assignment
+│   │
+│   ├── Connectivity
+│   │     └── Azure Firewall
+│   │
+│   ├── Management
+│   ├── Identity
+│   └── Security
+│
+└── Landing Zones
+      └── NO AMBA por ahora
+````
+Como las policies están asignadas a Platform, sus hijos las heredan.
+
+
 
 ---
 
