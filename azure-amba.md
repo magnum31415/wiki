@@ -101,6 +101,89 @@ Por eso AMBA encaja tan bien con ALZ: **Azure Policy proporciona el mecanismo pa
 
 ## ¿Dónde entra el Action Group?
 
+**Si quiero 1 Subscription = 1 Action Group usando AMBA-ALZ estándar, necesito que esa subscription esté sola bajo un MG al que pueda aplicar Deploy-AMBA-Notification, porque este patrón de despliegue trabaja a nivel de Management Group y no soporta todavía el escenario de despliegue directo a nivel de subscription**
+
+
+Azure Policy sí puede asignarse técnicamente a una subscription, pero el patrón AMBA-ALZ Terraform que estás utilizando no soporta todavía el deployment scenario a nivel de subscription. Microsoft lo indica explícitamente en la documentación actual.
+
+tus application subscriptions, si tienes:
+````
+online_enforced
+├── sub-A
+├── sub-B
+├── sub-C
+└── sub-D
+````
+y quieres:
+````
+sub-A → AG-A
+sub-C → AG-C
+````
+con AMBA-ALZ estándar no basta con un único Deploy-AMBA-Notification en online_enforced, porque ambas subscriptions heredarían la misma configuración.
+
+La solución puramente AMBA-ALZ sería algo como:
+````
+online_enforced
+├── mg-sub-A
+│   └── sub-A
+│       → AG-A
+│
+├── sub-B
+│
+├── mg-sub-C
+│   └── sub-C
+│       → AG-C
+│
+└── sub-D
+````
+y asignar AMBA únicamente en mg-sub-A y mg-sub-C.
+
+
+Podrías crear un único archetype reutilizable, por ejemplo:
+
+````
+amba_application_custom.alz_archetype_override.yaml
+````
+````
+base_archetype: amba_landingzones
+name: amba_application_custom
+
+policy_assignments_to_add:
+  - Deploy-AMBA-Notification
+
+policy_assignments_to_remove: []
+
+policy_definitions_to_add: []
+policy_definitions_to_remove: []
+
+policy_set_definitions_to_add: []
+policy_set_definitions_to_remove: []
+
+role_definitions_to_add: []
+role_definitions_to_remove: []
+````
+Y reutilizar ese mismo archetype en varios MG:
+````
+online_enforced
+│
+├── mg-sub-A
+│   └── archetype = amba_application_custom
+│       └── sub-A
+│
+└── mg-sub-C
+    └── archetype = amba_application_custom
+        └── sub-C
+````
+
+
+La diferencia de Action Group/emails no la metería en el archetype. La pondría después en los parámetros del policy assignment para cada MG:
+
+
+
+
+
+
+
 Una Alert Rule necesita saber qué hacer cuando dispara.
 
 ````
