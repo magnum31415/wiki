@@ -1600,17 +1600,18 @@ Ejemplo descript para generar trafico
 ````bash
 #!/bin/bash
 
-# Crear el script que genera trafic HTTPS
 cat << 'EOF' > /usr/local/bin/generate-traffic.sh
 #!/bin/bash
 URLS=(
   "https://www.microsoft.com"
   "https://www.azure.com"
   "https://www.bing.com"
+  "https://www.google.com"
+  "https://www.github.com"
 )
 
 for url in "${URLS[@]}"; do
-  for i in {1..20}; do
+  for i in {1..40}; do
     curl -k -s -o /dev/null "$url"
   done
 done
@@ -1618,11 +1619,10 @@ EOF
 
 chmod +x /usr/local/bin/generate-traffic.sh
 
-# Afegir la tasca cron (cada 5 minuts) si no existeix ja
 CRON_JOB="*/5 * * * * /usr/local/bin/generate-traffic.sh"
 ( crontab -l 2>/dev/null | grep -v "generate-traffic.sh" ; echo "$CRON_JOB" ) | crontab -
 
-echo "Script instal·lat i cron configurat correctament."
+echo "Script actualitzat i cron configurat correctament."
 crontab -l
 ````
 
