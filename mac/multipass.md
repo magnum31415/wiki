@@ -68,6 +68,7 @@ curl -fsSL https://claude.ai/install.sh | bash
 
 ````bash
 multipass list                  # ver todas tus VMs y su estado
+multipass shell dev-vm          # entrar
 multipass stop dev-vm           # apagarla
 multipass start dev-vm          # encenderla
 multipass info dev-vm           # ver IP, montajes, recursos
