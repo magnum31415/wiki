@@ -309,3 +309,15 @@ Debe crearse manualmente.
 ```text
 Azure auto-registers VMs ONLY in Private DNS Zones and ONLY with private IP addresses.
 ```
+
+---
+
+# Private DNS Zone
+
+![azure-privatedns-v2.png](./img/azure/azure-privatedns-v2.png)
+
+---
+
+# Private DNS Zone - Hub & Spoke
+
+![azure-privatedns-hub-spoke.png](./img/azure/azure-privatedns-hub-spoke.png)
