@@ -162,8 +162,8 @@ cat flowlog.json | jq .
   --scope /providers/Microsoft.Management/managementGroups/landingzones \
   --query "{Name:name,PrincipalId:identity.principalId,TenantId:identity.tenantId}" \
   -o table
-  ````
-  ````
+
+
   #verlas todas
   for mg in landingzones sandbox; do
   for policy in Deploy-VNFL-GWC Deploy-VNFL-SWC; do
@@ -230,3 +230,17 @@ done
   --query "[].name" \
   -o table
   ````
+
+## VM extensions
+
+````
+#unistall AzureMonitorLinuxAgent
+az account set --subscription 60776952-6ec5-4877-b8fa-123abb852a1a
+
+az vm extension delete \
+  --resource-group rg-alz-validation-network-gwc \
+  --vm-name vm-alz-validation-ubuntu-gwc-001 \
+  --name AzureMonitorLinuxAgent
+
+
+````
