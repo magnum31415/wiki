@@ -1301,3 +1301,42 @@ az network nic show-effective-route-table
 - Routing BGP
 - Overlaps CIDR
 - Private Endpoints consumidos desde on-prem
+
+---
+
+# 13. AMA Monitoring
+
+## ¿Está viva la VM y reportando heartbeat? (la más básica, confirma que el agente está corriendo)
+
+````kusto
+Heartbeat
+| where Computer has "vm-alz-validation-ubuntu"
+| summarize LastHeartbeat = max(TimeGenerated) by Computer, ResourceId
+| extend MinutesSinceLastHeartbeat = datetime_diff('minute', now(), LastHeartbeat)
+````
+## ¿Están llegando las métricas de Microsoft-InsightsMetrics? (confirma el performance_counter que arreglamos con el sampling a 60s)
+
+````kusto
+InsightsMetrics
+| where Computer has "vm-alz-validation-ubuntu"
+| summarize LastSample = max(TimeGenerated), SampleCount = count() by Computer, Namespace, Name
+| order by LastSample desc
+````
+## ¿Están llegando los logs de Syslog? (confirma el data_source.syslog que añadimos)
+
+````kusto
+Syslog
+| where Computer has "vm-alz-validation-ubuntu"
+| summarize LastLog = max(TimeGenerated), LogCount = count() by Computer, Facility, SeverityLevel
+| order by LastLog desc
+````
+## Vista combinada rápida — un solo vistazo a las tres tablas a la vez
+
+````kusto
+union
+  (Heartbeat | where Computer has "vm-alz-validation-ubuntu" | extend Source = "Heartbeat"),
+  (InsightsMetrics | where Computer has "vm-alz-validation-ubuntu" | extend Source = "InsightsMetrics"),
+  (Syslog | where Computer has "vm-alz-validation-ubuntu" | extend Source = "Syslog")
+| summarize LastSeen = max(TimeGenerated), RecordCount = count() by Computer, Source
+| order by Computer, Source
+````
