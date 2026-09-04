@@ -156,13 +156,12 @@ cat flowlog.json | jq .
     ``az policy definition show   --name "3e9965dc-cc13-47ca-8259-a4252fd0cf7b"``
 
 - **Consultar las Policy Assignments**:Muestra la Policy Assignment Deploy-VNFL-GWC del MG landingzones y devuelve su nombre, Principal ID de la Managed Identity y Tenant ID.
-  ````
+````bash
   az policy assignment show \
   --name Deploy-VNFL-GWC \
   --scope /providers/Microsoft.Management/managementGroups/landingzones \
   --query "{Name:name,PrincipalId:identity.principalId,TenantId:identity.tenantId}" \
   -o table
-
 
   #verlas todas
   for mg in landingzones sandbox; do
@@ -173,8 +172,8 @@ cat flowlog.json | jq .
       --query "{ManagementGroup:'$mg',Policy:name,PrincipalId:identity.principalId,TenantId:identity.tenantId}" \
       -o table
   done
-done
-  ````
+  done
+````
 
 ## Log Analytics Workspace
 
