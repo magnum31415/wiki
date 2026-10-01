@@ -1340,3 +1340,74 @@ union
 | summarize LastSeen = max(TimeGenerated), RecordCount = count() by Computer, Source
 | order by Computer, Source
 ````
+
+# Azure Resource Graph – Auditoría del tag `Owner`
+
+Queries KQL para ejecutar en **Azure Resource Graph Explorer** (ámbito: tenant / todas las suscripciones).
+
+> **Nota:** en Resource Graph las claves de los tags distinguen mayúsculas y minúsculas, por eso se contemplan las variantes `Owner`, `owner` y `OWNER`.
+
+---
+
+## Resumen: cuántos recursos tienen el tag y cuántos no
+
+```kusto
+resources
+| extend owner = coalesce(tostring(tags['Owner']), tostring(tags['owner']), tostring(tags['OWNER']))
+| summarize
+    Total     = count(),
+    ConOwner  = countif(isnotempty(owner)),
+    SinOwner  = countif(isempty(owner))
+| extend PorcentajeCumplimiento = round(100.0 * ConOwner / Total, 2)
+```
+
+## Listado de recursos con el tag Owner
+
+```kusto
+resources
+| extend owner = coalesce(tostring(tags['Owner']), tostring(tags['owner']), tostring(tags['OWNER']))
+| where isnotempty(owner)
+| project name, type, resourceGroup, subscriptionId, location, owner
+| order by owner asc, name asc
+```
+
+## Listado de recursos sin el tag Owner
+
+```kusto
+resources
+| extend owner = coalesce(tostring(tags['Owner']), tostring(tags['owner']), tostring(tags['OWNER']))
+| where isempty(owner)
+| project name, type, resourceGroup, subscriptionId, location
+| order by subscriptionId, resourceGroup, name
+```
+
+## Opcional: desglose por suscripción
+
+```kusto
+resources
+| extend owner = coalesce(tostring(tags['Owner']), tostring(tags['owner']), tostring(tags['OWNER']))
+| summarize ConOwner = countif(isnotempty(owner)), SinOwner = countif(isempty(owner)) by subscriptionId
+| join kind=leftouter (
+    resourcecontainers
+    | where type == 'microsoft.resources/subscriptions'
+    | project subscriptionId, subscriptionName = name
+) on subscriptionId
+| project subscriptionName, subscriptionId, ConOwner, SinOwner
+| order by SinOwner desc
+```
+
+## Listado completo de resource groups indicando si tienen o no el tag
+
+```kusto
+resourcecontainers
+| where type == 'microsoft.resources/subscriptions/resourcegroups'
+| extend owner = coalesce(tostring(tags['Owner']), tostring(tags['owner']), tostring(tags['OWNER']))
+| extend TieneOwner = iff(isnotempty(owner), 'Sí', 'No')
+| join kind=leftouter (
+    resourcecontainers
+    | where type == 'microsoft.resources/subscriptions'
+    | project subscriptionId, subscriptionName = name
+) on subscriptionId
+| project resourceGroup = name, subscriptionName, subscriptionId, location, TieneOwner, owner
+| order by TieneOwner asc, subscriptionName asc, resourceGroup asc
+```
