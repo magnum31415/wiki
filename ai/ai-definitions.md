@@ -328,3 +328,184 @@ Agent = usa todo lo anterior para intentar conseguir un objetivo
 O en inglés:
 
 > An Agent is an LLM with tools in a loop to achieve a goal.
+
+## ¿Qué es un Workflow?
+
+Un **Workflow** es un conjunto de pasos definidos previamente para realizar una tarea.
+
+En un Workflow normalmente sabemos de antemano:
+
+- Qué pasos se ejecutarán.
+- En qué orden.
+- Qué ocurre después de cada paso.
+- Qué condiciones pueden cambiar el camino.
+
+Podemos verlo como una receta:
+
+```text
+Paso 1
+  |
+  v
+Paso 2
+  |
+  v
+Paso 3
+  |
+  v
+Resultado
+```
+
+### Ejemplo sencillo
+
+Queremos procesar un fichero:
+
+```text
+1. Leer fichero.
+2. Validar formato.
+3. Transformar datos.
+4. Guardar resultado.
+5. Enviar notificación.
+```
+
+Este flujo está definido previamente.
+
+---
+
+## Workflow con decisiones
+
+Un Workflow también puede tener condiciones.
+
+Ejemplo:
+
+```text
+Leer fichero
+     |
+     v
+¿Formato correcto?
+   /      \
+ Sí        No
+ |          |
+ v          v
+Procesar   Error
+ |
+ v
+Guardar
+```
+
+Aunque existan decisiones, los caminos posibles están definidos previamente.
+
+---
+
+## Diferencia entre Workflow y Agent
+
+La diferencia principal es quién decide el siguiente paso.
+
+### Workflow
+
+En un Workflow:
+
+> El siguiente paso está definido por el flujo.
+
+```text
+Paso A
+  |
+  v
+Paso B
+  |
+  v
+Paso C
+```
+
+El comportamiento está previamente diseñado.
+
+### Agent
+
+En un Agent:
+
+> El LLM puede decidir cuál debe ser el siguiente paso.
+
+Ejemplo:
+
+```text
+Goal
+ |
+ v
+LLM
+ |
+ +--> ¿Hago ping?
+ |
+ +--> ¿Compruebo DNS?
+ |
+ +--> ¿Leo logs?
+ |
+ +--> ¿Compruebo Azure?
+ |
+ v
+Resultado
+```
+
+El agente decide dinámicamente qué herramienta utilizar y qué hacer después según los resultados.
+
+---
+
+## Workflow vs Agent
+
+```text
+Workflow
+--------
+Pasos predefinidos
+Orden controlado
+Comportamiento predecible
+
+Agent
+-----
+Decisiones dinámicas
+El LLM decide el siguiente paso
+Puede cambiar su estrategia según los resultados
+```
+
+---
+
+## Ejemplo práctico
+
+### Workflow
+
+Objetivo:
+
+```text
+Crear una máquina virtual en Azure
+```
+
+Workflow:
+
+```text
+1. Validar parámetros.
+2. Crear Resource Group.
+3. Crear VNet.
+4. Crear Subnet.
+5. Crear VM.
+6. Aplicar Tags.
+```
+
+Los pasos ya están definidos.
+
+---
+
+### Agent
+
+Objetivo:
+
+```text
+Averigua por qué una VM de Azure no tiene conectividad.
+```
+
+El agente podría decidir:
+
+```text
+1. Revisar estado de la VM.
+2. Revisar NSG.
+3. Revisar UDR.
+4. Revisar Azure Firewall.
+5. Revisar DNS.
+6. Ejecutar prueba de conectividad.
+```
