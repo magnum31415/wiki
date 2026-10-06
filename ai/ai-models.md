@@ -1,4 +1,28 @@
+## Índice
 
+- [Principales modelos, proveedores y plataformas de IA](#principales-modelos-proveedores-y-plataformas-de-ia)
+  - [Resumen rápido](#resumen-rápido)
+- [OpenAI](#openai)
+- [Anthropic](#anthropic)
+- [Claude](#claude)
+- [Google](#google)
+- [Gemini](#gemini)
+- [DeepSeek](#deepseek)
+- [Groq](#groq)
+- [SPEED](#speed)
+- [Ollama](#ollama)
+- [OpenRouter](#openrouter)
+- [¿Para qué sirve OpenRouter?](#para-qué-sirve-openrouter)
+- [Diferencia fundamental](#diferencia-fundamental)
+- [Forma fácil de recordarlo](#forma-fácil-de-recordarlo)
+- [Artificial Analysis](#artificial-analysis)
+- [Resumen para memorizar](#resumen-para-memorizar)
+- [Frameworks para Agentes de IA](#frameworks-para-agentes-de-ia)
+- [1. CrewAI](#1-crewai)
+- [Tool Calling — cómo funciona realmente](#tool-calling--cómo-funciona-realmente)
+  - [Diagrama](#diagrama)
+
+---
 
 # Principales modelos, proveedores y plataformas de IA
 
@@ -624,3 +648,68 @@ COMPARE MODELS
     ├── Speed
     └── Latency
 ```
+
+
+---
+# Frameworks para Agentes de IA
+
+| Categoría | Framework | Explicación sencilla |
+|---|---|---|
+| **Frameworks generales / avanzados** | **CrewAI** | Framework especialmente orientado a crear sistemas con varios agentes que colaboran entre ellos. |
+| **Frameworks generales / avanzados** | **LangGraph / LangChain** | LangChain proporciona componentes para trabajar con LLMs, tools, RAG, etc. LangGraph permite construir agentes y workflows mediante grafos, estados y bucles. |
+| **SDK del proveedor** | **OpenAI Agents SDK** | SDK de OpenAI para programar agentes utilizando modelos, tools, handoffs y otras funcionalidades de OpenAI. |
+| **SDK del proveedor** | **Google ADK** | Agent Development Kit de Google para desarrollar agentes mediante código, especialmente integrado con el ecosistema de Google y Gemini. |
+| **SDK del proveedor** | **AWS Strands Agents** | SDK de AWS para desarrollar agentes que pueden utilizar modelos, herramientas y servicios del ecosistema AWS. |
+| **Sin framework** | **No framework** | Construir tú mismo la lógica del agente utilizando directamente la API/SDK de un LLM y tus propias funciones. |
+
+---
+
+# 1. CrewAI
+
+**CrewAI** está especialmente orientado a crear sistemas donde varios agentes tienen diferentes responsabilidades.
+
+Ejemplo:
+
+```text
+              Supervisor Agent
+                     |
+        ┌────────────┼────────────┐
+        ↓            ↓            ↓
+   Linux Agent   Network Agent  Azure Agent
+```` 
+
+---
+
+# Tool Calling — cómo funciona realmente
+
+Las **Tools** dan capacidades adicionales a un LLM.
+
+Por sí solo, un LLM genera texto/tokens.
+
+No entra directamente en tu ordenador ni ejecuta comandos por sí mismo.
+
+La aplicación o software que integra el LLM es quien:
+
+1. recibe la petición del usuario
+2. envía información al LLM
+3. recibe del LLM una petición para usar una Tool
+4. ejecuta la Tool
+5. devuelve el resultado al LLM
+6. entrega la respuesta final al usuario
+
+## Diagrama
+
+```mermaid
+flowchart LR
+
+    U[User]
+
+    S[Software / Application]
+
+    L[LLM]
+
+    T[Tools<br/>Search Internet<br/>Query Database<br/>SSH<br/>Grafana API]
+
+    U <--> S
+    S <--> L
+    S <--> T
