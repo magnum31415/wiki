@@ -32,6 +32,12 @@ flowchart TB
     class A agent
 ````
 
+| Origen | Destino | Puerto destino | Modo |
+|---|---|---|---|
+| Zabbix Proxy | Zabbix Agent | TCP 10050 | Agent PASSIVE MODE |
+| Zabbix Agent | Zabbix Proxy | TCP 10051 | Agent ACTIVE MODE |
+| Zabbix Proxy | Zabbix Server | TCP 10051 | Proxy ACTIVE MODE |
+| Zabbix Server | Zabbix Proxy | TCP 10051 | Proxy PASSIVE MODE |
 
 ## 1. Arquitectura y componentes
 
