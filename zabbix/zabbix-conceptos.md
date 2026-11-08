@@ -1,3 +1,5 @@
+[ZABBIX ](https://github.com/magnum31415/wiki/tree/main/zabbix)
+
 # Zabbix - Conceptos
 
 # Zabbix 7.0 LTS — Glosario de conceptos
