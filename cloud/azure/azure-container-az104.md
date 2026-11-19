@@ -1,0 +1,2281 @@
+[Azure](azure.md)
+
+# Azure Container 
+
+
+# Índice
+- [⬅️ Volver a: Subred mínima requerida por servicio (AZ-104)](#subred-mínima-requerida-por-servicio-az-104)
+- [Azure Containers: soporte Windows vs Linux](#azure-containers-soporte-windows-vs-linux-az-104)
+- [⬅️ Volver a: Azure Container Registry - Admin User (AZ-104)](#azure-container-registry---admin-user-az-104)
+- [Azure Container Registry (ACR) y Azure Container Instances (ACI) - Resumen AZ-104](#azure-container-registry-acr-y-azure-container-instances-aci---resumen-az-104)
+- [Azure Container Registry (ACR)](#azure-container-registry-acr)
+- [Azure Container Instances (ACI)](#azure-container-instances-aci)
+- [⬅️ Volver a: Azure Container Apps (ACA)](#azure-container-apps-aca)
+- [Cómo funciona ACI con ACR](#cómo-funciona-aci-con-acr)
+- [ACR Tasks](#acr-tasks)
+- [Qué es Admin User](#qué-es-admin-user)
+- [Container Group - CPU Requests vs CPU Limits](#container-group---cpu-requests-vs-cpu-limits)
+- [Azure Container Services - Windows vs Linux Containers](#azure-container-services---windows-vs-linux-containers)
+  
+---
+# Subred mínima requerida por servicio (AZ-104)
+
+| Servicio | ¿Requiere subnet dedicada? | Subnet mínima | Delegación requerida | Observaciones |
+|----------|:--------------------------:|:-------------:|----------------------|---------------|
+| **Azure Container Instances (ACI)** | ✅ Sí | **/28** (recomendado; evitar `/29`) | `Microsoft.ContainerInstance/containerGroups` | La subnet debe estar delegada. Para salida a Internet desde una VNet se requiere **NAT Gateway**. |
+| **Azure Container Apps Environment (ACA)** | ✅ Sí | **/27** (Workload Profiles)<br>**/23** (Consumption-only legacy) | `Microsoft.App/environments` | La subnet debe ser exclusiva para el Container Apps Environment. |
+| **Azure App Service** *(Regional VNet Integration)* | ❌ No | **Sin mínimo específico** | Ninguna | La integración con VNet utiliza una subnet existente dedicada a la integración. Microsoft recomienda dejar suficiente espacio (por ejemplo `/26` o mayor) para soportar el escalado. |
+| **Azure App Service Environment (ASE v3)** | ✅ Sí | **/24** | `Microsoft.Web/hostingEnvironments` | El ASE se despliega dentro de una VNet y requiere una subnet dedicada de al menos `/24`. |
+| **Azure Container Registry (ACR)** | ❌ No | N/A | Ninguna | ACR no se despliega dentro de una VNet. Si utilizas **Private Endpoint**, este se crea en una subnet cualquiera; ACR no exige un tamaño mínimo de subnet. |
+
+---
+
+## Regla rápida para el AZ-104
+
+| Servicio | Tamaño a memorizar |
+|----------|-------------------:|
+| **Azure Container Instances (ACI)** | **/28** |
+| **Azure Container Apps Environment (ACA)** | **/27** |
+| **Azure App Service (VNet Integration)** | **Sin mínimo** |
+| **Azure App Service Environment (ASE v3)** | **/24** |
+| **Azure Container Registry (ACR)** | **No aplica** |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **ACI** requiere una **subnet delegada** de al menos **/28**.
+> - **Azure Container Apps** requiere una **subnet dedicada** de al menos **/27** (o **/23** si el examen especifica un entorno **Consumption-only** heredado).
+> - **App Service** con **Regional VNet Integration** no tiene un tamaño mínimo obligatorio, pero la subnet debe estar **dedicada a la integración** y dimensionarse para el escalado.
+> - **App Service Environment (ASE v3)** requiere una **subnet dedicada /24**.
+> - **Azure Container Registry (ACR)** no se despliega dentro de una VNet; únicamente el **Private Endpoint** utiliza una subnet.
+---
+
+# Azure Containers: soporte Windows vs Linux (AZ-104)
+
+No todos los servicios de contenedores de Azure soportan contenedores Windows.
+
+En el examen AZ-104, si una imagen está basada en **Windows Server**, debes comprobar qué servicios permiten ejecutar **Windows containers**.
+
+## Servicios del escenario
+
+| Servicio | Linux containers | Windows containers |
+|---|:---:|:---:|
+| Azure Container Instances | ✅ | ✅ |
+| Azure Container Apps | ✅ | ❌ |
+| Azure App Service | ✅ | ✅ |
+
+---
+# Azure Container Registry - Admin User (AZ-104)
+
+Azure Container Registry (ACR) permite habilitar un usuario administrador denominado **Admin User**.
+
+Este usuario proporciona una forma sencilla de autenticarse utilizando un **usuario y contraseña**, sin necesidad de Microsoft Entra ID.
+
+---
+
+# ¿Qué ocurre al habilitar el Admin User?
+
+Cuando habilitas:
+
+```text
+Admin User = Enabled
+```
+
+Azure genera automáticamente:
+
+- Un **nombre de usuario**.
+- Dos **contraseñas** (Password1 y Password2).
+
+Ejemplo:
+
+```text
+Registry
+
+ShireenReg1
+
+↓
+
+Username
+
+ShireenReg1
+
+↓
+
+Password1
+
+xxxxxxxx
+
+↓
+
+Password2
+
+yyyyyyyy
+```
+
+---
+
+# ¿Cuál es el nombre de usuario?
+
+El nombre de usuario **NO es**:
+
+- admin
+- administrator
+- root
+
+El nombre de usuario es **exactamente el nombre del Container Registry**.
+
+En este caso:
+
+```text
+Container Registry
+
+ShireenReg1
+```
+
+↓
+
+Username:
+
+```text
+ShireenReg1
+```
+
+Por eso la respuesta correcta es:
+
+✅ **ShireenReg1**
+
+---
+
+# ¿Cómo iniciar sesión?
+
+Con Docker:
+
+```bash
+docker login shireenreg1.azurecr.io
+```
+
+Docker solicitará:
+
+```text
+Username:
+```
+
+Debes escribir:
+
+```text
+ShireenReg1
+```
+
+Y como contraseña:
+
+```text
+Password1
+```
+
+o
+
+```text
+Password2
+```
+
+---
+
+# ¿Por qué existen dos contraseñas?
+
+Azure crea dos contraseñas para permitir la **rotación de credenciales sin interrumpir el servicio**.
+
+Ejemplo:
+
+```text
+Password1
+
+↓
+
+Se renueva
+
+↓
+
+Las aplicaciones siguen usando Password2
+
+↓
+
+Después se actualiza Password2
+```
+
+---
+
+# ¿Qué permisos tiene?
+
+El **Admin User** tiene acceso completo al Container Registry.
+
+Puede:
+
+- Push de imágenes.
+- Pull de imágenes.
+- Eliminar imágenes.
+- Administrar repositorios.
+
+---
+
+# ¿Cuándo se recomienda utilizarlo?
+
+Principalmente para:
+
+- Laboratorios.
+- Desarrollo.
+- Scripts sencillos.
+- Compatibilidad con herramientas antiguas.
+
+Microsoft recomienda utilizar **Microsoft Entra ID + Azure RBAC** en producción.
+
+---
+
+# Comparación
+
+| Método | Usuario | Contraseña | Recomendado |
+|---------|----------|------------|:-----------:|
+| **Admin User** | Nombre del Registry | Password1 o Password2 | ⚠️ Solo desarrollo/laboratorios |
+| **Microsoft Entra ID** | Usuario de Entra ID | Token | ✅ Producción |
+| **Managed Identity** | No aplica | No aplica | ✅ Producción |
+
+---
+
+# Regla para el AZ-104
+
+Si el examen pregunta:
+
+> **¿Cuál es el username del Admin User de un Azure Container Registry?**
+
+La respuesta siempre es:
+
+```text
+El nombre del Container Registry
+```
+
+Ejemplo:
+
+| Container Registry | Username |
+|--------------------|----------|
+| contosoreg | contosoreg |
+| myregistry | myregistry |
+| ShireenReg1 | **ShireenReg1** |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - Al habilitar el **Admin User** de un Azure Container Registry, Azure crea **un usuario y dos contraseñas**.
+> - El **nombre de usuario es exactamente el nombre del Container Registry**.
+> - Las dos contraseñas permiten la **rotación de credenciales** sin interrumpir el servicio.
+> - Para entornos de producción, Microsoft recomienda autenticarse mediante **Microsoft Entra ID** o **Managed Identity**, en lugar del Admin User.
+---
+
+# Azure Container Registry (ACR)
+
+## Qué es
+
+Registro privado de imágenes Docker/OCI administrado por Azure.
+
+---
+
+## Uso típico
+
+- Imágenes Docker
+- AKS
+- Azure Container Apps
+- Azure Container Instances (ACI)
+- CI/CD
+
+---
+
+## Estructura básica
+
+```text
+ACR
+ ↓
+Repository
+ ↓
+Image
+ ↓
+Tag
+```
+
+Ejemplo:
+
+```text
+corpregistry.azurecr.io/webappimage:v1
+```
+
+---
+
+# Azure Container Instances (ACI)
+
+## Qué es
+
+Servicio serverless para ejecutar contenedores sin administrar VMs.
+
+Azure Container Instances puede ejecutar:
+
+- ✅ Contenedores Linux
+- ✅ Contenedores Windows
+
+
+---
+
+## Uso típico
+
+- Testing
+- Automatización
+- Jobs rápidos
+- Procesos batch
+
+---
+
+# Cómo funciona ACI con ACR
+
+ACI necesita:
+
+1. Llegar al ACR "Azure Container Registry"
+2. Tener permisos para hacer pull
+
+Flujo típico:
+
+```text
+ACI "Azure Container Instances"
+ ↓
+ACR "Azure Container Registry"
+ ↓
+Pull image
+ ↓
+Run container
+```
+
+---
+
+## Requisitos para usar imágenes privadas
+
+| Requisito | Obligatorio |
+|---|---|
+| Acceso red al ACR | ✅ |
+| Permisos pull | ✅ |
+| Imagen válida | ✅ |
+
+---
+
+## Roles importantes ACR
+
+| Rol | Función |
+|---|---|
+| AcrPull | Descargar imágenes |
+| AcrPush | Subir imágenes |
+| Owner | Administración total |
+
+---
+
+## AcrPull
+
+### Permite
+
+✅ Descargar imágenes
+
+### NO permite
+
+❌ Push  
+❌ Delete  
+❌ Administrar ACR  
+
+---
+
+## Managed Identity
+
+ACI puede usar:
+
+| Tipo | Soportado |
+|---|---|
+| System-assigned MI | ✅ |
+| User-assigned MI | ✅ |
+
+---
+
+## Configuración recomendada
+
+```text
+ACI
+ ↓
+Managed Identity
+ ↓
+AcrPull
+ ↓
+ACR
+```
+
+---
+# Azure Container Registry - Dedicated Data Endpoints (AZ-104)
+
+## Concepto principal
+
+Azure Container Registry (ACR) separa:
+
+- Management Plane
+- Data Plane
+
+
+### Qué es el Data Plane
+
+El:
+
+```text
+Data Plane
+```
+
+maneja:
+
+- push imágenes
+- pull imágenes
+- layers/blobs
+- operaciones Docker/OCI
+
+
+### Qué es el Management Plane
+
+El:
+
+```text
+Management Plane
+```
+
+maneja:
+
+- configuración del registry
+- networking
+- RBAC
+- webhooks
+- tasks
+- properties
+
+
+### Qué es un Dedicated Data Endpoint
+
+Permite que:
+
+```text
+las operaciones de imágenes
+```
+
+usen:
+
+```text
+un endpoint dedicado
+```
+
+en vez del endpoint general del registry.
+
+## firma, cifrado, autenticación y distribución de imágenes en Azure Container Registry.
+
+
+| Si la pregunta dice...                  | Piensa en...                |
+| --------------------------------------- | --------------------------- |
+| **signed, trusted, integrity**          | ✍️ **Content Trust**        |
+| **encrypted, data at rest, own key**    | 🔐 **Customer-managed key** |
+| **authentication, access, permissions** | 🔑 **Token**                |
+| **edge, disconnected, synchronization** | 🌍 **Connected registry**   |
+
+
+
+| Concepto             | Configuración en ACR           | ¿Qué hace?                                                    | Ejemplo                                                                             | ¿Cumple «imágenes firmadas y confiables»? |
+| -------------------- | ------------------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------- |
+| ✍️ **Firma**         | **Content Trust**              | Firma y verifica criptográficamente las imágenes              | Verificar que `app:v1` fue publicada por un autor confiable y no ha sido modificada | ✅ **Sí**                                  |
+| 🔐 **Cifrado**       | **Customer-managed key (CMK)** | Cifra las imágenes almacenadas                                | Cifrar las imágenes de ACR con una clave gestionada por la empresa                  | ❌ No                                      |
+| 🔑 **Autenticación** | **Token**                      | Controla quién puede acceder y qué operaciones puede realizar | Permitir a una aplicación hacer `pull` pero no `push`                               | ❌ No                                      |
+| 🌍 **Distribución**  | **Connected registry**         | Sincroniza y distribuye imágenes a otros entornos             | Llevar imágenes desde Azure a un entorno edge u on-premises                         | ❌ No                                      |
+
+### Qué hace Content Trust?
+
+Content Trust responde: **¿Quién publicó esta imagen y ha sido modificada?**
+
+**Cryptographically signed + trusted images = Content Trust**
+
+La idea es:
+
+````
+Developer
+    │
+    │  1. Firma la imagen 🔏
+    ▼
+Azure Container Registry
+    │
+    │  2. Almacena imagen + información de firma
+    ▼
+Cliente
+    │
+    │  3. Verifica la firma 🔍
+    ▼
+¿Imagen confiable?
+   ├── Sí → Pull permitido ✅
+   └── No → Rechazada ❌
+````
+Así puedes verificar dos cosas:
+
+- **Autenticidad:** la imagen fue publicada por alguien autorizado.
+- **Integridad:** la imagen no ha sido modificada desde que fue firmada.
+
+
+### Qué haceCustomer-managed key (CMK)
+
+Customer-managed key (CMK) responde:  **¿Está la imagen cifrada mientras está almacenada?**
+
+
+
+
+# Objetivo principal
+
+Mejorar:
+
+- seguridad
+- aislamiento
+- firewalling
+- Private Link
+- routing
+
+---
+
+# Muy importante examen
+
+Dedicated Data Endpoints requieren:
+
+```text
+Premium SKU
+```
+
+---
+
+# La pregunta
+
+Te preguntan:
+
+```text
+¿Qué dos configuraciones debes modificar?
+```
+
+---
+
+# Respuesta correcta
+
+| Configuración | Motivo |
+|---|---|
+| Properties | Activar Dedicated Data Endpoint + Premium |
+| Networking | Configurar acceso/red/Private Endpoint |
+
+---
+
+# Por qué Properties
+
+En:
+
+```text
+Properties
+```
+
+es donde:
+
+- cambias SKU
+- habilitas dedicated data endpoint
+
+---
+
+# Importante
+
+Dedicated Data Endpoints:
+
+❌ NO funcionan en Standard  
+❌ NO funcionan en Basic  
+
+↓
+
+solo:
+
+```text
+Premium
+```
+
+---
+
+# Por qué Networking
+
+Después debes configurar:
+
+- Private Endpoint
+- Public access
+- Firewall rules
+- acceso privado
+
+---
+
+# Flujo real
+
+```text
+1. Upgrade a Premium
+2. Enable dedicated data endpoint
+3. Configure networking/private access
+```
+
+---
+
+# Qué NO sirve
+
+## Overview
+
+❌ Solo información general.
+
+---
+
+## Tasks
+
+❌ Relacionado con ACR Tasks/builds.
+
+---
+
+## IAM
+
+❌ RBAC/permisos.
+
+No configura networking ni data endpoints.
+
+---
+
+## Events
+
+❌ Eventos/Event Grid.
+
+---
+
+# Concepto importante AZ-104
+
+ACR tiene:
+
+```text
+control plane endpoint
+```
+
+y opcionalmente:
+
+```text
+dedicated data endpoints
+```
+
+---
+
+# Visualmente
+
+## Sin Dedicated Data Endpoint
+
+```text
+Docker Client
+      ↓
+registry.azurecr.io
+      ↓
+management + data juntos
+```
+
+---
+
+## Con Dedicated Data Endpoint
+
+```text
+Docker Client
+      ↓
+Dedicated Data Endpoint
+      ↓
+solo tráfico imágenes/blobs
+```
+
+---
+
+# Beneficios
+
+| Beneficio | Explicación |
+|---|---|
+| Seguridad | Mejor aislamiento |
+| Firewall simplificado | Reglas más precisas |
+| Private Link | Mejor integración |
+| Routing separado | Data traffic separado |
+
+---
+
+# Premium añade además
+
+| Feature | Premium |
+|---|---|
+| Dedicated Data Endpoints | ✅ |
+| Geo-replication | ✅ |
+| Private Link | ✅ |
+| Mayor throughput | ✅ |
+| Más concurrencia | ✅ |
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+```text
+Dedicated Data Endpoints funcionan en Standard
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 2
+
+```text
+IAM configura networking
+```
+
+❌ Incorrecto.
+
+---
+
+## Trampa 3
+
+```text
+Tasks están relacionados con data endpoints
+```
+
+❌ Incorrecto.
+
+---
+
+# Conceptos importantes examen
+
+| Concepto | Importancia |
+|---|---|
+| ACR Premium features | Alta |
+| Data Plane vs Control Plane | Muy alta |
+| Private Link | Alta |
+| Dedicated Data Endpoints | Alta |
+| Networking ACR | Alta |
+
+---
+
+# Regla rápida examen
+
+```text
+Dedicated Data Endpoints require Premium SKU.
+```
+
+```text
+Properties enables the feature.
+```
+
+```text
+Networking configures private/public access.
+```
+---
+
+## Private Endpoint
+
+### Qué es
+
+Permite acceso privado mediante IP privada dentro de una VNet.
+
+---
+
+### Qué hace
+
+✅ Conectividad privada  
+✅ Network isolation  
+✅ Private Link  
+
+---
+
+### Qué NO hace
+
+❌ Dar permisos RBAC  
+❌ Autorizar pull imágenes  
+❌ Resolver autenticación  
+
+---
+
+## Concepto clave
+
+### Networking ≠ Authorization
+
+| Concepto | Función |
+|---|---|
+| Private Endpoint | Conectividad |
+| AcrPull | Permisos |
+
+---
+
+## Error típico AZ-104
+
+### Problema
+
+```text
+ACI cannot pull image from ACR
+```
+
+### Solución habitual
+
+Asignar:
+
+```text
+AcrPull
+```
+
+a la Managed Identity del ACI.
+
+---
+
+## Dedicated Data Endpoint
+
+### Qué es
+
+Separa tráfico de:
+
+| Tipo tráfico | Función |
+|---|---|
+| Management plane | Administrar ACR |
+| Data plane | Pull/Push imágenes |
+
+---
+
+## Sin dedicated endpoint
+
+```text
+registry.azurecr.io
+```
+
+---
+
+## Con dedicated endpoint
+
+| Endpoint | Uso |
+|---|---|
+| registry.azurecr.io | Management |
+| registry.region.data.azurecr.io | Data plane |
+
+---
+
+## Qué mejora realmente
+
+✅ Seguridad  
+✅ Network isolation  
+✅ Firewall granular  
+✅ Routing/networking  
+
+---
+
+## Qué NO hace
+
+❌ NO da permisos  
+❌ NO asigna AcrPull  
+❌ NO corrige autenticación  
+❌ NO arregla tags incorrectos  
+
+---
+
+## Lo que normalmente falta
+
+| Problema | Solución |
+|---|---|
+| Falta permisos pull | AcrPull |
+| Sin Managed Identity | Crear MI |
+| Password incorrecto | Corregir credenciales |
+| Imagen/tag incorrecto | Corregir image/tag |
+| Firewall | Configurar networking |
+
+---
+
+## Diferencia importante
+
+| Feature | Función |
+|---|---|
+| Private Endpoint | Acceso privado |
+| Dedicated Data Endpoint | Separar data plane |
+| AcrPull | Permisos pull |
+
+---
+
+## Data Plane vs Management Plane
+
+### Data Plane
+
+Operaciones sobre imágenes:
+
+- Pull
+- Push
+- Layers
+- Manifests
+
+---
+
+### Management Plane
+
+Administrar recurso Azure:
+
+- Crear ACR
+- Configurar SKU
+- Configurar networking
+
+---
+
+## Trampas típicas AZ-104
+
+### Trampa 1
+
+Pensar que Private Endpoint da permisos.
+
+❌ Incorrecto
+
+---
+
+### Trampa 2
+
+Pensar que networking basta.
+
+❌ Incorrecto
+
+También necesitas:
+
+✅ AcrPull  
+✅ RBAC  
+
+---
+
+### Trampa 3
+
+Confundir AcrPull y AcrPush.
+
+| Rol | Función |
+|---|---|
+| AcrPull | Descargar |
+| AcrPush | Subir |
+
+---
+
+### Trampa 4
+
+Pensar que Dedicated Data Endpoint resuelve autenticación.
+
+❌ Incorrecto
+
+Solo mejora networking.
+
+---
+
+## Tabla resumen examen
+
+| Necesidad | Solución |
+|---|---|
+| Descargar imágenes ACR | AcrPull |
+| Ejecutar contenedor | ACI |
+| Registry privado | ACR |
+| Acceso privado ACR | Private Endpoint |
+| Separar tráfico data plane | Dedicated Data Endpoint |
+
+---
+
+## Reglas rápidas AZ-104
+
+```text
+Private Endpoint = networking
+```
+
+```text
+AcrPull = authorization
+```
+
+```text
+Dedicated Data Endpoint = data plane isolation
+```
+
+---
+
+## Frases clave examen
+
+```text
+ACI requires permission to pull images from ACR.
+```
+
+```text
+A private endpoint does not grant image pull permissions.
+```
+
+```text
+Dedicated data endpoints improve networking isolation, not authorization.
+```
+# Azure Container Registry - Control Plane vs Dedicated Data Endpoints (AZ-104)
+
+| Característica | Control Plane Endpoint | Dedicated Data Endpoint |
+|---|---|---|
+| Objetivo principal | Administrar el registry | Transferencia de imágenes y blobs |
+| Tipo de operaciones | Management Plane | Data Plane |
+| Ejemplos | RBAC, networking, Tasks, webhooks | Push/Pull imágenes Docker |
+| Gestiona configuración ACR | ✅ | ❌ |
+| Gestiona imágenes/layers | ❌ | ✅ |
+| Docker pull/push | ❌ | ✅ |
+| Azure Portal/API management | ✅ | ❌ |
+| Tráfico blobs OCI/Docker | ❌ | ✅ |
+| Necesario para funcionamiento ACR | ✅ | ❌ Opcional |
+| Disponible en Basic | ✅ | ❌ |
+| Disponible en Standard | ✅ | ❌ |
+| Disponible en Premium | ✅ | ✅ |
+| Compatible con Private Link | ✅ | ✅ |
+| Aislamiento tráfico imágenes | ❌ | ✅ |
+| Uso típico | Administración registry | Tráfico containers/imágenes |
+| Endpoint típico | `contoso.azurecr.io` | `contoso.<region>.data.azurecr.io` |
+| Relacionado con | Control Plane | Data Plane |
+| Configuración principal | Properties / IAM / Networking | Properties + Networking |
+| Seguridad avanzada | Limitada | Mejor aislamiento tráfico |
+
+---
+
+# Concepto importante
+
+## Control Plane
+
+Administra:
+
+```text
+el recurso Azure Container Registry
+```
+
+---
+
+## Dedicated Data Endpoint
+
+Administra:
+
+```text
+el tráfico de imágenes y blobs
+```
+
+---
+
+# Visualmente
+
+## Control Plane
+
+```text
+Azure Portal
+      ↓
+contoso.azurecr.io
+      ↓
+Configuración ACR
+```
+
+---
+
+## Dedicated Data Endpoint
+
+```text
+Docker Client
+      ↓
+contoso.<region>.data.azurecr.io
+      ↓
+Push/Pull imágenes
+```
+
+---
+
+# Regla rápida examen
+
+```text
+Control Plane = administración
+```
+
+```text
+Data Endpoint = tráfico imágenes
+```
+
+```text
+Dedicated Data Endpoints require Premium SKU.
+```
+
+
+
+## Quién debe tener AcrPull
+
+### Concepto clave
+
+El rol:
+
+```text
+AcrPull
+```
+
+debe asignarse a:
+
+```text
+la identidad que realmente hace el pull de la imagen
+```
+
+NO a cualquier recurso relacionado con ACR.
+
+---
+
+## Qué NO debe recibir AcrPull
+
+Ejemplo incorrecto:
+
+```text
+AcrPull → ACR-Tasks-Network
+```
+
+❌ Incorrecto
+
+Porque:
+
+```text
+ACR-Tasks-Network NO descarga la imagen para ACI.
+```
+
+---
+
+## Qué identidad sí necesita AcrPull
+
+En Azure Container Instances normalmente el pull lo hace:
+
+- Managed Identity del ACI
+- Service Principal configurado
+- Credenciales del registry
+
+---
+
+## Configuración correcta típica
+
+```text
+ACI
+ ↓
+Managed Identity
+ ↓
+AcrPull
+ ↓
+ACR
+```
+
+---
+
+# ACR Tasks
+
+## Qué es
+
+Servicio de automatización/build dentro de Azure Container Registry.
+
+
+| SKU | ¿Soporta ACR Tasks? |
+|---|---|
+| Basic | ✅ |
+| Standard | ✅ |
+| Premium | ✅ |
+
+# Qué cambia entre SKUs
+
+Lo que cambia NO es:
+
+```text
+la existencia de ACR Tasks
+```
+
+sino:
+
+- rendimiento
+- throughput
+- concurrencia
+- features avanzadas
+
+---
+
+# Qué es ACR Tasks
+
+ACR Tasks permite:
+
+```text
+automatizar builds y operaciones Docker/OCI
+```
+
+directamente dentro de:
+
+```text
+Azure Container Registry
+```
+
+---
+
+# Casos típicos
+
+| Función | Ejemplo |
+|---|---|
+| Build automático | Build imagen al hacer push Git |
+| Scheduled builds | Build nocturno |
+| Base image update | Rebuild automático si cambia imagen base |
+| Multi-step tasks | Pipelines containerizadas |
+
+---
+
+# Tipos de triggers
+
+| Trigger | Descripción |
+|---|---|
+| Source code update | Cambio en Git |
+| Base image update | Cambio imagen base |
+| Timer trigger | Schedule/cron |
+| Manual | Ejecución manual |
+
+---
+
+# Diferencias entre SKUs
+
+| Característica | Basic | Standard | Premium |
+|---|---|---|---|
+| ACR Tasks | ✅ | ✅ | ✅ |
+| Webhooks | ✅ | ✅ | ✅ |
+| Microsoft Entra integration | ✅ | ✅ | ✅ |
+| Throughput | Bajo | Medio | Alto |
+| Concurrent operations | Bajo | Medio | Alto |
+| Geo-replication | ❌ | ❌ | ✅ |
+| Private Link / Private Endpoint | ❌ | ❌ | ✅ |
+| Availability features | Básicas | Medias | Avanzadas |
+
+---
+
+# Qué suele preguntar AZ-104
+
+## Trampa típica
+
+```text
+¿Qué SKU mínimo soporta ACR Tasks?
+```
+
+Respuesta:
+
+```text
+Basic
+```
+
+---
+
+# Otra trampa típica
+
+Muchos candidatos asocian:
+
+```text
+CI/CD avanzado = Premium
+```
+
+❌ Incorrecto.
+
+Premium añade:
+
+- geo-replication
+- Private Link
+- mayor throughput
+- HA avanzada
+
+pero:
+
+```text
+NO habilita ACR Tasks
+```
+
+porque Tasks ya existe en Basic.
+
+---
+
+# Cuándo usar cada SKU
+
+| SKU | Uso típico |
+|---|---|
+| Basic | Dev/Test/Lab |
+| Standard | Producción normal |
+| Premium | Enterprise/global/high-scale |
+
+---
+
+# Concepto importante AZ-104
+
+```text
+Feature availability ≠ performance level
+```
+
+---
+
+# Regla rápida examen
+
+```text
+ACR Tasks is supported in Basic, Standard, and Premium tiers.
+```
+
+```text
+Premium adds advanced networking and geo-replication features.
+```
+
+
+---
+
+## Uso típico
+
+- Build imágenes
+- Automatización CI/CD
+- Tareas automáticas ACR
+
+---
+
+## Importante
+
+ACR Tasks:
+
+❌ NO ejecuta Azure Container Instances  
+❌ NO hace el pull para ACI  
+
+---
+
+## Trampa típica examen
+
+Microsoft intenta que pienses:
+
+```text
+Cualquier identidad relacionada con ACR sirve
+```
+
+❌ Incorrecto
+
+RBAC debe asignarse:
+
+```text
+al principal que ejecuta la acción
+```
+
+---
+
+## Ejemplo importante
+
+## Acción
+
+```text
+Pull image
+```
+
+### Principal correcto
+
+✅ Azure Container Instance identity
+
+### Principal incorrecto
+
+❌ ACR-Tasks-Network
+
+---
+
+## Regla importante
+
+```text
+The identity performing the image pull must have the AcrPull role.
+```
+
+---
+
+## Tabla resumen
+
+| Recurso | Función | Necesita AcrPull |
+|---|---|---|
+| ACI | Ejecuta contenedor | ✅ |
+| AKS kubelet identity | Pull imágenes | ✅ |
+| Container Apps | Pull imágenes | ✅ |
+| ACR Tasks | Build automation | ❌ normalmente |
+| ACR-Tasks-Network | Networking interno ACR Tasks | ❌ |
+
+---
+
+## Frase clave examen
+
+```text
+Assign AcrPull to the identity that pulls the container image.
+```
+---
+
+# Qué es Admin User
+
+`Admin User` es una funcionalidad de Azure Container Registry (ACR) que habilita autenticación mediante:
+
+- Username
+- Password
+
+similar a un login clásico Docker Registry.
+
+---
+
+## Qué ocurre al habilitarlo
+
+Cuando activas:
+
+```text
+Admin User = Enabled
+```
+
+Azure genera automáticamente:
+
+| Credencial | Disponible |
+|---|---|
+| Username | ✅ |
+| Password1 | ✅ |
+| Password2 | ✅ |
+
+---
+
+## Dónde se ve
+
+En Azure Portal:
+
+```text
+Azure Container Registry
+    ↓
+Settings
+    ↓
+Access Keys
+```
+
+---
+
+## Para qué sirve
+
+Permite autenticarse contra ACR usando credenciales tradicionales.
+
+---
+
+## Uso típico
+
+- Docker login manual
+- Azure Container Instances (ACI)
+- Scripts
+- Testing rápido
+- Integraciones legacy
+- Herramientas externas
+
+---
+
+## Ejemplo Docker Login
+
+```bash
+docker login corpregistry.azurecr.io
+```
+
+Azure pedirá:
+
+```text
+Username
+Password
+```
+
+---
+
+## Ejemplo completo
+
+```bash
+docker login corpregistry.azurecr.io \
+  --username corpregistry \
+  --password XXXXX
+```
+
+---
+
+## Qué permite
+
+Con las credenciales Admin User puedes:
+
+✅ Pull imágenes  
+✅ Push imágenes  
+✅ Autenticación Docker clásica  
+
+---
+
+## Dónde puede usarse
+
+| Servicio | Uso típico |
+|---|---|
+| Docker CLI | `docker login` |
+| Azure Container Instances | Pull imágenes |
+| Kubernetes | imagePullSecrets |
+| CI/CD pipelines | Pull/Push |
+| Scripts automatizados | Login ACR |
+
+---
+
+## Flujo típico
+
+```text
+ACI / Docker / AKS
+ ↓
+Username + Password
+ ↓
+ACR
+ ↓
+Pull image
+```
+
+---
+
+## Diferencia con Managed Identity
+
+| Método                  | Networking | Auth | Recomendado      |
+| ----------------------- | ---------- | ---- | ---------------- |
+| Private Endpoint        | ✅          | ❌    | Sí               |
+| Dedicated Data Endpoint | ✅          | ❌    | Sí               |
+| AcrPull + MI            | ❌          | ✅    | ✅ Mejor práctica |
+| Admin User              | ❌          | ✅    | ⚠️ Menos seguro  |
+
+
+### Admin User
+
+Usa:
+
+```text
+username/password
+```
+
+---
+
+### Managed Identity
+
+Usa:
+
+```text
+Azure RBAC + Entra ID
+```
+
+---
+
+## Comparativa importante
+
+| Método | Tipo autenticación |
+|---|---|
+| Admin User | Username/Password |
+| Managed Identity | RBAC + Identity |
+| Service Principal | App registration |
+
+---
+
+## Ventajas de Admin User
+
+| Ventaja | Explicación |
+|---|---|
+| Fácil configuración | Muy simple |
+| Compatible Docker estándar | Sí |
+| Compatible herramientas externas | Sí |
+| Rápido para testing | Sí |
+
+---
+
+## Desventajas
+
+| Problema | Explicación |
+|---|---|
+| Passwords estáticos | Sí |
+| Shared credentials | Sí |
+| Menos seguro | Sí |
+| No RBAC granular | Sí |
+| Difícil rotación | Sí |
+
+---
+
+## Best Practice Azure
+
+Microsoft normalmente recomienda:
+
+✅ Managed Identity  
+✅ Service Principal  
+
+antes que:
+
+⚠️ Admin User
+
+---
+
+## Cuándo suele usarse
+
+### Recomendado para
+
+- Laboratorios
+- Testing
+- Pruebas rápidas
+- Herramientas legacy
+- Casos simples
+
+---
+
+### No recomendado para
+
+- Producción crítica
+- Entornos enterprise
+- Zero Trust
+- Seguridad avanzada
+
+---
+
+## Relación con AcrPull
+
+### Admin User
+
+NO necesita:
+
+```text
+AcrPull
+```
+
+porque usa autenticación clásica.
+
+---
+
+### Managed Identity
+
+SÍ necesita:
+
+```text
+AcrPull
+```
+
+---
+
+## Comparativa completa
+
+| Método | Necesita AcrPull | Usa password |
+|---|---|---|
+| Admin User | ❌ | ✅ |
+| Managed Identity | ✅ | ❌ |
+| Service Principal | Puede usar RBAC | ✅ |
+
+---
+
+## Trampas típicas AZ-104
+
+### Trampa 1
+
+Pensar que Admin User solo sirve para administración.
+
+❌ Incorrecto
+
+También sirve para:
+
+✅ Pull/Push imágenes
+
+---
+
+### Trampa 2
+
+Pensar que Admin User usa RBAC.
+
+❌ Incorrecto
+
+Usa:
+
+```text
+username/password
+```
+
+---
+
+### Trampa 3
+
+Pensar que si no es best practice no funciona.
+
+❌ Incorrecto
+
+Funciona perfectamente.
+
+---
+
+## Casos típicos examen
+
+| Escenario | Solución válida |
+|---|---|
+| ACI no puede hacer pull | Enable Admin User |
+| Docker login manual | Admin User |
+| AKS legacy pull secret | Admin User |
+| Testing rápido | Admin User |
+
+---
+
+## Regla rápida examen
+
+```text
+Admin User provides username/password authentication for ACR.
+```
+
+---
+
+## Frases clave AZ-104
+
+```text
+Enabling Admin User generates credentials for Docker authentication.
+```
+
+```text
+Admin User can be used by ACI to pull container images.
+```
+
+```text
+Managed Identity is more secure than Admin User.
+```
+
+---
+
+# Container Group - CPU Requests vs CPU Limits
+
+## Qué es un Container Group
+
+En Azure Container Instances (ACI), un Container Group permite ejecutar varios contenedores juntos compartiendo:
+
+- Red
+- Storage
+- Recursos CPU/memoria
+
+---
+
+# CPU Request
+
+## Qué es
+
+Cantidad de CPU garantizada para el contenedor.
+
+---
+
+# Ejemplo
+
+| Contenedor | CPU request |
+|---|---|
+| cont1 | 2 CPUs |
+| cont2 | 3 CPUs |
+
+---
+
+# Significado
+
+```text
+cont1 necesita 2 CPUs garantizadas
+cont2 necesita 3 CPUs garantizadas
+```
+
+---
+
+## CPU Limit
+
+### Qué es
+
+Cantidad máxima de CPU que el contenedor puede consumir.
+
+---
+
+### Ejemplo
+
+| Contenedor | CPU request | CPU limit |
+|---|---|---|
+| cont2 | 3 | 6 |
+
+---
+
+### Significado
+
+```text
+cont2 necesita 3 CPUs
+pero podría intentar consumir hasta 6 CPUs
+```
+
+---
+
+### Problema de los limits altos
+
+Si un contenedor puede consumir más CPU de la necesaria:
+
+❌ Puede afectar a otros contenedores del mismo group.
+
+---
+
+### Qué ocurre si no defines limit
+
+En Azure Container Instances:
+
+```text
+si no existe CPU limit
+→ limit = request
+```
+
+---
+
+### Resultado
+
+| Contenedor | Request | Limit eliminado | Máximo real |
+|---|---|---|---|
+| cont1 | 2 | Sí | 2 CPUs |
+| cont2 | 3 | Sí | 3 CPUs |
+
+---
+
+### Ventaja
+
+Así:
+
+✅ cont2 obtiene las 3 CPUs que necesita  
+✅ no puede excederlas  
+✅ no afecta a cont1  
+
+### Regla importante AZ-104
+
+```text
+CPU limit must be greater than or equal to CPU request.
+```
+
+---
+
+### Regla importante ACI
+
+```text
+If no limit is specified, the limit equals the request.
+```
+
+---
+
+### Diferencia importante
+
+| Concepto | Significado |
+|---|---|
+| CPU request | CPU garantizada |
+| CPU limit | CPU máxima permitida |
+
+---
+
+### Trampa típica AZ-104
+
+Muchos candidatos piensan:
+
+```text
+más limit = mejor rendimiento
+```
+
+❌ Incorrecto.
+
+Puede provocar:
+
+- Resource contention
+- Impacto otros contenedores
+
+---
+
+### Tabla resumen examen
+
+| Configuración | Resultado |
+|---|---|
+| request = 3, limit = 6 | Puede consumir hasta 6 |
+| request = 3, sin limit | Máximo = 3 |
+| limit < request | ❌ Inválido |
+
+---
+
+### Frases clave AZ-104
+
+```text
+CPU request defines guaranteed CPU resources.
+```
+
+```text
+CPU limit defines maximum CPU usage.
+```
+
+```text
+If no limit is specified, the limit equals the request.
+```
+
+---
+
+# Azure Container Services - Windows vs Linux Containers
+
+---
+
+# Concepto clave
+
+En Azure:
+
+```text
+NO todos los servicios de contenedores soportan Windows containers
+```
+
+Algunos servicios soportan:
+
+- Linux containers únicamente
+- Linux + Windows containers
+
+---
+
+# Windows Containers vs Linux Containers
+
+| Tipo de contenedor | Base |
+|---|---|
+| Linux Container | Linux OS |
+| Windows Container | Windows Server OS |
+
+---
+
+# Importante examen
+
+Cuando una imagen está basada en:
+
+```text
+Windows Server
+```
+
+↓
+
+solo puede desplegarse en servicios compatibles con:
+
+```text
+Windows containers
+```
+
+---
+
+# Azure App Service
+
+## Qué es
+
+Servicio PaaS para aplicaciones web y APIs.
+Azure App Service puede ejecutar aplicaciones en contenedores sobre:
+
+- ✅ Linux
+- ✅ Windows
+
+---
+
+# Compatibilidad
+
+| Tipo | Compatible |
+|---|---|
+| Linux Containers | ✅ |
+| Windows Containers | ✅ |
+
+---
+
+# Azure Container Instances (ACI)
+
+## Qué es
+
+Servicio serverless para ejecutar contenedores sin administrar infraestructura.
+
+---
+
+# Compatibilidad
+
+| Tipo | Compatible |
+|---|---|
+| Linux Containers | ✅ |
+| Windows Containers | ✅ |
+
+---
+
+# Azure Container Apps (ACA)
+
+## Qué es
+
+Plataforma moderna serverless basada en Kubernetes.
+
+Azure Container Apps ejecuta contenedores basados en Linux.
+
+No soporta contenedores Windows.
+
+Azure Container Apps parece similar a Azure Container Instances, pero no tiene el mismo soporte de sistema operativo.
+
+Azure Container Apps admite dos modelos de entorno (**Environment**):
+
+1. **Consumption-only** (modelo heredado)
+2. **Workload Profiles** (modelo actual y recomendado)
+
+La principal diferencia es cómo se asignan los recursos, cómo escala la aplicación y el tamaño mínimo de la subred cuando se integra con una Virtual Network.
+
+---
+
+# Comparativa
+
+| Característica | Consumption-only (Legacy) | Workload Profiles (Actual) |
+|----------------|---------------------------|----------------------------|
+| Estado | ⚠️ Heredado | ✅ Recomendado por Microsoft |
+| Modelo de ejecución | Solo Consumption | Consumption + Dedicated |
+| Escalado | Automático (KEDA) | Automático (KEDA) + perfiles dedicados |
+| Workload Profiles | ❌ No | ✅ Sí |
+| SKU dedicadas | ❌ No | ✅ Sí |
+| CPU/Memoria dedicada | ❌ No | ✅ Sí |
+| Coste | Solo por consumo | Consumo o recursos dedicados |
+| Integración con VNet | ✅ | ✅ |
+| **Subnet mínima** | **/23** | **/27** |
+| Direcciones IP mínimas | 512 | 32 |
+| Uso recomendado | Entornos antiguos | Nuevos despliegues |
+
+---
+
+# 1. Consumption-only
+
+Es el modelo original de Azure Container Apps.
+
+Las aplicaciones:
+
+- Escalan automáticamente.
+- Solo pagas por el consumo.
+- No existen nodos dedicados.
+
+Visualmente:
+
+```text
+Usuarios
+    │
+    ▼
+Azure Container Apps
+    │
+Escalado automático
+    │
+Infraestructura compartida
+```
+
+Al utilizar VNet requería una subred grande:
+
+```text
+/23
+
+↓
+
+512 direcciones IP
+```
+
+Actualmente solo se mantiene por compatibilidad con despliegues existentes.
+
+---
+
+# 2. Workload Profiles
+
+Es el modelo actual.
+
+Permite ejecutar distintos perfiles de carga dentro del mismo entorno.
+
+Ejemplo:
+
+```text
+Environment
+
+├── Consumption Profile
+├── D4 Profile
+├── E8 Profile
+└── GPU Profile
+```
+
+Cada aplicación puede ejecutarse en el perfil más adecuado.
+
+Ejemplo:
+
+```text
+Web API
+
+↓
+
+Consumption
+```
+
+```text
+Machine Learning
+
+↓
+
+Dedicated Profile
+```
+
+Visualmente:
+
+```text
+Usuarios
+      │
+      ▼
+Container Apps Environment
+      │
+ ┌───────────────┐
+ │ Consumption   │
+ ├───────────────┤
+ │ Dedicated D4  │
+ ├───────────────┤
+ │ Dedicated E8  │
+ └───────────────┘
+```
+
+Gracias a la nueva arquitectura solo necesita:
+
+```text
+/27
+
+↓
+
+32 direcciones IP
+```
+
+---
+
+# ¿Qué es un Workload Profile?
+
+Un **Workload Profile** define:
+
+- Tipo de infraestructura.
+- CPU.
+- Memoria.
+- Escalado.
+- Coste.
+
+Es parecido a elegir un tamaño de VM.
+
+Ejemplo:
+
+```text
+Profile A
+
+2 vCPU
+4 GB RAM
+```
+
+```text
+Profile B
+
+8 vCPU
+32 GB RAM
+```
+
+Las aplicaciones se asignan al perfil que necesiten.
+
+---
+
+# ¿Por qué cambió la subnet mínima?
+
+En el modelo antiguo Microsoft necesitaba reservar muchas direcciones IP para la infraestructura del entorno.
+
+```text
+Consumption-only
+
+↓
+
+/23
+
+↓
+
+512 IPs
+```
+
+Con Workload Profiles la arquitectura cambió y la infraestructura consume muchas menos IPs.
+
+```text
+Workload Profiles
+
+↓
+
+/27
+
+↓
+
+32 IPs
+```
+
+---
+
+# ¿Qué aparece en el AZ-104?
+
+Aquí es donde suele haber confusión.
+
+Muchos bancos de preguntas fueron creados cuando solo existía:
+
+```text
+Consumption-only
+
+↓
+
+/23
+```
+
+La documentación oficial actual utiliza:
+
+```text
+Workload Profiles
+
+↓
+
+/27
+```
+
+Por ello puedes encontrar preguntas donde la respuesta correcta sea **/23**, aunque Microsoft actualmente recomiende **/27**.
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - **Consumption-only** es el modelo **heredado** de Azure Container Apps.
+> - **Workload Profiles** es el modelo **actual y recomendado** por Microsoft.
+> - Ambos permiten el escalado automático mediante **KEDA**.
+> - La diferencia más preguntada en el examen es el **tamaño mínimo de la subnet**:
+>   - **Consumption-only → /23**
+>   - **Workload Profiles → /27**
+> - Muchos simuladores antiguos siguen considerando **/23** como la respuesta correcta.
+
+
+| Servicio | Trampa |
+|---|---|
+| Azure Container Instances | Soporta Windows y Linux |
+| Azure Container Apps | No soporta Windows containers |
+| Azure App Service | Soporta Windows y Linux |
+
+
+
+
+---
+
+# Compatibilidad
+
+| Tipo | Compatible |
+|---|---|
+| Linux Containers | ✅ |
+| Windows Containers | ❌ |
+
+---
+
+# Tabla resumen examen
+
+| Servicio Azure | Linux Containers | Windows Containers | Comentario |
+|---|---|---|---|
+| Azure App Service | ✅ | ✅ | Web Apps y APIs |
+| Azure Container Instances (ACI) | ✅ | ✅ | Contenedores serverless |
+| Azure Container Apps (ACA) | ✅ | ❌ | Solo Linux |
+| AKS (Azure Kubernetes Service) | ✅ | ✅ | Kubernetes administrado |
+
+---
+
+# Diferencia importante examen
+
+| Servicio | Solo Linux | Linux + Windows |
+|---|---|---|
+| Azure Container Apps | ✅ | ❌ |
+| App Service | ❌ | ✅ |
+| Azure Container Instances | ❌ | ✅ |
+| AKS | ❌ | ✅ |
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+Azure Container Apps supports Linux containers only.
+```
+
+```text
+Azure App Service supports Linux and Windows containers.
+```
+
+```text
+Azure Container Instances supports Linux and Windows containers.
+```
+
+```text
+Windows-based container images require services that support Windows containers.
+```

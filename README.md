@@ -1,18 +1,17 @@
 # wiki cheatsheets
 
 
-1. [Terraform](https://github.com/magnum31415/wiki/blob/main/terraform.md)
-2. [Aws](https://github.com/magnum31415/wiki/blob/main/aws.md)
-3. [Kubernetes](https://github.com/magnum31415/wiki/blob/main/Kubernetes_Cheat_Sheet.pdf)
-4. [Ansible](https://github.com/magnum31415/wiki/blob/main/ansible.md)
-5. [RedHat9](https://github.com/magnum31415/wiki/blob/main/RedHat9.md)
-6. [SSL](https://github.com/magnum31415/wiki/blob/main/SSL.md)
-7. [PasswdPolicies](https://github.com/magnum31415/wiki/blob/main/passwd.md)
-8. [Vagrant Boxes](https://github.com/magnum31415/wiki/blob/main/vagrant-box.md)
-9. [Oracle](https://github.com/magnum31415/wiki/blob/main/oracle.md)
-10. [Azure](https://github.com/magnum31415/wiki/blob/main/azure.md)
-12. [FinOPs](https://github.com/magnum31415/wiki/blob/main/finops.md)
-
+1. [Terraform](terraform/terraform.md)
+2. [Aws](cloud/aws.md)
+3. [Kubernetes](Kubernetes_Cheat_Sheet.pdf)
+4. [Ansible](ansible/ansible.md)
+5. [RedHat9](linux/RedHat9.md)
+6. [SSL](linux/SSL.md)
+7. [PasswdPolicies](linux/passwd.md)
+8. [Vagrant Boxes](tools/vagrant-box.md)
+9. [Oracle](oracle/oracle.md)
+10. [Azure](cloud/azure/azure.md)
+12. [FinOPs](finops/finops.md)
 
 
 

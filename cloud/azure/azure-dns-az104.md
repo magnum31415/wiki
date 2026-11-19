@@ -1,0 +1,684 @@
+[Azure](azure.md)
+
+# Índice
+
+
+- [🔎 Concepto clave: Verificación de dominio en Microsoft Entra ID](#-concepto-clave-verificación-de-dominio-en-microsoft-entra-id)
+- [Azure DNS Roles importantes para AZ-104](#azure-dns-roles-importantes-para-az-104)
+- [⬅️ Volver a: Virtual Network Link (AZ-104)](#virtual-network-link-az-104)
+- [⬅️ Volver a: Verificación de un dominio personalizado en Azure App Service (AZ-104)](#verificación-de-un-dominio-personalizado-en-azure-app-service-az-104)
+
+  
+  ---
+  
+
+# 🔎 Concepto clave: Verificación de dominio en Microsoft Entra ID
+
+Cuando agregas un dominio personalizado a **Microsoft Entra ID**, Azure necesita confirmar que:
+
+- Realmente eres propietario del dominio
+- Tienes control sobre su configuración DNS
+
+Para hacerlo, Azure te pide que agregues un **registro DNS específico** en tu zona pública.
+
+---
+
+# ✅ Respuesta correcta: MX
+
+Microsoft Entra ID permite verificar un dominio usando:
+
+- **TXT**
+- **MX**
+
+En este caso, la respuesta correcta es:
+
+**MX**
+
+Azure genera un registro MX especial que debes agregar en tu DNS.  
+Si el registro existe y coincide con el valor esperado, el dominio queda verificado.
+
+# 📚 Tipos de registros DNS y para qué se usan
+
+| Tipo de Registro | Nombre completo | ¿Para qué se usa? | Ejemplo típico | ¿Se usa para verificación en Entra ID / M365? |
+|------------------|------------------|-------------------|----------------|----------------------------------------------|
+| **A** | Address Record | Asocia un dominio a una dirección IPv4 | `example.com → 192.168.1.10` | ❌ No |
+| **AAAA** | IPv6 Address Record | Asocia un dominio a una dirección IPv6 | `example.com → 2001:db8::1` | ❌ No |
+| **CNAME** | Canonical Name | Alias de un dominio hacia otro dominio | `www.example.com → example.com` | ❌ No (normalmente) |
+| **MX** | Mail Exchange | Define el servidor que recibe correos del dominio | `example.com → mail.example.com` | ✅ Sí |
+| **TXT** | Text Record | Almacena texto arbitrario (SPF, verificación dominio, etc.) | `v=spf1 include:spf.protection.outlook.com -all` | ✅ Sí |
+| **SOA** | Start of Authority | Información administrativa del dominio (DNS primario, tiempos de refresco, etc.) | Define servidor DNS principal | ❌ No |
+| **NS** | Name Server | Indica los servidores DNS autoritativos del dominio | `ns1.contoso.com` | ❌ No |
+| **PTR** | Pointer Record | Resolución inversa (IP → nombre de dominio) | `192.168.1.10 → example.com` | ❌ No |
+| **SRV** | Service Record | Define ubicación de servicios específicos (puerto + host) | `_sip._tcp.example.com` | ❌ No (generalmente) |
+| **CAA** | Certification Authority Authorization | Especifica qué autoridades pueden emitir certificados SSL para el dominio | Autoriza Let's Encrypt, DigiCert, etc. | ❌ No |
+| **RRSIG** | DNSSEC Signature | Firma criptográfica para validar registros DNS (DNSSEC) | Firma digital del registro | ❌ No |
+
+---
+
+# 🧠 Puntos clave para examen (AZ-104 / AZ-900)
+
+- **Verificación de dominio en Microsoft Entra ID o Microsoft 365 → TXT o MX**
+- **Publicar una web → A o CNAME**
+- **Configurar correo → MX**
+- **SPF / DKIM / verificación servicios cloud → TXT**
+- **Información administrativa DNS → SOA**
+- **Alias de dominio → CNAME**
+
+---
+
+# Azure DNS Roles importantes para AZ-104
+
+| Rol RBAC | Servicio | Qué puede hacer | Qué NO puede hacer | Uso típico examen |
+|---|---|---|---|---|
+| DNS Zone Contributor | Public DNS Zones | Administrar zonas DNS públicas y registros DNS | No administrar RBAC | Gestionar dominios públicos |
+| Private DNS Zone Contributor | Private DNS Zones | Administrar zonas DNS privadas y Virtual Network Links | No unir VNets | Linking Private DNS ↔ VNet |
+| Network Contributor | Recursos de red | Administrar VNets, NICs, NSGs y join VNets | No administrar DNS Zones | Requerido para DNS VNet Links |
+| Contributor | General Azure | Administrar casi todos los recursos | No administrar RBAC | Excesivo para least privilege |
+| Reader | General Azure | Ver configuración | No modificar | Auditoría / visualización |
+| Owner | General Azure | Control total + RBAC | — | Administración completa |
+
+---
+
+# 1. DNS Zone Contributor
+
+## Qué administra
+
+Zonas DNS públicas:
+
+```text
+example.com
+```
+
+---
+
+## Qué puede hacer
+
+✅ crear registros A  
+✅ crear registros CNAME  
+✅ modificar registros MX/TXT  
+✅ administrar zonas DNS públicas  
+
+---
+
+## Qué NO puede hacer
+
+❌ administrar RBAC  
+❌ permisos IAM  
+
+---
+
+# Importante examen
+
+```text
+DNS Zone Contributor
+```
+
+↓
+
+solo para:
+
+```text
+Public DNS Zones
+```
+
+---
+
+# 2. Private DNS Zone Contributor
+
+## Qué administra
+
+Private DNS Zones:
+
+```text
+privatelink.database.windows.net
+```
+
+---
+
+## Qué puede hacer
+
+✅ administrar zonas privadas  
+✅ crear Virtual Network Links  
+✅ administrar registros privados  
+
+---
+
+## Qué NO puede hacer
+
+❌ unir VNets  
+❌ permisos sobre Virtual Networks  
+
+---
+
+# Importante examen
+
+Para:
+
+```text
+Private DNS Zone Link
+```
+
+normalmente necesitas además:
+
+```text
+Network Contributor
+```
+
+---
+
+# 3. Network Contributor
+
+## Qué administra
+
+Recursos de red Azure:
+
+- VNets
+- NICs
+- NSGs
+- Load Balancers
+- Route Tables
+
+---
+
+# Permiso clave examen
+
+```text
+Microsoft.Network/virtualNetworks/join/action
+```
+
+---
+
+# Importante examen
+
+Este permiso es necesario para:
+
+```text
+linking VNets
+```
+
+incluyendo:
+
+- Private DNS Zone Links
+- Private Endpoints
+
+---
+
+# 4. Contributor
+
+## Qué puede hacer
+
+✅ administrar casi todos los recursos Azure  
+
+---
+
+# Problema examen
+
+```text
+Contributor
+```
+
+frecuentemente:
+
+❌ NO es la mejor respuesta  
+
+porque viola:
+
+```text
+Least Privilege Principle
+```
+
+---
+
+# 5. Reader
+
+## Qué puede hacer
+
+✅ visualizar configuración  
+✅ leer recursos  
+
+---
+
+## Qué NO puede hacer
+
+❌ modificar DNS  
+❌ crear registros  
+
+---
+
+# 6. Owner
+
+## Qué puede hacer
+
+✅ control total  
+✅ administrar RBAC  
+✅ asignar roles  
+
+---
+
+# Importante examen
+
+Solo:
+
+```text
+Owner
+```
+
+o:
+
+```text
+User Access Administrator
+```
+
+pueden asignar roles RBAC.
+
+---
+
+# Trampas típicas AZ-104
+
+## Trampa 1
+
+Pensar que:
+
+```text
+Private DNS Zone Contributor
+```
+
+puede unir VNets.
+
+❌ Incorrecto.
+
+---
+
+## Trampa 2
+
+Pensar que:
+
+```text
+Network Contributor
+```
+
+puede administrar DNS Zones.
+
+❌ Incorrecto.
+
+---
+
+## Trampa 3
+
+Elegir:
+
+```text
+Contributor
+```
+
+cuando el examen pide:
+
+```text
+least privilege
+```
+
+---
+
+# Diferencia importante examen
+
+| Rol | Public DNS | Private DNS | VNet Join |
+|---|---|---|---|
+| DNS Zone Contributor | ✅ | ❌ | ❌ |
+| Private DNS Zone Contributor | ❌ | ✅ | ❌ |
+| Network Contributor | ❌ | ❌ | ✅ |
+| Contributor | ✅ | ✅ | ✅ |
+
+---
+
+# Reglas rápidas AZ-104
+
+```text
+DNS Zone Contributor manages public DNS zones.
+```
+
+```text
+Private DNS Zone Contributor manages private DNS zones.
+```
+
+```text
+Network Contributor provides virtualNetworks/join/action.
+```
+
+```text
+Private DNS Zone linking requires permissions on both the DNS zone and the VNet.
+```
+
+---
+# Virtual Network Link (AZ-104)
+
+Un **Virtual Network Link** **NO transporta tráfico de red**.
+
+Su única función es:
+
+> Permitir que una **Virtual Network** utilice una **Private DNS Zone** para resolver nombres DNS privados.
+
+---
+
+# ¿Qué es una Private DNS Zone?
+
+Una **Private DNS Zone** es un servicio de Azure que permite resolver **nombres DNS privados** únicamente desde las **Virtual Networks** vinculadas a ella.
+
+A diferencia de una zona DNS pública:
+
+- No es accesible desde Internet.
+- Solo las VNets enlazadas mediante un **Virtual Network Link** pueden utilizarla.
+
+Ejemplo de una zona privada:
+
+```text
+acmedomain.priv
+```
+
+o la utilizada por los Private Endpoints:
+
+```text
+privatelink.blob.core.windows.net
+```
+
+---
+
+## Arquitectura
+
+```text
+             Private DNS Zone
+
+      privatelink.blob.core.windows.net
+                    │
+                    │
+         Virtual Network Link
+                    │
+                    ▼
+                 VNET1
+```
+
+---
+
+## Ejemplo 1 - Private Endpoint
+
+Gracias al **Virtual Network Link**, una máquina virtual de **VNET1** puede resolver el nombre DNS privado:
+
+```text
+mystorage.privatelink.blob.core.windows.net
+```
+
+obteniendo la dirección IP privada:
+
+```text
+10.0.1.5
+```
+
+---
+
+## Ejemplo 2 - Nombres privados para las VMs
+
+También puedes crear una zona DNS privada propia:
+
+```text
+acmedomain.priv
+```
+
+y vincularla a una VNet.
+
+```text
+Private DNS Zone
+
+acmedomain.priv
+        │
+Virtual Network Link
+        │
+        ▼
+      VNET1
+```
+
+Ahora las máquinas virtuales podrán utilizar nombres como:
+
+```text
+VM1.acmedomain.priv
+
+VM2.acmedomain.priv
+```
+
+---
+
+# Auto-registration
+
+Al crear un **Virtual Network Link** existe una opción denominada:
+
+```text
+Auto-registration
+```
+
+Puede estar:
+
+- Enabled
+- Disabled
+
+---
+
+## Auto-registration = Enabled
+
+Cuando se crea una nueva máquina virtual en la VNet:
+
+```text
+VM1
+```
+
+Azure registra automáticamente:
+
+```text
+VM1.acmedomain.priv
+
+↓
+
+10.0.1.4
+```
+
+No es necesario crear manualmente el registro DNS.
+
+---
+
+## Auto-registration = Disabled
+
+La máquina virtual se crea normalmente:
+
+```text
+VM1
+```
+
+pero **Azure NO crea automáticamente** el registro DNS.
+
+Será necesario crear manualmente un registro A:
+
+```text
+VM1.acmedomain.priv
+
+↓
+
+10.0.1.4
+```
+
+---
+
+# ¿Qué ocurre si no existe el Virtual Network Link?
+
+Si la VNet **no está vinculada** a la **Private DNS Zone**, la resolución DNS falla.
+
+Por ejemplo:
+
+```text
+nslookup mystorage.privatelink.blob.core.windows.net
+
+↓
+
+No encuentra el registro DNS privado
+```
+
+Aunque el **Private Endpoint** exista, la VM no podrá resolver automáticamente su nombre DNS privado.
+
+---
+
+# Comparación
+
+| Función | Virtual Network Link |
+|----------|----------------------|
+| Conecta una VNet con una Private DNS Zone | ✅ |
+| Permite resolver nombres DNS privados | ✅ |
+| Transporta tráfico IP | ❌ |
+| Conecta dos VNets | ❌ |
+| Registra automáticamente las VMs | ⚠️ Solo si **Auto-registration = Enabled** |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - Un **Virtual Network Link** conecta una **Virtual Network** con una **Private DNS Zone**.
+> - **No proporciona conectividad IP** entre VNets.
+> - Su única función es permitir la **resolución de nombres DNS privados**.
+> - Una **Private DNS Zone** solo es accesible desde las VNets vinculadas mediante un **Virtual Network Link**.
+> - Si el **Virtual Network Link** tiene **Auto-registration = Enabled**, Azure registra automáticamente las máquinas virtuales de esa VNet en la zona DNS privada (por ejemplo, **VM1.acmedomain.priv**).
+> - Es un componente imprescindible cuando se utilizan **Private Endpoints** con **Private DNS Zones**.
+---
+
+# Verificación de un dominio personalizado en Azure App Service (AZ-104)
+
+Cuando se quiere asociar un **dominio personalizado (Custom Domain)** a un **Azure App Service**, Microsoft primero debe comprobar que eres el propietario del dominio.
+
+Para ello se utiliza un **registro DNS de tipo TXT**.
+
+---
+
+# ¿Qué es `asuid`?
+
+**ASUID** significa:
+
+> **App Service Unique ID**
+
+Es un identificador único generado por **Azure App Service** para verificar la propiedad del dominio.
+
+**No es un estándar de DNS**, sino una convención utilizada por Azure App Service.
+
+---
+
+# Ejemplo
+
+Supongamos que quieres asociar el dominio:
+
+```text
+app.bluerock.com
+```
+
+a un Azure App Service.
+
+Azure genera un identificador único, por ejemplo:
+
+```text
+3F7A9C8D123456789ABCDEF
+```
+
+Y solicita crear el siguiente registro DNS:
+
+| Tipo | Nombre (Host) | Valor |
+|------|---------------|-------|
+| **TXT** | **asuid.app** | **3F7A9C8D123456789ABCDEF** |
+
+---
+
+# ¿Qué hace Azure?
+
+Azure consulta el DNS público.
+
+```text
+Azure App Service
+
+        │
+
+Busca:
+
+TXT asuid.app.bluerock.com
+
+        │
+
+¿Existe?
+
+        │
+
+Sí
+
+        ▼
+
+Dominio verificado
+```
+
+Una vez verificado el dominio, ya puede asociarse al App Service.
+
+---
+
+# ¿Por qué el nombre es `asuid.app`?
+
+Porque:
+
+- **asuid** → Indica que es un registro de verificación de **Azure App Service**.
+- **app** → Es el subdominio que se desea verificar.
+
+Por ejemplo:
+
+| Dominio | Registro TXT |
+|----------|--------------|
+| `app.bluerock.com` | `asuid.app` |
+| `api.bluerock.com` | `asuid.api` |
+| `portal.contoso.com` | `asuid.portal` |
+
+Si se verifica el dominio raíz:
+
+```text
+contoso.com
+```
+
+normalmente el registro será:
+
+| Tipo | Nombre |
+|------|--------|
+| TXT | **asuid** |
+
+---
+
+# ¿Sirve para dirigir el tráfico?
+
+**No.**
+
+El registro **TXT** únicamente demuestra que eres el propietario del dominio.
+
+No redirige tráfico hacia la aplicación.
+
+Después de la verificación, normalmente también se configura:
+
+- **CNAME** → Para subdominios (`app.contoso.com`)
+- **A Record** → Para el dominio raíz (`contoso.com`)
+
+---
+
+# Resumen
+
+| Registro DNS | Función |
+|--------------|---------|
+| **TXT (`asuid.<subdominio>`)** | Verificar la propiedad del dominio. |
+| **CNAME** | Asociar un subdominio al Azure App Service. |
+| **A Record** | Asociar el dominio raíz a una dirección IP. |
+
+---
+
+> [!IMPORTANT]
+> **Claves para el AZ-104**
+>
+> - Para verificar un **Custom Domain** en **Azure App Service** se utiliza un **registro TXT**.
+> - **ASUID** significa **App Service Unique ID**.
+> - El registro suele tener el formato **`asuid.<subdominio>`**.
+> - El valor del registro es un identificador único generado por Azure.
+> - El registro **TXT** solo sirve para **verificar la propiedad del dominio**; no dirige el tráfico hacia la aplicación.
+> - Una vez verificado el dominio, normalmente se configura también un **CNAME** (subdominios) o un **A Record** (dominio raíz).

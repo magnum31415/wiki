@@ -1,4 +1,4 @@
-[ZABBIX ](https://github.com/magnum31415/wiki/tree/main/zabbix)
+[ZABBIX ](readme.md)
 
 # Zabbix - Conceptos
 
