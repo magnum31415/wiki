@@ -3,7 +3,6 @@
 
 1. [Terraform](terraform/terraform.md)
 2. [Aws](cloud/aws.md)
-3. [Kubernetes](Kubernetes_Cheat_Sheet.pdf)
 4. [Ansible](ansible/ansible.md)
 5. [RedHat9](linux/RedHat9.md)
 6. [SSL](linux/SSL.md)
@@ -24,3 +23,8 @@
 - [Zabbix](zabbix/readme.md)
 - [Opciones financieras](finance/options.md)
 - [Git](tools/git.md)
+
+## Cheat Sheets
+
+- [Ansible Cheat Sheet](cheat-sheets/Ansible_Cheat_Sheet.pdf)
+- [Kubernetes Cheat Sheet](cheat-sheets/Kubernetes_Cheat_Sheet.pdf)

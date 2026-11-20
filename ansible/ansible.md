@@ -1,6 +1,6 @@
 
 # Ansible Cheat Sheet
-[Ansible Cheat Sheet](../Ansible_Cheat_Sheet.pdf)
+[Ansible Cheat Sheet](../cheat-sheets/Ansible_Cheat_Sheet.pdf)
 
 # Instalar venv ansible
 
