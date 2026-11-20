@@ -256,6 +256,8 @@ Es el componente que proporciona el servicio Bastion.
 
 # Requisitos para desplegar Azure Bastion
 
+**Alcance pendiente de verificar por SKU.** Las formulaciones generales sobre subred e IP pública deben contrastarse con la excepción descrita en [Bastion Developer](#bastion-developer).
+
 ## Virtual Network
 
 Debe existir una VNet.

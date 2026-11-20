@@ -145,6 +145,8 @@ In this model:
 ---
 
 # Active Directory vs Microsoft Entra ID
+
+Consulta la [comparación detallada de Active Directory local y Microsoft Entra ID](#microsoft-active-directory-on-premises-vs-microsoft-entra-id) para ampliar arquitectura, dispositivos e integración.
 [Back to Index](#índice)
 
 ## ¿Son lo mismo?

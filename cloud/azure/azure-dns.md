@@ -431,7 +431,7 @@ Registro automático         Sin registro automático
 
 ## ¿Qué es?
 
-Permite registrar automáticamente los registros DNS tipo A de las máquinas virtuales.
+Consulta la [definición del autorregistro](#auto-registration).
 
 ---
 
@@ -515,22 +515,13 @@ Registro actualizado
 
 ## Requisitos
 
-- Private DNS Zone.
-- Virtual Network Link.
-- Registration habilitado.
-- Máquina virtual perteneciente a esa VNet.
+Consulta la [lista de requisitos del autorregistro](#requisitos).
 
 ---
 
 ## Solo funciona para máquinas virtuales
 
-No registra automáticamente:
-
-- Load Balancer.
-- Private Endpoint.
-- Azure Firewall.
-- Application Gateway.
-- Recursos externos.
+Consulta [qué recursos quedan fuera del autorregistro](#qué-no-registra). Los recursos externos tampoco se registran automáticamente.
 
 ---
 

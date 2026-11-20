@@ -447,6 +447,8 @@ VM2.acmedomain.priv
 
 # Auto-registration
 
+Consulta el [flujo de autorregistro](azure-dns-zones-az104.md#flujo-correcto-de-auto-registration) para ver los requisitos y ejemplos.
+
 Al crear un **Virtual Network Link** existe una opción denominada:
 
 ```text

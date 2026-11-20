@@ -180,14 +180,7 @@ Si el requisito menciona:
 - ❌ No puedes convertir de GRS a ZRS directamente
 - ❌ No puedes convertir de GZRS a ZRS
 
-| Desde ↓     | Puede convertirse a →              |
-| ----------- | ---------------------------------- |
-| **LRS**     | GRS, RA-GRS, ZRS*, GZRS*, RA-GZRS* |
-| **ZRS**     | GZRS, RA-GZRS                      |
-| **GRS**     | RA-GRS, GZRS*, RA-GZRS*            |
-| **RA-GRS**  | GRS, GZRS*, RA-GZRS*               |
-| **GZRS**    | RA-GZRS                            |
-| **RA-GZRS** | GZRS                               |
+[Consultar la tabla de conversiones y sus condiciones](azure-storage-az104.md#conversiones-permitidas-entre-tipos-de-redundancia-en-azure-storage).
 
 
 ![ZRS](../../img/azure/azure-zone-redundant-storage.png)

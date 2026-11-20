@@ -391,26 +391,6 @@ Accede a las Tables
 | **Caso de uso típico** | Compartir temporalmente un blob usando identidades de Microsoft Entra ID. | Compartir temporalmente un recurso concreto sin usar Entra ID. | Delegar acceso temporal a varios servicios del Storage Account. |
 | **Ejemplo** | Una aplicación con **Managed Identity** genera una SAS de lectura válida 15 minutos para `container1/foto.jpg`. | Un administrador genera una SAS para que un proveedor suba un archivo a `container1` durante 24 horas. | Una aplicación de backup genera una única SAS para acceder temporalmente a **Blob + Queue + File Share** del mismo Storage Account. |
 
-- **User Delegation SAS**
-  - **Microsoft Entra ID** + **User Delegation Key**
-  - Solo para **Blob Storage** (Blob y ADLS Gen2).
-
-- **Service SAS**
-  - **Storage Account Key**
-  - Acceso a **un único recurso o servicio**:
-    - Blob
-    - Azure Files
-    - Queue
-    - Table
-
-- **Account SAS**
-  - **Storage Account Key**
-  - Acceso a **uno o varios servicios** del mismo **Storage Account**:
-    - Blob
-    - Azure Files
-    - Queue
-    - Table
-
 ## Proceso de generación de una User Delegation SAS
 
 ````

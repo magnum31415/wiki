@@ -198,6 +198,8 @@ Virtual Network Flow Logs → futuro
 Para cubrir el requisito del SIEM de recibir información de tráfico de red, la solución moderna equivalente es Virtual Network Flow Logs.
 
 # Integración con SIEM
+
+Consulta la [implementación de VNet Flow Logs hacia el SIEM](azure-vnetflowlogs-siem.md) para ver Traffic Analytics, Data Export y Event Hub.
 ````
 VNet Flow Logs → Storage Account → SIEM corporativo
 ````

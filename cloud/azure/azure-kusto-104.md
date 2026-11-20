@@ -266,6 +266,15 @@ Resources
 | order by VM asc
 ````
 
+### Variante breve desde el recurso de VM
+
+Procedencia: [guía de inventario de IP públicas](azure-resoruce-graph-104.md#4-internet-facing-vms-without-nsgs).
+
+````
+Resources | where type == 'microsoft.compute/virtualmachines' | where isempty(properties.networkProfile.networkInterfaces[*].properties.networkSecurityGroup)
+````
+
+**Alcance pendiente de verificar.** Ninguna de las dos consultas de este apartado filtra explícitamente por IP pública. La consulta con cruces evalúa filas por NIC y toma la subred de la primera configuración IP de la NIC. Conviene verificar la interpretación del resultado para VM con varias NIC o configuraciones IP.
 
 ---
 

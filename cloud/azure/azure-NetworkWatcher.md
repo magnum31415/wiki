@@ -132,6 +132,8 @@ Sin Network Watcher no se pueden habilitar VNet Flow Logs.
 
 ## Principales funcionalidades
 
+Consulta la [referencia de diagnóstico de Network Watcher](azure-network-watcher.md) para ver ejemplos y resultados de Connection Monitor, IP Flow Verify y Next Hop.
+
 ### VNet Flow Logs
 
 Captura los flujos de tráfico IP de una VNet.

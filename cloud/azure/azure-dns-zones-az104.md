@@ -89,6 +89,8 @@ fabrikam.com
 
 Azure puede crear automáticamente registros DNS para las VMs conectadas a una VNet.
 
+Consulta el [ciclo de vida del autorregistro](azure-dns.md#auto-registration) para ver cómo se crean, actualizan y eliminan los registros.
+
 ## Solo funciona con
 
 ✅ Private DNS Zones

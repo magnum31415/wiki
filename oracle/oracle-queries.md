@@ -112,6 +112,8 @@ SET SQLPROMPT "_USER'@'_CONNECT_IDENTIFIER> "
 
 # Transparent Data Encryption TDE
 
+Consulta el [procedimiento de Oracle TDE](oracle-tde..md) para ver la configuración multitenant y el contexto del keystore.
+
 ✅**Procedure to enable TDE**
 
 1. **Create a spfile backup**
@@ -263,6 +265,8 @@ ADMINISTER KEY MANAGEMENT SET KEYSTORE CLOSE IDENTIFIED BY "<wallet_password>" C
 
 
 # DataGuard
+
+Consulta [la configuración de Data Guard](oracle-dg.md) y [el procedimiento de switchover](oracle-dg-switchover.md) para distinguir la configuración inicial de la operación con el broker.
 
 ✅**Query database current Role**
 ````sql
@@ -635,6 +639,8 @@ LIST BACKUP OF CONTROLFILE;
 
 
 # Restore Database
+
+Consulta el [procedimiento de restauración con Veeam](oracle-RMAN-Restore.md) para ver los pasos específicos del agente y de los servidores de origen y destino.
 
 ## 1. **(Original Server) Get DBID from the Original Database**
    On the original db get the dbid.

@@ -64,6 +64,8 @@ Las máquinas virtuales únicamente necesitan una **Private IP**.
 
 # 3. AzureBastionSubnet
 
+**Alcance pendiente de verificar por SKU.** Consulta [Bastion Developer](../azure-bastion.md#bastion-developer) y las [características por SKU](../azure-bastion.md#características-por-sku) para contrastar los requisitos de subred e IP pública.
+
 Toda Virtual Network que aloje un Bastion debe contener una Subnet llamada exactamente:
 
 ```
