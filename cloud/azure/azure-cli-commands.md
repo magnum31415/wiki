@@ -35,7 +35,7 @@
       "tags": {
         "Application": "APP!",
         "Environment": "DEV",
-        "Owner": "perter@acme.com",
+        "Owner": "owner@example.com",
         "CostCenter": "tbd"
       },
       "properties": {}
@@ -153,7 +153,7 @@ cat flowlog.json | jq .
     ``az policy state trigger-scan   --resource-group "rg-alz-flowlogs-validation-gwc-002"``
 
 - **Policy definition show**:
-    ``az policy definition show   --name "3e9965dc-cc13-47ca-8259-a4252fd0cf7b"``
+    ``az policy definition show   --name "00000000-0000-4000-8000-00000000a001"``
 
 - **Consultar las Policy Assignments**:Muestra la Policy Assignment Deploy-VNFL-GWC del MG landingzones y devuelve su nombre, Principal ID de la Managed Identity y Tenant ID.
 ````bash
@@ -234,7 +234,7 @@ cat flowlog.json | jq .
 
 ````
 #unistall AzureMonitorLinuxAgent
-az account set --subscription 60776952-6ec5-4877-b8fa-123abb852a1a
+az account set --subscription 00000000-0000-4000-8000-00000000a002
 
 az vm extension delete \
   --resource-group rg-alz-validation-network-gwc \

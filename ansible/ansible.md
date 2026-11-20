@@ -66,7 +66,7 @@ sudo apt-get install proxychains
 vim /etc/proxychains.conf 
 
 Add in [ProxyList]
-socks5 12.34.11.123 1080
+socks5 198.51.100.10 1080
 ```
 # Molecule
 
@@ -243,7 +243,7 @@ Host *
     ServerAliveCountMax 30
 
 Host jumpserver
-    HostName bastion.company.intern
+    HostName managed-host.example.com.intern
     User ansible
     IdentityFile ~/.ssh/ansible-jump-host
 ````

@@ -343,8 +343,8 @@ Connectivity Subscription
 │
 ├── NetworkWatcher_germanywestcentral
 ├── NetworkWatcher_swedencentral
-├── st-netlogs-prod-gwc-001
-└── st-netlogs-prod-swc-001
+├── stflowlogexample01
+└── stflowlogexample02
 ```
 
 ### Una instancia por región
@@ -440,12 +440,12 @@ Create one regional Storage Account per region:
 Connectivity Subscription
 
 Germany West Central
-└── st-netlogs-prod-gwc-001
+└── stflowlogexample01
     └── VNet Flow Logs
         └── Retention: 90 days
 
 Sweden Central
-└── st-netlogs-prod-swc-001
+└── stflowlogexample02
     └── VNet Flow Logs
         └── Retention: 90 days
 ```
@@ -513,8 +513,8 @@ Ensure that all production VNets have VNet Flow Logs enabled automatically.
 Grant the SIEM access to both Storage Accounts:
 
 ```text
-st-netlogs-prod-gwc-001
-st-netlogs-prod-swc-001
+stflowlogexample01
+stflowlogexample02
 ```
 
 Preferred authentication method:
@@ -587,10 +587,10 @@ Connectivity Subscription
 ├── NetworkWatcher_germanywestcentral
 ├── NetworkWatcher_swedencentral
 │
-├── st-netlogs-prod-gwc-001
+├── stflowlogexample01
 │   └── VNet Flow Logs (90 days)
 │
-└── st-netlogs-prod-swc-001
+└── stflowlogexample02
     └── VNet Flow Logs (90 days)
 
                 │
@@ -609,8 +609,8 @@ Allow the corporate SIEM to securely read VNet Flow Logs stored in Azure Storage
 
 - Corporate SIEM capable of authenticating against Azure using a Service Principal.
 - Storage Accounts already deployed:
-  - st-netlogs-prod-gwc-001
-  - st-netlogs-prod-swc-001
+  - stflowlogexample01
+  - stflowlogexample02
 - Appropriate permissions in Azure:
   - Application Administrator or equivalent in Entra ID.
   - Owner or User Access Administrator on the Storage Accounts.
@@ -679,7 +679,7 @@ Upload a certificate provided by the SIEM team.
 Navigate to:
 
 ```text
-st-netlogs-prod-gwc-001
+stflowlogexample01
 └── Access Control (IAM)
     └── Add role assignment
 ```
@@ -699,7 +699,7 @@ sp-siem-vnetflowlogs
 Navigate to:
 
 ```text
-st-netlogs-prod-swc-001
+stflowlogexample02
 └── Access Control (IAM)
     └── Add role assignment
 ```
@@ -758,8 +758,8 @@ Client ID:
 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 
 Storage Accounts:
-st-netlogs-prod-gwc-001
-st-netlogs-prod-swc-001
+stflowlogexample01
+stflowlogexample02
 ```
 
 ---

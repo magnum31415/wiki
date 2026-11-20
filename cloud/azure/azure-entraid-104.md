@@ -346,7 +346,7 @@ Cuando creas una **Azure Free Account**, Microsoft **crea automáticamente un Mi
 
 ### Flujo de creación
 
-1. Te registras con tu **Microsoft account** (por ejemplo `tuemail@gmail.com`).
+1. Te registras con tu **Microsoft account** (por ejemplo `user-a@example.com`).
 2. Microsoft crea automáticamente un **Microsoft Entra ID tenant** para representar tu organización.
 3. Ese tenant recibe un dominio inicial del tipo: ``<nombre>.onmicrosoft.com``
 4. 4. Dentro de ese tenant se crea tu **Azure Free Subscription**.
@@ -904,7 +904,7 @@ Member: AZ-Platform-Subscription-Owners
 Una vez el grupo tenga permisos:
 ````
 Remove role assignment
-frank.sinatra@nyRZV.onmicrosoft.com
+user@YOUR_TENANT_A.onmicrosoft.com
 ````
 
 # Microsoft Entra ID - Group Naming Policy
@@ -3225,8 +3225,8 @@ Resultado:
 
 | Usuario | ¿Puede solicitar el Access Package? |
 |-----------|:-----------------------------------:|
-| user@ironclad.com | ✅ Sí |
-| user@bluerock.com | ❌ No |
+| user-b@example.com | ✅ Sí |
+| user-c@example.com | ❌ No |
 
 ---
 

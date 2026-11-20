@@ -385,8 +385,8 @@ Example:
 
 ```json
 {
-  "srcIp": "10.1.1.4",
-  "destIp": "52.239.152.12",
+  "srcIp": "10.0.0.10",
+  "destIp": "203.0.113.10",
   "srcPort": 51524,
   "destPort": 443,
   "protocol": "T",

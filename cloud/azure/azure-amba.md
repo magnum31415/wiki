@@ -54,7 +54,7 @@ AMBA Metric Alert
 Action Group
      │
      ▼
-groupit-cloud@synlab.com
+monitoring@example.com
 ````
 
 **AMBA te evita tener que crear manualmente todas las alertas recomendadas para Firewall, ExpressRoute, VPN Gateway, etc.**
@@ -212,7 +212,7 @@ En vuestro caso inicial:
 ````
 ag-platform
      │
-     └── it-cloud@company.com
+     └── alert-operator@example.com
 ````
 Por tanto:
 ````
@@ -225,7 +225,7 @@ AMBA Alert
 ag-platform
       │
       ▼
-groupit-cloud@synlab.com
+monitoring@example.com
 ````
 
 ## 4. ¿Qué tiene que ver el Management Group?
@@ -663,7 +663,7 @@ Action Type:
 Webhook
 
 Endpoint:
-https://solarwinds.company.com/api/alerts
+https://webhook.example.com/api/alerts
 ```
 
 ## Alert Rule

@@ -304,7 +304,7 @@ SQL>  startup nomount pfile=/u01/app/oracle/product/19.21.0.0/dbname/dbs/initdbn
 ````
 Second, duplicate primary
 ````sql
-rman target=sys/REPLACE_WITH_ORACLE_DG_PASSWORD@dbname_1 auxiliary sys/REPLACE_WITH_ORACLE_DG_PASSWORD@dbname_2
+rman target=sys/REPLACE_WITH_ORACLE_DG_PASSWORD@qryprim1 auxiliary sys/REPLACE_WITH_ORACLE_DG_PASSWORD@qrystby1
 RMAN > DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE NOFILENAMECHECK;
 ````
 
@@ -325,17 +325,17 @@ show parameter dg_broker_config_file2
 🔹 **These parameters must be defined as in the table  (Primary vs Standby)**
 | **Parameter**            | **Primary**                                                                                 | **Standby**                                                                                 |
 |--------------------------|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| **log_archive_config**   | `dg_config=(dbname_1,dbname_1)`                                                           | `dg_config=(dbname_1,dbname_1)`                                                           |
-| **log_archive_dest_1**   | `location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=dbname_1` | `location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=dbname_2` |
-| **log_archive_dest_2**   | `service="dbname_2", ASYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="dbname_2" net_timeout=30, valid_for=(online_logfile,all_roles)` |  |
+| **log_archive_config**   | `dg_config=(qryprim1,qryprim1)`                                                           | `dg_config=(qryprim1,qryprim1)`                                                           |
+| **log_archive_dest_1**   | `location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=qryprim1` | `location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=qrystby1` |
+| **log_archive_dest_2**   | `service="qrystby1", ASYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="qrystby1" net_timeout=30, valid_for=(online_logfile,all_roles)` |  |
 | **dg_broker_start**      | `TRUE`                                                                                    | `TRUE`                                                                                    |
 | **dg_broker_config_file1** | `/u01/app/oracle/product/19.21.0.0/dbname/dbs/dr1dbname_1.dat`                          | `/u01/app/oracle/product/19.21.0.0/dbname/dbs/dr1dbname_2.dat`                          |
 | **dg_broker_config_file2** | `/u01/app/oracle/product/19.21.0.0/dbname/dbs/dr2dbname_1.dat`                          | `/u01/app/oracle/product/19.21.0.0/dbname/dbs/dr1dbname_2.dat`                          |
 
 **How to setup**
 ````sql
-alter system set log_archive_dest_1='location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=dbname_1';
-alter system set log_archive_dest_2='service="dbname_1"','ASYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="dbname_1" net_timeout=30','valid_for=(online_logfile,all_roles)';
+alter system set log_archive_dest_1='location=USE_DB_RECOVERY_FILE_DEST valid_for=(all_logfiles,all_roles) db_unique_name=qryprim1';
+alter system set log_archive_dest_2='service="qryprim1"','ASYNC NOAFFIRM delay=0 optional compression=disable max_failure=0 reopen=300 db_unique_name="qryprim1" net_timeout=30','valid_for=(online_logfile,all_roles)';
 ````
 
 **Config Datagruard with dataguard Mager**
@@ -357,12 +357,12 @@ From DataGuard Manager command line ````dgmgrl sys/REPLACE_WITH_ORACLE_DG_PASSWO
 
 | **Order** | **Command** | **Action** |
 |---------|------------|-----------|
-| **1** | `CREATE CONFIGURATION dbname_dg_config AS PRIMARY DATABASE IS dbname_1 CONNECT IDENTIFIER IS dbname_1;` | Creates a **Data Guard Configuration** with `dbname_1` as the **Primary Database**. |
-| **2** | `ADD DATABASE dbname_2 AS CONNECT IDENTIFIER IS dbname_2 MAINTAINED AS PHYSICAL;` | Adds `dbname_1` as a **Physical Standby Database**. |
+| **1** | `CREATE CONFIGURATION dbname_dg_config AS PRIMARY DATABASE IS qryprim1 CONNECT IDENTIFIER IS qryprim1;` | Creates a **Data Guard Configuration** with `qryprim1` as the **Primary Database**. |
+| **2** | `ADD DATABASE qrystby1 AS CONNECT IDENTIFIER IS qrystby1 MAINTAINED AS PHYSICAL;` | Adds `qryprim1` as a **Physical Standby Database**. |
 | **3** | `EXIT;` | Exits **DGMGRL** (Data Guard Manager). |
 | **4** | `SHOW CONFIGURATION;` | Displays the current Data Guard configuration status. |
-| **5** | `SHOW DATABASE dbname_1;` | Displays details about the **Primary Database** (`dbname_1`). |
-| **6** | `SHOW DATABASE dbname_1;` | Displays details about the **Standby Database** (`dbname_2`). |
+| **5** | `SHOW DATABASE qryprim1;` | Displays details about the **Primary Database** (`qryprim1`). |
+| **6** | `SHOW DATABASE qryprim1;` | Displays details about the **Standby Database** (`qrystby1`). |
 | **7** | `ENABLE CONFIGURATION;` | Enables Data Guard Broker monitoring and management. |
 | **8** | `EDIT DATABASE cotde_2 SET STATE='APPLY-ON';` | Starts **Redo Log Apply** on the standby database (`cotde_2`). |
 

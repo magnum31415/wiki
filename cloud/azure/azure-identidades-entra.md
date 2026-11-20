@@ -128,7 +128,7 @@ Nombre:
 sc-alz-connectivity-apply
 
 Application ID:
-1f386f75-bc02-4197-9a0d-5237fec42cc5
+00000000-0000-4000-8000-00000000e001
 ```
 
 Puede imaginarse como:
@@ -281,7 +281,7 @@ Ejemplo:
 ```text
 Application ID
 
-1f386f75-bc02-4197-9a0d-5237fec42cc5
+00000000-0000-4000-8000-00000000e001
 ```
 
 Características:
@@ -328,7 +328,7 @@ Object ID:
 Service Principal
 
 Object ID:
-8cb8568f-79ed-45ca-9d4d-594d3990ab66
+00000000-0000-4000-8000-00000000e002
 ```
 
 Este identificador es el que utiliza Azure RBAC internamente.
@@ -349,7 +349,7 @@ El nombre es simplemente un atributo descriptivo (displayName), no un identifica
               sc-alz-connectivity-apply
 
               Application ID
-              1f386f75-bc02-4197-9a0d-5237fec42cc5
+              00000000-0000-4000-8000-00000000e001
 
                             │
                             │ crea
@@ -362,7 +362,7 @@ El nombre es simplemente un atributo descriptivo (displayName), no un identifica
               sc-alz-connectivity-apply
 
               Object ID
-              8cb8568f-79ed-45ca-9d4d-594d3990ab66
+              00000000-0000-4000-8000-00000000e002
 
                             ▲
                             │
@@ -402,7 +402,7 @@ sc-alz-connectivity-apply
 
 Application ID
 
-1f386f75-bc02-4197-9a0d-5237fec42cc5
+00000000-0000-4000-8000-00000000e001
 ```
 
 ---
@@ -416,11 +416,11 @@ sc-alz-connectivity-apply
 
 Application ID
 
-1f386f75-bc02-4197-9a0d-5237fec42cc5
+00000000-0000-4000-8000-00000000e001
 
 Object ID
 
-8cb8568f-79ed-45ca-9d4d-594d3990ab66
+00000000-0000-4000-8000-00000000e002
 ```
 
 ---
@@ -439,12 +439,12 @@ Workload Identity Federation
 Utiliza:
 
 Application ID:
-1f386f75-bc02-4197-9a0d-5237fec42cc5
+00000000-0000-4000-8000-00000000e001
 
 Para autenticarse como el Service Principal cuyo:
 
 Object ID:
-8cb8568f-79ed-45ca-9d4d-594d3990ab66
+00000000-0000-4000-8000-00000000e002
 ```
 
 ---
@@ -467,7 +467,7 @@ Object ID:
 
                   Application ID
 
-          1f386f75-bc02-4197-9a0d-5237fec42cc5
+          00000000-0000-4000-8000-00000000e001
 
                               │
                               ▼
@@ -476,7 +476,7 @@ Object ID:
 
                   Object ID
 
-          8cb8568f-79ed-45ca-9d4d-594d3990ab66
+          00000000-0000-4000-8000-00000000e002
 
                               │
                               │ principal_id
@@ -513,7 +513,7 @@ resource "azurerm_role_assignment" "example" {
 
   role_definition_name = "Storage Blob Data Contributor"
 
-  principal_id         = "8cb8568f-79ed-45ca-9d4d-594d3990ab66"
+  principal_id         = "00000000-0000-4000-8000-00000000e002"
 }
 ```
 
@@ -528,7 +528,7 @@ resource "azurerm_role_assignment" "example" {
 
   role_definition_name = "Storage Blob Data Contributor"
 
-  principal_id         = "1f386f75-bc02-4197-9a0d-5237fec42cc5"
+  principal_id         = "00000000-0000-4000-8000-00000000e001"
 }
 ```
 
@@ -560,7 +560,7 @@ Role:
     Storage Blob Data Contributor
 
 Principal:
-    Object ID = 8cb8568f-79ed-45ca-9d4d-594d3990ab66
+    Object ID = 00000000-0000-4000-8000-00000000e002
 
 Scope:
     /subscriptions/.../storageAccounts/stnetlogsprodgwc001

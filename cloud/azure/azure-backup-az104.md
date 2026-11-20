@@ -110,7 +110,7 @@ Recuperar uno o varios archivos individuales.
 
 Ejemplo:
 
-- Se ha borrado /home/ricard/documento.txt
+- Se ha borrado ~/documento.txt
 - Quieres recuperar solo ese fichero.
 
 Proceso:

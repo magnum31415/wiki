@@ -295,10 +295,10 @@ Connectivity Subscription
 
 ### Germany West Central
 
-st-netlogs-prod-gwc-001
+stflowlogexample01
 
 ```text
-st-netlogs-prod-gwc-001
+stflowlogexample01
 ├── VNet Flow Logs
 ├── Azure Firewall
 ├── VPN Gateway
@@ -307,10 +307,10 @@ st-netlogs-prod-gwc-001
 
 ### Sweden Central
 
-st-netlogs-prod-swc-001
+stflowlogexample02
 
 ```text
-st-netlogs-prod-swc-001
+stflowlogexample02
 ├── VNet Flow Logs
 ├── Azure Firewall
 ├── VPN Gateway
@@ -323,10 +323,10 @@ st-netlogs-prod-swc-001
 
 ### Germany West Central
 
-st-monitoring-prod-gwc-001
+stflowlogexample03
 
 ```text
-st-monitoring-prod-gwc-001
+stflowlogexample03
 ├── Activity Logs
 ├── Defender exports
 ├── Azure Monitor exports
@@ -335,10 +335,10 @@ st-monitoring-prod-gwc-001
 
 ### Sweden Central
 
-st-monitoring-prod-swc-001
+stflowlogexample04
 
 ```text
-st-monitoring-prod-swc-001
+stflowlogexample04
 ├── Activity Logs
 ├── Defender exports
 ├── Azure Monitor exports

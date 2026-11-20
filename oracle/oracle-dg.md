@@ -149,12 +149,12 @@ ALTER DATABASE SET STANDBY DATABASE TO MAXIMUM PERFORMANCE;
 
 Agregar Standby Redo Logs en la Primary
 ````sql
-ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 10 ('/u02/oradata/DIGITAL/stby10a.log','/u03/fra/stby10b.log') SIZE 50M;
-ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 11 ('/u02/oradata/DIGITAL/stby11a.log','/u03/fra/stby11b.log') SIZE 50M;
-ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 12 ('/u02/oradata/DIGITAL/stby12a.log','/u03/fra/stby12b.log') SIZE 50M;
-ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 13 ('/u02/oradata/DIGITAL/stby13a.log','/u03/fra/stby13b.log') SIZE 50M;
-ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 14 ('/u02/oradata/DIGITAL/stby14a.log','/u03/fra/stby14b.log') SIZE 50M;
-ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 15 ('/u02/oradata/DIGITAL/stby15a.log','/u03/fra/stby15b.log') SIZE 50M;
+ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 10 ('/u02/oradata/dgprim01/stby10a.log','/u03/fra/stby10b.log') SIZE 50M;
+ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 11 ('/u02/oradata/dgprim01/stby11a.log','/u03/fra/stby11b.log') SIZE 50M;
+ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 12 ('/u02/oradata/dgprim01/stby12a.log','/u03/fra/stby12b.log') SIZE 50M;
+ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 13 ('/u02/oradata/dgprim01/stby13a.log','/u03/fra/stby13b.log') SIZE 50M;
+ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 14 ('/u02/oradata/dgprim01/stby14a.log','/u03/fra/stby14b.log') SIZE 50M;
+ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 15 ('/u02/oradata/dgprim01/stby15a.log','/u03/fra/stby15b.log') SIZE 50M;
 ````
 Verificar la creación
 ````sql
@@ -176,21 +176,21 @@ SELECT group#, member, type, status FROM v$logfile;
 ### 5. Configurar TNS y Listener para Primary y Standby
 Editar tnsnames.ora en ambas bases
 ````ini
-DIGITAL =
+dgprim01 =
   (DESCRIPTION =
     (ADDRESS = (PROTOCOL = TCP)(HOST = ocptechnology.localhost)(PORT = 1521))
     (CONNECT_DATA =
       (SERVER = DEDICATED)
-      (SERVICE_NAME = digital)
+      (SERVICE_NAME = dgprim01)
     )
   )
 
-DIGITALDR =
+dgstby01 =
   (DESCRIPTION =
     (ADDRESS = (PROTOCOL = TCP)(HOST = ocpstandby.localhost)(PORT = 1521))
     (CONNECT_DATA =
       (SERVER = DEDICATED)
-      (SERVICE_NAME = digitaldr)
+      (SERVICE_NAME = dgstby01)
     )
   )
 ````
@@ -201,9 +201,9 @@ Listener en la Primary (listener.ora)
 SID_LIST_LISTENER =
   (SID_LIST =
     (SID_DESC =
-      (GLOBAL_DBNAME = digital)
+      (GLOBAL_DBNAME = dgprim01)
       (ORACLE_HOME = /u02/app/oracle/product/19.3.0/db_home)
-      (SID_NAME = digital)
+      (SID_NAME = dgprim01)
     )
   )
 
@@ -221,9 +221,9 @@ Listener en la Standby (listener.ora)
 SID_LIST_LISTENER =
   (SID_LIST =
     (SID_DESC =
-      (GLOBAL_DBNAME = digitaldr)
+      (GLOBAL_DBNAME = dgstby01)
       (ORACLE_HOME = /u02/app/oracle/product/19.3.0/db_home)
-      (SID_NAME = digitaldr)
+      (SID_NAME = dgstby01)
     )
   )
 
@@ -237,8 +237,8 @@ ADR_BASE_LISTENER = /u02/app/oracle
 
 ### 7. Probar la conectividad con tnsping
 ````bash
-tnsping digital
-tnsping digitaldr
+tnsping dgprim01
+tnsping dgstby01
 ````
 Si tnsping no funciona:
 - Revisar /etc/hosts
@@ -260,37 +260,37 @@ sudo firewall-cmd --list-ports
 
 | **Comando** | **Propósito** |
 |------------|-------------|
-| `log_archive_config` | Define la relación entre Primary (`digital`) y Standby (`digitaldr`). |
+| `log_archive_config` | Define la relación entre Primary (`dgprim01`) y Standby (`dgstby01`). |
 | `fal_server` | Especifica desde dónde solicitar redo logs faltantes (Standby). |
 | `fal_client` | Define el nombre de la base de datos local en FAL (Primary). |
 | `standby_file_management` | Permite la creación automática de archivos en Standby al agregar datafiles en la Primary. |
 | `log_archive_dest_1` | Configura el almacenamiento de redo logs locales en la **Fast Recovery Area (FRA)**. |
-| `log_archive_dest_2` | Envía redo logs desde la Primary (`digital`) a la Standby (`digitaldr`) de forma asíncrona. |
-| `LOG_ARCHIVE_DEST_STATE_2` | Habilita la replicación de redo logs hacia la Standby (`digitaldr`). |
+| `log_archive_dest_2` | Envía redo logs desde la Primary (`dgprim01`) a la Standby (`dgstby01`) de forma asíncrona. |
+| `LOG_ARCHIVE_DEST_STATE_2` | Habilita la replicación de redo logs hacia la Standby (`dgstby01`). |
 
  
 #### Configurar `log_archive_config`
 - Define las bases de datos participantes en Data Guard.
-- "digital" es el Primary y "digitaldr" es la Standby.
+- "dgprim01" es el Primary y "dgstby01" es la Standby.
 - Permite la replicación de redo logs entre ambas bases de datos.
 
 ```sql
-ALTER SYSTEM SET log_archive_config='dg_config=(digital,digitaldr)' SCOPE=both;
+ALTER SYSTEM SET log_archive_config='dg_config=(dgprim01,dgstby01)' SCOPE=both;
 ````
 #### Configurar `fal_server` (Fetch Archive Log Server)
 - Especifica desde dónde la base de datos primaria pedirá archivos de redo logs perdidos.
-- "digitaldr" es el servidor de la Standby.
-- Si la Primary pierde un archivo de redo, lo buscará en "digitaldr".
+- "dgstby01" es el servidor de la Standby.
+- Si la Primary pierde un archivo de redo, lo buscará en "dgstby01".
 
 ````sql
-ALTER SYSTEM SET fal_server='digitaldr' SCOPE=both;
+ALTER SYSTEM SET fal_server='dgstby01' SCOPE=both;
 ````
 
 #### Configurar `fal_client` (Fetch Archive Log Client)
 - Define el nombre de la base de datos local en el contexto de FAL.
-- "digital" se usa para que la Standby se identifique al solicitar redo logs a la Primary.
+- "dgprim01" se usa para que la Standby se identifique al solicitar redo logs a la Primary.
 ````sql
-ALTER SYSTEM SET fal_client='digital' SCOPE=both;
+ALTER SYSTEM SET fal_client='dgprim01' SCOPE=both;
 ````
 
 #### Configurar `standby_file_management`
@@ -304,26 +304,26 @@ ALTER SYSTEM SET standby_file_management='AUTO' SCOPE=both;
 - Define el destino de archivos de redo logs locales.
 - "use_db_recovery_file_dest" usa la Fast Recovery Area (FRA) para almacenar los logs.
 - "valid_for=(all_logfiles,all_roles)" aplica a todos los logs en Primary y Standby.
-- "db_unique_name=digital" especifica que esta configuración pertenece a "digital".
+- "db_unique_name=dgprim01" especifica que esta configuración pertenece a "dgprim01".
 
 ````sql
 ALTER SYSTEM SET log_archive_dest_1='location=use_db_recovery_file_dest valid_for=(all_logfiles,all_roles)
-db_unique_name=digital' SCOPE=both;
+db_unique_name=dgprim01' SCOPE=both;
 ````
 #### Configurar `log_archive_dest_2` (Destino de logs a la Standby)
 - Define el destino de los redo logs enviados a la Standby.
-- "service=digitaldr" indica que los logs se enviarán a la Standby.
+- "service=dgstby01" indica que los logs se enviarán a la Standby.
 - "async" envía los redo logs de manera asíncrona, sin retrasar las transacciones en la Primary.
 - "valid_for=(online_logfiles,primary_role)" aplica solo a online redo logs en modo Primary.
-- "db_unique_name=digitaldr" especifica que el destino es la Standby.
+- "db_unique_name=dgstby01" especifica que el destino es la Standby.
 
 ````sql
-ALTER SYSTEM SET log_archive_dest_2='service=digitaldr async valid_for=(online_logfiles,primary_role)
-db_unique_name=digitaldr' SCOPE=both;
+ALTER SYSTEM SET log_archive_dest_2='service=dgstby01 async valid_for=(online_logfiles,primary_role)
+db_unique_name=dgstby01' SCOPE=both;
 ````
 #### Habilitar el destino de replicación LOG_ARCHIVE_DEST_STATE_2
 - Activa el destino log_archive_dest_2 para enviar redo logs a la Standby.
-- Sin este comando, la Primary no enviará logs a "digitaldr".
+- Sin este comando, la Primary no enviará logs a "dgstby01".
 ````sql
 ALTER SYSTEM SET LOG_ARCHIVE_DEST_STATE_2=ENABLE;
 ````
@@ -356,7 +356,7 @@ Oracle usa el password file (orapw<db_name>) para permitir la autenticación rem
 sin requerir la contraseña explícita en la conexión. Esto es esencial en Data Guard, RMAN, y conexiones administrativas remotas.
 
 ````bash
-scp orapwdigital oracle@192.168.74.160:$ORACLE_HOME/dbs/
+scp orapwdigital oracle@10.0.0.20:$ORACLE_HOME/dbs/
 ````
 Renombrar el archivo en la Standby:
 ````bash
@@ -413,23 +413,23 @@ SHOW PARAMETER audit;
 ## 📌STANDBY DATABASE - Configuración de la Base de Datos Standby en Oracle Data Guard
 ### 1.  Create the required directory on the standby side as below:
 ````bash
-mkdir -p /u02/app/oracle/oradata/DIGITALDR/
-mkdir -p /u02/app/oracle/oradata/DIGITALDR/pdbseed/
-mkdir -p /u02/app/oracle/oradata/DIGITALDR/shri/	
-mkdir -p /u02/app/oracle/admin/digitaldr/adump
+mkdir -p /u02/app/oracle/oradata/dgstby01/
+mkdir -p /u02/app/oracle/oradata/dgstby01/pdbseed/
+mkdir -p /u02/app/oracle/oradata/dgstby01/shri/	
+mkdir -p /u02/app/oracle/admin/dgstby01/adump
 mkdir -p /u02/app/oracle/fast_recovery_area/
 ````
 
 ### 2. Crear pfile en la Standby
 ```bash
 cat /u02/app/oracle/product/19.3.0/db_home/dbs/initdigitaldr.ora
-db_name=digital
+db_name=dgprim01
 enable_pluggable_database=true
 ```
 
 ### 3. Arrancar la instancia en modo NOMOUNT
 ````
-export ORACLE_SID=digitaldr
+export ORACLE_SID=dgstby01
 sqlplus / as sysdba
 startup nomount pfile=/u02/app/oracle/product/19.3.0/db_home/dbs/initdigitaldr.ora;
 ````
@@ -446,34 +446,34 @@ manualmente los parámetros en la Standby, ya que RMAN los aplica automáticamen
 
 **¿Cuándo NO necesitas modificar manualmente los parámetros en la Standby?**
 ✅ Si en el bloque DUPLICATE ya incluyes:
-- set db_unique_name='digitaldr'
-- set fal_client='digitaldr'
-- set fal_server='digital'
-- set log_archive_dest_2='service=digital ...'
-- set log_archive_config='dg_config=(digital,digitaldr)'
+- set db_unique_name='dgstby01'
+- set fal_client='dgstby01'
+- set fal_server='dgprim01'
+- set log_archive_dest_2='service=dgprim01 ...'
+- set log_archive_config='dg_config=(dgprim01,dgstby01)'
 
 
 ````
-rman target sys/REPLACE_WITH_RMAN_DUPLICATE_PASSWORD@digital auxiliary sys/REPLACE_WITH_RMAN_DUPLICATE_PASSWORD@digitaldr
+rman target sys/REPLACE_WITH_RMAN_DUPLICATE_PASSWORD@dgprim01 auxiliary sys/REPLACE_WITH_RMAN_DUPLICATE_PASSWORD@dgstby01
 
 run {
   ALLOCATE CHANNEL c1 TYPE DISK;
   ALLOCATE AUXILIARY CHANNEL c3 TYPE DISK;
   DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE
     SPFILE
-    PARAMETER_VALUE_CONVERT 'digital','digitaldr'
-    SET DB_NAME='digital'
-    SET DB_UNIQUE_NAME='digitaldr'
-    SET AUDIT_FILE_DEST='/ocptechnology/app/oracle/admin/digital/adump'
-    SET DIAGNOSTIC_DEST='/ocptechnology/app/oracle/admin/digital/adump'
-    SET DB_FILE_NAME_CONVERT='/u02/app/oracle/oradata/DIGITAL/','/ocptechnology/app/oracle/oradata/DIGITALDR/'
-    SET LOG_FILE_NAME_CONVERT='/u02/app/oracle/oradata/DIGITAL/','/ocptechnology/app/oracle/oradata/DIGITALDR/'
-    SET CONTROL_FILES='/ocptechnology/app/oracle/oradata/DIGITALDR/standby1.ctl'
+    PARAMETER_VALUE_CONVERT 'dgprim01','dgstby01'
+    SET DB_NAME='dgprim01'
+    SET DB_UNIQUE_NAME='dgstby01'
+    SET AUDIT_FILE_DEST='/ocptechnology/app/oracle/admin/dgprim01/adump'
+    SET DIAGNOSTIC_DEST='/ocptechnology/app/oracle/admin/dgprim01/adump'
+    SET DB_FILE_NAME_CONVERT='/u02/app/oracle/oradata/dgprim01/','/ocptechnology/app/oracle/oradata/dgstby01/'
+    SET LOG_FILE_NAME_CONVERT='/u02/app/oracle/oradata/dgprim01/','/ocptechnology/app/oracle/oradata/dgstby01/'
+    SET CONTROL_FILES='/ocptechnology/app/oracle/oradata/dgstby01/standby1.ctl'
     SET LOG_ARCHIVE_MAX_PROCESSES='5'
-    SET FAL_CLIENT='digitaldr'
-    SET FAL_SERVER='digital'
+    SET FAL_CLIENT='dgstby01'
+    SET FAL_SERVER='dgprim01'
     SET STANDBY_FILE_MANAGEMENT='AUTO'
-    SET LOG_ARCHIVE_CONFIG='dg_config=(digital,digitaldr)'
+    SET LOG_ARCHIVE_CONFIG='dg_config=(dgprim01,dgstby01)'
     SET COMPATIBLE='19.0.0.0.0'
     NOFILENAMECHECK;
 }
@@ -525,7 +525,7 @@ SQL> select name,open_mode,database_role from v$database;
 
 NAME      OPEN_MODE            DATABASE_ROLE
 --------- -------------------- ----------------
-DIGITAL   READ ONLY WITH APPLY PHYSICAL STANDBY
+dgprim01   READ ONLY WITH APPLY PHYSICAL STANDBY
 ````
 
 Después de iniciar el Managed Recovery Process (MRP) en la Standby, 

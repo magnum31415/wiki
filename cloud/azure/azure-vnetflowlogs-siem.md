@@ -141,7 +141,7 @@ AzureActivity
 ````
 Flow:
 
-10.1.1.4 ---> 10.2.3.7 TCP 443 ALLOW
+10.0.0.10 ---> 10.2.3.7 TCP 443 ALLOW
 ````
 
 **Salida:**
@@ -152,7 +152,7 @@ Most connections:
 443
 
 Top Talkers:
-10.1.1.4
+10.0.0.10
 
 Denied Flows:
 15

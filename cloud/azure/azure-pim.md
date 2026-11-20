@@ -187,9 +187,9 @@ temporary Contributor access during emergencies.
 Example members:
 
 ```text
-john.smith@company.com
-mary.jones@company.com
-alex.brown@company.com
+pim-user-a@example.com
+pim-user-b@example.com
+pim-user-c@example.com
 ```
 
 The application owner is responsible for identifying which users should belong to this group.
@@ -303,7 +303,7 @@ Every activation is logged.
 Example:
 
 ```text
-User: john.smith@company.com
+User: pim-user-a@example.com
 Role: Contributor
 Scope: sub-finance-invoiceprocessor-prod
 Reason: Production Incident INC-12345

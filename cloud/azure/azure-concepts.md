@@ -49,7 +49,7 @@ There is no such thing as a subscription without a tenant.
 
 ### Where does YOUR user fit?
 
-Your user: ````es-adm-mcdonals@companyrz.onmicrosoft.com````
+Your user: ````user@YOUR_TENANT_B.onmicrosoft.com````
 
 - **Users exist in the tenant, not in subscriptions.**
 - **They only gain access to subscriptions through RBAC role assignments**.

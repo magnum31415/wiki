@@ -207,8 +207,8 @@ Puede realizar acciones como:
 | **Short Name**         | ✅ Sí        | Nombre corto utilizado en SMS y algunas notificaciones. Máximo 12 caracteres. | `OPS-NOTIF`                      |
 | **Resource Group**     | ✅ Sí        | Resource Group donde se almacena el Action Group.                             | `rg-monitoring-prod`             |
 | **Email**              | ❌ No        | Envía una notificación por correo electrónico.                                | `ops@contoso.com`                |
-| **SMS**                | ❌ No        | Envía un mensaje SMS a uno o varios números.                                  | `+34 600123456`                  |
-| **Voice Call**         | ❌ No        | Realiza una llamada telefónica automática.                                    | `+34 600123456`                  |
+| **SMS**                | ❌ No        | Envía un mensaje SMS a uno o varios números.                                  | `YOUR_PHONE_NUMBER`                  |
+| **Voice Call**         | ❌ No        | Realiza una llamada telefónica automática.                                    | `YOUR_PHONE_NUMBER`                  |
 | **Webhook**            | ❌ No        | Invoca una URL HTTP/HTTPS cuando se dispara la alerta.                        | `https://api.contoso.com/alerts` |
 | **Azure Function**     | ❌ No        | Ejecuta una Azure Function como respuesta a la alerta.                        | `ProcessCriticalAlert`           |
 | **Logic App**          | ❌ No        | Ejecuta una Logic App para automatizar un flujo de trabajo.                   | `NotifyTeamsAndCreateTicket`     |
@@ -225,7 +225,7 @@ Ejemplo:
 | **Short Name**         | `OPS-NOTIF`                      |
 | **Resource Group**     | `rg-monitoring-prod`             |
 | **Email**              | `ops@contoso.com`                |
-| **SMS**                | `+34 600123456`                  |
+| **SMS**                | `YOUR_PHONE_NUMBER`                  |
 | **Voice Call**         | *(no configurado)*               |
 | **Webhook**            | `https://api.contoso.com/alerts` |
 | **Azure Function**     | `ProcessCriticalAlert`           |
@@ -353,7 +353,7 @@ Action Group
 Email
         │
         ▼
-admin1@company.com
+alerts@example.com
 ```
 
 Existe además:

@@ -40,19 +40,19 @@ cat /opt/veeam/VeeamPluginforOracleRMAN/veeam_config.xml
     <CAVerificationParameters />
     <AdditionalCertificatePaths />
     <ProxyConfig />
-    <VBRConnectionParams vbrHostName="DC-REPO1" vbrPort="10006" vbrUser="rman_DBNAME" vbrDomain="" vbrPassword="REPLACE_WITH_VEEAM_PASSWORD" />
+    <VBRConnectionParams vbrHostName="backup-server" vbrPort="10006" vbrUser="rman_DBNAME" vbrDomain="" vbrPassword="REPLACE_WITH_VEEAM_PASSWORD" />
     <Certificate />
     <BackupForRestoreParams />
     <AgentParams />
     <RepositoryParams parallelism="1">
-        <Repository repositoryName="DC-REPO1" repositoryID="445242435346y54624245245" />
+        <Repository repositoryName="backup-server" repositoryID="445242435346y54624245245" />
     </RepositoryParams>
     <PluginParameters customServerName="db.mycompany.com" />
 </Config>
 
 OracleRMANConfigTool --show-config
 
-OracleRMANConfigTool --set-credentials "DC-REPO1\rman_DBNAME" "TopSecretPasswd"
+OracleRMANConfigTool --set-credentials "backup-server\rman_DBNAME" "TopSecretPasswd"
 Please ensure the following roles are assigned to the user in Users and Roles settings on the backup server:
 Backup Administrator, or
 Backup Operator and Restore Operator

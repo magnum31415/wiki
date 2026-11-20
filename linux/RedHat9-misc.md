@@ -97,7 +97,7 @@ El comando ss reemplaza la herramienta anterior netstat, que es parte del paquet
 # Proxy
 
 ## wget
-wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=REPLACE_WITH_MAXMIND_LICENSE_KEY&suffix=tar.gz.sha256" -e use_proxy=yes -e https_proxy=http://usr_useproxy:REPLACE_WITH_PROXY_PASSWORD@bbkproxybc.server.es:8080 --no-check-certificate --content-disposition || { error 'Descarga de sha256 fallida'; }
+wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=REPLACE_WITH_MAXMIND_LICENSE_KEY&suffix=tar.gz.sha256" -e use_proxy=yes -e https_proxy=http://proxy-user:REPLACE_WITH_PROXY_PASSWORD@proxy.example.com:8080 --no-check-certificate --content-disposition || { error 'Descarga de sha256 fallida'; }
 
  
 

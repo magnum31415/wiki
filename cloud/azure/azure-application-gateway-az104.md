@@ -213,7 +213,7 @@ Application Gateway
 |---|---|---|---|
 | Public IP | Entrada Internet | Dirección IP pública que expone el Application Gateway a Internet. Es un recurso Azure independiente ``Microsoft.Network/publicIPAddresses``| `52.168.x.x` |
 | Frontend IP | IP frontend del gateway | Configuración IP que usa el gateway para recibir tráfico | Frontend público HTTPS en puerto 443 |
-| Listener | Escucha HTTP/HTTPS | Componente que escucha peticiones HTTP/HTTPS en un puerto concreto | Listener HTTPS para `api.company.com:443` |
+| Listener | Escucha HTTP/HTTPS | Componente que escucha peticiones HTTP/HTTPS en un puerto concreto | Listener HTTPS para `api.example.com:443` |
 | Rule | Routing | Regla que decide a qué backend enviar el tráfico | `/api/* → Backend Pool API` |
 | Backend Pool | APIs/VMs/App Services | Grupo de servidores o servicios backend que reciben tráfico | AKS, VMs privadas, App Services |
 | Probe | Health checks | Verificación periódica del estado de los backends | GET `/health` cada 30 segundos |
@@ -360,7 +360,7 @@ Ejemplo:
 |---|---|
 | Protocol | HTTPS |
 | Port | 443 |
-| Hostname | api.company.com |
+| Hostname | api.example.com |
 | Certificate | TLS certificate |
 
 ---
