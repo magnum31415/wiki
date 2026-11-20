@@ -16,3 +16,11 @@
 
 
 
+## Más temas del vault
+
+- [Conceptos de IA, modelos y agentes](ai/ai-definitions.md)
+- [IA responsable (AI-900)](ai901/azure-concepts.md)
+- [macOS — entorno con Multipass](mac/multipass.md)
+- [Zabbix](zabbix/readme.md)
+- [Opciones financieras](finance/options.md)
+- [Git](tools/git.md)

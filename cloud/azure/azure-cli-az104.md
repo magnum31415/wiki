@@ -139,3 +139,7 @@ az acr build → build + push imagen
 ```text
 az acr login → login Docker contra ACR
 ```
+
+## Documentos relacionados
+
+- [Referencia de comandos de Azure CLI](azure-cli-commands.md)

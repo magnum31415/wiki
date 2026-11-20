@@ -75,3 +75,8 @@ multipass info dev-vm           # ver IP, montajes, recursos
 multipass delete dev-vm         # borrarla
 multipass purge                 # limpiar VMs borradas definitivamente
 ````
+
+## Documentos relacionados
+
+- [VS Code Remote-SSH hacia la VM](vscode.md)
+- [Claude Code en la VM](claude.md)

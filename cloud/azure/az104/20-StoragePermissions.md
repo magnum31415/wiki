@@ -466,3 +466,7 @@ Cuando una pregunta mencione:
 - **Acceso a blobs o archivos**
 
 La respuesta correcta casi siempre será un **Storage Data Role** (Blob o File), y **no** un rol genérico como **Contributor** u **Owner**.
+
+## Documentos relacionados
+
+- [Condiciones de Azure RBAC para Storage](../Azure-RBAC-Conditions-az104.md)

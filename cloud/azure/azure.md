@@ -132,3 +132,8 @@
 | **Break Glass accounts**    | are **emergency administrator accounts** used to access a system when normal authentication methods fail. | They are designed to be used **only in critical situations** where administrators cannot access the environment through normal accounts. | Una cuenta Global Admin guardada offline para acceder al tenant en caso de emergencia. |
 | **Claim**                   | Información sobre una identidad incluida en un token de autenticación | OAuth / OpenID Connect / Entra ID                                                                                  | Un claim **email=peter@company.com** dentro de un JWT emitido por Entra ID. |
 | **Access Key (Storage)**    | Una access key es una **clave secreta compartida** que da acceso completo a la cuenta de storage | Autenticación basada en claves                                                                                     | Usar la **Storage Account Key** para acceder a blobs mediante una aplicación. |
+
+## Documentos relacionados
+
+- [Manual de estudio AZ-104](az104/readme.md)
+- [Azure Automation Account](azure-automation-az104.md)

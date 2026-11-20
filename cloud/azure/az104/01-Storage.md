@@ -423,3 +423,8 @@ Microsoft recomienda:
 | Private Endpoint | IP privada |
 | Infrastructure Encryption | Solo al crear |
 | Recovery Services Vault | Backup Azure Files |
+
+## Documentos relacionados
+
+- [Azure Storage — referencia ampliada para AZ-104](../azure-storage-az104.md)
+- [Permisos de Azure Storage](20-StoragePermissions.md)

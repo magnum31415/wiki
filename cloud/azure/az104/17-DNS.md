@@ -285,3 +285,7 @@ Microsoft recomienda:
 | Private Endpoint | Recomendado con Private DNS Zone |
 | DNS Suffix | No afecta al registro automático |
 
+## Documentos relacionados
+
+- [Azure Private DNS y resolución](../azure-dns.md)
+- [Zonas DNS, enlaces de VNet y autorregistro](../azure-dns-zones-az104.md)

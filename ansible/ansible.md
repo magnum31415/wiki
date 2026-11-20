@@ -865,3 +865,6 @@ This order comes from the fact that each play listed in the playbook is a YAML d
       become: false
 ````
 
+## Documentos relacionados
+
+- [Ansible para Windows — inventario y WinRM](Ansible-Windows.md)

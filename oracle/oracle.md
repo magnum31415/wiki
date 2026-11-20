@@ -163,3 +163,6 @@ SELECT GROUP#, STATUS FROM V$LOG;
 
 
 
+## Documentos relacionados
+
+- [Entrevista técnica — Oracle y Linux](../ansible/10-questions.md)

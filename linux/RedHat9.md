@@ -12,3 +12,8 @@
 6. [Container](RedHat9-container.md)
 7. [Grub2](RedHat9-grub2.md)
 8. [Manage Profiles](RedHat9-profiles.md)
+
+## Documentos relacionados
+
+- [Gestión de contraseñas en Linux](passwd.md)
+- [Entrevista técnica — Oracle y Linux](../ansible/10-questions.md)

@@ -2236,3 +2236,8 @@ automatic remediation
 ```
 
 con guardrails estrictos.
+
+## Documentos relacionados
+
+- [Comparativa de modelos, proveedores y plataformas](ai-models.md)
+- [Panorama de plataformas de agentes](ai-agentlandscape.md)

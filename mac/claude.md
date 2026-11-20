@@ -14,3 +14,7 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 claude --version
 ````
+
+## Documentos relacionados
+
+- [Estructura de un proyecto con Claude Code](../claude/README.md)

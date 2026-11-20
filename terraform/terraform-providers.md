@@ -300,3 +300,7 @@ resource "azurerm_virtual_network" "vnet" {
 | azapi | Acceder directamente a APIs ARM de Azure |
 | alz | Gestionar Azure Landing Zone Accelerator |
 | local | Crear o leer recursos locales (ficheros, plantillas, etc.) |
+
+## Documentos relacionados
+
+- [Resolución de problemas de Terraform en Azure](../cloud/azure/azure-terraform.md)

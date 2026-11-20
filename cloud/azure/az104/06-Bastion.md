@@ -307,3 +307,7 @@ Microsoft recomienda:
 | VNet Peering | Solo directo |
 | Peering transitivo | No soportado |
 | Puerto 3389/22 | No es necesario abrirlos a Internet |
+
+## Documentos relacionados
+
+- [Azure Bastion — requisitos por SKU y conectividad](../azure-bastion.md)
