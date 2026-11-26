@@ -1,5 +1,7 @@
 #
 
+> Referencia relacionada: [plantillas y guía de OpenCode](../ai/OpenCode/README.md).
+
 ## Estructura
 
 En Claude Code, el fichero estándar para instrucciones del proyecto es CLAUDE.md

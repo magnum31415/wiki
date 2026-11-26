@@ -1,68 +1,201 @@
 # Plantillas de OpenCode
 
 Esta carpeta reúne referencias y plantillas reutilizables para proyectos que usan OpenCode.
-Los archivos con el sufijo `-template` son plantillas de referencia; no son instrucciones ni comandos activos en este vault.
+Los archivos de `templates/` son plantillas de referencia. OpenCode no trata esa carpeta como ruta de descubrimiento por defecto para agentes, comandos o skills; cópialos a las ubicaciones indicadas para instalarlos. **Excepción:** el archivo `templates/AGENTS.md` puede cargarse como instrucción cuando OpenCode trabaja dentro de esa carpeta o la explora.
 
 ## Contenido
 
+1. [AGENTS.md y MEMORY.md](./README.md#agents-memory)
+   - [Plantilla de `AGENTS.md`](templates/AGENTS.md)
+   - [Plantilla de `MEMORY.md`](templates/MEMORY.md)
+2. [Skills](./README.md#skills)
+   - [Plantilla de Skill](templates/skills/SKILL.md)
+   - [Plantilla de Skill SDD](templates/skills/sdd/SKILL.md)
+   - [Starter Pack de Skills](./README.md#starter-pack-de-skills)
+   - [Referencias sobre Skills](./README.md#referencias-sobre-skills)
+3. [Comandos](./README.md#comandos)
+   - [Comando `feature`](templates/commands/feature.md)
+   - [Comandos SDD](sdd/README.md#automatizacion-de-sdd-mediante-skills-y-comandos)
+4. [MCP (Model Context Protocol)](./README.md#mcp-model-context-protocol)
+5. [SDD](./README.md#spec-driven-development-sdd)
+   - [Guía SDD: flujo, plantillas y comandos](sdd/README.md)
+6. [Agentes y subagentes](./README.md#agentes-y-subagentes)
+   - [Guía de agentes, subagentes y sistemas multiagente](agents/README.md)
+
+### Recursos de consulta
+
 - [Chuleta de OpenCode para macOS](OpenCode-CheatSheet.md)
-- [Plantilla de `AGENTS.md`](AGENTS-template.md)
-- [Plantilla de `MEMORY.md`](MEMORY-template.md)
-- [Plantilla del comando para planificar funcionalidades](commands/feature-template.md)
-- [Plantilla de Skill](skills/SKILL-template.md)
-- [Plantilla de Skill SDD](skills/sdd/SKILL-template.md)
 - [Guía de uso de las plantillas en un proyecto](Guia-de-uso.md)
-- [Guía SDD y plantillas](sdd/README.md)
-- [Guía de agentes, subagentes y sistemas multiagente](agents/README.md)
 
 ## Empezar un proyecto con estas plantillas
 
-Si vas a desarrollar un proyecto con IA, consulta la [guía de uso](Guia-de-uso.md): explica cómo instalar y adaptar las plantillas, seleccionar el coordinador y recorrer el flujo SDD con aprobaciones humanas. El README sirve como índice; la guía reúne el procedimiento paso a paso.
+Si vas a desarrollar un proyecto con IA, consulta la [guía de uso](Guia-de-uso.md): explica cómo instalar y adaptar las plantillas, seleccionar el coordinador y recorrer el flujo SDD con aprobaciones humanas. El siguiente árbol reúne una posible estructura completa; crea solo los archivos y directorios que necesite el proyecto.
 
-## Agentes y subagentes
+```text
+project/
+├── AGENTS.md # instrucciones del agente
+├── MEMORY.md # memoria entre sesiones (opcional)
+├── opencode.jsonc # configuración y MCP
+├── docs/
+│   └── constitution.md # principios del proyecto SDD
+├── specs/
+│   └── 001-nombre/
+│       ├── spec.md # requisitos y criterios de aceptación
+│       ├── plan.md # solución técnica y pruebas
+│       └── tasks.md # tareas vinculadas a requisitos
+├── tests/ # pruebas del proyecto; estructura según el stack
+├── .agents/
+│   └── skills/
+│       └── sdd/
+│           └── SKILL.md # reglas y flujo SDD
+├── .opencode/
+│   ├── agents/
+│   │   ├── coordinator.md # coordina el flujo
+│   │   ├── planner.md # redacta specs, planes y tareas
+│   │   ├── implementer.md # implementa una tarea
+│   │   └── reviewer.md # revisa y valida sin editar
+│   ├── commands/
+│   │   ├── feature.md # comando opcional para cambios pequeños
+│   │   ├── sdd-constitution.md # propone la constitución
+│   │   ├── sdd-spec.md # entrevista y redacta la spec
+│   │   ├── sdd-clarify.md # detecta dudas y conflictos
+│   │   ├── sdd-plan.md # genera el plan técnico
+│   │   ├── sdd-tasks.md # desglosa el plan en tareas
+│   │   ├── sdd-implement.md # implementa una tarea
+│   │   ├── sdd-validate.md # valida los RF
+│   │   ├── sdd-change.md # actualiza primero la spec
+│   │   └── sdd-status.md # informa fase y siguiente paso
+│   ├── plugins/
+│   │   └── <plugin>.ts # plugin local opcional; también .js
+│   ├── skills/
+│   │   └── <opencode-skill-id>/
+│   │       └── SKILL.md # skill adicional opcional
+│   └── themes/
+│       └── <theme-name>.json # tema del proyecto opcional
+└── <código del proyecto>
+```
 
-Los agentes personalizados permiten separar responsabilidades mediante instrucciones, modos de ejecución y permisos; los subagentes trabajan en sesiones independientes y devuelven sus resultados al agente principal. Consulta la [guía de agentes y sistemas multiagente](agents/README.md), con ejemplos, plantillas y una explicación del arnés de agente y sus guardrails.
+La configuración de OpenCode puede estar en `opencode.json`/`opencode.jsonc` en la raíz o en `.opencode/`; este ejemplo la coloca en la raíz. Evita duplicar la skill SDD en `.agents/skills/` y `.opencode/skills/`. `MEMORY.md`, `tests/`, los agentes personalizados, los comandos, plugins y temas son opcionales según el proyecto.
 
-## Spec-Driven Development (SDD)
+## AGENTS-MEMORY
 
-SDD define primero qué debe hacer el sistema: requisitos, límites y criterios de aceptación. Esa especificación guía la planificación, la implementación y la validación.
-
-### Estilos de SDD
-
-- **Spec-first:** la especificación sirve de punto de partida; después, el código suele evolucionar directamente y la spec puede quedar desactualizada.
-- **Spec-anchored:** la especificación se mantiene viva y se actualiza junto con el código. Es un buen enfoque para empezar.
-- **Spec-as-source:** la especificación es la fuente de verdad y el código se genera a partir de ella; los cambios se hacen en la spec y se vuelve a generar el código.
-
-### Requisitos con EARS
-
-EARS (*Easy Approach to Requirements Syntax*) usa patrones para redactar requisitos claros y verificables. Por ejemplo: `CUANDO <evento>, el sistema deberá <respuesta>` o `SI <condición>, ENTONCES el sistema deberá <respuesta>`. Conviene describir un comportamiento por requisito y explicitar los casos límite.
-
-### Flujo habitual
-
-1. Definir la constitución del proyecto.
-2. Especificar la funcionalidad.
-3. Aclarar ambigüedades y decisiones pendientes.
-4. Preparar el plan de implementación.
-5. Desglosar el plan en tareas.
-6. Implementar siguiendo la spec.
-7. Validar los criterios de aceptación y mantener la spec alineada con el resultado.
-
-Para ver la estructura de carpetas, el proceso detallado y las plantillas de constitución, especificación, plan y tareas, consulta la [guía SDD](sdd/README.md).
-
-## Usar las plantillas `AGENTS.md` y `MEMORY.md`
-
-1. Copia `AGENTS-template.md` a la raíz del proyecto destino y renómbralo a `AGENTS.md`.
+1. Copia `templates/AGENTS.md` a la raíz del proyecto destino y completa sus instrucciones.
 2. Completa la descripción, el stack, los comandos comprobados, las convenciones y las reglas propias del proyecto. Sustituye o elimina todos los marcadores y apartados que no apliquen.
-3. Si quieres conservar contexto entre sesiones, copia `MEMORY-template.md` a la raíz como `MEMORY.md`. Rellénalo solo con información real del proyecto; mantenlo en unas 50 líneas como máximo y no guardes datos sensibles ni personales.
+3. Si quieres conservar contexto entre sesiones, copia `templates/MEMORY.md` a la raíz como `MEMORY.md`. Rellénalo solo con información real del proyecto; mantenlo en unas 50 líneas como máximo y no guardes datos sensibles ni personales.
 4. Mantén en `AGENTS.md` las reglas permanentes y en `MEMORY.md` el estado cambiante, las decisiones, los aprendizajes y los próximos pasos. Las instrucciones de `AGENTS.md` indican a OpenCode cuándo leer y actualizar la memoria.
 
 La memoria es opcional: si todavía no hay información duradera que guardar, puedes crear `MEMORY.md` más adelante.
 
-## Usar la plantilla del comando `feature`
+Los dos archivos viven en la raíz del proyecto; `MEMORY.md` es opcional:
 
-1. Copia `commands/feature-template.md` al proyecto destino como `.opencode/commands/feature.md`.
+```text
+project/
+├── AGENTS.md
+├── MEMORY.md   # opcional
+└── <código del proyecto>
+```
+
+## Skills
+
+### Usar la plantilla `SKILL.md`
+
+1. Copia `templates/skills/SKILL.md` al proyecto destino como `.opencode/skills/<opencode-skill-id>/SKILL.md`.
+2. Usa para `<opencode-skill-id>` un identificador único en minúsculas y kebab-case, por ejemplo `local-dates`.
+3. Completa `name` y `description`; la descripción debe explicar claramente cuándo es pertinente la skill. Sustituye los marcadores por instrucciones, pasos y comprobaciones específicas del proyecto.
+4. Añade los archivos de referencia o scripts que necesite la skill junto a `SKILL.md`; las rutas escritas en ella son relativas a su directorio.
+
+OpenCode puede anunciar una skill por su descripción y cargar sus instrucciones completas cuando resulte pertinente y esté permitido por la configuración del proyecto.
+
+El árbol muestra dos skills distintas: una skill genérica y la skill SDD:
+
+```text
+project/
+├── .opencode/
+│   └── skills/
+│       └── <opencode-skill-id>/ # otra skill, por ejemplo local-dates
+│           └── SKILL.md
+└── .agents/
+    └── skills/
+        └── sdd/ # ID concreto de la skill SDD
+            └── SKILL.md
+```
+
+`<opencode-skill-id>` es un marcador para otra skill instalada en `.opencode/`, como `local-dates`. La ID concreta de SDD es `sdd`; instala esa skill en una sola de las dos rutas y no la dupliques.
+
+**Distribución recomendada:** coloca `sdd` en `.agents/skills/sdd/` si quieres compartirla con agentes compatibles; guarda en `.opencode/skills/<opencode-skill-id>/` las skills específicas de OpenCode. Otras skills que también deban compartirse pueden ir en `.agents/skills/`. Si ambas rutas definen el mismo ID, prevalece `.opencode/skills/`; evita duplicarlo salvo que quieras sobrescribirlo intencionadamente.
+
+Para usar la [plantilla de skill SDD](templates/skills/sdd/SKILL.md), cópiala al proyecto como `.agents/skills/sdd/SKILL.md` (OpenCode también admite `.opencode/skills/sdd/SKILL.md`).
+
+### Ejemplo de skill específica de OpenCode
+
+Una skill para crear y mantener plugins de OpenCode podría guardarse así:
+
+```text
+project/
+└── .opencode/
+    └── skills/
+        └── opencode-plugin-dev/
+            └── SKILL.md
+```
+
+Sus instrucciones cubrirían la API y los hooks propios de los plugins de OpenCode. Al depender de conceptos específicos de esta herramienta, corresponde a `.opencode/skills/`; una skill portable puede ubicarse en `.agents/skills/`.
+
+### Ejemplo de uso: `frontend-design`
+
+Si la skill `frontend-design` está instalada y disponible en el proyecto, puedes invocarla directamente:
+
+```text
+@frontend-design mejora el diseño de la web, conserva las funcionalidades existentes y prioriza la accesibilidad y el diseño responsive
+```
+
+`@frontend-design` usa el ID de la skill; no funciona si la skill no está instalada o si su ID es distinto.
+
+### Starter-Pack-de-Skills
+
+Estas skills de terceros son recomendaciones orientativas; no vienen incluidas ni se instalan automáticamente con estas plantillas. Revisa el repositorio, las instrucciones y los posibles scripts antes de instalar una skill, especialmente las que ayudan a buscar o instalar otras.
+
+- [`find-skills` — Vercel Labs](https://github.com/vercel-labs/skills/tree/main/skills/find-skills): ayuda a descubrir skills del ecosistema y a encontrar cómo instalarlas.
+- [`grill-me` — Matt Pocock](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me): entrevista al usuario para poner a prueba un plan o diseño y descubrir decisiones pendientes.
+- [`frontend-design` — Anthropic](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/frontend-design/skills/frontend-design): ayuda a crear o rediseñar interfaces con una dirección visual intencionada.
+- [`web-design-guidelines` — Vercel Labs](https://github.com/vercel-labs/agent-skills/tree/main/skills/web-design-guidelines): revisa interfaces frente a pautas de diseño web, UX y accesibilidad.
+- [`systematic-debugging` — obra / Superpowers](https://github.com/obra/superpowers/tree/main/skills/systematic-debugging): guía una depuración metódica, desde reproducir el problema hasta verificar la causa y la solución.
+
+Estas skills externas no se copian al proyecto por incluirlas en esta lista. Si instalas una compatible, tendrá su propio directorio, por ejemplo:
+
+```text
+project/
+└── .agents/
+    └── skills/
+        └── <skill-id>/
+            └── SKILL.md
+```
+
+### Referencias-sobre-Skills
+
+- [Agent Skills](https://agentskills.io/)
+- [OpenCode — Skills](https://opencode.ai/v2/docs/skills)
+- [skills.sh](http://skills.sh/)
+
+Este apartado solo contiene enlaces de consulta; no crea archivos ni carpetas en el proyecto.
+
+## Comandos
+
+Las plantillas de comandos de este proyecto se instalan en `.opencode/commands/` y se ejecutan con `/`.
+
+### Plantilla del comando `feature`
+
+1. Copia `templates/commands/feature.md` al proyecto destino como `.opencode/commands/feature.md`.
 2. Desde OpenCode, ejecuta `/feature` seguido de la descripción de la funcionalidad.
 3. Revisa el plan que prepare el agente y apruébalo antes de pedir la implementación.
+
+El único archivo necesario para este comando es:
+
+```text
+project/
+└── .opencode/
+    └── commands/
+        └── feature.md
+```
 
 ### Ejemplo de uso
 
@@ -86,46 +219,13 @@ Al solicitar una funcionalidad, puedes preguntar también si hay una skill perti
 
 El agente debe indicar el ID de una skill disponible que sea relevante y por qué la usaría, o explicar que ninguna aplica. La plantilla genérica de esta carpeta no se activa por sí sola: primero hay que instalar una skill concreta en el proyecto.
 
-## Usar la plantilla `SKILL.md`
+### Plantillas de comandos SDD
 
-1. Copia `skills/SKILL-template.md` al proyecto destino como `.opencode/skills/<skill-id>/SKILL.md`.
-2. Usa para `<skill-id>` un identificador único en minúsculas y kebab-case, por ejemplo `local-dates`.
-3. Completa `name` y `description`; la descripción debe explicar claramente cuándo es pertinente la skill. Sustituye los marcadores por instrucciones, pasos y comprobaciones específicas del proyecto.
-4. Añade los archivos de referencia o scripts que necesite la skill junto a `SKILL.md`; las rutas escritas en ella son relativas a su directorio.
-
-OpenCode puede anunciar una skill por su descripción y cargar sus instrucciones completas cuando resulte pertinente y esté permitido por la configuración del proyecto.
-
-Para usar la [plantilla de skill SDD](skills/sdd/SKILL-template.md), cópiala al proyecto como `.agents/skills/sdd/SKILL.md`. Las plantillas de comandos SDD están enlazadas desde la [tabla de automatización](sdd/README.md); cópialas a `.opencode/commands/` y elimina el sufijo `-template`.
-
-### Ejemplo de uso: `frontend-design`
-
-Si la skill `frontend-design` está instalada y disponible en el proyecto, puedes invocarla directamente:
-
-```text
-@frontend-design mejora el diseño de la web, conserva las funcionalidades existentes y prioriza la accesibilidad y el diseño responsive
-```
-
-`@frontend-design` usa el ID de la skill; no funciona si la skill no está instalada o si su ID es distinto.
-
-## Starter Pack de Skills
-
-Estas skills de terceros son recomendaciones orientativas; no vienen incluidas ni se instalan automáticamente con estas plantillas. Revisa el repositorio, las instrucciones y los posibles scripts antes de instalar una skill, especialmente las que ayudan a buscar o instalar otras.
-
-- [`find-skills` — Vercel Labs](https://github.com/vercel-labs/skills/tree/main/skills/find-skills): ayuda a descubrir skills del ecosistema y a encontrar cómo instalarlas.
-- [`grill-me` — Matt Pocock](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me): entrevista al usuario para poner a prueba un plan o diseño y descubrir decisiones pendientes.
-- [`frontend-design` — Anthropic](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/frontend-design/skills/frontend-design): ayuda a crear o rediseñar interfaces con una dirección visual intencionada.
-- [`web-design-guidelines` — Vercel Labs](https://github.com/vercel-labs/agent-skills/tree/main/skills/web-design-guidelines): revisa interfaces frente a pautas de diseño web, UX y accesibilidad.
-- [`systematic-debugging` — obra / Superpowers](https://github.com/obra/superpowers/tree/main/skills/systematic-debugging): guía una depuración metódica, desde reproducir el problema hasta verificar la causa y la solución.
-
-## Referencias sobre Skills
-
-- [Agent Skills](https://agentskills.io/)
-- [OpenCode — Skills](https://opencode.ai/v2/docs/skills)
-- [skills.sh](http://skills.sh/)
+Para activar un comando SDD, copia la plantilla correspondiente de `templates/commands/` a `.opencode/commands/` con el mismo nombre. La [guía SDD](sdd/README.md#automatizacion-de-sdd-mediante-skills-y-comandos) incluye la lista de comandos y la fase correspondiente.
 
 Consulta la [documentación oficial de comandos](https://opencode.ai/docs/commands/) para más información sobre comandos y argumentos.
 
-## MCP (Model Context Protocol)
+## MCP-Model-Context-Protocol
 
 MCP es un protocolo abierto para conectar agentes con servidores que proporcionan herramientas, recursos, prompts e instrucciones. Por ejemplo, un servidor puede dar acceso a documentación, un navegador, repositorios o servicios externos.
 
@@ -139,6 +239,14 @@ MCP es un protocolo abierto para conectar agentes con servidores que proporciona
 ### Añadir servidores MCP
 
 Puedes añadir servidores con la CLI —que actualiza la configuración del proyecto— o editando `opencode.json`/`opencode.jsonc` en la raíz. En OpenCode V2, los servidores se declaran bajo `mcp.servers`.
+
+La configuración MCP es un archivo en la raíz, no una carpeta:
+
+```text
+project/
+├── opencode.json   # o opencode.jsonc
+└── <código del proyecto>
+```
 
 Ejemplos de alta con la CLI:
 
@@ -198,3 +306,67 @@ Si prefieres autenticar Context7 mediante OAuth, omite `oauth` y `headers` y sig
 - [mcpservers.org](https://mcpservers.org/es)
 
 Consulta la [documentación oficial de OpenCode sobre MCP](https://opencode.ai/v2/docs/mcp-servers) y la [documentación del protocolo MCP](https://modelcontextprotocol.io/).
+
+## Spec-Driven-Development-SDD
+
+SDD define primero qué debe hacer el sistema: requisitos, límites y criterios de aceptación. Esa especificación guía la planificación, la implementación y la validación.
+
+### Estilos de SDD
+
+- **Spec-first:** la especificación sirve de punto de partida; después, el código suele evolucionar directamente y la spec puede quedar desactualizada.
+- **Spec-anchored:** la especificación se mantiene viva y se actualiza junto con el código. Es un buen enfoque para empezar.
+- **Spec-as-source:** la especificación es la fuente de verdad y el código se genera a partir de ella; los cambios se hacen en la spec y se vuelve a generar el código.
+
+### Requisitos con EARS
+
+EARS (*Easy Approach to Requirements Syntax*) usa patrones para redactar requisitos claros y verificables. Por ejemplo: `CUANDO <evento>, el sistema deberá <respuesta>` o `SI <condición>, ENTONCES el sistema deberá <respuesta>`. Conviene describir un comportamiento por requisito y explicitar los casos límite.
+
+### Flujo habitual
+
+1. Definir la constitución del proyecto.
+2. Especificar la funcionalidad.
+3. Aclarar ambigüedades y decisiones pendientes.
+4. Preparar el plan de implementación.
+5. Desglosar el plan en tareas.
+6. Implementar siguiendo la spec.
+7. Validar los criterios de aceptación y mantener la spec alineada con el resultado.
+
+Para ver la estructura de carpetas, el proceso detallado y las plantillas de constitución, especificación, plan y tareas, consulta la [guía SDD](sdd/README.md).
+
+Al preparar SDD para un proyecto, se añaden la constitución y una carpeta por funcionalidad. La skill y los comandos son opcionales si se sigue el proceso manualmente:
+
+```text
+project/
+├── docs/
+│   └── constitution.md
+├── specs/
+│   └── 001-nombre/
+│       ├── spec.md
+│       ├── plan.md
+│       └── tasks.md
+├── tests/
+├── .agents/
+│   └── skills/
+│       └── sdd/
+│           └── SKILL.md
+└── .opencode/
+    └── commands/
+        ├── sdd-constitution.md
+        └── sdd-*.md
+```
+
+## Agentes-y-subagentes
+
+Los agentes personalizados permiten separar responsabilidades mediante instrucciones, modos de ejecución y permisos; los subagentes trabajan en sesiones independientes y devuelven sus resultados al agente principal. Consulta la [guía de agentes y sistemas multiagente](agents/README.md), con ejemplos, plantillas y una explicación del arnés de agente y sus guardrails.
+
+Al copiar los perfiles de ejemplo, los nuevos archivos quedan en:
+
+```text
+project/
+└── .opencode/
+    └── agents/
+        ├── coordinator.md
+        ├── planner.md
+        ├── implementer.md
+        └── reviewer.md
+```

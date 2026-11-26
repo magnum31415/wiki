@@ -1,5 +1,7 @@
 # Agentes y subagentes en OpenCode
 
+[← Índice y plantillas de OpenCode](../README.md)
+
 ## Agentes personalizados
 
 Un agente personalizado es un asistente de IA configurado para una función específica, con instrucciones, permisos y, opcionalmente, un modelo propios. Puede ser, por ejemplo, un revisor de código o un especialista en implementación.
@@ -38,11 +40,11 @@ Un **guardrail** es una protección o límite dentro de ese entorno. Por tanto, 
 
 - **Rol e instrucciones:** cada archivo de agente declara `description` y `mode` (`primary` o `subagent`) y define su función en el cuerpo del Markdown.
 - **Permisos por responsabilidad:**
-  - [Coordinator](coordinator-template.md) no puede editar ni ejecutar shell; solo puede delegar en `planner`, `implementer` y `reviewer`.
-  - [Planner](planner-template.md) puede editar únicamente `specs/**`; no puede usar shell ni lanzar subagentes.
-  - [Implementer](implementer-template.md) puede editar y ejecutar comandos para implementar; se le instruye a completar una sola tarea, ejecutar `node --test` y detenerse. Sus permisos de edición y shell son amplios, así que conviene restringirlos más si el proyecto necesita límites técnicos más estrictos.
-  - [Reviewer](reviewer-template.md) no puede editar; el shell pide autorización por defecto y permite explícitamente `node --test`, `git diff` y `git status`.
-- **Contexto y método:** la [skill SDD](../skills/sdd/SKILL-template.md) contiene el flujo y sus reglas; las [plantillas de comandos SDD](../sdd/README.md#automatización-de-sdd-mediante-skills-y-comandos) ofrecen tareas guiadas. `AGENTS.md`, `MEMORY.md` y `specs/` aportan contexto y decisiones del proyecto.
+  - [Coordinator](../templates/agents/coordinator.md) no puede editar ni ejecutar shell; solo puede delegar en `planner`, `implementer` y `reviewer`.
+  - [Planner](../templates/agents/planner.md) puede editar únicamente `specs/**`; no puede usar shell ni lanzar subagentes.
+  - [Implementer](../templates/agents/implementer.md) puede editar y ejecutar comandos para implementar; se le instruye a completar una sola tarea, ejecutar `node --test` y detenerse. Sus permisos de edición y shell son amplios, así que conviene restringirlos más si el proyecto necesita límites técnicos más estrictos.
+  - [Reviewer](../templates/agents/reviewer.md) no puede editar; el shell pide autorización por defecto y permite explícitamente `node --test`, `git diff` y `git status`.
+ - **Contexto y método:** la [skill SDD](../templates/skills/sdd/SKILL.md) contiene el flujo y sus reglas; las [plantillas de comandos SDD](../sdd/README.md#automatizacion-de-sdd-mediante-skills-y-comandos) ofrecen tareas guiadas. `AGENTS.md`, `MEMORY.md` y `specs/` aportan contexto y decisiones del proyecto.
 - **Comprobación y supervisión:** las plantillas piden pruebas, validación RF por RF, informes de resultados y aprobación humana entre fases. Chrome DevTools y otras herramientas externas solo están disponibles si el proyecto las configura y concede acceso.
 
 El arnés SDD, por tanto, es la combinación de estos agentes, permisos, skill, comandos, archivos de contexto y ciclo de verificación. Los límites escritos en instrucciones son guardrails de proceso; para impedir de verdad una acción, usa permisos explícitos y comprueba que la configuración se aplica como esperas.
@@ -150,14 +152,14 @@ project/
 
 ## Plantillas de flujo SDD multiagente
 
-Estas plantillas están inactivas en este vault. Para usarlas, copia cada archivo a `.opencode/agents/` en el proyecto destino y elimina el sufijo `-template`.
+Estas plantillas están inactivas en este vault. Para usarlas, copia cada archivo de `../templates/agents/` a `.opencode/agents/` en el proyecto destino conservando el nombre.
 
 | Perfil | Modo | Responsabilidad |
 |---|---|---|
-| [Coordinador](coordinator-template.md) | `primary` | Conduce las fases SDD y delega en los otros tres perfiles. |
-| [Planificador](planner-template.md) | `subagent` | Redacta y mantiene artefactos dentro de `specs/`, sin tocar código. |
-| [Implementador](implementer-template.md) | `subagent` | Implementa una tarea aprobada cada vez, con pruebas primero. |
-| [Revisor](reviewer-template.md) | `subagent` | Detecta problemas y valida los RF sin modificar archivos. |
+| [Coordinador](../templates/agents/coordinator.md) | `primary` | Conduce las fases SDD y delega en los otros tres perfiles. |
+| [Planificador](../templates/agents/planner.md) | `subagent` | Redacta y mantiene artefactos dentro de `specs/`, sin tocar código. |
+| [Implementador](../templates/agents/implementer.md) | `subagent` | Implementa una tarea aprobada cada vez, con pruebas primero. |
+| [Revisor](../templates/agents/reviewer.md) | `subagent` | Detecta problemas y valida los RF sin modificar archivos. |
 
 Los perfiles están redactados como ejemplo para un proyecto con flujo SDD. Ajusta el nombre del proyecto, las reglas, las rutas y los permisos antes de activarlos.
 

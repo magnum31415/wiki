@@ -1,13 +1,13 @@
 # Guía de uso de las plantillas de OpenCode
 
-Esta guía explica cómo preparar las plantillas para un proyecto y utilizarlas durante el desarrollo con IA. Los archivos con sufijo `-template` son ejemplos inactivos en este vault: cópialos al proyecto de destino y renómbralos según se indica.
+Esta guía explica cómo preparar las plantillas de `templates/` para un proyecto y utilizarlas durante el desarrollo con IA. Esa carpeta no es una ruta de descubrimiento por defecto para agentes, comandos o skills; copia los archivos a las ubicaciones del proyecto indicadas aquí. **Excepción:** OpenCode puede cargar `templates/AGENTS.md` como instrucción al trabajar dentro de esa carpeta o explorarla.
 
 ## 1. Prepara el contexto del proyecto
 
 En la raíz del proyecto:
 
-- Copia `AGENTS-template.md` como `AGENTS.md` y completa las instrucciones permanentes: objetivo, stack, estructura, convenciones y comandos comprobados.
-- Copia `MEMORY-template.md` como `MEMORY.md` si quieres mantener entre sesiones las decisiones y el estado del trabajo. Es opcional; no incluyas secretos ni datos personales.
+- Copia `templates/AGENTS.md` a la raíz del proyecto y completa las instrucciones permanentes: objetivo, stack, estructura, convenciones y comandos comprobados.
+- Copia `templates/MEMORY.md` como `MEMORY.md` si quieres mantener entre sesiones las decisiones y el estado del trabajo. Es opcional; no incluyas secretos ni datos personales.
 - Crea `docs/` y `specs/` si todavía no existen.
 
 No dejes marcadores de plantilla sin resolver. Asegúrate de que las instrucciones reflejen el repositorio real.
@@ -16,13 +16,13 @@ No dejes marcadores de plantilla sin resolver. Asegúrate de que las instruccion
 
 Para el flujo SDD con coordinador y subagentes, copia las plantillas así:
 
-- `sdd/docs/constitution-template.md` → `docs/constitution.md`.
-- `skills/sdd/SKILL-template.md` → `.agents/skills/sdd/SKILL.md`.
-- Los cuatro perfiles de `agents/` → `.opencode/agents/`, quitando `-template` de sus nombres: `coordinator.md`, `planner.md`, `implementer.md` y `reviewer.md`.
-- Los comandos `commands/sdd-*-template.md` → `.opencode/commands/`, quitando `-template`; por ejemplo, `sdd-spec-template.md` pasa a `sdd-spec.md`.
-- Copia `sdd/specs/001-spec-name-template/` a `specs/NNN-nombre/` para cada funcionalidad y renombra sus archivos `spec-template.md`, `plan-template.md` y `tasks-template.md` a `spec.md`, `plan.md` y `tasks.md`.
+- `templates/sdd/docs/constitution.md` → `docs/constitution.md`.
+- `templates/skills/sdd/SKILL.md` → `.agents/skills/sdd/SKILL.md`.
+- Copia los cuatro perfiles de `templates/agents/` a `.opencode/agents/` con sus nombres: `coordinator.md`, `planner.md`, `implementer.md` y `reviewer.md`.
+- Copia los comandos `templates/commands/sdd-*.md` a `.opencode/commands/` con los mismos nombres, por ejemplo `sdd-spec.md`.
+- Copia `templates/sdd/specs/001-spec-name/` a `specs/NNN-nombre/` para cada funcionalidad; sus archivos ya se llaman `spec.md`, `plan.md` y `tasks.md`.
 
-Si no quieres usar un sistema multiagente, puedes empezar con la skill SDD y los comandos; los perfiles `coordinator`, `planner`, `implementer` y `reviewer` son opcionales. Para cambios pequeños fuera del flujo SDD, puedes instalar también `commands/feature-template.md` como `.opencode/commands/feature.md`.
+Si no quieres usar un sistema multiagente, puedes empezar con la skill SDD y los comandos; los perfiles `coordinator`, `planner`, `implementer` y `reviewer` son opcionales. Para cambios pequeños fuera del flujo SDD, puedes instalar también `templates/commands/feature.md` como `.opencode/commands/feature.md`.
 
 ## 3. Adapta instrucciones, pruebas y permisos
 

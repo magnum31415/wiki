@@ -1,5 +1,7 @@
 # Spec-Driven Development (SDD)
 
+[← Índice y plantillas de OpenCode](../README.md)
+
 ## ¿Qué es?
 
 Spec-Driven Development es una forma de desarrollar software en la que primero se definen el comportamiento esperado, los requisitos, los límites y los criterios de aceptación. La especificación guía la planificación, la implementación y la validación.
@@ -77,25 +79,25 @@ La constitución describe reglas estables del proyecto. Cada funcionalidad o cam
 6. **Implementación.** Ejecuta las tareas respetando la constitución y la especificación. Si es necesario cambiar el comportamiento acordado, actualiza primero la especificación o registra la decisión.
 7. **Validación.** Ejecuta las pruebas y comprobaciones, y contrasta cada criterio de aceptación con el resultado.
 
-## Automatización de SDD mediante Skills y Comandos
+## Automatizacion-de-SDD-mediante-Skills-y-Comandos
 
 En OpenCode, las **skills** se invocan con `@<id>` y los **comandos** con `/nombre`. Por eso, la skill general de SDD se invocaría como `@sdd`, no como `/sdd`.
 
-**Skill:** [`@sdd`](../skills/sdd/SKILL-template.md) — guía el flujo SDD y el uso de las plantillas de especificación.
+**Skill:** [`@sdd`](../templates/skills/sdd/SKILL.md) — guía el flujo SDD y el uso de las plantillas de especificación.
 
 | Comando | Ejemplo de uso | Fase | Agente |
 |---|---|---|---|
-| [`/sdd-constitution`](../commands/sdd-constitution-template.md) | `/sdd-constitution` | Constitución | `build` |
-| [`/sdd-spec`](../commands/sdd-spec-template.md) | `/sdd-spec 002-nombre idea…` | Especificación | `build` |
-| [`/sdd-clarify`](../commands/sdd-clarify-template.md) | `/sdd-clarify 002-nombre` | Clarificación | `plan` |
-| [`/sdd-plan`](../commands/sdd-plan-template.md) | `/sdd-plan 002-nombre` | Planificación | `build` |
-| [`/sdd-tasks`](../commands/sdd-tasks-template.md) | `/sdd-tasks 002-nombre` | Tareas | `build` |
-| [`/sdd-implement`](../commands/sdd-implement-template.md) | `/sdd-implement 002-nombre T3` | Implementación | `build` |
-| [`/sdd-validate`](../commands/sdd-validate-template.md) | `/sdd-validate 002-nombre` | Validación | `build` |
-| [`/sdd-change`](../commands/sdd-change-template.md) | `/sdd-change 002-nombre requisito…` | Mantenimiento | `build` |
-| [`/sdd-status`](../commands/sdd-status-template.md) | `/sdd-status 002-nombre` | Fase actual y siguiente paso de una spec | `plan` |
+| [`/sdd-constitution`](../templates/commands/sdd-constitution.md) | `/sdd-constitution` | Constitución | `build` |
+| [`/sdd-spec`](../templates/commands/sdd-spec.md) | `/sdd-spec 002-nombre idea…` | Especificación | `build` |
+| [`/sdd-clarify`](../templates/commands/sdd-clarify.md) | `/sdd-clarify 002-nombre` | Clarificación | `plan` |
+| [`/sdd-plan`](../templates/commands/sdd-plan.md) | `/sdd-plan 002-nombre` | Planificación | `build` |
+| [`/sdd-tasks`](../templates/commands/sdd-tasks.md) | `/sdd-tasks 002-nombre` | Tareas | `build` |
+| [`/sdd-implement`](../templates/commands/sdd-implement.md) | `/sdd-implement 002-nombre T3` | Implementación | `build` |
+| [`/sdd-validate`](../templates/commands/sdd-validate.md) | `/sdd-validate 002-nombre` | Validación | `build` |
+| [`/sdd-change`](../templates/commands/sdd-change.md) | `/sdd-change 002-nombre requisito…` | Mantenimiento | `build` |
+| [`/sdd-status`](../templates/commands/sdd-status.md) | `/sdd-status 002-nombre` | Fase actual y siguiente paso de una spec | `plan` |
 
-Estos archivos son plantillas y no están activos en este vault. Para usar la skill, copia `../skills/sdd/SKILL-template.md` al proyecto como `.agents/skills/sdd/SKILL.md` (OpenCode también admite `.opencode/skills/sdd/SKILL.md`). Para activar un comando, copia su plantilla a `.opencode/commands/` y quita el sufijo `-template` del nombre.
+Estos archivos son plantillas y no están activos en este vault. Para usar la skill, copia `../templates/skills/sdd/SKILL.md` al proyecto como `.agents/skills/sdd/SKILL.md` (OpenCode también admite `.opencode/skills/sdd/SKILL.md`). Para activar un comando, copia su plantilla a `.opencode/commands/` conservando el nombre.
 
 Los comandos que escriben artefactos usan `build`; los de solo lectura usan `plan`. El agente `plan` integrado no puede editar archivos normales del proyecto.
 
@@ -168,14 +170,11 @@ veredicto: ¿la spec está cumplida?
 
 ## Usar las plantillas
 
-- Copia [`docs/constitution-template.md`](docs/constitution-template.md) al proyecto como `docs/constitution.md`.
-- Copia la [plantilla de la skill SDD](../skills/sdd/SKILL-template.md) al proyecto como `.agents/skills/sdd/SKILL.md`.
-- Copia las plantillas de comandos enlazadas en la tabla a `.opencode/commands/` y quita `-template` del nombre para activarlas.
-- Copia la carpeta `specs/001-spec-name-template/` al proyecto y renómbrala con el ID y nombre de la funcionalidad, por ejemplo `specs/001-autenticacion/`.
-- Dentro de la carpeta copiada, renombra:
-  - [`spec-template.md`](specs/001-spec-name-template/spec-template.md) a `spec.md`.
-  - [`plan-template.md`](specs/001-spec-name-template/plan-template.md) a `plan.md`.
-  - [`tasks-template.md`](specs/001-spec-name-template/tasks-template.md) a `tasks.md`.
+- Copia [`templates/sdd/docs/constitution.md`](../templates/sdd/docs/constitution.md) al proyecto como `docs/constitution.md`.
+- Copia la [plantilla de la skill SDD](../templates/skills/sdd/SKILL.md) al proyecto como `.agents/skills/sdd/SKILL.md`.
+- Copia las plantillas de comandos enlazadas en la tabla a `.opencode/commands/` conservando sus nombres para activarlas.
+- Copia la carpeta `templates/sdd/specs/001-spec-name/` al proyecto y adáptala al ID y nombre de la funcionalidad, por ejemplo `specs/001-autenticacion/`.
+- Dentro de la carpeta copiada, adapta los archivos [`spec.md`](../templates/sdd/specs/001-spec-name/spec.md), [`plan.md`](../templates/sdd/specs/001-spec-name/plan.md) y [`tasks.md`](../templates/sdd/specs/001-spec-name/tasks.md).
 - Sustituye los marcadores y elimina los apartados que no apliquen. Mantén las decisiones y requisitos basados en información confirmada.
 
 ## Referencias

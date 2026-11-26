@@ -56,7 +56,42 @@ Atajos de teclado para OpenCode TUI.
 | `/redo` | Rehacer |
 | `/editor` | Abrir editor externo |
 
-## 5. Cómo utilizar los atajos
+## 5. Estructura del directorio `.opencode`
+
+La configuración de proyecto puede estar en `opencode.json`/`opencode.jsonc` en la raíz o dentro de `.opencode/`. Este ejemplo la sitúa dentro de `.opencode`; crea solo las carpetas y archivos que vayas a usar:
+
+```text
+project/
+├── AGENTS.md
+├── docs/
+├── specs/
+├── tests/
+└── .opencode/
+    ├── opencode.jsonc             # también puede estar en la raíz del proyecto
+    ├── agents/
+    │   └── coordinator.md
+    ├── commands/
+    │   └── sdd-spec.md
+    ├── plugins/
+    │   └── local-plugin.ts
+    ├── skills/
+    │   └── <skill-id>/
+    │       └── SKILL.md
+    └── themes/
+        └── project-theme.json
+```
+
+> En un proyecto sencillo, elige una ubicación para la configuración: `opencode.json(c)` en la raíz o `.opencode/opencode.json(c)`. OpenCode también puede combinar configuraciones en distintos niveles; consulta la [documentación de configuración](https://opencode.ai/v2/docs/config) si necesitas esa precedencia.
+
+- `agents/`: perfiles de agentes personalizados.
+- `commands/`: comandos Markdown invocados con `/`.
+- `plugins/`: plugins locales `.js`/`.ts` o directorios de paquetes.
+- `skills/`: instrucciones reutilizables en archivos `SKILL.md`, con sus referencias o scripts.
+- `themes/`: temas del proyecto en archivos `.json`.
+
+`AGENTS.md`, `docs/`, `specs/` y `tests/` pertenecen a la raíz del proyecto, no a `.opencode/`. Para ver ejemplos de SDD y agentes, consulta la [guía de uso](Guia-de-uso.md).
+
+## 6. Cómo utilizar los atajos
 
 ### Atajos secuenciales
 
@@ -72,7 +107,7 @@ Significa:
 
 No hay que pulsar las tres teclas simultáneamente.
 
-## 6. Resumen rápido
+## 7. Resumen rápido
 
 ```text
 Shift + Tab       Cambiar Build / Plan
@@ -87,7 +122,7 @@ Ctrl + X → U      Deshacer
 Esc               Interrumpir respuesta
 ```
 
-## 7. Documentación
+## 8. Documentación
 
 - [OpenCode — Keyboard shortcuts](https://opencode.ai/docs/cli/keybinds)
 - [OpenCode — Documentación oficial](https://opencode.ai/docs/)
